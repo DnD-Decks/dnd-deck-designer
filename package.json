@@ -9,8 +9,8 @@
     "preview": "vite preview",
     "lint": "biome check .",
     "format": "biome format . --write",
-    "test": "node --test",
-    "blue-ball": "biome check . && node --test && tsc -b && vite build"
+    "test": "node --import ./scripts/test-resolver.mjs --test",
+    "blue-ball": "biome check . && node --import ./scripts/test-resolver.mjs --test && tsc -b && vite build"
   },
   "dependencies": {
     "react": "^19.1.0",

@@ -1,0 +1,889 @@
+{
+  "barbarian": {
+    "label": "Barbarian",
+    "icon": "/class-icons/barbarian.svg",
+    "hitDie": "d12",
+    "primaryAbilities": ["str"],
+    "saves": "Strength & Constitution",
+    "description": "A fierce warrior of primal rage",
+    "manualClassification": "martial",
+    "recommendedBackgrounds": ["farmer", "soldier"],
+    "proficiencies": {
+      "light-armor": true,
+      "medium-armor": true,
+      "heavy-armor": false,
+      "shields": true,
+      "simple-weapons": true,
+      "martial-weapons": true,
+      "skills": {
+        "n": 2,
+        "options": [
+          "animal-handling",
+          "athletics",
+          "intimidation",
+          "nature",
+          "perception",
+          "survival"
+        ]
+      }
+    },
+    "startingEquipment": [
+      [
+        {
+          "item": "greataxe",
+          "quantity": 1
+        },
+        {
+          "item": "handaxe",
+          "quantity": 4
+        },
+        {
+          "item": "explorers-pack",
+          "quantity": 1
+        },
+        {
+          "item": "gp",
+          "quantity": 15
+        }
+      ],
+      [
+        {
+          "item": "gp",
+          "quantity": 75
+        }
+      ]
+    ],
+    "recommendedScores": {
+      "str": 15,
+      "dex": 13,
+      "con": 14,
+      "int": 8,
+      "wis": 12,
+      "cha": 10
+    }
+  },
+  "bard": {
+    "label": "Bard",
+    "icon": "/class-icons/bard.svg",
+    "hitDie": "d8",
+    "primaryAbilities": ["cha"],
+    "saves": "Dexterity & Charisma",
+    "description": "An inspiring performer of music, dance, and magic",
+    "manualClassification": "spell-caster",
+    "recommendedBackgrounds": ["entertainer", "charlatan"],
+    "proficiencies": {
+      "light-armor": true,
+      "medium-armor": false,
+      "heavy-armor": false,
+      "shields": false,
+      "simple-weapons": true,
+      "martial-weapons": false,
+      "skills": {
+        "n": 3,
+        "options": [
+          "acrobatics",
+          "animal-handling",
+          "arcana",
+          "athletics",
+          "deception",
+          "history",
+          "insight",
+          "intimidation",
+          "investigation",
+          "medicine",
+          "nature",
+          "perception",
+          "performance"
+        ]
+      },
+      "tools": ["musical-instruments"]
+    },
+    "startingEquipment": [
+      [
+        {
+          "item": "leather-armor",
+          "quantity": 1
+        },
+        {
+          "item": "dagger",
+          "quantity": 2
+        },
+        {
+          "item": "musical-instrument",
+          "quantity": 1
+        },
+        {
+          "item": "entertainers-pack",
+          "quantity": 1
+        },
+        {
+          "item": "gp",
+          "quantity": 19
+        }
+      ],
+      [
+        {
+          "item": "gp",
+          "quantity": 90
+        }
+      ]
+    ],
+    "recommendedScores": {
+      "str": 8,
+      "dex": 14,
+      "con": 13,
+      "int": 10,
+      "wis": 12,
+      "cha": 15
+    }
+  },
+  "cleric": {
+    "label": "Cleric",
+    "icon": "/class-icons/cleric.svg",
+    "hitDie": "d8",
+    "primaryAbilities": ["wis"],
+    "saves": "Wisdom & Charisma",
+    "description": "A miraculous priest of divine power",
+    "manualClassification": "spell-caster",
+    "recommendedBackgrounds": ["acolyte", "sage"],
+    "proficiencies": {
+      "light-armor": true,
+      "medium-armor": true,
+      "heavy-armor": false,
+      "shields": true,
+      "simple-weapons": true,
+      "martial-weapons": false,
+      "skills": {
+        "n": 2,
+        "options": ["history", "insight", "medicine", "persuasion", "religion"]
+      }
+    },
+    "startingEquipment": [
+      [
+        {
+          "item": "chain-shirt",
+          "quantity": 1
+        },
+        {
+          "item": "shield",
+          "quantity": 1
+        },
+        {
+          "item": "mace",
+          "quantity": 1
+        },
+        {
+          "item": "holy-symbol",
+          "quantity": 1
+        },
+        {
+          "item": "priests-pack",
+          "quantity": 1
+        },
+        {
+          "item": "gp",
+          "quantity": 7
+        }
+      ],
+      [
+        {
+          "item": "gp",
+          "quantity": 110
+        }
+      ]
+    ],
+    "recommendedScores": {
+      "str": 13,
+      "dex": 10,
+      "con": 14,
+      "int": 8,
+      "wis": 15,
+      "cha": 12
+    }
+  },
+  "druid": {
+    "label": "Druid",
+    "icon": "/class-icons/druid.svg",
+    "hitDie": "d8",
+    "primaryAbilities": ["wis"],
+    "saves": "Intelligence & Wisdom",
+    "description": "A nature priest of primal power",
+    "manualClassification": "spell-caster",
+    "recommendedBackgrounds": ["hermit", "guide"],
+    "proficiencies": {
+      "light-armor": true,
+      "medium-armor": false,
+      "heavy-armor": false,
+      "shields": true,
+      "simple-weapons": true,
+      "martial-weapons": false,
+      "skills": {
+        "n": 2,
+        "options": [
+          "arcana",
+          "animal-handling",
+          "insight",
+          "medicine",
+          "nature",
+          "perception",
+          "religion",
+          "survival"
+        ]
+      },
+      "tools": ["herbalism-kit"]
+    },
+    "startingEquipment": [
+      [
+        {
+          "item": "leather-armor",
+          "quantity": 1
+        },
+        {
+          "item": "shield",
+          "quantity": 1
+        },
+        {
+          "item": "sickle",
+          "quantity": 1
+        },
+        {
+          "item": "druidic-focus-quarterstaff",
+          "quantity": 1
+        },
+        {
+          "item": "explorers-pack",
+          "quantity": 1
+        },
+        {
+          "item": "herbalism-kit",
+          "quantity": 1
+        },
+        {
+          "item": "gp",
+          "quantity": 9
+        }
+      ],
+      [
+        {
+          "item": "gp",
+          "quantity": 50
+        }
+      ]
+    ],
+    "recommendedScores": {
+      "str": 8,
+      "dex": 13,
+      "con": 14,
+      "int": 12,
+      "wis": 15,
+      "cha": 10
+    }
+  },
+  "fighter": {
+    "label": "Fighter",
+    "icon": "/class-icons/fighter.svg",
+    "hitDie": "d10",
+    "primaryAbilities": ["str", "dex"],
+    "saves": "Strength & Constitution",
+    "description": "A master of all arms and armor",
+    "manualClassification": "martial",
+    "recommendedBackgrounds": ["soldier", "guard"],
+    "proficiencies": {
+      "light-armor": true,
+      "medium-armor": true,
+      "heavy-armor": true,
+      "shields": true,
+      "simple-weapons": true,
+      "martial-weapons": true,
+      "skills": {
+        "n": 2,
+        "options": [
+          "acrobatics",
+          "animal-handling",
+          "athletics",
+          "history",
+          "insight",
+          "intimidation",
+          "perception",
+          "survival"
+        ]
+      }
+    },
+    "startingEquipment": [
+      [
+        {
+          "item": "chain-mail",
+          "quantity": 1
+        },
+        {
+          "item": "greatsword",
+          "quantity": 1
+        },
+        {
+          "item": "flail",
+          "quantity": 1
+        },
+        {
+          "item": "javelin",
+          "quantity": 8
+        },
+        {
+          "item": "dungeoneers-pack",
+          "quantity": 1
+        },
+        {
+          "item": "gp",
+          "quantity": 4
+        }
+      ],
+      [
+        {
+          "item": "studded-leather-armor",
+          "quantity": 1
+        },
+        {
+          "item": "scimitar",
+          "quantity": 1
+        },
+        {
+          "item": "shortsword",
+          "quantity": 1
+        },
+        {
+          "item": "longbow",
+          "quantity": 1
+        },
+        {
+          "item": "arrows",
+          "quantity": 20
+        },
+        {
+          "item": "quiver",
+          "quantity": 1
+        },
+        {
+          "item": "dungeoneers-pack",
+          "quantity": 1
+        },
+        {
+          "item": "gp",
+          "quantity": 11
+        }
+      ]
+    ],
+    "recommendedScores": {
+      "str": 15,
+      "dex": 13,
+      "con": 14,
+      "int": 8,
+      "wis": 12,
+      "cha": 10
+    }
+  },
+  "monk": {
+    "label": "Monk",
+    "icon": "/class-icons/monk.svg",
+    "hitDie": "d8",
+    "primaryAbilities": ["dex", "wis"],
+    "saves": "Strength & Dexterity",
+    "description": "A martial artist of supernatural focus",
+    "manualClassification": "martial",
+    "recommendedBackgrounds": ["hermit", "acolyte"],
+    "proficiencies": {
+      "light-armor": false,
+      "medium-armor": false,
+      "heavy-armor": false,
+      "shields": false,
+      "simple-weapons": true,
+      "martial-weapons": {
+        "property": ["light"]
+      },
+      "skills": {
+        "n": 2,
+        "options": ["acrobatics", "athletics", "history", "insight", "religion", "stealth"]
+      }
+    },
+    "startingEquipment": [
+      [
+        {
+          "item": "spear",
+          "quantity": 1
+        },
+        {
+          "item": "dagger",
+          "quantity": 5
+        },
+        {
+          "item": "artisans-tools",
+          "quantity": 1
+        },
+        {
+          "item": "explorers-pack",
+          "quantity": 1
+        },
+        {
+          "item": "gp",
+          "quantity": 11
+        }
+      ],
+      [
+        {
+          "item": "gp",
+          "quantity": 50
+        }
+      ]
+    ],
+    "recommendedScores": {
+      "str": 12,
+      "dex": 15,
+      "con": 13,
+      "int": 8,
+      "wis": 14,
+      "cha": 10
+    }
+  },
+  "paladin": {
+    "label": "Paladin",
+    "icon": "/class-icons/paladin.svg",
+    "hitDie": "d10",
+    "primaryAbilities": ["str", "cha"],
+    "saves": "Wisdom & Charisma",
+    "description": "A devout warrior of sacred oaths",
+    "manualClassification": "versatile",
+    "recommendedBackgrounds": ["noble", "soldier"],
+    "proficiencies": {
+      "light-armor": true,
+      "medium-armor": true,
+      "heavy-armor": true,
+      "shields": true,
+      "simple-weapons": true,
+      "martial-weapons": true,
+      "skills": {
+        "n": 2,
+        "options": ["athletics", "insight", "intimidation", "medicine", "persuasion", "religion"]
+      }
+    },
+    "startingEquipment": [
+      [
+        {
+          "item": "chain-mail",
+          "quantity": 1
+        },
+        {
+          "item": "shield",
+          "quantity": 1
+        },
+        {
+          "item": "longsword",
+          "quantity": 1
+        },
+        {
+          "item": "javelin",
+          "quantity": 6
+        },
+        {
+          "item": "holy-symbol",
+          "quantity": 1
+        },
+        {
+          "item": "priests-pack",
+          "quantity": 1
+        },
+        {
+          "item": "gp",
+          "quantity": 9
+        }
+      ],
+      [
+        {
+          "item": "gp",
+          "quantity": 150
+        }
+      ]
+    ],
+    "recommendedScores": {
+      "str": 15,
+      "dex": 10,
+      "con": 13,
+      "int": 8,
+      "wis": 12,
+      "cha": 14
+    }
+  },
+  "ranger": {
+    "label": "Ranger",
+    "icon": "/class-icons/ranger.svg",
+    "hitDie": "d10",
+    "primaryAbilities": ["dex", "wis"],
+    "saves": "Strength & Dexterity",
+    "description": "A wandering warrior imbued with primal magic",
+    "manualClassification": "versatile",
+    "recommendedBackgrounds": ["guide", "wayfarer"],
+    "proficiencies": {
+      "light-armor": true,
+      "medium-armor": true,
+      "heavy-armor": false,
+      "shields": true,
+      "simple-weapons": true,
+      "martial-weapons": true,
+      "skills": {
+        "n": 3,
+        "options": [
+          "animal-handling",
+          "athletics",
+          "insight",
+          "investigation",
+          "nature",
+          "perception",
+          "stealth",
+          "survival"
+        ]
+      }
+    },
+    "startingEquipment": [
+      [
+        {
+          "item": "studded-leather-armor",
+          "quantity": 1
+        },
+        {
+          "item": "scimitar",
+          "quantity": 1
+        },
+        {
+          "item": "shortsword",
+          "quantity": 1
+        },
+        {
+          "item": "longbow",
+          "quantity": 1
+        },
+        {
+          "item": "arrows",
+          "quantity": 20
+        },
+        {
+          "item": "quiver",
+          "quantity": 1
+        },
+        {
+          "item": "druidic-focus",
+          "quantity": 1
+        },
+        {
+          "item": "explorers-pack",
+          "quantity": 1
+        },
+        {
+          "item": "gp",
+          "quantity": 7
+        }
+      ],
+      [
+        {
+          "item": "gp",
+          "quantity": 150
+        }
+      ]
+    ],
+    "recommendedScores": {
+      "str": 12,
+      "dex": 15,
+      "con": 13,
+      "int": 8,
+      "wis": 14,
+      "cha": 10
+    }
+  },
+  "rogue": {
+    "label": "Rogue",
+    "icon": "/class-icons/rogue.svg",
+    "hitDie": "d8",
+    "primaryAbilities": ["dex"],
+    "saves": "Dexterity & Intelligence",
+    "description": "A dexterous expert in stealth and subterfuge",
+    "manualClassification": "martial",
+    "recommendedBackgrounds": ["criminal", "charlatan"],
+    "proficiencies": {
+      "light-armor": true,
+      "medium-armor": false,
+      "heavy-armor": false,
+      "shields": false,
+      "simple-weapons": true,
+      "martial-weapons": {
+        "property": ["finesse", "light"]
+      },
+      "skills": {
+        "n": 4,
+        "options": [
+          "acrobatics",
+          "athletics",
+          "deception",
+          "insight",
+          "intimidation",
+          "investigation",
+          "perception",
+          "performance",
+          "persuasion",
+          "sleight-of-hand",
+          "stealth"
+        ]
+      }
+    },
+    "tools": ["thieves-tools"],
+    "startingEquipment": [
+      [
+        {
+          "item": "leather-armor",
+          "quantity": 1
+        },
+        {
+          "item": "dagger",
+          "quantity": 2
+        },
+        {
+          "item": "shortsword",
+          "quantity": 1
+        },
+        {
+          "item": "shortbow",
+          "quantity": 1
+        },
+        {
+          "item": "arrows",
+          "quantity": 20
+        },
+        {
+          "item": "quiver",
+          "quantity": 1
+        },
+        {
+          "item": "thieves-tools",
+          "quantity": 1
+        },
+        {
+          "item": "burglars-pack",
+          "quantity": 1
+        },
+        {
+          "item": "gp",
+          "quantity": 8
+        }
+      ],
+      [
+        {
+          "item": "gp",
+          "quantity": 100
+        }
+      ]
+    ],
+    "recommendedScores": {
+      "str": 8,
+      "dex": 15,
+      "con": 14,
+      "int": 12,
+      "wis": 10,
+      "cha": 13
+    }
+  },
+  "sorcerer": {
+    "label": "Sorcerer",
+    "icon": "/class-icons/sorcerer.svg",
+    "hitDie": "d6",
+    "primaryAbilities": ["cha"],
+    "saves": "Constitution & Charisma",
+    "description": "A dazzling mage filled with innate magic",
+    "manualClassification": "spell-caster",
+    "recommendedBackgrounds": ["sage", "hermit"],
+    "proficiencies": {
+      "light-armor": false,
+      "medium-armor": false,
+      "heavy-armor": false,
+      "shields": false,
+      "simple-weapons": true,
+      "martial-weapons": false,
+      "skills": {
+        "n": 2,
+        "options": ["arcana", "deception", "insight", "intimidation", "persuasion", "religion"]
+      }
+    },
+    "startingEquipment": [
+      [
+        {
+          "item": "spear",
+          "quantity": 1
+        },
+        {
+          "item": "dagger",
+          "quantity": 2
+        },
+        {
+          "item": "arcane-focus-crystal",
+          "quantity": 1
+        },
+        {
+          "item": "dungeoneers-pack",
+          "quantity": 1
+        },
+        {
+          "item": "gp",
+          "quantity": 28
+        }
+      ],
+      [
+        {
+          "item": "gp",
+          "quantity": 50
+        }
+      ]
+    ],
+    "recommendedScores": {
+      "str": 8,
+      "dex": 13,
+      "con": 14,
+      "int": 10,
+      "wis": 12,
+      "cha": 15
+    }
+  },
+  "warlock": {
+    "label": "Warlock",
+    "icon": "/class-icons/warlock.svg",
+    "hitDie": "d8",
+    "primaryAbilities": ["cha"],
+    "saves": "Wisdom & Charisma",
+    "description": "An occultist empowered by otherworldly pacts",
+    "manualClassification": "spell-caster",
+    "recommendedBackgrounds": ["charlatan", "sage"],
+    "proficiencies": {
+      "light-armor": true,
+      "medium-armor": false,
+      "heavy-armor": false,
+      "shields": false,
+      "simple-weapons": true,
+      "martial-weapons": false,
+      "skills": {
+        "n": 2,
+        "options": [
+          "arcana",
+          "deception",
+          "history",
+          "intimidation",
+          "investigation",
+          "nature",
+          "religion"
+        ]
+      }
+    },
+    "startingEquipment": [
+      [
+        {
+          "item": "leather-armor",
+          "quantity": 1
+        },
+        {
+          "item": "sickle",
+          "quantity": 1
+        },
+        {
+          "item": "dagger",
+          "quantity": 2
+        },
+        {
+          "item": "arcane-focus-orb",
+          "quantity": 1
+        },
+        {
+          "item": "book-occult-lore",
+          "quantity": 1
+        },
+        {
+          "item": "scholars-pack",
+          "quantity": 1
+        },
+        {
+          "item": "gp",
+          "quantity": 15
+        }
+      ],
+      [
+        {
+          "item": "gp",
+          "quantity": 100
+        }
+      ]
+    ],
+    "recommendedScores": {
+      "str": 8,
+      "dex": 13,
+      "con": 14,
+      "int": 10,
+      "wis": 12,
+      "cha": 15
+    }
+  },
+  "wizard": {
+    "label": "Wizard",
+    "icon": "/class-icons/wizard.svg",
+    "hitDie": "d6",
+    "primaryAbilities": ["int"],
+    "saves": "Intelligence & Wisdom",
+    "description": "A scholarly magic-user of arcane power",
+    "manualClassification": "spell-caster",
+    "recommendedBackgrounds": ["sage", "scribe"],
+    "proficiencies": {
+      "light-armor": false,
+      "medium-armor": false,
+      "heavy-armor": false,
+      "shields": false,
+      "simple-weapons": true,
+      "martial-weapons": false,
+      "skills": {
+        "n": 2,
+        "options": ["arcana", "history", "insight", "investigation", "medicine", "religion"]
+      }
+    },
+    "startingEquipment": [
+      [
+        {
+          "item": "dagger",
+          "quantity": 2
+        },
+        {
+          "item": "arcane-focus-quarterstaff",
+          "quantity": 1
+        },
+        {
+          "item": "robe",
+          "quantity": 1
+        },
+        {
+          "item": "spellbook",
+          "quantity": 1
+        },
+        {
+          "item": "scholars-pack",
+          "quantity": 1
+        },
+        {
+          "item": "gp",
+          "quantity": 5
+        }
+      ],
+      [
+        {
+          "item": "gp",
+          "quantity": 55
+        }
+      ]
+    ],
+    "recommendedScores": {
+      "str": 8,
+      "dex": 13,
+      "con": 14,
+      "int": 15,
+      "wis": 12,
+      "cha": 10
+    }
+  }
+}
