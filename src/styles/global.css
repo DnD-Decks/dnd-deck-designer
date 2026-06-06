@@ -1,0 +1,25 @@
+/* Design tokens */
+:root {
+  --card-width: 63.5mm;
+  --card-height: 88.9mm;
+}
+
+/* Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+
+/* Print layout */
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+  }
+}
