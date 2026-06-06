@@ -15,6 +15,8 @@
 
 ## Standards
 
+- **Filenames**: always `kebab-case`. Never PascalCase or camelCase file names.
+- **Filename pattern**: `<module>.<role>.ts(x)` — e.g. `wizard.controller.ts`, `spell.service.ts`, `feat-card.component.tsx`. The module comes first, the role second.
 - import: use absolute `src/*` paths.
 - use relative imports only for same-folder files (e.g. CSS modules: `./Card.module.css`).
 - use `import type` for type-only imports.
