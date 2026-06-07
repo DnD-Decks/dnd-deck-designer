@@ -1,0 +1,75 @@
+{
+  "label": "Bard",
+  "icon": "/class-icons/bard.svg",
+  "hitDie": "d8",
+  "primaryAbilities": ["cha"],
+  "saves": "Dexterity & Charisma",
+  "description": "An inspiring performer of music, dance, and magic",
+  "manualClassification": "spell-caster",
+  "recommendedBackgrounds": ["entertainer", "charlatan"],
+  "proficiencies": {
+    "light-armor": true,
+    "medium-armor": false,
+    "heavy-armor": false,
+    "shields": false,
+    "simple-weapons": true,
+    "martial-weapons": false,
+    "skills": {
+      "n": 3,
+      "options": [
+        "acrobatics",
+        "animal-handling",
+        "arcana",
+        "athletics",
+        "deception",
+        "history",
+        "insight",
+        "intimidation",
+        "investigation",
+        "medicine",
+        "nature",
+        "perception",
+        "performance"
+      ]
+    },
+    "tools": ["musical-instruments"]
+  },
+  "startingEquipment": [
+    [
+      {
+        "item": "leather-armor",
+        "quantity": 1
+      },
+      {
+        "item": "dagger",
+        "quantity": 2
+      },
+      {
+        "item": "musical-instrument",
+        "quantity": 1
+      },
+      {
+        "item": "entertainers-pack",
+        "quantity": 1
+      },
+      {
+        "item": "gp",
+        "quantity": 19
+      }
+    ],
+    [
+      {
+        "item": "gp",
+        "quantity": 90
+      }
+    ]
+  ],
+  "recommendedScores": {
+    "str": 8,
+    "dex": 14,
+    "con": 13,
+    "int": 10,
+    "wis": 12,
+    "cha": 15
+  }
+}

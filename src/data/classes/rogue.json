@@ -1,0 +1,91 @@
+{
+  "label": "Rogue",
+  "icon": "/class-icons/rogue.svg",
+  "hitDie": "d8",
+  "primaryAbilities": ["dex"],
+  "saves": "Dexterity & Intelligence",
+  "description": "A dexterous expert in stealth and subterfuge",
+  "manualClassification": "martial",
+  "recommendedBackgrounds": ["criminal", "charlatan"],
+  "proficiencies": {
+    "light-armor": true,
+    "medium-armor": false,
+    "heavy-armor": false,
+    "shields": false,
+    "simple-weapons": true,
+    "martial-weapons": {
+      "property": ["finesse", "light"]
+    },
+    "skills": {
+      "n": 4,
+      "options": [
+        "acrobatics",
+        "athletics",
+        "deception",
+        "insight",
+        "intimidation",
+        "investigation",
+        "perception",
+        "performance",
+        "persuasion",
+        "sleight-of-hand",
+        "stealth"
+      ]
+    }
+  },
+  "tools": ["thieves-tools"],
+  "startingEquipment": [
+    [
+      {
+        "item": "leather-armor",
+        "quantity": 1
+      },
+      {
+        "item": "dagger",
+        "quantity": 2
+      },
+      {
+        "item": "shortsword",
+        "quantity": 1
+      },
+      {
+        "item": "shortbow",
+        "quantity": 1
+      },
+      {
+        "item": "arrows",
+        "quantity": 20
+      },
+      {
+        "item": "quiver",
+        "quantity": 1
+      },
+      {
+        "item": "thieves-tools",
+        "quantity": 1
+      },
+      {
+        "item": "burglars-pack",
+        "quantity": 1
+      },
+      {
+        "item": "gp",
+        "quantity": 8
+      }
+    ],
+    [
+      {
+        "item": "gp",
+        "quantity": 100
+      }
+    ]
+  ],
+  "recommendedScores": {
+    "str": 8,
+    "dex": 15,
+    "con": 14,
+    "int": 12,
+    "wis": 10,
+    "cha": 13
+  }
+}

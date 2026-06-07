@@ -44,8 +44,7 @@ JSON vendored from sibling repo [`dnd-beginner-character-sheet-5e-2024/src/data`
 | `spells/spells-level-0.json` | 33 cantrips, keyed by id |
 | `spells/spells-level-1.json` | 54 level-1 spells, keyed by id |
 | `spells/wizard-spells.json` | Wizard spell id lists (cantrips, level1, level2) |
-| `class/class-details.json` | All 12 classes: label, icon, hitDie, saves, proficiencies |
-| `class/class-resources.json` | Level progression tables (spell slots, class resource tracks) |
+| `classes/<cls>.json` | One file per class (12 total): label, icon, hitDie, saves, proficiencies |
 
 ### Deferred files (not yet vendored)
 
@@ -57,6 +56,8 @@ JSON vendored from sibling repo [`dnd-beginner-character-sheet-5e-2024/src/data`
 | `origin/` | Backgrounds, origin feats, species |
 
 > **Data import mechanism: deferred.** When ready, add a `scripts/fetch-data.mjs` (zero deps, Node built-in fetch) that downloads the JSON files from the sibling repo's `main` branch into `src/data/`.
+
+> **Level progression (spell slots, resource tracks):** vendoring and modelling is deferred. Re-vendor `class/class-resources.json` from the sibling repo and add `src/models/class/class-resources.model.ts` when the deck needs it.
 
 ### Spell record shape
 
@@ -115,6 +116,5 @@ Current modules:
 |---|---|
 | `src/models/spells/spells.model.ts` | `spells` — cantrips + lvl-1 spells; `findAll({cls, level})` |
 | `src/models/class/classes.model.ts` | `classes` — all 12 PHB class details |
-| `src/models/class/class-resources.model.ts` | `classResources` — spell slots + class features per level |
 
 Conventions follow [`dnd-beginner-character-sheet-5e-2024/src/models/CLAUDE.md`](https://github.com/manuartero/dnd-beginner-character-sheet-5e-2024/blob/main/src/models/CLAUDE.md).

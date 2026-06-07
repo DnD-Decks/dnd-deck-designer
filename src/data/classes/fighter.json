@@ -1,0 +1,101 @@
+{
+  "label": "Fighter",
+  "icon": "/class-icons/fighter.svg",
+  "hitDie": "d10",
+  "primaryAbilities": ["str", "dex"],
+  "saves": "Strength & Constitution",
+  "description": "A master of all arms and armor",
+  "manualClassification": "martial",
+  "recommendedBackgrounds": ["soldier", "guard"],
+  "proficiencies": {
+    "light-armor": true,
+    "medium-armor": true,
+    "heavy-armor": true,
+    "shields": true,
+    "simple-weapons": true,
+    "martial-weapons": true,
+    "skills": {
+      "n": 2,
+      "options": [
+        "acrobatics",
+        "animal-handling",
+        "athletics",
+        "history",
+        "insight",
+        "intimidation",
+        "perception",
+        "survival"
+      ]
+    }
+  },
+  "startingEquipment": [
+    [
+      {
+        "item": "chain-mail",
+        "quantity": 1
+      },
+      {
+        "item": "greatsword",
+        "quantity": 1
+      },
+      {
+        "item": "flail",
+        "quantity": 1
+      },
+      {
+        "item": "javelin",
+        "quantity": 8
+      },
+      {
+        "item": "dungeoneers-pack",
+        "quantity": 1
+      },
+      {
+        "item": "gp",
+        "quantity": 4
+      }
+    ],
+    [
+      {
+        "item": "studded-leather-armor",
+        "quantity": 1
+      },
+      {
+        "item": "scimitar",
+        "quantity": 1
+      },
+      {
+        "item": "shortsword",
+        "quantity": 1
+      },
+      {
+        "item": "longbow",
+        "quantity": 1
+      },
+      {
+        "item": "arrows",
+        "quantity": 20
+      },
+      {
+        "item": "quiver",
+        "quantity": 1
+      },
+      {
+        "item": "dungeoneers-pack",
+        "quantity": 1
+      },
+      {
+        "item": "gp",
+        "quantity": 11
+      }
+    ]
+  ],
+  "recommendedScores": {
+    "str": 15,
+    "dex": 13,
+    "con": 14,
+    "int": 8,
+    "wis": 12,
+    "cha": 10
+  }
+}

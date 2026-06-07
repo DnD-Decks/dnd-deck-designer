@@ -1,0 +1,64 @@
+{
+  "label": "Cleric",
+  "icon": "/class-icons/cleric.svg",
+  "hitDie": "d8",
+  "primaryAbilities": ["wis"],
+  "saves": "Wisdom & Charisma",
+  "description": "A miraculous priest of divine power",
+  "manualClassification": "spell-caster",
+  "recommendedBackgrounds": ["acolyte", "sage"],
+  "proficiencies": {
+    "light-armor": true,
+    "medium-armor": true,
+    "heavy-armor": false,
+    "shields": true,
+    "simple-weapons": true,
+    "martial-weapons": false,
+    "skills": {
+      "n": 2,
+      "options": ["history", "insight", "medicine", "persuasion", "religion"]
+    }
+  },
+  "startingEquipment": [
+    [
+      {
+        "item": "chain-shirt",
+        "quantity": 1
+      },
+      {
+        "item": "shield",
+        "quantity": 1
+      },
+      {
+        "item": "mace",
+        "quantity": 1
+      },
+      {
+        "item": "holy-symbol",
+        "quantity": 1
+      },
+      {
+        "item": "priests-pack",
+        "quantity": 1
+      },
+      {
+        "item": "gp",
+        "quantity": 7
+      }
+    ],
+    [
+      {
+        "item": "gp",
+        "quantity": 110
+      }
+    ]
+  ],
+  "recommendedScores": {
+    "str": 13,
+    "dex": 10,
+    "con": 14,
+    "int": 8,
+    "wis": 15,
+    "cha": 12
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "label": "Paladin",
+  "icon": "/class-icons/paladin.svg",
+  "hitDie": "d10",
+  "primaryAbilities": ["str", "cha"],
+  "saves": "Wisdom & Charisma",
+  "description": "A devout warrior of sacred oaths",
+  "manualClassification": "versatile",
+  "recommendedBackgrounds": ["noble", "soldier"],
+  "proficiencies": {
+    "light-armor": true,
+    "medium-armor": true,
+    "heavy-armor": true,
+    "shields": true,
+    "simple-weapons": true,
+    "martial-weapons": true,
+    "skills": {
+      "n": 2,
+      "options": ["athletics", "insight", "intimidation", "medicine", "persuasion", "religion"]
+    }
+  },
+  "startingEquipment": [
+    [
+      {
+        "item": "chain-mail",
+        "quantity": 1
+      },
+      {
+        "item": "shield",
+        "quantity": 1
+      },
+      {
+        "item": "longsword",
+        "quantity": 1
+      },
+      {
+        "item": "javelin",
+        "quantity": 6
+      },
+      {
+        "item": "holy-symbol",
+        "quantity": 1
+      },
+      {
+        "item": "priests-pack",
+        "quantity": 1
+      },
+      {
+        "item": "gp",
+        "quantity": 9
+      }
+    ],
+    [
+      {
+        "item": "gp",
+        "quantity": 150
+      }
+    ]
+  ],
+  "recommendedScores": {
+    "str": 15,
+    "dex": 10,
+    "con": 13,
+    "int": 8,
+    "wis": 12,
+    "cha": 14
+  }
+}

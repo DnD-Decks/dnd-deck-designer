@@ -1,6 +1,6 @@
-import cantripsData from "src/data/spells/spells-level-0.json";
-import spellsLevel1Data from "src/data/spells/spells-level-1.json";
-import wizardSpellsData from "src/data/spells/wizard-spells.json";
+import cantripsData from "../../data/spells/spells-level-0.json" with { type: "json" };
+import spellsLevel1Data from "../../data/spells/spells-level-1.json" with { type: "json" };
+import wizardSpellsData from "../../data/spells/wizard-spells.json" with { type: "json" };
 
 import type { CharacterClass } from "src/models/class/classes.model";
 

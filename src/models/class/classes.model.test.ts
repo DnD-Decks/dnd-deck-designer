@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { classes } from "src/models/class/classes.model";
+import { classes } from "./classes.model.ts";
 
 test("wizard has correct base stats", () => {
   const wizard = classes.get({ id: "wizard" });

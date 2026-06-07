@@ -1,0 +1,78 @@
+{
+  "label": "Druid",
+  "icon": "/class-icons/druid.svg",
+  "hitDie": "d8",
+  "primaryAbilities": ["wis"],
+  "saves": "Intelligence & Wisdom",
+  "description": "A nature priest of primal power",
+  "manualClassification": "spell-caster",
+  "recommendedBackgrounds": ["hermit", "guide"],
+  "proficiencies": {
+    "light-armor": true,
+    "medium-armor": false,
+    "heavy-armor": false,
+    "shields": true,
+    "simple-weapons": true,
+    "martial-weapons": false,
+    "skills": {
+      "n": 2,
+      "options": [
+        "arcana",
+        "animal-handling",
+        "insight",
+        "medicine",
+        "nature",
+        "perception",
+        "religion",
+        "survival"
+      ]
+    },
+    "tools": ["herbalism-kit"]
+  },
+  "startingEquipment": [
+    [
+      {
+        "item": "leather-armor",
+        "quantity": 1
+      },
+      {
+        "item": "shield",
+        "quantity": 1
+      },
+      {
+        "item": "sickle",
+        "quantity": 1
+      },
+      {
+        "item": "druidic-focus-quarterstaff",
+        "quantity": 1
+      },
+      {
+        "item": "explorers-pack",
+        "quantity": 1
+      },
+      {
+        "item": "herbalism-kit",
+        "quantity": 1
+      },
+      {
+        "item": "gp",
+        "quantity": 9
+      }
+    ],
+    [
+      {
+        "item": "gp",
+        "quantity": 50
+      }
+    ]
+  ],
+  "recommendedScores": {
+    "str": 8,
+    "dex": 13,
+    "con": 14,
+    "int": 12,
+    "wis": 15,
+    "cha": 10
+  }
+}

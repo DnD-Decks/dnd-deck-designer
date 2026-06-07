@@ -3,14 +3,17 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "biome check .",
     "format": "biome format . --write",
-    "test": "node --import ./scripts/test-resolver.mjs --test",
-    "blue-ball": "biome check . && node --import ./scripts/test-resolver.mjs --test && tsc -b && vite build"
+    "test": "node --test 'src/**/*.test.ts'",
+    "blue-ball": "biome check . && node --test 'src/**/*.test.ts' && tsc -b && vite build"
   },
   "dependencies": {
     "react": "^19.1.0",

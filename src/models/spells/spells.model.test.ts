@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { spells } from "src/models/spells/spells.model";
+import { spells } from "./spells.model.ts";
 
 test("wizard cantrips: 19 entries including fire-bolt", () => {
   const cantrips = spells.findAll({ cls: "wizard", level: 0 });

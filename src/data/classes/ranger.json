@@ -1,0 +1,85 @@
+{
+  "label": "Ranger",
+  "icon": "/class-icons/ranger.svg",
+  "hitDie": "d10",
+  "primaryAbilities": ["dex", "wis"],
+  "saves": "Strength & Dexterity",
+  "description": "A wandering warrior imbued with primal magic",
+  "manualClassification": "versatile",
+  "recommendedBackgrounds": ["guide", "wayfarer"],
+  "proficiencies": {
+    "light-armor": true,
+    "medium-armor": true,
+    "heavy-armor": false,
+    "shields": true,
+    "simple-weapons": true,
+    "martial-weapons": true,
+    "skills": {
+      "n": 3,
+      "options": [
+        "animal-handling",
+        "athletics",
+        "insight",
+        "investigation",
+        "nature",
+        "perception",
+        "stealth",
+        "survival"
+      ]
+    }
+  },
+  "startingEquipment": [
+    [
+      {
+        "item": "studded-leather-armor",
+        "quantity": 1
+      },
+      {
+        "item": "scimitar",
+        "quantity": 1
+      },
+      {
+        "item": "shortsword",
+        "quantity": 1
+      },
+      {
+        "item": "longbow",
+        "quantity": 1
+      },
+      {
+        "item": "arrows",
+        "quantity": 20
+      },
+      {
+        "item": "quiver",
+        "quantity": 1
+      },
+      {
+        "item": "druidic-focus",
+        "quantity": 1
+      },
+      {
+        "item": "explorers-pack",
+        "quantity": 1
+      },
+      {
+        "item": "gp",
+        "quantity": 7
+      }
+    ],
+    [
+      {
+        "item": "gp",
+        "quantity": 150
+      }
+    ]
+  ],
+  "recommendedScores": {
+    "str": 12,
+    "dex": 15,
+    "con": 13,
+    "int": 8,
+    "wis": 14,
+    "cha": 10
+  }
+}
