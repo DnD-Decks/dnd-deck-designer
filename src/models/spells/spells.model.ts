@@ -29,10 +29,18 @@ const ALL_LEVEL_1 = spellsLevel1Data as Record<string, Spell>;
 const ALL: Spell[] = [...Object.values(ALL_CANTRIPS), ...Object.values(ALL_LEVEL_1)];
 const BY_ID = new Map(ALL.map((s) => [s.id, s]));
 
+function resolveSpellIds(ids: string[], table: Record<string, Spell>): Spell[] {
+  return ids.map((id) => {
+    const s = table[id];
+    if (!s) throw new Error(`wizard-spells.json references unknown spell id: "${id}"`);
+    return s;
+  });
+}
+
 const CLASS_DATA: Partial<Record<CharacterClass, { cantrips: Spell[]; level1: Spell[] }>> = {
   wizard: {
-    cantrips: wizardSpellsData.cantrips.map((id) => ALL_CANTRIPS[id]),
-    level1: wizardSpellsData.level1.map((id) => ALL_LEVEL_1[id]),
+    cantrips: resolveSpellIds(wizardSpellsData.cantrips, ALL_CANTRIPS),
+    level1: resolveSpellIds(wizardSpellsData.level1, ALL_LEVEL_1),
   },
 };
 
@@ -51,9 +59,11 @@ export const spells = {
     return ALL;
   },
 
-  findAll({ cls, level }: { cls: CharacterClass; level: 0 | 1 }): Spell[] {
+  findAll({ cls, level }: { cls: CharacterClass; level: SpellLevel }): Spell[] {
     const data = CLASS_DATA[cls];
     if (!data) return [];
-    return level === 0 ? data.cantrips : data.level1;
+    if (level === 0) return data.cantrips;
+    if (level === 1) return data.level1;
+    return []; // levels 2-9 not vendored yet
   },
 };

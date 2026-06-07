@@ -54,6 +54,12 @@ test("findAll for unknown class returns empty array", () => {
   assert.deepEqual(result, []);
 });
 
+test("findAll for un-vendored level returns empty array", () => {
+  // level2 ids exist in wizard-spells.json but no level-2 spell records are vendored yet
+  const result = spells.findAll({ cls: "wizard", level: 2 });
+  assert.deepEqual(result, []);
+});
+
 test("list returns all cantrips + lvl-1 spells", () => {
   const all = spells.list();
   assert.ok(all.length >= 33 + 54); // 33 cantrips + 54 level-1
