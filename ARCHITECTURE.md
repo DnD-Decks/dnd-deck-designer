@@ -35,20 +35,29 @@ Each class deck is composed in `src/decks/<class>/index.tsx`.
 
 ## Data source
 
-JSON imported from sibling repo [`dnd-beginner-character-sheet-5e-2024/src/data`](https://github.com/manuartero/dnd-beginner-character-sheet-5e-2024/tree/main/src/data).
+JSON vendored from sibling repo [`dnd-beginner-character-sheet-5e-2024/src/data`](https://github.com/manuartero/dnd-beginner-character-sheet-5e-2024/tree/main/src/data) into `src/data/` (same relative paths).
 
-### Known files
+### Vendored files (✓ present locally)
 
 | File | Contents |
 |---|---|
-| `spells/spells-level-{0-2}.json` | Full spell records by level |
-| `spells/{class}-spells.json` | Spell ID lists per class (bard, cleric, druid, paladin, ranger, sorcerer, warlock, wizard) |
-| `class/class-details.json` | Class metadata: label, icon, hitDie, saves, proficiencies, starting equipment |
-| `class/class-resources.json` | Level progression tables (spell slots, class resource tracks) |
-| `common/abilities.json` | Ability score rules |
-| `common/actions.json` | Action types |
-| `common/gear/` | Weapons, armor, mastery, properties |
+| `spells/spells-level-0.json` | 33 cantrips, keyed by id |
+| `spells/spells-level-1.json` | 54 level-1 spells, keyed by id |
+| `spells/wizard-spells.json` | Wizard spell id lists (cantrips, level1, level2) |
+| `classes/<cls>.json` | One file per class (12 total): label, icon, hitDie, saves, proficiencies |
+
+### Deferred files (not yet vendored)
+
+| File | Contents |
+|---|---|
+| `spells/spells-level-2.json` | Level-2 spells |
+| `spells/{class}-spells.json` | Spell id lists for the other 11 classes |
+| `common/` | Abilities, actions, gear |
 | `origin/` | Backgrounds, origin feats, species |
+
+> **Data import mechanism: deferred.** When ready, add a `scripts/fetch-data.mjs` (zero deps, Node built-in fetch) that downloads the JSON files from the sibling repo's `main` branch into `src/data/`.
+
+> **Level progression (spell slots, resource tracks):** vendoring and modelling is deferred. Re-vendor `class/class-resources.json` from the sibling repo and add `src/models/class/class-resources.model.ts` when the deck needs it.
 
 ### Spell record shape
 
@@ -65,23 +74,47 @@ type Spell = {
   concentration: boolean;
   ritual: boolean;
   description: string;
-  icon: string;         // sprite ref e.g. "vol3/icon-vol3_20"
+  save?: string;
+  damage?: { dice: string; type: string[] };
+  icon?: string;        // sprite ref e.g. "vol3/icon-vol3_20"
 };
 ```
 
 ### Class detail record shape (excerpt)
 
 ```ts
-type ClassDetail = {
+type ClassDetails = {
+  id: CharacterClass;
   label: string;
   icon: string;
-  hitDie: string;       // "d8" | "d10" | …
+  hitDie: string;       // "d6" | "d8" | "d10" | "d12"
   saves: string;
   description: string;
-  manualClassification: "martial" | "spell-caster" | "half-caster";
+  manualClassification: "martial" | "spell-caster" | "versatile";
   proficiencies: { /* armor, weapon, skill options */ };
-  startingEquipment: Array<Array<{ item: string; quantity: number }>>;
 };
 ```
 
-> **Data import mechanism: deferred.** When ready, add a `scripts/fetch-data.mjs` (zero deps, Node built-in fetch) that downloads the JSON files from the sibling repo's `main` branch into `src/data/`.
+---
+
+## Models tier
+
+`src/models/` is the typed bridge between raw JSON (`src/data/`) and components. **Components never touch JSON directly** — they call typed methods on model objects.
+
+Each model module exports a single object (named after the entity) with a small, stable API:
+
+| Method | Returns |
+|---|---|
+| `get({id})` | `T` — throws on unknown id |
+| `find({id})` | `T \| undefined` |
+| `findAll({...})` | `T[]` |
+| `list()` | `T[]` |
+
+Current modules:
+
+| Module | Exports |
+|---|---|
+| `src/models/spells/spells.model.ts` | `spells` — cantrips + lvl-1 spells; `findAll({cls, level})` |
+| `src/models/class/classes.model.ts` | `classes` — all 12 PHB class details |
+
+Conventions follow [`dnd-beginner-character-sheet-5e-2024/src/models/CLAUDE.md`](https://github.com/manuartero/dnd-beginner-character-sheet-5e-2024/blob/main/src/models/CLAUDE.md).

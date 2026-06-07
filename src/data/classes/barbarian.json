@@ -1,0 +1,63 @@
+{
+  "label": "Barbarian",
+  "icon": "/class-icons/barbarian.svg",
+  "hitDie": "d12",
+  "primaryAbilities": ["str"],
+  "saves": "Strength & Constitution",
+  "description": "A fierce warrior of primal rage",
+  "manualClassification": "martial",
+  "recommendedBackgrounds": ["farmer", "soldier"],
+  "proficiencies": {
+    "light-armor": true,
+    "medium-armor": true,
+    "heavy-armor": false,
+    "shields": true,
+    "simple-weapons": true,
+    "martial-weapons": true,
+    "skills": {
+      "n": 2,
+      "options": [
+        "animal-handling",
+        "athletics",
+        "intimidation",
+        "nature",
+        "perception",
+        "survival"
+      ]
+    }
+  },
+  "startingEquipment": [
+    [
+      {
+        "item": "greataxe",
+        "quantity": 1
+      },
+      {
+        "item": "handaxe",
+        "quantity": 4
+      },
+      {
+        "item": "explorers-pack",
+        "quantity": 1
+      },
+      {
+        "item": "gp",
+        "quantity": 15
+      }
+    ],
+    [
+      {
+        "item": "gp",
+        "quantity": 75
+      }
+    ]
+  ],
+  "recommendedScores": {
+    "str": 15,
+    "dex": 13,
+    "con": 14,
+    "int": 8,
+    "wis": 12,
+    "cha": 10
+  }
+}

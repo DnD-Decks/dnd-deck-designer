@@ -1,0 +1,62 @@
+{
+  "label": "Monk",
+  "icon": "/class-icons/monk.svg",
+  "hitDie": "d8",
+  "primaryAbilities": ["dex", "wis"],
+  "saves": "Strength & Dexterity",
+  "description": "A martial artist of supernatural focus",
+  "manualClassification": "martial",
+  "recommendedBackgrounds": ["hermit", "acolyte"],
+  "proficiencies": {
+    "light-armor": false,
+    "medium-armor": false,
+    "heavy-armor": false,
+    "shields": false,
+    "simple-weapons": true,
+    "martial-weapons": {
+      "property": ["light"]
+    },
+    "skills": {
+      "n": 2,
+      "options": ["acrobatics", "athletics", "history", "insight", "religion", "stealth"]
+    }
+  },
+  "startingEquipment": [
+    [
+      {
+        "item": "spear",
+        "quantity": 1
+      },
+      {
+        "item": "dagger",
+        "quantity": 5
+      },
+      {
+        "item": "artisans-tools",
+        "quantity": 1
+      },
+      {
+        "item": "explorers-pack",
+        "quantity": 1
+      },
+      {
+        "item": "gp",
+        "quantity": 11
+      }
+    ],
+    [
+      {
+        "item": "gp",
+        "quantity": 50
+      }
+    ]
+  ],
+  "recommendedScores": {
+    "str": 12,
+    "dex": 15,
+    "con": 13,
+    "int": 8,
+    "wis": 14,
+    "cha": 10
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "label": "Wizard",
+  "icon": "/class-icons/wizard.svg",
+  "hitDie": "d6",
+  "primaryAbilities": ["int"],
+  "saves": "Intelligence & Wisdom",
+  "description": "A scholarly magic-user of arcane power",
+  "manualClassification": "spell-caster",
+  "recommendedBackgrounds": ["sage", "scribe"],
+  "proficiencies": {
+    "light-armor": false,
+    "medium-armor": false,
+    "heavy-armor": false,
+    "shields": false,
+    "simple-weapons": true,
+    "martial-weapons": false,
+    "skills": {
+      "n": 2,
+      "options": ["arcana", "history", "insight", "investigation", "medicine", "religion"]
+    }
+  },
+  "startingEquipment": [
+    [
+      {
+        "item": "dagger",
+        "quantity": 2
+      },
+      {
+        "item": "arcane-focus-quarterstaff",
+        "quantity": 1
+      },
+      {
+        "item": "robe",
+        "quantity": 1
+      },
+      {
+        "item": "spellbook",
+        "quantity": 1
+      },
+      {
+        "item": "scholars-pack",
+        "quantity": 1
+      },
+      {
+        "item": "gp",
+        "quantity": 5
+      }
+    ],
+    [
+      {
+        "item": "gp",
+        "quantity": 55
+      }
+    ]
+  ],
+  "recommendedScores": {
+    "str": 8,
+    "dex": 13,
+    "con": 14,
+    "int": 15,
+    "wis": 12,
+    "cha": 10
+  }
+}
