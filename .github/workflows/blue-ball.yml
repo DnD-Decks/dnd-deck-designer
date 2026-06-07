@@ -1,0 +1,26 @@
+name: blue-ball
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  blue-ball:
+    runs-on: ubuntu-latest
+    container:
+      image: node:22-alpine
+    steps:
+      - name: Install git
+        run: apk add --no-cache git
+
+      - uses: actions/checkout@v4
+
+      - name: Enable pnpm via corepack
+        run: corepack enable
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: blue-ball (lint + test + build)
+        run: pnpm blue-ball
