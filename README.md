@@ -1,4 +1,4 @@
-# dnd-deck-creator
+# dnd-deck-designer
 
 > **Status: scaffolding** — project skeleton and data import not yet wired.
 
