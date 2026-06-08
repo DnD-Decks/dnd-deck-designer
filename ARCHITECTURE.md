@@ -1,12 +1,8 @@
 # Architecture
 
-## Vision
+## Deck scope
 
-A static web tool for laying out D&D 5.5 (2024 PHB) card decks.
-One deck per class, one card per game element. 
-The primary output is a print-ready browser page; secondary is screen preview.
-
-**The 12 PHB classes** each get a dedicated deck: Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, Wizard.
+12 PHB classes: Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, Wizard.
 
 **Card categories per deck:**
 
