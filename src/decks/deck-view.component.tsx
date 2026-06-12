@@ -1,6 +1,8 @@
+import { Fragment } from "react";
 import { SpellCard } from "src/cards/spell-card.component";
 import type { DeckCard } from "src/decks/deck.model";
 import { decks } from "src/decks/deck.model";
+import { assertNever } from "src/lib/assert-never";
 import type { CharacterClass } from "src/models/class/classes.model";
 import styles from "./deck-view.module.css";
 
@@ -10,6 +12,8 @@ function sectionLabel(card: DeckCard) {
   switch (card.kind) {
     case "spell":
       return card.spell.level === 0 ? "Cantrips" : `Level ${card.spell.level}`;
+    default:
+      return assertNever(card.kind);
   }
 }
 
@@ -17,17 +21,21 @@ function cardKey(card: DeckCard) {
   switch (card.kind) {
     case "spell":
       return `spell-${card.spell.id}`;
+    default:
+      return assertNever(card.kind);
   }
 }
 
 function renderCard(card: DeckCard) {
   switch (card.kind) {
     case "spell":
-      return <SpellCard key={cardKey(card)} spell={card.spell} />;
+      return <SpellCard spell={card.spell} />;
+    default:
+      return assertNever(card.kind);
   }
 }
 
-/** Group cards into ordered sections; deck.model already sorts cards by level. */
+/** Group cards into ordered sections; deck.model emits cards grouped by ascending level. */
 function sections(cards: DeckCard[]) {
   const bySection = new Map<string, DeckCard[]>();
   for (const card of cards) {
@@ -60,7 +68,11 @@ export function DeckView({ cls }: Props) {
             {label}
             <span className={styles.count}>{cards.length} cards</span>
           </h2>
-          <div className={styles.cardRow}>{cards.map(renderCard)}</div>
+          <div className={styles.cardRow}>
+            {cards.map((card) => (
+              <Fragment key={cardKey(card)}>{renderCard(card)}</Fragment>
+            ))}
+          </div>
         </section>
       ))}
     </main>
