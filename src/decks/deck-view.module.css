@@ -1,0 +1,42 @@
+.deck {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #d8d8d8;
+}
+
+.cardRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.emptyState {
+  margin: 0;
+  padding: 2rem;
+  border: 1px dashed #5a5a5a;
+  border-radius: 8px;
+  color: #9a9a9a;
+  font-style: italic;
+}
+
+@media print {
+  /* keep screen chrome out of print output; cards keep their physical size */
+  .sectionTitle,
+  .emptyState {
+    display: none;
+  }
+}

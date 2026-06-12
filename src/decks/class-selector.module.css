@@ -1,0 +1,53 @@
+.selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.classButton {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 6px 12px;
+  border: 1px solid #5a5a5a;
+  border-radius: 6px;
+  background: #2e2e2e;
+  color: #d8d8d8;
+  font: inherit;
+  cursor: pointer;
+}
+
+.classButton:hover {
+  border-color: #8a8a8a;
+}
+
+.classButton[aria-pressed="true"] {
+  border-color: #c0a020;
+  background: #1a3a5c;
+  color: #fff;
+}
+
+.label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.meta {
+  display: flex;
+  gap: 6px;
+  font-size: 11px;
+  color: #9a9a9a;
+}
+
+.classButton[aria-pressed="true"] .meta {
+  color: #c8d4e4;
+}
+
+.classification {
+  font-style: italic;
+}
+
+.hitDie {
+  font-variant-numeric: tabular-nums;
+}
