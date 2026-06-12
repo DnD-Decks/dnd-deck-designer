@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { CharacterClass } from "src/models/class/classes.model";
 import { classes } from "src/models/class/classes.model";
 
-const DEFAULT_CLASS: CharacterClass = "wizard"; // the only deck with vendored spells so far
+const DEFAULT_CLASS: CharacterClass = "wizard"; // richest spell list — good showcase default
 
 function classFromHash() {
   const id = window.location.hash.slice(1);
