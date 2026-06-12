@@ -57,9 +57,16 @@
 .textBox {
   flex: 1;
   padding: 6px 8px;
-  overflow: hidden;
+  overflow-y: auto;
   background: #f5f0e8;
   border-top: 1px solid #8a7a5a;
+}
+
+@media print {
+  /* hide overflow in print so cards clip cleanly at fixed dimensions */
+  .textBox {
+    overflow: hidden;
+  }
 }
 
 .textBox p {
