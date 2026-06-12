@@ -7,10 +7,13 @@ type Props = {
   onSelect: (cls: CharacterClass) => void;
 };
 
+// Static data — read once at module level instead of on every render.
+const ALL_CLASSES = classes.list();
+
 export function ClassSelector({ selected, onSelect }: Props) {
   return (
     <nav className={styles.selector} aria-label="Character class">
-      {classes.list().map((cls) => (
+      {ALL_CLASSES.map((cls) => (
         <button
           key={cls.id}
           type="button"

@@ -45,7 +45,9 @@ export function DeckView({ cls }: Props) {
   if (deck.cards.length === 0) {
     return (
       <main className={styles.deck} data-class={cls}>
-        <p className={styles.emptyState}>No cards vendored for {deck.cls.label} yet.</p>
+        <div className={styles.emptySlot}>
+          <p className={styles.emptyState}>No cards vendored for {deck.cls.label} yet.</p>
+        </div>
       </main>
     );
   }
@@ -54,7 +56,10 @@ export function DeckView({ cls }: Props) {
     <main className={styles.deck} data-class={cls}>
       {sections(deck.cards).map(([label, cards]) => (
         <section key={label} className={styles.section}>
-          <h2 className={styles.sectionTitle}>{label}</h2>
+          <h2 className={styles.sectionTitle}>
+            {label}
+            <span className={styles.count}>{cards.length} cards</span>
+          </h2>
           <div className={styles.cardRow}>{cards.map(renderCard)}</div>
         </section>
       ))}

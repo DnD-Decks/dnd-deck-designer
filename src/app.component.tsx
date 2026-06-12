@@ -8,6 +8,12 @@ export function App() {
 
   return (
     <div className={styles.root}>
+      <header className={styles.header}>
+        <h1 className={styles.title}>
+          D<span className={styles.amp}>&amp;</span>D Deck Designer
+        </h1>
+        <p className={styles.tagline}>compose · preview · print</p>
+      </header>
       <ClassSelector selected={selected} onSelect={setSelected} />
       <DeckView cls={selected} />
     </div>
