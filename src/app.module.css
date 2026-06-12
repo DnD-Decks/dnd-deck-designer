@@ -1,10 +1,64 @@
+/* The workbench: a slate cutting-mat (coarse + fine measuring grid) under the cards */
 .root {
   min-height: 100vh; /* fallback for browsers that don't support dvh */
   min-height: 100dvh;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 1.5rem 2rem 4rem;
+  color: var(--text-hi);
+  background-color: var(--ink-900);
+  background-image: radial-gradient(
+      1100px 500px at 50% -8%,
+      rgba(192, 160, 32, 0.07),
+      transparent 65%
+    ), linear-gradient(rgba(46, 51, 59, 0.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46, 51, 59, 0.6) 1px, transparent 1px),
+    linear-gradient(rgba(46, 51, 59, 0.28) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46, 51, 59, 0.28) 1px, transparent 1px);
+  background-size: 100% 100%, 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
   gap: 1rem;
-  padding: 2rem;
-  align-items: flex-start;
-  background: #3a3a3a;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--ink-line);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variant: small-caps;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--parchment);
+}
+
+.amp {
+  color: var(--gold);
+}
+
+.tagline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--text-mid);
+}
+
+@media print {
+  /* the mat stays on the desk — only cards reach the printer */
+  .root {
+    padding: 0;
+    background: none;
+  }
+
+  .header {
+    display: none;
+  }
 }
