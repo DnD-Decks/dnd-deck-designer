@@ -18,10 +18,16 @@ export function SpellCard({ spell }: Props) {
   const action = actionIcon(spell.castingTime);
 
   return (
-    <article className={styles.card} aria-labelledby={headingId} data-school={spell.school.toLowerCase()}>
+    <article
+      className={styles.card}
+      aria-labelledby={headingId}
+      data-school={spell.school.toLowerCase()}
+    >
       {/* Title bar — name left, cost cluster right */}
       <div className={styles.titleBar}>
-        <h3 id={headingId} className={styles.name}>{spell.name}</h3>
+        <h3 id={headingId} className={styles.name}>
+          {spell.name}
+        </h3>
         <span className={styles.costCluster}>
           {action ? (
             <Icon src={action.src} label={action.label} className={styles.actionIcon} />

@@ -29,5 +29,5 @@ test("level-1 spell shows 'Level 1' in the type line", () => {
 
 test("description text is rendered", () => {
   render(<SpellCard spell={fireBolt} />);
-  screen.getByText(new RegExp(fireBolt.description.slice(0, 20), "i"));
+  screen.getByText(fireBolt.description.slice(0, 20), { exact: false });
 });

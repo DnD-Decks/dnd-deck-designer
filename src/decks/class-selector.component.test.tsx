@@ -14,13 +14,13 @@ test("nav has accessible label 'Character class'", () => {
 
 test("selected class button has aria-pressed=true", () => {
   render(<ClassSelector selected="wizard" onSelect={() => {}} />);
-  const btn = screen.getByRole("button", { name: "Wizard" });
+  const btn = screen.getByRole("button", { name: /wizard/i });
   expect(btn.getAttribute("aria-pressed")).toBe("true");
 });
 
 test("non-selected class buttons have aria-pressed=false", () => {
   render(<ClassSelector selected="wizard" onSelect={() => {}} />);
-  const btn = screen.getByRole("button", { name: "Barbarian" });
+  const btn = screen.getByRole("button", { name: /barbarian/i });
   expect(btn.getAttribute("aria-pressed")).toBe("false");
 });
 
@@ -34,6 +34,6 @@ test("clicking a class button calls onSelect with that class id", () => {
       }}
     />
   );
-  fireEvent.click(screen.getByRole("button", { name: "Barbarian" }));
+  fireEvent.click(screen.getByRole("button", { name: /barbarian/i }));
   expect(called).toBe("barbarian");
 });
