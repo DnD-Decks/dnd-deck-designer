@@ -1,69 +1,190 @@
-/* Physical card dimensions — tokens from global.css */
+/* Physical card — poker size, tokens from global.css */
 .card {
+  --school-color: var(--card-blue); /* default; per-school overrides below */
+
   width: var(--card-width);
   height: var(--card-height);
   display: flex;
   flex-direction: column;
-  border: 2px solid #2a2a2a;
+  border: 2px solid var(--ink-900);
   border-radius: 8px;
   overflow: hidden;
-  background: #f5f0e8;
-  font-family: "Georgia", serif;
-  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.3);
+  background: var(--parchment);
+  font-family: var(--font-display);
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.35);
+  /* defer layout/paint for off-screen cards in long decks */
+  content-visibility: auto;
+  contain-intrinsic-size: 0 var(--card-height);
 }
 
-/* Title bar — name left, level badge right */
+/* Per-school color identity */
+.card[data-school="abjuration"] {
+  --school-color: var(--school-abjuration);
+}
+.card[data-school="conjuration"] {
+  --school-color: var(--school-conjuration);
+}
+.card[data-school="divination"] {
+  --school-color: var(--school-divination);
+}
+.card[data-school="enchantment"] {
+  --school-color: var(--school-enchantment);
+}
+.card[data-school="evocation"] {
+  --school-color: var(--school-evocation);
+}
+.card[data-school="illusion"] {
+  --school-color: var(--school-illusion);
+}
+.card[data-school="necromancy"] {
+  --school-color: var(--school-necromancy);
+}
+.card[data-school="transmutation"] {
+  --school-color: var(--school-transmutation);
+}
+
+/* ── Title bar ───────────────────────────────────────────────────────────── */
 .titleBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 8px;
-  background: #1a3a5c;
-  color: #fff;
+  padding: 4px 6px 4px 8px;
+  background: var(--school-color);
+  color: var(--text-hi);
+  min-height: 22px;
+  flex-shrink: 0;
 }
 
 .name {
   font-size: 10px;
   font-weight: bold;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.levelBadge {
+.costCluster {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #c0a020;
-  color: #1a1a1a;
-  font-size: 10px;
-  font-weight: bold;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: 6px;
+}
+
+.actionIcon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
   flex-shrink: 0;
 }
 
-/* Type line — school · level */
-.typeLine {
-  padding: 2px 8px;
-  background: #2e5c8a;
-  color: #d0d8e8;
-  font-size: 8px;
-  font-style: italic;
-  letter-spacing: 0.05em;
+/* Mana badge — icon with level number overlaid */
+.manaBadge {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
-/* Rules text box — fills remaining height */
+.manaIcon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.manaLevel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: bold;
+  color: var(--ink-900);
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* ── Art box ─────────────────────────────────────────────────────────────── */
+.art {
+  height: 26mm;
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--school-color) 12%, var(--parchment));
+  border-bottom: 1px solid color-mix(in srgb, var(--school-color) 35%, transparent);
+  flex-shrink: 0;
+}
+
+.artPlaceholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: bold;
+  color: color-mix(in srgb, var(--school-color) 18%, transparent);
+  text-transform: uppercase;
+  user-select: none;
+}
+
+/* ── Type line ───────────────────────────────────────────────────────────── */
+.typeLine {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 8px;
+  background: color-mix(in srgb, var(--school-color) 80%, #000);
+  color: var(--text-hi);
+  font-size: 7.5px;
+  font-style: italic;
+  letter-spacing: 0.05em;
+  min-height: 16px;
+  flex-shrink: 0;
+}
+
+.tags {
+  display: flex;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  padding: 1px 3px;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 3px;
+}
+
+.tagIcon {
+  width: 10px;
+  height: 10px;
+  object-fit: contain;
+}
+
+/* ── Text box ────────────────────────────────────────────────────────────── */
 .textBox {
   flex: 1;
-  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px 8px 4px;
   overflow-y: auto;
-  background: #f5f0e8;
-  border-top: 1px solid #8a7a5a;
+  background: var(--parchment);
+  border-top: 1px solid color-mix(in srgb, var(--school-color) 20%, #8a7a5a);
+  gap: 4px;
+  min-height: 0;
 }
 
 @media print {
-  /* hide overflow in print so cards clip cleanly at fixed dimensions */
+  .card {
+    /* ensure all cards render at print time regardless of scroll position */
+    content-visibility: visible;
+  }
   .textBox {
     overflow: hidden;
   }
@@ -71,7 +192,35 @@
 
 .textBox p {
   margin: 0;
-  font-size: 8px;
-  line-height: 1.4;
-  color: #1a1a1a;
+  font-size: 7.5px;
+  line-height: 1.35;
+  color: var(--ink-900);
+  flex: 1;
+}
+
+/* ── Stat strip ──────────────────────────────────────────────────────────── */
+.statStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  padding-top: 4px;
+  border-top: 1px solid color-mix(in srgb, var(--school-color) 20%, #8a7a5a);
+  font-size: 6.5px;
+  color: var(--text-low);
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.statIcon {
+  width: 10px;
+  height: 10px;
+  object-fit: contain;
+  flex-shrink: 0;
+  vertical-align: middle;
 }

@@ -16,6 +16,16 @@
   --text-mid: #a9a395;
   --text-low: #6f6a5e;
   --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+
+  /* Spell school color identities */
+  --school-abjuration: #4a6fa5; /* warding blue */
+  --school-conjuration: #c9a227; /* summoning gold */
+  --school-divination: #5fb5c9; /* foresight cyan */
+  --school-enchantment: #b5538f; /* charm magenta */
+  --school-evocation: #b23a2e; /* energy red */
+  --school-illusion: #6b4f9e; /* trickery violet */
+  --school-necromancy: #3d6b4a; /* deathly green */
+  --school-transmutation: #b07a3a; /* change amber */
 }
 
 /* Reset */
