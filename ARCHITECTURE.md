@@ -93,6 +93,14 @@ type ClassDetails = {
 
 ---
 
+## Testing
+
+Component tests run under **vitest** with a jsdom DOM environment. `test/setup.ts` (loaded via `setupFiles`) calls `afterEach(cleanup)` globally so individual test files need no boilerplate. Vitest reuses `vite.config.ts` — the same React plugin, path aliases, and CSS-module handling that powers the build apply to tests automatically.
+
+Pure model tests (`*.model.test.ts`) have no DOM dependency and can use either vitest or `node:test`.
+
+---
+
 ## Models tier
 
 `src/models/` is the typed bridge between raw JSON (`src/data/`) and components. **Components never touch JSON directly** — they call typed methods on model objects.
