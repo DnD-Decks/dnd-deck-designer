@@ -18,6 +18,7 @@ export function ClassSelector({ selected, onSelect }: Props) {
           key={cls.id}
           type="button"
           className={styles.classButton}
+          aria-label={cls.label}
           aria-pressed={cls.id === selected}
           onClick={() => onSelect(cls.id)}
         >

@@ -13,8 +13,8 @@
     "preview": "vite preview",
     "lint": "biome check .",
     "format": "biome format . --write",
-    "test": "node --test 'src/**/*.test.ts'",
-    "blue-ball": "biome check . && node --test 'src/**/*.test.ts' && tsc -b && vite build"
+    "test": "vitest run",
+    "blue-ball": "biome check . && vitest run && tsc -b && vite build"
   },
   "dependencies": {
     "react": "^19.1.0",
@@ -22,10 +22,13 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@testing-library/react": "^16.0.0",
     "@types/node": "^25.9.1",
     "@types/react": "^19.1.5",
     "@types/react-dom": "^19.1.5",
     "@vitejs/plugin-react": "^4.5.2",
+    "jsdom": "^26.0.0",
+    "vitest": "^3.0.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
   }

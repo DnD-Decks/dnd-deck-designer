@@ -14,13 +14,14 @@ const levelLabel = (level: Spell["level"]) => (level === 0 ? "Cantrip" : `Level 
 type Props = { spell: Spell };
 
 export function SpellCard({ spell }: Props) {
+  const headingId = `spell-card-${spell.id}`;
   const action = actionIcon(spell.castingTime);
 
   return (
-    <div className={styles.card} data-school={spell.school.toLowerCase()}>
+    <article className={styles.card} aria-labelledby={headingId} data-school={spell.school.toLowerCase()}>
       {/* Title bar — name left, cost cluster right */}
       <div className={styles.titleBar}>
-        <span className={styles.name}>{spell.name}</span>
+        <h3 id={headingId} className={styles.name}>{spell.name}</h3>
         <span className={styles.costCluster}>
           {action ? (
             <Icon src={action.src} label={action.label} className={styles.actionIcon} />
@@ -66,6 +67,6 @@ export function SpellCard({ spell }: Props) {
           damage={spell.damage}
         />
       </div>
-    </div>
+    </article>
   );
 }

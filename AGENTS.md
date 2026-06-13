@@ -28,8 +28,20 @@
 
 - **Bundler**: Vite + React + TypeScript.
 - **Styles**: `*.module.css` (CSS modules). No CSS-in-JS, no Tailwind.
-- **Tests**: `node:test` (built into Node ≥ 22). **Never vitest**.
+- **Tests**: `vitest` for component tests; `node:test` is acceptable for pure model/logic tests.
 - **Lint/format**: biome.
 - **Package manager**: pnpm.
 - **Minimize dependencies**: every new `dependency` or `devDependency` must be justified. Prefer solving in userland before reaching for a package.
 - **Composite check**: `pnpm blue-ball` = lint + test + build. Run before pushing.
+
+### Testing
+
+- Component tests render through `@testing-library/react` in a jsdom environment (vitest handles setup via `test/setup.ts` — tests never configure the DOM themselves).
+- Co-locate test files: `<module>.<role>.test.tsx` beside the component. Pure model logic stays `*.model.test.ts`.
+- **Query as a user perceives the UI**, in priority order:
+  1. role + accessible name — `getByRole("button", { name: "Wizard" })`
+  2. label / visible text — `getByLabelText`, `getByText`
+  3. last resort: `getByTestId` — a test-id signals missing role or label; fix the component instead
+- Never query by CSS class, tag name, or DOM shape — styling is not the contract.
+- Assert behavior: what the user sees and what handlers receive. Use `fireEvent` for interaction; assert via role/state (`aria-pressed`) and handler spies.
+- **Accessibility is the test contract**: if an element isn't reachable by role + name, add the semantic tag or `aria-label` to the component — don't reach past it. Components ship semantic HTML and accessible names by default.
