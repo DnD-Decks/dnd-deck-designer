@@ -3,16 +3,16 @@ export const DURATION_ICON = "/icons/duration.png";
 export const SAVING_THROW_ICON = "/icons/saving-throw.png";
 export const CONCENTRATION_ICON = "/icons/concentration.png";
 export const RITUAL_ICON = "/icons/ritual.png";
-export const ATTACK_ROLL_ICON = "/icons/attack-roll.png";
 
 export type IconRef = { src: string; label: string };
 
-export const actionIcon = (castingTime: string): IconRef => {
+export const actionIcon = (castingTime: string): IconRef | undefined => {
   const t = castingTime.toLowerCase();
   if (t.includes("bonus")) return { src: "/icons/bonus-action.png", label: castingTime };
   if (t.includes("reaction")) return { src: "/icons/reaction.png", label: castingTime };
   if (t.includes("action")) return { src: "/icons/action.png", label: castingTime };
-  return { src: "/icons/duration.png", label: castingTime };
+  // long-cast times (minutes, hours) have no action-economy glyph — render nothing
+  return undefined;
 };
 
 export const rangeIcon = (range: string): string => {
@@ -47,9 +47,11 @@ const DICE_ICONS: Record<string, string> = {
   "12": "/icons/d12.png",
 };
 
-const DICE_PATTERN = /d(\d+)/i;
+const DICE_PATTERN = /d(\d+)/gi;
 
 export const diceIcon = (dice: string): string | undefined => {
-  const m = dice.match(DICE_PATTERN);
-  return m ? DICE_ICONS[m[1]] : undefined;
+  const sizes = [...dice.matchAll(DICE_PATTERN)].map((m) => m[1]);
+  const distinct = [...new Set(sizes)];
+  // return an icon only when the notation maps to exactly one die size
+  return distinct.length === 1 ? DICE_ICONS[distinct[0]] : undefined;
 };

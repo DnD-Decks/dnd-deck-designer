@@ -22,7 +22,9 @@ export function SpellCard({ spell }: Props) {
       <div className={styles.titleBar}>
         <span className={styles.name}>{spell.name}</span>
         <span className={styles.costCluster}>
-          <Icon src={action.src} label={action.label} className={styles.actionIcon} />
+          {action ? (
+            <Icon src={action.src} label={action.label} className={styles.actionIcon} />
+          ) : null}
           <span className={styles.manaBadge}>
             <Icon src={MANA_ICON} label="Mana" className={styles.manaIcon} />
             {spell.level > 0 ? <span className={styles.manaLevel}>{spell.level}</span> : null}
