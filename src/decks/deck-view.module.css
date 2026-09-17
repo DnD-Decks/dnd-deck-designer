@@ -46,6 +46,11 @@
   color: var(--parchment);
 }
 
+.sectionLabel {
+  margin: 0;
+  font: inherit;
+}
+
 /* gold rule trailing off after the heading */
 .sectionTitle::after {
   content: "";
