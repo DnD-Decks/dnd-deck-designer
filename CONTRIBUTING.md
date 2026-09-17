@@ -24,3 +24,24 @@ Decks are data-driven — there is no per-class UI code.
 2. Register the JSON in the model's `CLASS_DATA` map: `src/models/feats/feats.model.ts` and `src/models/resources/resources.model.ts`. Spell lists work the same way via `src/data/spells/<class>-spells.json` + `src/models/spells/spells.model.ts`.
 3. Verify content against `reference/srd/SRD_5.2.1.md` (D&D 2024 / 5.5e rules) and run `pnpm scripts:sync-srd-data` — no new mismatches.
 4. `src/decks/deck.model.ts` assembles the deck automatically from the models; the class selector already lists all 12 classes.
+
+## Delivering a card asset
+
+Card art is generated outside the repo — a PR delivering an asset carries the PNG and nothing else.
+
+1. **Pick an open issue** labelled `ASSET` — titled ``[asset]: `<spell>` spell``.
+2. **Copy the prompt** from the issue body (it is written for ChatGPT, but any image tool works).
+3. **Generate the image.**
+4. **Save it as `public/art/<spell-id>.png`** — 5:7 portrait (MTG card ratio), ≥ 750 × 1050 px. The id is in the issue's *Asset ID* block.
+5. **Open a PR** with `Closes #<issue>` in the body. One spell per PR.
+6. **Run `pnpm blue-ball`** — the build must stay green.
+
+Asset identity is **per spell, shared across classes** — `fire-bolt.png` serves both the Wizard and Sorcerer decks. Never add per-class variants.
+
+To regenerate or inspect the prompt for an asset, run the `/asset` skill (`.claude/skills/asset/`):
+
+```
+/asset <spell name>
+```
+
+It re-renders the prompt and upserts the matching issue — re-running it edits the existing one instead of opening a duplicate. Background: `ARCHITECTURE.md` § *Art assets*.
