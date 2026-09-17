@@ -4,13 +4,15 @@
 
 - **Node ≥ 22.18** (see `engines` in `package.json`) — required for the built-in `node:test` runner executing TypeScript directly (type stripping on by default).
 - **pnpm** — install with `npm i -g pnpm` or via `corepack enable`.
+- **Docker** — only for the e2e suite: snapshot baselines are generated in the pinned Playwright image, never on the host.
 
 ## Workflow
 
 1. **Branch** off `main` for every change, however small.
 2. **Run `pnpm blue-ball`** before opening a PR. No red gate, no merge.
-3. **Small PRs.** One concern per PR. A PR that touches card layout, data loading, *and* a new deck composition is three PRs.
-4. **Plan mode first** — see `AGENTS.md` for triggers.
+3. **Run `pnpm e2e`** when the change touches the UI. It starts vite itself; `pnpm e2e:docker` runs the same suite in the pinned Playwright image — the same image CI uses, and the only place snapshot baselines may be generated. See [e2e/README.md](e2e/README.md).
+4. **Small PRs.** One concern per PR. A PR that touches card layout, data loading, *and* a new deck composition is three PRs.
+5. **Plan mode first** — see `AGENTS.md` for triggers.
 
 ## Adding a new card kind
 

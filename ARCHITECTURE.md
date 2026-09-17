@@ -38,7 +38,7 @@ Cards are React components with **fixed physical proportions** — the goal is W
     - Print view: `@media print` overrides — mm units, bleed/cut margins, page breaks between decks.
 - **Horizontal feat cards** swap dimensions: `width: var(--card-height); height: var(--card-width)`.
 - **Weapon-mastery cards** reuse `spell-card.module.css` directly (same-folder relative import), overriding `--school-color` via inline style.
-- Use semantic HTML (`<article>`, `<h3>`) so cards are role-queryable in RTL tests.
+- Use semantic HTML (`<article>`, `<h3>`) so cards are role-queryable in RTL and Playwright tests. Deck sections carry an `aria-label` (their section name) and keep the card tally *outside* the `<h2>`, so a heading reads "Level 1", not "Level 123 cards".
 
 ---
 
@@ -78,6 +78,8 @@ See `Spell` type in `src/models/spells/spells.model.ts`.
 Component tests run under **vitest** with a jsdom DOM environment. `test/setup.ts` (loaded via `setupFiles`) calls `afterEach(cleanup)` globally so individual test files need no boilerplate. Vitest reuses `vite.config.ts` — the same React plugin, path aliases, and CSS-module handling that powers the build apply to tests automatically.
 
 Pure model tests (`*.model.test.ts`) have no DOM dependency and can use either vitest or `node:test`.
+
+End-to-end tests run the real app in Chromium via **Playwright**, from `e2e/` (excluded from the vitest glob). The app has no backend — data is bundled JSON and icons are served from the dev server — so instead of mocking endpoints the suite installs a network guard that aborts every cross-origin request, making "the deck renders with zero outbound traffic" an assertion rather than an assumption. Card layout is covered by locator-scoped screenshots whose baselines are generated in the pinned Playwright Docker image. See [e2e/README.md](e2e/README.md).
 
 ---
 

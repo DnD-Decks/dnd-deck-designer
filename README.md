@@ -6,10 +6,11 @@ A static web tool for laying out custom **D&D 2024 (5.5e, SRD 5.2.1)** card deck
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) — vision, folder layout, data shapes, decisions log
 - [CONTRIBUTING.md](CONTRIBUTING.md) — prerequisites, scripts, workflow
+- [e2e/README.md](e2e/README.md) — end-to-end suite: layout, running it, snapshots
 
 ## Tech
 
-React 19 · Vite · TypeScript · CSS Modules · pnpm · biome · vitest / node:test
+React 19 · Vite · TypeScript · CSS Modules · pnpm · biome · vitest / node:test · Playwright (e2e)
 
 ## Data
 

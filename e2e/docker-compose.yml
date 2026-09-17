@@ -1,0 +1,17 @@
+# Run from the repo root: docker compose -f e2e/docker-compose.yml run --rm e2e
+services:
+  e2e:
+    build:
+      context: ..
+      dockerfile: e2e/Dockerfile
+      args:
+        PW_VERSION: "1.63.0"
+    ipc: host # Chromium shares memory through /dev/shm; without this it OOMs
+    environment:
+      CI: "1"
+      BASE_URL: http://localhost:5173
+    volumes:
+      # The whole suite is mounted: specs, fixtures and config stay editable without a rebuild,
+      # and snapshots, results and the HTML report land back on the host.
+      # (Changing src/ still needs `--build` — the app itself is baked into the image.)
+      - .:/work/e2e
