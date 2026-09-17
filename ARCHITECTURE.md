@@ -58,7 +58,7 @@ JSON for spells is vendored from sibling repo [`dnd-beginner-character-sheet-5e-
 | `classes/class-resources.json` | Level-progression resource data for all 12 classes (consumed by `class-resources.model.ts`) |
 | `resources/<cls>-resources.json` | L1 resources for 10 classes (monk, rogue: none) |
 | `feats/<cls>-feats.json` | L1 class features for all 12 classes |
-| `weapon-masteries/weapon-masteries.json` | All 8 PHB 2024 mastery properties (class-agnostic) |
+| `gear/weapon-mastery.json` | All 8 PHB 2024 mastery properties, SRD-audited (class-agnostic; also feeds the card-facing `weapon-masteries` model) |
 
 ### Deferred
 
