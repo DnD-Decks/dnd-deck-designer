@@ -21,7 +21,9 @@ Asset identity is **per unique spell, shared across classes** — `fire-bolt.png
 
 ### 2. Render the prompt
 
-Fill `asset.template.prompt.md` (same folder as this file) with the spell's fields:
+Fill `asset.template.prompt.md` (same folder as this file) with the spell's fields.
+Everything above `## SCENE` is the shared house style — reproduce it **verbatim**, never reworded
+per spell. Only the SCENE block is data-driven:
 
 - `{{name}}`, `{{school}}` — verbatim from the JSON.
 - `{{level_label}}` — `cantrip` when `level` is `0`, otherwise `level N spell`.
@@ -81,7 +83,7 @@ Issue body format:
 
 ## Acceptance criteria
 
-- [ ] PR adds `public/art/<id>.png` — 1:1 ratio, ≥ 512 px
+- [ ] PR adds `public/art/<id>.png` — vertical (portrait) ratio, ≥ 1024 px tall
 - [ ] PR body references `Closes #<this issue number>`
 ```
 
