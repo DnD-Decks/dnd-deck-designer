@@ -83,7 +83,7 @@ Issue body format:
 
 ## Acceptance criteria
 
-- [ ] PR adds `public/art/<id>.png` — vertical (portrait) ratio, ≥ 1024 px tall
+- [ ] PR adds `public/art/<id>.png` — 5:7 portrait (MTG card ratio), ≥ 750 × 1050 px
 - [ ] PR body references `Closes #<this issue number>`
 ```
 

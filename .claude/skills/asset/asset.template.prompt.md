@@ -57,6 +57,11 @@ No UI.
 No decorative card elements.
 No reserved text boxes or artificially empty areas designed for card information.
 
+## OUTPUT
+
+Vertical 5:7 portrait aspect ratio — standard trading-card proportions (63 x 88 mm).
+At least 750 x 1050 px.
+
 ## SCENE
 
 **{{name}}** — {{school}} {{level_label}}.
