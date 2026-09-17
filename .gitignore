@@ -141,3 +141,11 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# transient git worktrees created by agent sessions
+.claude/worktrees/
+
+# Playwright
+e2e/test-results/
+e2e/playwright-report/
+e2e/blob-report/
