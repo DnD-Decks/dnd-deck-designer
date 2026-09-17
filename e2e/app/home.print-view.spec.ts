@@ -6,7 +6,7 @@ globalSetup();
 test.describe("home: print view", () => {
   test("print media drops the screen chrome and keeps the cards", async ({ page, homePage }) => {
     await homePage.goto("wizard");
-    await expect(homePage.title).toBeVisible(); // precondition: screen view first
+    await expect(homePage.title).toBeVisible();
 
     await page.emulateMedia({ media: "print" });
 

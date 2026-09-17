@@ -52,12 +52,30 @@ The baselines land in `app/<spec>-snapshots/` through the compose mount; commit 
   preconditions the rest of the test depends on.
 - No `waitForTimeout`, no shared state between tests.
 
+## What belongs here — and what doesn't
+
+A browser is expensive, so a spec earns its place only by testing something jsdom cannot prove:
+real CSS (print media, card layout), real navigation (URL hash, history), real asset loading,
+real network behaviour. Everything else — props, prop-driven attributes, which cards a class's
+deck contains — is cheaper and sharper as a vitest component test or a `deck.model` test, and
+duplicating it here buys nothing but runtime.
+
+Two traps worth naming, both hit while writing this suite:
+
+- **Assertions that cannot fail.** "The section heading's tally matches the number of cards it
+  renders" reads well, but both numbers come from the same array in the same render — it can only
+  break if someone edits the expression it is asserting.
+- **Assertions that look stronger than they are.** `getByRole("img", { name: "Mana" })` passes
+  with a 404 icon: the role and the alt text survive a broken image. The icon test therefore
+  checks `naturalWidth`, and it was verified by deleting `public/icons/mana.png` and watching it
+  fail.
+
 ## Not covered
 
 - The deck empty state (`No cards vendored for …`) is unreachable in the browser: all 12 classes
   ship level-1 cards. It stays a vitest test with a mocked model.
-- One desktop project only. The app is a print workbench sized in mm; a phone project would add
-  a second set of baselines without testing a supported use.
+- One desktop project. The app is a print workbench sized in mm; a phone project would add a
+  second set of baselines without testing a supported use.
 
 ## Keeping Docker in step
 
