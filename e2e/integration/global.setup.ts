@@ -1,11 +1,7 @@
-// Called at module level in every spec. Must be idempotent — fullyParallel runs it per worker.
 let done = false;
 
-/**
- * The suite is offline by construction: the app bundles its own data and the network guard
- * aborts anything cross-origin. Pointing BASE_URL at a deployed site would silently turn these
- * specs into a smoke test against production, so refuse it unless asked explicitly.
- */
+/** Guards against BASE_URL pointing at a deployment, which would turn the suite into a
+ * production smoke test. Idempotent: every spec calls it, fullyParallel runs it per worker. */
 export function globalSetup() {
   if (done) return;
   done = true;

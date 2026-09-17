@@ -85,8 +85,7 @@ export function DeckView({ cls }: Props) {
     <main className={styles.deck} data-class={cls}>
       {sections(deck.cards).map(([label, cards]) => (
         <section key={label} className={styles.section} aria-label={label}>
-          {/* the tally sits beside the heading, not inside it — a heading's accessible
-              name should read "Level 1", not "Level 123 cards" */}
+          {/* tally outside the h2: the heading should read "Level 1", not "Level 123 cards" */}
           <header className={styles.sectionTitle}>
             <h2 className={styles.sectionLabel}>{label}</h2>
             <span className={styles.count}>{cards.length} cards</span>

@@ -1,4 +1,3 @@
-// Every spec imports { test, expect } from here — never from "@playwright/test" directly.
 import { test as base } from "@playwright/test";
 import { type HomePage, createHomePage } from "../home.page";
 import { type NetworkGuard, createNetworkGuard } from "../network.guard";
@@ -9,7 +8,7 @@ type Fixtures = {
 };
 
 export const test = base.extend<Fixtures>({
-  // `auto: true` — the guard is armed in every test, even one that never names `network`.
+  // auto: no spec can forget to arm the guard
   network: [
     async ({ page, baseURL }, use) => {
       const guard = await createNetworkGuard({
