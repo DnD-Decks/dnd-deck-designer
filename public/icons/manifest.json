@@ -1,0 +1,827 @@
+{
+  "source": "https://bg3.wiki",
+  "generatedAt": "2026-09-18T09:34:34.446Z",
+  "count": 82,
+  "icons": [
+    {
+      "file": "action.png",
+      "title": "Action Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AAction_Icon.png",
+      "url": "https://bg3.wiki/w/images/f/f2/Action_Icon.png",
+      "width": 48,
+      "height": 48,
+      "bytes": 1919,
+      "sha1": "a0eef033d5a041d8f9b7d53cafda0fc2bf3b349d"
+    },
+    {
+      "file": "aoe.png",
+      "title": "Aoe Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AAoe_Icon.png",
+      "url": "https://bg3.wiki/w/images/d/d0/Aoe_Icon.png",
+      "width": 48,
+      "height": 48,
+      "bytes": 4198,
+      "sha1": "81844a1f6475d40b90ebc1f8ea13b6f9c8e6f832"
+    },
+    {
+      "file": "attack-roll.png",
+      "title": "Attack Roll Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AAttack_Roll_Icon.png",
+      "url": "https://bg3.wiki/w/images/b/ba/Attack_Roll_Icon.png",
+      "width": 54,
+      "height": 54,
+      "bytes": 3272,
+      "sha1": "c02a26fb2560425d2fb5d1d397ca2eac6043371e"
+    },
+    {
+      "file": "bonus-action.png",
+      "title": "Bonus Action Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ABonus_Action_Icon.png",
+      "url": "https://bg3.wiki/w/images/c/c9/Bonus_Action_Icon.png",
+      "width": 48,
+      "height": 48,
+      "bytes": 1469,
+      "sha1": "fec7f97d41524c99fba20fa9f45c44355f1269af"
+    },
+    {
+      "file": "class-barbarian.png",
+      "title": "Class Barbarian Badge Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AClass_Barbarian_Badge_Icon.png",
+      "url": "https://bg3.wiki/w/images/4/41/Class_Barbarian_Badge_Icon.png",
+      "width": 300,
+      "height": 300,
+      "bytes": 19619,
+      "sha1": "dfd3fceff05cf4f7b9fc8861a6f0dd86e1f402ca"
+    },
+    {
+      "file": "class-bard.png",
+      "title": "Class Bard Badge Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AClass_Bard_Badge_Icon.png",
+      "url": "https://bg3.wiki/w/images/3/38/Class_Bard_Badge_Icon.png",
+      "width": 300,
+      "height": 300,
+      "bytes": 25101,
+      "sha1": "b8aad1fc57232d887242ab5615834a4f0dba29ed"
+    },
+    {
+      "file": "class-cleric.png",
+      "title": "Class Cleric Badge Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AClass_Cleric_Badge_Icon.png",
+      "url": "https://bg3.wiki/w/images/a/ac/Class_Cleric_Badge_Icon.png",
+      "width": 300,
+      "height": 300,
+      "bytes": 23837,
+      "sha1": "040f3c51ee111a90ef39788e6d1c9b573f048996"
+    },
+    {
+      "file": "class-druid.png",
+      "title": "Class Druid Badge Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AClass_Druid_Badge_Icon.png",
+      "url": "https://bg3.wiki/w/images/c/c9/Class_Druid_Badge_Icon.png",
+      "width": 300,
+      "height": 300,
+      "bytes": 27265,
+      "sha1": "0a6e87248cf0e284fa0cb3be1bc1c26b7b37a5e7"
+    },
+    {
+      "file": "class-fighter.png",
+      "title": "Class Fighter Badge Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AClass_Fighter_Badge_Icon.png",
+      "url": "https://bg3.wiki/w/images/2/21/Class_Fighter_Badge_Icon.png",
+      "width": 300,
+      "height": 300,
+      "bytes": 21204,
+      "sha1": "3af049298db0116183ce29d3701e3f5112e60e98"
+    },
+    {
+      "file": "class-monk.png",
+      "title": "Class Monk Badge Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AClass_Monk_Badge_Icon.png",
+      "url": "https://bg3.wiki/w/images/9/93/Class_Monk_Badge_Icon.png",
+      "width": 300,
+      "height": 300,
+      "bytes": 22986,
+      "sha1": "b6800142f2f3614792a3b0230e8f19bd4cfac3f2"
+    },
+    {
+      "file": "class-paladin.png",
+      "title": "Class Paladin Badge Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AClass_Paladin_Badge_Icon.png",
+      "url": "https://bg3.wiki/w/images/e/ea/Class_Paladin_Badge_Icon.png",
+      "width": 300,
+      "height": 300,
+      "bytes": 30728,
+      "sha1": "e7fe5722dcc1191ae2290ea1235b1c2805cb59c7"
+    },
+    {
+      "file": "class-ranger.png",
+      "title": "Class Ranger Badge Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AClass_Ranger_Badge_Icon.png",
+      "url": "https://bg3.wiki/w/images/f/f5/Class_Ranger_Badge_Icon.png",
+      "width": 300,
+      "height": 300,
+      "bytes": 28011,
+      "sha1": "c20f6764780291412ccff9477058295ebf58d511"
+    },
+    {
+      "file": "class-rogue.png",
+      "title": "Class Rogue Badge Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AClass_Rogue_Badge_Icon.png",
+      "url": "https://bg3.wiki/w/images/d/da/Class_Rogue_Badge_Icon.png",
+      "width": 300,
+      "height": 300,
+      "bytes": 96366,
+      "sha1": "f0e363622e6844f40c8332974ba8b98b700554a5"
+    },
+    {
+      "file": "class-sorcerer.png",
+      "title": "Class Sorcerer Badge Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AClass_Sorcerer_Badge_Icon.png",
+      "url": "https://bg3.wiki/w/images/a/a8/Class_Sorcerer_Badge_Icon.png",
+      "width": 300,
+      "height": 300,
+      "bytes": 24737,
+      "sha1": "7d258a04a085e2770e8603348a34b6b5fd120bbe"
+    },
+    {
+      "file": "class-warlock.png",
+      "title": "Class Warlock Badge Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AClass_Warlock_Badge_Icon.png",
+      "url": "https://bg3.wiki/w/images/6/66/Class_Warlock_Badge_Icon.png",
+      "width": 300,
+      "height": 300,
+      "bytes": 23130,
+      "sha1": "c9c4e6571c682dbd9dd8e436f805fe7985083c40"
+    },
+    {
+      "file": "class-wizard.png",
+      "title": "Class Wizard Badge Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AClass_Wizard_Badge_Icon.png",
+      "url": "https://bg3.wiki/w/images/d/d9/Class_Wizard_Badge_Icon.png",
+      "width": 300,
+      "height": 300,
+      "bytes": 23677,
+      "sha1": "1e93a24a6238167c6e603c2c388e08e4459e4a54"
+    },
+    {
+      "file": "concentration.png",
+      "title": "Concentration Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AConcentration_Icon.png",
+      "url": "https://bg3.wiki/w/images/8/83/Concentration_Icon.png",
+      "width": 48,
+      "height": 48,
+      "bytes": 2791,
+      "sha1": "f077eba70d514bccbb633e3f3195dc24f1724931"
+    },
+    {
+      "file": "d10.png",
+      "title": "D10 Physical.png",
+      "source": "https://bg3.wiki/wiki/File%3AD10_Physical.png",
+      "url": "https://bg3.wiki/w/images/0/0d/D10_Physical.png",
+      "width": 72,
+      "height": 74,
+      "bytes": 10266,
+      "sha1": "7ad3e54df473aa5c18cd2755315862c1145f74a3"
+    },
+    {
+      "file": "d12.png",
+      "title": "D12 Poison.png",
+      "source": "https://bg3.wiki/wiki/File%3AD12_Poison.png",
+      "url": "https://bg3.wiki/w/images/b/bd/D12_Poison.png",
+      "width": 76,
+      "height": 79,
+      "bytes": 12344,
+      "sha1": "022a9defeae3927d859adf744c2da014563d95e7"
+    },
+    {
+      "file": "d4.png",
+      "title": "D4 Healing.png",
+      "source": "https://bg3.wiki/wiki/File%3AD4_Healing.png",
+      "url": "https://bg3.wiki/w/images/8/87/D4_Healing.png",
+      "width": 76,
+      "height": 74,
+      "bytes": 10994,
+      "sha1": "b374ee40c9a43a9768ffdd388a0487da779cadb8"
+    },
+    {
+      "file": "d6.png",
+      "title": "D6 Physical.png",
+      "source": "https://bg3.wiki/wiki/File%3AD6_Physical.png",
+      "url": "https://bg3.wiki/w/images/2/2b/D6_Physical.png",
+      "width": 70,
+      "height": 78,
+      "bytes": 11031,
+      "sha1": "b155dbe75a3f121322676b6625f7c96497999387"
+    },
+    {
+      "file": "d8.png",
+      "title": "D8 Physical.png",
+      "source": "https://bg3.wiki/wiki/File%3AD8_Physical.png",
+      "url": "https://bg3.wiki/w/images/8/8a/D8_Physical.png",
+      "width": 67,
+      "height": 76,
+      "bytes": 10552,
+      "sha1": "ec26ac411c7650a87d81d1ebe3e333158d688cff"
+    },
+    {
+      "file": "damage-acid.png",
+      "title": "Acid Damage Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AAcid_Damage_Icon.png",
+      "url": "https://bg3.wiki/w/images/5/5f/Acid_Damage_Icon.png",
+      "width": 52,
+      "height": 52,
+      "bytes": 5215,
+      "sha1": "840954bdb45188ec3c119f23bc44309a2788cde6"
+    },
+    {
+      "file": "damage-bludgeoning.png",
+      "title": "Bludgeoning Damage Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ABludgeoning_Damage_Icon.png",
+      "url": "https://bg3.wiki/w/images/7/7d/Bludgeoning_Damage_Icon.png",
+      "width": 52,
+      "height": 52,
+      "bytes": 4457,
+      "sha1": "5b02b4527d80c8c298b6f5955a709d92f05062e5"
+    },
+    {
+      "file": "damage-cold.png",
+      "title": "Cold Damage Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ACold_Damage_Icon.png",
+      "url": "https://bg3.wiki/w/images/0/05/Cold_Damage_Icon.png",
+      "width": 49,
+      "height": 50,
+      "bytes": 3566,
+      "sha1": "3a64fa600047a0c446f16d9beedd6f4cd0bd1955"
+    },
+    {
+      "file": "damage-fire.png",
+      "title": "Fire Damage Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AFire_Damage_Icon.png",
+      "url": "https://bg3.wiki/w/images/8/84/Fire_Damage_Icon.png",
+      "width": 52,
+      "height": 52,
+      "bytes": 4959,
+      "sha1": "18f2d62d6ad3f0224884b142a692b232a79c4075"
+    },
+    {
+      "file": "damage-force.png",
+      "title": "Force Damage Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AForce_Damage_Icon.png",
+      "url": "https://bg3.wiki/w/images/d/d1/Force_Damage_Icon.png",
+      "width": 52,
+      "height": 52,
+      "bytes": 5102,
+      "sha1": "0adafab6770c17e635fc7513de2942a392b4b6de"
+    },
+    {
+      "file": "damage-lightning.png",
+      "title": "Lightning Damage Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ALightning_Damage_Icon.png",
+      "url": "https://bg3.wiki/w/images/3/31/Lightning_Damage_Icon.png",
+      "width": 52,
+      "height": 52,
+      "bytes": 4207,
+      "sha1": "a430d3c955f08885b87f9296371f26956cd24c10"
+    },
+    {
+      "file": "damage-necrotic.png",
+      "title": "Necrotic Damage Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ANecrotic_Damage_Icon.png",
+      "url": "https://bg3.wiki/w/images/3/39/Necrotic_Damage_Icon.png",
+      "width": 52,
+      "height": 52,
+      "bytes": 5087,
+      "sha1": "77022d98d663fe991a467c784a832f469b5fadf5"
+    },
+    {
+      "file": "damage-piercing.png",
+      "title": "Piercing Damage Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3APiercing_Damage_Icon.png",
+      "url": "https://bg3.wiki/w/images/0/0b/Piercing_Damage_Icon.png",
+      "width": 52,
+      "height": 52,
+      "bytes": 4217,
+      "sha1": "74008bcfaabf5e3259ae119b2935b238ffa3be6e"
+    },
+    {
+      "file": "damage-poison.png",
+      "title": "Poison Damage Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3APoison_Damage_Icon.png",
+      "url": "https://bg3.wiki/w/images/5/55/Poison_Damage_Icon.png",
+      "width": 52,
+      "height": 52,
+      "bytes": 5369,
+      "sha1": "120ce8784b5853e4eeb0097bc88d0aab081f46df"
+    },
+    {
+      "file": "damage-psychic.png",
+      "title": "Psychic Damage Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3APsychic_Damage_Icon.png",
+      "url": "https://bg3.wiki/w/images/0/04/Psychic_Damage_Icon.png",
+      "width": 52,
+      "height": 52,
+      "bytes": 4537,
+      "sha1": "b2abf7932e2694048f2c1ff79a1499c7efcda46a"
+    },
+    {
+      "file": "damage-radiant.png",
+      "title": "Radiant Damage Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ARadiant_Damage_Icon.png",
+      "url": "https://bg3.wiki/w/images/7/78/Radiant_Damage_Icon.png",
+      "width": 52,
+      "height": 52,
+      "bytes": 5205,
+      "sha1": "aa40d6850ebfd73555838c9d5d342702d174da58"
+    },
+    {
+      "file": "damage-slashing.png",
+      "title": "Slashing Damage Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ASlashing_Damage_Icon.png",
+      "url": "https://bg3.wiki/w/images/f/f0/Slashing_Damage_Icon.png",
+      "width": 52,
+      "height": 52,
+      "bytes": 4167,
+      "sha1": "aa2e16e8cfc1df406101c22bd03af63a53b1266a"
+    },
+    {
+      "file": "damage-thunder.png",
+      "title": "Thunder Damage Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AThunder_Damage_Icon.png",
+      "url": "https://bg3.wiki/w/images/8/87/Thunder_Damage_Icon.png",
+      "width": 52,
+      "height": 52,
+      "bytes": 4900,
+      "sha1": "98585bd26b37a2e134277f9d8fcae7659f3efcac"
+    },
+    {
+      "file": "duration.png",
+      "title": "Duration Icons.png",
+      "source": "https://bg3.wiki/wiki/File%3ADuration_Icons.png",
+      "url": "https://bg3.wiki/w/images/6/6a/Duration_Icons.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 5327,
+      "sha1": "aecdc579bb240ebde35347ac1d93a94773debca5"
+    },
+    {
+      "file": "healing.png",
+      "title": "Healing Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AHealing_Icon.png",
+      "url": "https://bg3.wiki/w/images/a/ac/Healing_Icon.png",
+      "width": 52,
+      "height": 52,
+      "bytes": 2717,
+      "sha1": "19b5e9718818772e61c686dea7f62917b936f8a9"
+    },
+    {
+      "file": "mana.png",
+      "title": "Spell Slot Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ASpell_Slot_Icon.png",
+      "url": "https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png",
+      "width": 40,
+      "height": 40,
+      "bytes": 2760,
+      "sha1": "562af802862b212e3b3141f666cc0a473bdcb011"
+    },
+    {
+      "file": "melee-range.png",
+      "title": "Melee Range Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AMelee_Range_Icon.png",
+      "url": "https://bg3.wiki/w/images/2/2a/Melee_Range_Icon.png",
+      "width": 48,
+      "height": 48,
+      "bytes": 2116,
+      "sha1": "9b920d08156fe802412067adbaf4826558fd6b5a"
+    },
+    {
+      "file": "range.png",
+      "title": "Range Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ARange_Icon.png",
+      "url": "https://bg3.wiki/w/images/0/08/Range_Icon.png",
+      "width": 48,
+      "height": 48,
+      "bytes": 1913,
+      "sha1": "deba80e2158c347f1f35dc724ff9977b69247f47"
+    },
+    {
+      "file": "reaction.png",
+      "title": "Reaction Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AReaction_Icon.png",
+      "url": "https://bg3.wiki/w/images/c/c1/Reaction_Icon.png",
+      "width": 50,
+      "height": 50,
+      "bytes": 2951,
+      "sha1": "47cb90c27f8802766cf60e24c684e0c3082a13a1"
+    },
+    {
+      "file": "resource-bardic-inspiration.png",
+      "title": "Bardic Inspiration Resource Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ABardic_Inspiration_Resource_Icon.png",
+      "url": "https://bg3.wiki/w/images/b/be/Bardic_Inspiration_Resource_Icon.png",
+      "width": 48,
+      "height": 48,
+      "bytes": 2012,
+      "sha1": "f0bbb027c47d43ee36279e2f4c151c313616f3c5"
+    },
+    {
+      "file": "resource-favored-enemy.webp",
+      "title": "Hunter's Mark Unfaded Icon.webp",
+      "source": "https://bg3.wiki/wiki/File%3AHunter's_Mark_Unfaded_Icon.webp",
+      "url": "https://bg3.wiki/w/images/1/1b/Hunter%27s_Mark_Unfaded_Icon.webp",
+      "width": 64,
+      "height": 64,
+      "bytes": 2232,
+      "sha1": "baa33a39ce63238aec6a264719d1bbeb69dd6727"
+    },
+    {
+      "file": "resource-lay-on-hands.png",
+      "title": "Lay on Hands Resource Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ALay_on_Hands_Resource_Icon.png",
+      "url": "https://bg3.wiki/w/images/0/08/Lay_on_Hands_Resource_Icon.png",
+      "width": 48,
+      "height": 48,
+      "bytes": 2542,
+      "sha1": "d8aa73b8107363f8048bc4349b314969f26ccac9"
+    },
+    {
+      "file": "resource-rage.png",
+      "title": "Rage Charges Icons.png",
+      "source": "https://bg3.wiki/wiki/File%3ARage_Charges_Icons.png",
+      "url": "https://bg3.wiki/w/images/d/d6/Rage_Charges_Icons.png",
+      "width": 64,
+      "height": 60,
+      "bytes": 7684,
+      "sha1": "bafdd1e018e501c983f55f57a47c32715483c507"
+    },
+    {
+      "file": "resource-second-wind.webp",
+      "title": "Second Wind Unfaded Icon.webp",
+      "source": "https://bg3.wiki/wiki/File%3ASecond_Wind_Unfaded_Icon.webp",
+      "url": "https://bg3.wiki/w/images/e/e0/Second_Wind_Unfaded_Icon.webp",
+      "width": 64,
+      "height": 64,
+      "bytes": 2614,
+      "sha1": "4fb4f8c61f1c18e5325e08ae058d28528d9e4d15"
+    },
+    {
+      "file": "resource-sorcery-points.png",
+      "title": "Sorcery Points Icons.png",
+      "source": "https://bg3.wiki/wiki/File%3ASorcery_Points_Icons.png",
+      "url": "https://bg3.wiki/w/images/b/be/Sorcery_Points_Icons.png",
+      "width": 48,
+      "height": 48,
+      "bytes": 2184,
+      "sha1": "901eb921dde4c91d9acaecdac7ed458e5acbd4f9"
+    },
+    {
+      "file": "ritual.png",
+      "title": "Ritual Spell Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ARitual_Spell_Icon.png",
+      "url": "https://bg3.wiki/w/images/f/fa/Ritual_Spell_Icon.png",
+      "width": 48,
+      "height": 48,
+      "bytes": 1931,
+      "sha1": "9bdcc660e8545f9a8144c06e6602adaac52b1aa5"
+    },
+    {
+      "file": "saving-throw.png",
+      "title": "Saving Throw Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ASaving_Throw_Icon.png",
+      "url": "https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png",
+      "width": 38,
+      "height": 38,
+      "bytes": 2461,
+      "sha1": "04d7214f83ea90a47b290b48776576a0aaa91a9f"
+    },
+    {
+      "file": "weapon-battleaxe.png",
+      "title": "Battleaxes Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ABattleaxes_Icon.png",
+      "url": "https://bg3.wiki/w/images/d/d7/Battleaxes_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 4364,
+      "sha1": "ed5c63462665076d0a1af991b1c61e6aa5f44c91"
+    },
+    {
+      "file": "weapon-club.png",
+      "title": "Clubs Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AClubs_Icon.png",
+      "url": "https://bg3.wiki/w/images/d/d1/Clubs_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3487,
+      "sha1": "d756255734a87e0c5d46bcce0d47e8f59c655422"
+    },
+    {
+      "file": "weapon-dagger.png",
+      "title": "Daggers Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ADaggers_Icon.png",
+      "url": "https://bg3.wiki/w/images/b/b8/Daggers_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3177,
+      "sha1": "a84acc5d4eb8a293e247bcb968ce7c41178b20b3"
+    },
+    {
+      "file": "weapon-dart.png",
+      "title": "Darts Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ADarts_Icon.png",
+      "url": "https://bg3.wiki/w/images/4/4a/Darts_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3027,
+      "sha1": "3fb29054da0279762398ddc2dfce216608ad0188"
+    },
+    {
+      "file": "weapon-flail.png",
+      "title": "Flails Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AFlails_Icon.png",
+      "url": "https://bg3.wiki/w/images/f/f6/Flails_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 2522,
+      "sha1": "deb4ff0e1578833b8a37e3a432a986695ab4f5c7"
+    },
+    {
+      "file": "weapon-glaive.png",
+      "title": "Glaives Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AGlaives_Icon.png",
+      "url": "https://bg3.wiki/w/images/6/6a/Glaives_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3454,
+      "sha1": "89faabcedb69b7df16d9122cf16960a53cf275e4"
+    },
+    {
+      "file": "weapon-greataxe.png",
+      "title": "Greataxes Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AGreataxes_Icon.png",
+      "url": "https://bg3.wiki/w/images/1/1e/Greataxes_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 4203,
+      "sha1": "8f47e3db0eae7b4b84b3de2272534dbbd8dde487"
+    },
+    {
+      "file": "weapon-greatclub.png",
+      "title": "Greatclubs Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AGreatclubs_Icon.png",
+      "url": "https://bg3.wiki/w/images/a/a8/Greatclubs_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3743,
+      "sha1": "9e4a777b85df6e296c9c089c9c8113cabad600d6"
+    },
+    {
+      "file": "weapon-greatsword.png",
+      "title": "Greatswords Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AGreatswords_Icon.png",
+      "url": "https://bg3.wiki/w/images/9/9d/Greatswords_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3438,
+      "sha1": "0046eb9ff8591d01a60bf858daa524241919fafb"
+    },
+    {
+      "file": "weapon-halberd.png",
+      "title": "Halberds Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AHalberds_Icon.png",
+      "url": "https://bg3.wiki/w/images/b/b5/Halberds_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3722,
+      "sha1": "bc89810cf7aeed9bfc41403f2db4296442b4dcc9"
+    },
+    {
+      "file": "weapon-hand-crossbow.png",
+      "title": "Hand Crossbows Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AHand_Crossbows_Icon.png",
+      "url": "https://bg3.wiki/w/images/6/60/Hand_Crossbows_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3631,
+      "sha1": "a3bdc4c85b7fd065a073bb59f0ac152841168082"
+    },
+    {
+      "file": "weapon-handaxe.png",
+      "title": "Handaxes Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AHandaxes_Icon.png",
+      "url": "https://bg3.wiki/w/images/f/fb/Handaxes_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3813,
+      "sha1": "95be755206ff86f04259697faff7b54712def41e"
+    },
+    {
+      "file": "weapon-heavy-crossbow.png",
+      "title": "Heavy Crossbows Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AHeavy_Crossbows_Icon.png",
+      "url": "https://bg3.wiki/w/images/1/16/Heavy_Crossbows_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 4259,
+      "sha1": "d5376d5075e346b73a634e7fa6582585bb2b7de7"
+    },
+    {
+      "file": "weapon-javelin.png",
+      "title": "Javelins Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AJavelins_Icon.png",
+      "url": "https://bg3.wiki/w/images/8/81/Javelins_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3663,
+      "sha1": "82f720c66640452d7a2314d15616d3e96ceeb018"
+    },
+    {
+      "file": "weapon-light-crossbow.png",
+      "title": "Light Crossbows Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ALight_Crossbows_Icon.png",
+      "url": "https://bg3.wiki/w/images/7/70/Light_Crossbows_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3868,
+      "sha1": "f7c873dfdefcad374d622518fb53ced08b815724"
+    },
+    {
+      "file": "weapon-light-hammer.png",
+      "title": "Light Hammers Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ALight_Hammers_Icon.png",
+      "url": "https://bg3.wiki/w/images/b/ba/Light_Hammers_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3457,
+      "sha1": "7025bfbcc0ef98ede2e16b4cbec1b08a20be8926"
+    },
+    {
+      "file": "weapon-longbow.png",
+      "title": "Longbows Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ALongbows_Icon.png",
+      "url": "https://bg3.wiki/w/images/9/94/Longbows_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3168,
+      "sha1": "03760f03ece75c0c987d5e0a0dd55440f31e7acd"
+    },
+    {
+      "file": "weapon-longsword.png",
+      "title": "Longswords Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ALongswords_Icon.png",
+      "url": "https://bg3.wiki/w/images/b/b6/Longswords_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3018,
+      "sha1": "bf3d839e91156bec2fc6d435ee55ad2e076a6631"
+    },
+    {
+      "file": "weapon-mace.png",
+      "title": "Maces Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AMaces_Icon.png",
+      "url": "https://bg3.wiki/w/images/a/a9/Maces_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3255,
+      "sha1": "f04349f40556820c2aee2a83b6b5de2c79104e51"
+    },
+    {
+      "file": "weapon-maul.png",
+      "title": "Mauls Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AMauls_Icon.png",
+      "url": "https://bg3.wiki/w/images/d/d2/Mauls_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3755,
+      "sha1": "58312b669264b702f5bf69a90d19ca5d0bad2a08"
+    },
+    {
+      "file": "weapon-morningstar.png",
+      "title": "Morningstars Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AMorningstars_Icon.png",
+      "url": "https://bg3.wiki/w/images/6/65/Morningstars_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3696,
+      "sha1": "15e1df2cb7be35d93268a66a461f770d3394ea4d"
+    },
+    {
+      "file": "weapon-pike.png",
+      "title": "Pikes Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3APikes_Icon.png",
+      "url": "https://bg3.wiki/w/images/7/72/Pikes_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3298,
+      "sha1": "d19c47470090fc6fd01d1ed6aad96b2adf4df9c9"
+    },
+    {
+      "file": "weapon-quarterstaff.png",
+      "title": "Quarterstaves Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AQuarterstaves_Icon.png",
+      "url": "https://bg3.wiki/w/images/b/bb/Quarterstaves_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3236,
+      "sha1": "d878648e9396438bb7eaf9d05e9ca8bcc7269730"
+    },
+    {
+      "file": "weapon-rapier.png",
+      "title": "Rapiers Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ARapiers_Icon.png",
+      "url": "https://bg3.wiki/w/images/9/97/Rapiers_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3053,
+      "sha1": "9fc634479143c2e0ef153cb0219b61ac091daa07"
+    },
+    {
+      "file": "weapon-scimitar.png",
+      "title": "Scimitars Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AScimitars_Icon.png",
+      "url": "https://bg3.wiki/w/images/b/be/Scimitars_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3448,
+      "sha1": "8d92b30ae785f2562ed4fb5cd016b0d9f092bfd0"
+    },
+    {
+      "file": "weapon-shortbow.png",
+      "title": "Shortbows Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AShortbows_Icon.png",
+      "url": "https://bg3.wiki/w/images/6/64/Shortbows_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3089,
+      "sha1": "9dc27f7077233eee850ad9d0501bcf4fcf70742e"
+    },
+    {
+      "file": "weapon-shortsword.png",
+      "title": "Shortswords Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AShortswords_Icon.png",
+      "url": "https://bg3.wiki/w/images/b/b3/Shortswords_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3453,
+      "sha1": "5c40f2c137c369b0157cf52d6b9be1105e78772a"
+    },
+    {
+      "file": "weapon-sickle.png",
+      "title": "Sickles Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ASickles_Icon.png",
+      "url": "https://bg3.wiki/w/images/e/ea/Sickles_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3712,
+      "sha1": "ffb533605ef16f36a96924c01d1f6a2cc279c3a0"
+    },
+    {
+      "file": "weapon-sling.png",
+      "title": "Slings Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ASlings_Icon.png",
+      "url": "https://bg3.wiki/w/images/3/31/Slings_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3984,
+      "sha1": "8c52287720f8df514cf8e478f2e73adefc2c3254"
+    },
+    {
+      "file": "weapon-spear.png",
+      "title": "Spears Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ASpears_Icon.png",
+      "url": "https://bg3.wiki/w/images/a/a1/Spears_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 2945,
+      "sha1": "566a083687858ef19b681bc57b6173c05ac254f3"
+    },
+    {
+      "file": "weapon-trident.png",
+      "title": "Tridents Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ATridents_Icon.png",
+      "url": "https://bg3.wiki/w/images/5/5f/Tridents_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3745,
+      "sha1": "4037153998631ccb046ff2f18e65850e8ba5f1dc"
+    },
+    {
+      "file": "weapon-war-pick.png",
+      "title": "War Picks Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AWar_Picks_Icon.png",
+      "url": "https://bg3.wiki/w/images/8/81/War_Picks_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 3730,
+      "sha1": "dc3ed4557f97922c3dd47829db277137414ad92f"
+    },
+    {
+      "file": "weapon-warhammer.png",
+      "title": "Warhammers Icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AWarhammers_Icon.png",
+      "url": "https://bg3.wiki/w/images/c/cf/Warhammers_Icon.png",
+      "width": 60,
+      "height": 60,
+      "bytes": 4140,
+      "sha1": "b40741619f5e5a316e125150c534a33ab52e7a9c"
+    }
+  ]
+}

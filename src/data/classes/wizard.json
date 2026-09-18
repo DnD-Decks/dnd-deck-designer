@@ -1,6 +1,6 @@
 {
   "label": "Wizard",
-  "icon": "/class-icons/wizard.svg",
+  "icon": "/icons/class-wizard.png",
   "hitDie": "d6",
   "primaryAbilities": ["int"],
   "saves": "Intelligence & Wisdom",

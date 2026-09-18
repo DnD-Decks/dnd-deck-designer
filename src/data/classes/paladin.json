@@ -1,6 +1,6 @@
 {
   "label": "Paladin",
-  "icon": "/class-icons/paladin.svg",
+  "icon": "/icons/class-paladin.png",
   "hitDie": "d10",
   "primaryAbilities": ["str", "cha"],
   "saves": "Wisdom & Charisma",

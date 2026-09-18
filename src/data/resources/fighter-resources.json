@@ -2,6 +2,7 @@
   {
     "id": "fighter-second-wind",
     "name": "Second Wind",
+    "icon": "/icons/resource-second-wind.webp",
     "uses": 1,
     "recharge": "short-rest",
     "action": "bonus-action",

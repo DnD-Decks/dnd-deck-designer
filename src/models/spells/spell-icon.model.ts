@@ -1,3 +1,5 @@
+import { ACTION_TIMING_ICONS } from "src/models/actions/combat.model";
+
 export const MANA_ICON = "/icons/mana.png";
 export const DURATION_ICON = "/icons/duration.png";
 export const SAVING_THROW_ICON = "/icons/saving-throw.png";
@@ -8,9 +10,9 @@ export type IconRef = { src: string; label: string };
 
 export const actionIcon = (castingTime: string): IconRef | undefined => {
   const t = castingTime.toLowerCase();
-  if (t.includes("bonus")) return { src: "/icons/bonus-action.png", label: castingTime };
-  if (t.includes("reaction")) return { src: "/icons/reaction.png", label: castingTime };
-  if (t.includes("action")) return { src: "/icons/action.png", label: castingTime };
+  if (t.includes("bonus")) return { src: ACTION_TIMING_ICONS["bonus-action"], label: castingTime };
+  if (t.includes("reaction")) return { src: ACTION_TIMING_ICONS.reaction, label: castingTime };
+  if (t.includes("action")) return { src: ACTION_TIMING_ICONS.action, label: castingTime };
   // long-cast times (minutes, hours) have no action-economy glyph — render nothing
   return undefined;
 };

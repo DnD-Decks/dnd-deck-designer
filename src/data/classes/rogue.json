@@ -1,6 +1,6 @@
 {
   "label": "Rogue",
-  "icon": "/class-icons/rogue.svg",
+  "icon": "/icons/class-rogue.png",
   "hitDie": "d8",
   "primaryAbilities": ["dex"],
   "saves": "Dexterity & Intelligence",

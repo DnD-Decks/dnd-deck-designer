@@ -12,6 +12,7 @@ import warlockFeatsData from "../../data/feats/warlock-feats.json" with { type: 
 import wizardFeatsData from "../../data/feats/wizard-feats.json" with { type: "json" };
 
 import type { CharacterClass } from "src/models/class/classes.model";
+import { classes } from "src/models/class/classes.model";
 
 export type Feat = {
   id: string;
@@ -38,6 +39,8 @@ const CLASS_DATA: Partial<Record<CharacterClass, Feat[]>> = {
 
 export const feats = {
   findAll({ cls }: { cls: CharacterClass }): Feat[] {
-    return CLASS_DATA[cls] ?? [];
+    // feats carry no icon of their own; the class badge gives every feat card its identity
+    const icon = classes.find({ id: cls })?.icon;
+    return (CLASS_DATA[cls] ?? []).map((feat) => ({ ...feat, icon }));
   },
 };

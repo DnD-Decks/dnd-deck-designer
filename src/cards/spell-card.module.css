@@ -207,7 +207,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: 2px 8px;
+  margin: 0;
+  padding-left: 0;
   padding-top: 4px;
+  list-style: none; /* the weapon-mastery card renders this strip as a <ul> */
   border-top: 1px solid color-mix(in srgb, var(--school-color) 20%, #8a7a5a);
   font-size: 6.5px;
   color: var(--text-low);
@@ -227,4 +230,12 @@
   object-fit: contain;
   flex-shrink: 0;
   vertical-align: middle;
+}
+
+/* weapon silhouettes (weapon-mastery card) need a little more room than glyphs */
+.weaponIcon {
+  width: 12px;
+  height: 12px;
+  object-fit: contain;
+  flex-shrink: 0;
 }

@@ -7,10 +7,9 @@
 /* Binder-tab buttons: flat slate at rest, card-blue with a gold edge when selected */
 .classButton {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1px;
-  padding: 7px 14px 6px;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 10px;
   border: 1px solid var(--ink-line);
   border-radius: 6px 6px 3px 3px;
   background: linear-gradient(var(--ink-700), var(--ink-800));
@@ -36,6 +35,21 @@
   border-color: var(--gold);
   color: #fff;
   box-shadow: 0 0 0 1px rgba(192, 160, 32, 0.35), 0 6px 14px rgba(0, 0, 0, 0.45);
+}
+
+.badge {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
 }
 
 .label {

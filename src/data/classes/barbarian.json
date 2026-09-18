@@ -1,6 +1,6 @@
 {
   "label": "Barbarian",
-  "icon": "/class-icons/barbarian.svg",
+  "icon": "/icons/class-barbarian.png",
   "hitDie": "d12",
   "primaryAbilities": ["str"],
   "saves": "Strength & Constitution",
