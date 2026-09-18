@@ -1,3 +1,4 @@
+import { Icon } from "src/lib/icon.component";
 import type { Feat } from "src/models/feats/feats.model";
 import styles from "./feat-card.module.css";
 
@@ -9,6 +10,8 @@ export function FeatCard({ feat }: Props) {
   return (
     <article className={styles.card} aria-labelledby={headingId}>
       <header className={styles.header}>
+        {/* class badge; decorative — the heading already names the card */}
+        {feat.icon ? <Icon src={feat.icon} label="" decorative className={styles.badge} /> : null}
         <h3 id={headingId} className={styles.name}>
           {feat.name}
         </h3>

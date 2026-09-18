@@ -1,6 +1,6 @@
 {
   "label": "Druid",
-  "icon": "/class-icons/druid.svg",
+  "icon": "/icons/class-druid.png",
   "hitDie": "d8",
   "primaryAbilities": ["wis"],
   "saves": "Intelligence & Wisdom",

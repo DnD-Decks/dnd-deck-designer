@@ -60,6 +60,25 @@ Card art is **AI-generated outside the repo** — there is no generation step in
 
 **Where the issues come from.** `/asset <spell>` resolves the spell in `src/data/spells/`, renders the prompt template with its fields (only the `SCENE` block is data-driven; the house style above it is verbatim) and creates — or edits, it is idempotent — an issue titled ``[asset]: `<name>` spell`` labelled `ASSET`, carrying the prompt and the acceptance checklist. Contributor-side steps: `CONTRIBUTING.md` § *Delivering a card asset*.
 
+## Iconography
+
+Card glyphs are Baldur's Gate 3 game icons from bg3.wiki, vendored into the flat `public/icons/`
+folder by `pnpm scripts:sync-bg3-icons` (explicit pick-list, sha1-verified, writes
+`public/icons/manifest.json`; provenance and licence caveat in `public/icons/SOURCE.md`). Icons are
+plain `/icons/<kind>-<id>.<ext>` URL strings rendered through `src/lib/icon.component.tsx` — never
+imported as modules. The map from domain value to file lives with the domain it serves:
+
+| Card | Glyphs | Map |
+|---|---|---|
+| Spell | casting time, mana, ritual/concentration, range, duration, save, dice, damage type | `src/models/spells/spell-icon.model.ts` (+ `ACTION_TIMING_ICONS` in `actions/combat.model.ts`) |
+| Resource | resource icon (`Resource.icon` in `src/data/resources/*.json`), action timing | data + `actions/combat.model.ts` |
+| Class feature | class badge, decorative | `feats.model.ts` projects `ClassDetails.icon` (`src/data/classes/<cls>.json`) |
+| Weapon mastery | one weapon icon per weapon carrying the property (name always, icon when BG3 has one) | `weaponIcon()` in `gear/weapons.model.ts`; `WeaponMastery.weapons` |
+| Class selector | class badge, decorative | `ClassDetails.icon` |
+
+A badge shown next to visible text is rendered `decorative` (empty `alt`) so it does not change the
+element's accessible name; standalone glyphs keep `alt` = their label, which is what tests query.
+
 ---
 
 ## Data source

@@ -2,11 +2,15 @@ import weaponMasteryData from "../../data/gear/weapon-mastery.json" with { type:
 
 import type { CharacterClass } from "src/models/class/classes.model";
 import type { WeaponMasteryName } from "src/models/gear/weapon-mastery.model";
+import type { Weapon } from "src/models/gear/weapons.model";
+import { weapons } from "src/models/gear/weapons.model";
 
 export type WeaponMastery = {
   id: WeaponMasteryName;
   name: string;
   description: string;
+  /** Every weapon that carries this mastery property (SRD weapons table). */
+  weapons: readonly Weapon[];
   icon?: string;
 };
 
@@ -19,6 +23,7 @@ const ALL: WeaponMastery[] = (Object.keys(RAW) as WeaponMasteryName[]).map((id) 
   id,
   name: id.charAt(0).toUpperCase() + id.slice(1),
   description: RAW[id],
+  weapons: weapons.list().filter((w) => w.mastery === id),
 }));
 
 // D&D 2024: classes with the level-1 Weapon Mastery feature get the property

@@ -18,7 +18,8 @@
     "e2e": "playwright test --config e2e/playwright.config.ts",
     "e2e:docker": "docker compose -f e2e/docker-compose.yml run --rm e2e",
     "blue-ball": "biome check . && vitest run && tsc -b && vite build",
-    "scripts:sync-srd-data": "node scripts/sync-srd-data/sync.mjs"
+    "scripts:sync-srd-data": "node scripts/sync-srd-data/sync.mjs",
+    "scripts:sync-bg3-icons": "node scripts/sync-bg3-icons/sync.mjs"
   },
   "dependencies": {
     "react": "19.2.7",

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 import { weaponMastery } from "./weapon-mastery.model.ts";
-import { weapons } from "./weapons.model.ts";
+import { weaponIcon, weapons } from "./weapons.model.ts";
 
 // --- weapons.get ---
 
@@ -37,4 +37,17 @@ test("list contains both melee and ranged weapons", () => {
   const all = weapons.list();
   assert.ok(all.some((w) => w.range === "melee"));
   assert.ok(all.some((w) => w.range === "ranged"));
+});
+
+// --- weaponIcon ---
+
+test("weaponIcon follows the /icons/weapon-<id>.png convention", () => {
+  assert.equal(weaponIcon("longsword"), "/icons/weapon-longsword.png");
+  assert.equal(weaponIcon("war-pick"), "/icons/weapon-war-pick.png");
+});
+
+test("weaponIcon is undefined for weapons BG3 has no icon for", () => {
+  for (const id of ["lance", "whip", "blowgun", "musket", "pistol"] as const) {
+    assert.equal(weaponIcon(id), undefined, id);
+  }
 });

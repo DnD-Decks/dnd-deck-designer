@@ -2,6 +2,7 @@
   {
     "id": "ranger-mana",
     "name": "Mana",
+    "icon": "/icons/mana.png",
     "uses": 2,
     "recharge": "long-rest",
     "description": "You have 2 level-1 spell slots. Expend one to cast a prepared level-1 spell. You regain all expended mana after a Long Rest."
@@ -9,6 +10,7 @@
   {
     "id": "ranger-favored-enemy",
     "name": "Favored Enemy",
+    "icon": "/icons/resource-favored-enemy.webp",
     "uses": 2,
     "recharge": "long-rest",
     "action": "bonus-action",

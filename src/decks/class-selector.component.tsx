@@ -1,3 +1,4 @@
+import { Icon } from "src/lib/icon.component";
 import type { CharacterClass } from "src/models/class/classes.model";
 import { classes } from "src/models/class/classes.model";
 import styles from "./class-selector.module.css";
@@ -21,10 +22,14 @@ export function ClassSelector({ selected, onSelect }: Props) {
           aria-pressed={cls.id === selected}
           onClick={() => onSelect(cls.id)}
         >
-          <span className={styles.label}>{cls.label}</span>
-          <span className={styles.meta}>
-            <span className={styles.classification}>{cls.manualClassification}</span>
-            <span className={styles.hitDie}>{cls.hitDie}</span>
+          {/* decorative: the visible label already names the button */}
+          <Icon src={cls.icon} label={cls.label} decorative className={styles.badge} />
+          <span className={styles.text}>
+            <span className={styles.label}>{cls.label}</span>
+            <span className={styles.meta}>
+              <span className={styles.classification}>{cls.manualClassification}</span>
+              <span className={styles.hitDie}>{cls.hitDie}</span>
+            </span>
           </span>
         </button>
       ))}

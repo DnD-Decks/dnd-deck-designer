@@ -1,4 +1,6 @@
+import { Icon } from "src/lib/icon.component";
 import type { ActionTiming } from "src/models/actions/combat.model";
+import { ACTION_TIMING_ICONS } from "src/models/actions/combat.model";
 import type { Resource } from "src/models/resources/resources.model";
 import type { RestType } from "src/models/rest/rest-actions.model";
 import styles from "./resource-card.module.css";
@@ -19,21 +21,33 @@ const TIMING_LABELS: Record<ActionTiming, string> = {
 };
 
 export function ResourceCard({ resource }: Props) {
-  const timingLabel = resource.action ? TIMING_LABELS[resource.action] : undefined;
-  const metaParts = [timingLabel, `Recharges: ${REST_LABELS[resource.recharge]}`].filter(Boolean);
-
   const headingId = `resource-card-${resource.id}`;
 
   return (
     <article className={styles.card} aria-labelledby={headingId}>
       <header className={styles.titleBar}>
+        {resource.icon ? (
+          <Icon src={resource.icon} label={resource.name} className={styles.resourceIcon} />
+        ) : null}
         <h3 id={headingId} className={styles.name}>
           {resource.name}
         </h3>
         <span className={styles.usesBadge}>{usesLabel(resource.uses)}</span>
       </header>
 
-      <div className={styles.metaLine}>{metaParts.join(" · ")}</div>
+      <div className={styles.metaLine}>
+        {resource.action ? (
+          <span className={styles.metaItem}>
+            <Icon
+              src={ACTION_TIMING_ICONS[resource.action]}
+              label={TIMING_LABELS[resource.action]}
+              className={styles.metaIcon}
+            />
+            {TIMING_LABELS[resource.action]}
+          </span>
+        ) : null}
+        <span className={styles.metaItem}>Recharges: {REST_LABELS[resource.recharge]}</span>
+      </div>
 
       <div className={styles.textBox}>
         <p>{resource.description}</p>

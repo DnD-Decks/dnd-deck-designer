@@ -2,6 +2,7 @@
   {
     "id": "barbarian-rage",
     "name": "Rage",
+    "icon": "/icons/resource-rage.png",
     "uses": 2,
     "recharge": "long-rest",
     "action": "bonus-action",

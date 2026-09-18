@@ -1,6 +1,6 @@
 {
   "label": "Ranger",
-  "icon": "/class-icons/ranger.svg",
+  "icon": "/icons/class-ranger.png",
   "hitDie": "d10",
   "primaryAbilities": ["dex", "wis"],
   "saves": "Strength & Dexterity",

@@ -1,6 +1,6 @@
 {
   "label": "Bard",
-  "icon": "/class-icons/bard.svg",
+  "icon": "/icons/class-bard.png",
   "hitDie": "d8",
   "primaryAbilities": ["cha"],
   "saves": "Dexterity & Charisma",

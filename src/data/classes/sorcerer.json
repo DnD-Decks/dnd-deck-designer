@@ -1,6 +1,6 @@
 {
   "label": "Sorcerer",
-  "icon": "/class-icons/sorcerer.svg",
+  "icon": "/icons/class-sorcerer.png",
   "hitDie": "d6",
   "primaryAbilities": ["cha"],
   "saves": "Constitution & Charisma",

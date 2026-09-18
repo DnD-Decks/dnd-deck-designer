@@ -1,6 +1,6 @@
 {
   "label": "Monk",
-  "icon": "/class-icons/monk.svg",
+  "icon": "/icons/class-monk.png",
   "hitDie": "d8",
   "primaryAbilities": ["dex", "wis"],
   "saves": "Strength & Dexterity",

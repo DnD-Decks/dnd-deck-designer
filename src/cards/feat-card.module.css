@@ -40,6 +40,14 @@
   white-space: nowrap;
 }
 
+.badge {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-right: 6px;
+}
+
 .source {
   font-size: 7px;
   font-style: italic;

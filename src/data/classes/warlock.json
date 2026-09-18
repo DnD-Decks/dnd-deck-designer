@@ -1,6 +1,6 @@
 {
   "label": "Warlock",
-  "icon": "/class-icons/warlock.svg",
+  "icon": "/icons/class-warlock.png",
   "hitDie": "d8",
   "primaryAbilities": ["cha"],
   "saves": "Wisdom & Charisma",

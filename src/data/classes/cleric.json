@@ -1,6 +1,6 @@
 {
   "label": "Cleric",
-  "icon": "/class-icons/cleric.svg",
+  "icon": "/icons/class-cleric.png",
   "hitDie": "d8",
   "primaryAbilities": ["wis"],
   "saves": "Wisdom & Charisma",

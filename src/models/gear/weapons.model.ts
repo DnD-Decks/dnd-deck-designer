@@ -62,6 +62,13 @@ export type Weapon = {
 const DATA = weaponsData as Weapon[];
 const BY_ID = new Map<string, Weapon>(DATA.map((w) => [w.id, w]));
 
+// BG3 has no icon for these five; cards fall back to the weapon's name.
+const WITHOUT_ICON = new Set<WeaponId>(["lance", "whip", "blowgun", "musket", "pistol"]);
+
+/** `/icons/weapon-<id>.png` (see scripts/sync-bg3-icons), or undefined when BG3 has none. */
+export const weaponIcon = (id: WeaponId) =>
+  WITHOUT_ICON.has(id) ? undefined : `/icons/weapon-${id}.png`;
+
 export const weapons = {
   get({ id }: { id: WeaponId }): Weapon {
     const found = BY_ID.get(id);

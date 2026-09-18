@@ -1,6 +1,6 @@
 {
   "label": "Fighter",
-  "icon": "/class-icons/fighter.svg",
+  "icon": "/icons/class-fighter.png",
   "hitDie": "d10",
   "primaryAbilities": ["str", "dex"],
   "saves": "Strength & Constitution",
