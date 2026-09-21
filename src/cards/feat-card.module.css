@@ -4,16 +4,27 @@
 
   width: var(--card-height);
   height: var(--card-width);
+  position: relative; /* anchors the CardArt background layer */
   display: flex;
   flex-direction: column;
   border: 2px solid var(--ink-900);
   border-radius: 8px;
   overflow: hidden;
-  background: var(--parchment);
+  /* fallback wash — visible wherever no painting covers the card */
+  background: color-mix(in srgb, var(--feat-color) 12%, var(--parchment));
   font-family: var(--font-display);
   box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.35);
   content-visibility: auto;
   contain-intrinsic-size: 0 var(--card-width);
+}
+
+/* ── Panels over the painting ────────────────────────────────────────────── */
+.header,
+.typeLine,
+.textBox {
+  position: relative;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
@@ -22,7 +33,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 4px 8px;
-  background: var(--feat-color);
+  background: color-mix(in srgb, var(--feat-color) 72%, transparent);
   color: var(--text-hi);
   min-height: 22px;
   flex-shrink: 0;
@@ -60,7 +71,7 @@
 /* ── Type line ───────────────────────────────────────────────────────────── */
 .typeLine {
   padding: 2px 8px;
-  background: color-mix(in srgb, var(--feat-color) 80%, #000);
+  background: color-mix(in srgb, color-mix(in srgb, var(--feat-color) 80%, #000) 85%, transparent);
   color: var(--text-hi);
   font-size: 7.5px;
   font-style: italic;
@@ -69,13 +80,22 @@
   flex-shrink: 0;
 }
 
+/* ── Art window ──────────────────────────────────────────────────────────── */
+/* Takes whatever the text panel leaves: short feats show more painting, long ones less. */
+.artWindow {
+  flex: 1;
+  min-height: 8mm;
+}
+
 /* ── Text box ────────────────────────────────────────────────────────────── */
 .textBox {
-  flex: 1;
+  flex: 0 1 auto;
+  margin: 4px;
   padding: 5px 8px 4px;
   overflow-y: auto;
-  background: var(--parchment);
-  border-top: 1px solid color-mix(in srgb, var(--feat-color) 20%, #8a7a5a);
+  background: color-mix(in srgb, var(--parchment) 62%, transparent);
+  border: 1px solid color-mix(in srgb, var(--feat-color) 20%, #8a7a5a);
+  border-radius: 4px;
   min-height: 0;
 }
 
@@ -84,6 +104,8 @@
     content-visibility: visible;
     break-inside: avoid;
     box-shadow: none;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
   .textBox {
     overflow: hidden;

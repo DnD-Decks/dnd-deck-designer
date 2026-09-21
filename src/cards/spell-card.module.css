@@ -4,12 +4,14 @@
 
   width: var(--card-width);
   height: var(--card-height);
+  position: relative; /* anchors the CardArt background layer */
   display: flex;
   flex-direction: column;
   border: 2px solid var(--ink-900);
   border-radius: 8px;
   overflow: hidden;
-  background: var(--parchment);
+  /* fallback wash — visible wherever no painting covers the card */
+  background: color-mix(in srgb, var(--school-color) 12%, var(--parchment));
   font-family: var(--font-display);
   box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.35);
   /* defer layout/paint for off-screen cards in long decks */
@@ -43,13 +45,23 @@
   --school-color: var(--school-transmutation);
 }
 
+/* ── Panels over the painting ────────────────────────────────────────────── */
+/* Every text block is a frosted panel: tinted, translucent, blurred — never opaque. */
+.titleBar,
+.typeLine,
+.textBox {
+  position: relative; /* paints above the absolutely-positioned art layer */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
 /* ── Title bar ───────────────────────────────────────────────────────────── */
 .titleBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 4px 6px 4px 8px;
-  background: var(--school-color);
+  background: color-mix(in srgb, var(--school-color) 72%, transparent);
   color: var(--text-hi);
   min-height: 22px;
   flex-shrink: 0;
@@ -109,27 +121,11 @@
   pointer-events: none;
 }
 
-/* ── Art box ─────────────────────────────────────────────────────────────── */
-.art {
+/* ── Art window ──────────────────────────────────────────────────────────── */
+/* Transparent spacer: the painting (or the fallback wash) shows through here unblurred. */
+.artWindow {
   height: 26mm;
-  position: relative;
-  overflow: hidden;
-  background: color-mix(in srgb, var(--school-color) 12%, var(--parchment));
-  border-bottom: 1px solid color-mix(in srgb, var(--school-color) 35%, transparent);
   flex-shrink: 0;
-}
-
-.artPlaceholder {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  font-weight: bold;
-  color: color-mix(in srgb, var(--school-color) 18%, transparent);
-  text-transform: uppercase;
-  user-select: none;
 }
 
 /* ── Type line ───────────────────────────────────────────────────────────── */
@@ -138,7 +134,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 2px 8px;
-  background: color-mix(in srgb, var(--school-color) 80%, #000);
+  background: color-mix(in srgb, color-mix(in srgb, var(--school-color) 80%, #000) 85%, transparent);
   color: var(--text-hi);
   font-size: 7.5px;
   font-style: italic;
@@ -172,10 +168,12 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  margin: 4px;
   padding: 5px 8px 4px;
   overflow-y: auto;
-  background: var(--parchment);
-  border-top: 1px solid color-mix(in srgb, var(--school-color) 20%, #8a7a5a);
+  background: color-mix(in srgb, var(--parchment) 62%, transparent);
+  border: 1px solid color-mix(in srgb, var(--school-color) 20%, #8a7a5a);
+  border-radius: 4px;
   gap: 4px;
   min-height: 0;
 }
@@ -188,6 +186,9 @@
     break-inside: avoid;
     /* shadows print as gray halos around the cut line */
     box-shadow: none;
+    /* the painting and the frosted panels are the design, not decoration */
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
   .textBox {
     overflow: hidden;

@@ -38,6 +38,7 @@ Cards are React components with **fixed physical proportions** — the goal is W
     - Print view: `@media print` overrides — mm units, bleed/cut margins, page breaks between decks.
 - **Horizontal feat cards** swap dimensions: `width: var(--card-height); height: var(--card-width)`.
 - **Weapon-mastery cards** reuse `spell-card.module.css` directly (same-folder relative import), overriding `--school-color` via inline style.
+- **Background art** is a layer behind frosted panels — see § *Art assets*. Cards are `position: relative` for it; panels print with `print-color-adjust: exact`.
 - Use semantic HTML (`<article>`, `<h3>`) so cards are role-queryable in RTL and Playwright tests. Deck sections carry an `aria-label` (their section name) and keep the card tally *outside* the `<h2>`, so a heading reads "Level 1", not "Level 123 cards".
 
 ---
@@ -57,7 +58,9 @@ Class identity lives in card *style* (§ *Deck scope*), never in shared art, so 
 
 **Full-card background, not a boxed vignette.** The house style (`DECK BACKGROUND STYLE v2`, in `.claude/skills/asset/asset.template.prompt.md`) forbids borders, frames, UI, text and reserved empty areas: the asset is a standalone painting that the card's chrome sits on top of. Each ratio matches its card face 1:1, so the image needs no cropping.
 
-**Missing art degrades silently** — no broken-image icon, no layout shift. Today only the spell card has an art box, and it shows a school-letter placeholder (`spell-card.component.tsx`); painting the background on every card kind, with a colour-wash fallback, is #18.
+**How a card paints it.** Every card renders `CardArt` (`src/cards/card-art.component.tsx`) as its first child: an absolutely positioned, presentational `<img>` covering the whole card (`object-fit: cover`). The chrome sits on top as **frosted panels** — tinted, translucent (`color-mix(... transparent)`), `backdrop-filter: blur` — never opaque, so the painting stays visible through the text. A transparent *art window* (fixed 26 mm on portrait cards; whatever the text panel leaves on the landscape feat card) shows it unblurred.
+
+**Missing art degrades silently.** A file that 404s fires the image's `onError` and `CardArt` unmounts itself: no broken-image glyph, no layout shift, and the card's colour wash (`color-mix(<kind-color> 12%, parchment)`) shows in the window. `card-art.component.test.tsx` and `spell-card.component.test.tsx` cover it.
 
 **Where the issues come from.** `/asset <card>` renders the prompt (only the `SCENE` block and the orientation are data-driven; the style is verbatim) and creates — or updates, it is idempotent — an issue titled ``[asset]: `<name>` <kind>`` labelled `ASSET`. `/asset all` does it for every level-1 card. Contributor steps: `CONTRIBUTING.md` § *Delivering a card asset*.
 

@@ -6,6 +6,7 @@ import {
   actionIcon,
 } from "src/models/spells/spell-icon.model";
 import type { Spell } from "src/models/spells/spells.model";
+import { CardArt } from "./card-art.component";
 import { SpellCardStatStrip } from "./spell-card-stat-strip.component";
 import styles from "./spell-card.module.css";
 
@@ -23,6 +24,8 @@ export function SpellCard({ spell }: Props) {
       aria-labelledby={headingId}
       data-school={spell.school.toLowerCase()}
     >
+      <CardArt assetId={spell.id} />
+
       {/* Title bar — name left, cost cluster right */}
       <div className={styles.titleBar}>
         <h3 id={headingId} className={styles.name}>
@@ -39,10 +42,8 @@ export function SpellCard({ spell }: Props) {
         </span>
       </div>
 
-      {/* Art box — placeholder for v1 */}
-      <div className={styles.art} aria-hidden="true">
-        <span className={styles.artPlaceholder}>{spell.school[0]}</span>
-      </div>
+      {/* Art window — the painting shows through here unblurred */}
+      <div className={styles.artWindow} />
 
       {/* Type line — school · level + flag icons */}
       <div className={styles.typeLine}>
