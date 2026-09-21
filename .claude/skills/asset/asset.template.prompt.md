@@ -21,6 +21,8 @@ Style history:
       simpler uncluttered backgrounds, figures read by outline and rim light.
       Scene moved to the top and written as a concrete subject brief.
       Covers every card kind; landscape output for feat cards.
+      Secondary figures must be as simplified as the subject (first landscape
+      sample rendered the foe in more detail than the rogue).
 
 Placeholders (filled by SKILL.md § 2):
 
@@ -65,6 +67,7 @@ The image should read at a glance as a few bold shapes set against light and atm
 Low detail.
 Forms should dissolve naturally into light, shadow, mist, smoke or atmosphere.
 Characters and objects lean toward silhouette: readable through their outline and major shapes, with interior detail kept minimal and often lost in shadow.
+This applies to every figure in the picture, not only the main one: secondary figures, foes and bystanders are at least as simplified as the subject, never more rendered than it.
 Prefer figures in shadow or backlit, defined by rim light or by the light source named in the SCENE rather than by rendered surfaces.
 
 Use broad areas of light and shadow with dramatic but soft atmospheric lighting.
