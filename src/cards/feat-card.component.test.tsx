@@ -17,9 +17,12 @@ test("card is an article labeled by the feat name only (badge is decorative)", (
 });
 
 test("class badge is painted from the feat's icon", () => {
-  const { container } = render(<FeatCard feat={arcaneRecovery} />);
-  const badge = container.querySelector("img[aria-hidden='true']");
-  expect(badge?.getAttribute("src")).toBe("/icons/class-wizard.png");
+  render(<FeatCard feat={arcaneRecovery} />);
+  // presentational images: the class badge and the background painting
+  const sources = screen
+    .getAllByRole("presentation", { hidden: true })
+    .map((img) => img.getAttribute("src"));
+  expect(sources).toContain("/icons/class-wizard.png");
 });
 
 test("source and description are rendered", () => {

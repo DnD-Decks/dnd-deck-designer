@@ -1,6 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { spells } from "src/models/spells/spells.model";
-import { test } from "vitest";
+import { expect, test } from "vitest";
 import { SpellCard } from "./spell-card.component.tsx";
 
 const fireBolt = spells.get({ id: "fire-bolt" });
@@ -30,4 +30,15 @@ test("level-1 spell shows 'Level 1' in the type line", () => {
 test("description text is rendered", () => {
   render(<SpellCard spell={fireBolt} />);
   screen.getByText(fireBolt.description.slice(0, 20), { exact: false });
+});
+
+test("card art is a decorative background that disappears when the file is missing", () => {
+  render(<SpellCard spell={fireBolt} />);
+  const art = screen.getByRole("presentation", { hidden: true });
+  expect(art.getAttribute("src")).toBe("/art/fire-bolt.png");
+
+  fireEvent.error(art);
+  expect(screen.queryByRole("presentation", { hidden: true })).toBeNull();
+  // the card itself is unaffected
+  screen.getByRole("article", { name: /fire bolt/i });
 });

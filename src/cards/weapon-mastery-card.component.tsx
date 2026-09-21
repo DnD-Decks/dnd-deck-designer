@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { Icon } from "src/lib/icon.component";
 import { weaponIcon } from "src/models/gear/weapons.model";
 import type { WeaponMastery } from "src/models/weapon-masteries/weapon-masteries.model";
+import { CardArt } from "./card-art.component";
 // borrows spell-card stylesheet; no dedicated weapon-mastery layout exists yet
 import styles from "./spell-card.module.css";
 
@@ -16,6 +17,8 @@ export function WeaponMasteryCard({ mastery }: Props) {
 
   return (
     <article className={styles.card} style={MASTERY_STYLE} aria-labelledby={headingId}>
+      {/* mastery ids are plain words (`slow` is also a spell) — the art file carries a prefix */}
+      <CardArt assetId={`mastery-${mastery.id}`} />
       <div className={styles.titleBar}>
         <h3 id={headingId} className={styles.name}>
           {mastery.name}
@@ -23,6 +26,8 @@ export function WeaponMasteryCard({ mastery }: Props) {
       </div>
 
       <div className={styles.typeLine}>Weapon Mastery</div>
+
+      <div className={styles.artWindow} />
 
       <div className={styles.textBox}>
         <p>{mastery.description}</p>

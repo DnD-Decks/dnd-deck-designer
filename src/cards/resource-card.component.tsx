@@ -3,6 +3,7 @@ import type { ActionTiming } from "src/models/actions/combat.model";
 import { ACTION_TIMING_ICONS } from "src/models/actions/combat.model";
 import type { Resource } from "src/models/resources/resources.model";
 import type { RestType } from "src/models/rest/rest-actions.model";
+import { CardArt } from "./card-art.component";
 import styles from "./resource-card.module.css";
 
 type Props = { resource: Resource };
@@ -25,6 +26,7 @@ export function ResourceCard({ resource }: Props) {
 
   return (
     <article className={styles.card} aria-labelledby={headingId}>
+      <CardArt assetId={resource.id} />
       <header className={styles.titleBar}>
         {resource.icon ? (
           <Icon src={resource.icon} label={resource.name} className={styles.resourceIcon} />
@@ -48,6 +50,9 @@ export function ResourceCard({ resource }: Props) {
         ) : null}
         <span className={styles.metaItem}>Recharges: {REST_LABELS[resource.recharge]}</span>
       </div>
+
+      {/* Art window — the painting shows through here unblurred */}
+      <div className={styles.artWindow} />
 
       <div className={styles.textBox}>
         <p>{resource.description}</p>
