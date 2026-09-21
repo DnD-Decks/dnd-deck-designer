@@ -10,7 +10,7 @@
 |---|---|---|---|---|
 | Resource | `resource` | vertical | ✓ 10 classes with L1 resources (monk, rogue: none) | "Mana ×2", "Second Wind ×1" |
 | Class feature / feat | `feat` | horizontal (landscape) | ✓ all 12 classes (L1) | "Arcane Recovery", "Fighting Style" |
-| Spell | `spell` | vertical | ✓ all 8 caster classes (L1 only) | "Fireball" (Wizard) |
+| Spell | `spell` | vertical | ✓ all 8 caster classes (L1 only) | "Fire Bolt" (Wizard) |
 | Weapon mastery | `weapon-mastery` | vertical (spell layout) | ✓ 5 mastery classes (all 8 properties) | "Cleave", "Graze" |
 | Companion stats | `companion` | — | deferred | Ranger's beast companion |
 
@@ -44,21 +44,22 @@ Cards are React components with **fixed physical proportions** — the goal is W
 
 ## Art assets
 
-Card art is **AI-generated outside the repo** — there is no generation step in the build, no image pipeline, no dependency. The repo stores finished PNGs only.
+Card art is **AI-generated outside the repo** — no generation step, no image pipeline, no dependency. The repo stores finished PNGs only, one per card, at `public/art/<asset-id>.png` (served at `/art/<asset-id>.png`).
 
-| | |
-|---|---|
-| Path | `public/art/<asset-id>.png` — served at `/art/<asset-id>.png` |
-| Format | portrait 5:7, ≥ 750 × 1050 px for spell, resource and mastery cards; landscape 7:5, ≥ 1050 × 750 px for feat cards (§ *Deck scope*) |
-| Id | spells: the spell id (`fire-bolt`); feats and resources: their class-prefixed JSON id (`rogue-sneak-attack`, `barbarian-rage`); weapon masteries: `mastery-<id>` (`mastery-cleave`) |
+| Kind | Asset id | Orientation | Shared across classes |
+|---|---|---|---|
+| spell | spell id — `fire-bolt` | portrait 5:7, ≥ 750 × 1050 px | yes — one painting per spell |
+| feat | class-prefixed JSON id — `rogue-sneak-attack` | landscape 7:5, ≥ 1050 × 750 px | no |
+| resource | class-prefixed JSON id — `barbarian-rage` | portrait 5:7, ≥ 750 × 1050 px | no |
+| weapon mastery | `mastery-<id>` — `mastery-cleave` | portrait 5:7, ≥ 750 × 1050 px | yes — the same property card sits in every martial deck |
 
-**Every `DeckCard` kind gets one asset** (spell, feat, resource, weapon mastery — see `src/decks/deck.model.ts`). Spells and mastery properties are shared across classes: `fire-bolt.png` serves both Wizard and Sorcerer, `mastery-cleave.png` every martial deck. Class identity lives in card *style* (§ *Deck scope*), never in shared art — so there are no per-class spell variants to keep in sync. Feats and resources are class-specific by nature, hence their class-prefixed ids.
+Class identity lives in card *style* (§ *Deck scope*), never in shared art, so there are no per-class spell variants. The `mastery-` prefix keeps mastery ids clear of spell ids (`slow` is both).
 
-**Full-card background, not a boxed vignette.** The house style (`DECK BACKGROUND STYLE v2`, in `.claude/skills/asset/asset.template.prompt.md`) forbids borders, frames, UI, text and reserved empty areas: the asset is a standalone painting that the card's chrome sits on top of. 5:7 maps 1:1 onto the card face (`--card-width` × `--card-height` = 63.5 × 88.9 mm), and 7:5 onto the swapped feat card, so the image needs no cropping.
+**Full-card background, not a boxed vignette.** The house style (`DECK BACKGROUND STYLE v2`, in `.claude/skills/asset/asset.template.prompt.md`) forbids borders, frames, UI, text and reserved empty areas: the asset is a standalone painting that the card's chrome sits on top of. Each ratio matches its card face 1:1, so the image needs no cropping.
 
-**Missing art degrades silently** — no broken-image icon, no layout shift. Today every card renders the school-letter placeholder in the `.art` box (`spell-card.component.tsx`); painting the background layer and falling back to the `--school-color` wash is #18. No assets ship yet — `public/art/` does not exist until the first one lands.
+**Missing art degrades silently** — no broken-image icon, no layout shift. Today only the spell card has an art box, and it shows a school-letter placeholder (`spell-card.component.tsx`); painting the background on every card kind, with a colour-wash fallback, is #18.
 
-**Where the issues come from.** `/asset <card>` resolves the card across `src/data/{spells,feats,resources,gear}/`, renders the prompt template (only the leading `SCENE` block is data-driven; the house style below it is verbatim) and creates — or edits, it is idempotent — an issue titled ``[asset]: `<name>` <kind>`` labelled `ASSET`, carrying the prompt and the acceptance checklist. `/asset all` does it for every level-1 card. Contributor-side steps: `CONTRIBUTING.md` § *Delivering a card asset*.
+**Where the issues come from.** `/asset <card>` renders the prompt (only the `SCENE` block and the orientation are data-driven; the style is verbatim) and creates — or updates, it is idempotent — an issue titled ``[asset]: `<name>` <kind>`` labelled `ASSET`. `/asset all` does it for every level-1 card. Contributor steps: `CONTRIBUTING.md` § *Delivering a card asset*.
 
 ## Iconography
 

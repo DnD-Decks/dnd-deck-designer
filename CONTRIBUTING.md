@@ -31,19 +31,19 @@ Decks are data-driven — there is no per-class UI code.
 
 Card art is generated outside the repo — a PR delivering an asset carries the PNG and nothing else.
 
-1. **Pick an open issue** labelled `ASSET` — titled ``[asset]: `<name>` <kind>`` (spell, `<class>` feat, `<class>` resource or weapon mastery).
-2. **Copy the prompt** from the issue body (it is written for ChatGPT, but any image tool works).
+1. **Pick an open issue** labelled `ASSET` — titled ``[asset]: `<name>` <kind>``.
+2. **Copy the prompt** from the issue body (written for ChatGPT; any image tool works).
 3. **Generate the image.**
-4. **Save it as `public/art/<asset-id>.png`** — 5:7 portrait, ≥ 750 × 1050 px; feat cards are landscape, 7:5, ≥ 1050 × 750 px. The id and orientation are in the issue's *Asset ID* / *Card data snapshot* blocks.
+4. **Save it as `public/art/<asset-id>.png`.** The id, orientation and minimum size are in the issue body.
 5. **Open a PR** with `Closes #<issue>` in the body. One asset per PR.
 6. **Run `pnpm blue-ball`** — the build must stay green.
 
-Spell and weapon-mastery assets are **shared across classes** — `fire-bolt.png` serves both the Wizard and Sorcerer decks; never add per-class variants. Class features and resources are per class by nature (`rogue-sneak-attack`, `barbarian-rage`).
+Which cards share art across classes, and why, is in `ARCHITECTURE.md` § *Art assets*.
 
-To regenerate or inspect the prompt for an asset, run the `/asset` skill (`.claude/skills/asset/`):
+To inspect or regenerate a prompt, run the `/asset` skill (`.claude/skills/asset/`):
 
 ```
 /asset <card name | id | class + name> [--dry-run]
 ```
 
-It re-renders the prompt and upserts the matching issue — re-running it edits the existing one instead of opening a duplicate. `--dry-run` prints the prompt without touching GitHub; `/asset all` walks every level-1 card. Background: `ARCHITECTURE.md` § *Art assets*.
+It re-renders the prompt and creates or updates the matching issue, never a duplicate. `--dry-run` prints the prompt without touching GitHub. `/asset all` walks every level-1 card.
