@@ -16,12 +16,14 @@ Flags:
 
 Every card the deck renders (`src/decks/deck.model.ts` → `DeckCard`) gets exactly one asset. The asset id is the file name under `public/art/<asset-id>.png`.
 
-| Kind | Data | Asset id | Shared across classes? |
-| --- | --- | --- | --- |
-| spell | `src/data/spells/spells-level-*.json` (objects keyed by spell id) | `<spell-id>` — `fire-bolt` | yes: one painting per spell, Wizard and Sorcerer both use `fire-bolt.png`. Never create per-class variants. |
-| feat (class feature) | `src/data/feats/<class>-feats.json` (arrays) | the JSON `id`, already class-prefixed — `rogue-sneak-attack` | no: `wizard-spellcasting` and `cleric-spellcasting` are different paintings (their text and imagery differ). |
-| resource | `src/data/resources/<class>-resources.json` (arrays) | the JSON `id`, already class-prefixed — `barbarian-rage` | no, same reason. |
-| weapon mastery | `src/data/gear/weapon-mastery.json` (object keyed by property id) | `mastery-<id>` — `mastery-cleave` | yes: the same property card sits in every martial deck. The `mastery-` prefix keeps it clear of spell ids (`slow` is both a mastery and a spell). |
+| Kind | Data | Asset id | Orientation | Shared across classes? |
+| --- | --- | --- | --- | --- |
+| spell | `src/data/spells/spells-level-*.json` (objects keyed by spell id) | `<spell-id>` — `fire-bolt` | portrait 5:7 | yes: one painting per spell, Wizard and Sorcerer both use `fire-bolt.png`. Never create per-class variants. |
+| feat (class feature) | `src/data/feats/<class>-feats.json` (arrays) | the JSON `id`, already class-prefixed — `rogue-sneak-attack` | **landscape 7:5** | no: `wizard-spellcasting` and `cleric-spellcasting` are different paintings (their text and imagery differ). |
+| resource | `src/data/resources/<class>-resources.json` (arrays) | the JSON `id`, already class-prefixed — `barbarian-rage` | portrait 5:7 | no, same reason. |
+| weapon mastery | `src/data/gear/weapon-mastery.json` (object keyed by property id) | `mastery-<id>` — `mastery-cleave` | portrait 5:7 | yes: the same property card sits in every martial deck. The `mastery-` prefix keeps it clear of spell ids (`slow` is both a mastery and a spell). |
+
+Orientation is decided by the card kind, never by how "active" the text sounds: feat cards are the passive, text-heavy ones and the deck renders them horizontal (`feat-card.module.css` swaps the poker dimensions). Everything else is a portrait card.
 
 Level-1 scope of a batch run: spells listed under `cantrips` or `level1` in any `src/data/spells/<class>-spells.json`, every feat, every resource, every mastery property.
 
@@ -41,7 +43,7 @@ Report the resolved `kind`, `asset id` and, for feats and resources, the `class`
 
 ### 2. Render the prompt
 
-Fill `asset.template.prompt.md` (same folder as this file). The `SCENE` block is the **only** data-driven part and comes first in the prompt; everything from `## VISUAL STYLE` down is the shared house style — reproduce it **verbatim**, never reworded per card.
+Fill `asset.template.prompt.md` (same folder as this file). Two parts are data-driven: the `SCENE` block (first in the prompt) and the orientation (`{{orientation}}` in the opening line plus the `OUTPUT` block). Everything from `## VISUAL STYLE` down to `## OUTPUT` is the shared house style — reproduce it **verbatim**, never reworded per card.
 
 - `{{name}}` — verbatim from the JSON (`name`; for masteries the capitalised key: `cleave` → `Cleave`).
 - `{{subtitle}}` — per kind:
@@ -53,6 +55,7 @@ Fill `asset.template.prompt.md` (same folder as this file). The `SCENE` block is
   - Spells usually already describe imagery: take the first 1–2 sentences of `description` and only add the missing SETTING/LIGHT beats.
   - Feats, resources and masteries are rules text: translate the mechanic into what it *looks like*. `Sneak Attack` → a rogue mid-lunge from a dark alcove into the exposed back of a distracted foe, blade catching the only light. `Rage` → a barbarian mid-roar, veins of red-hot light, weapon raised, dust and embers around. `Cleave` → one great axe swing carrying through two foes in a single arc.
   - Abstract resources like `Mana` get a symbolic scene (a well of arcane light, a hand cupping a flame of the class's colour), still concrete.
+- `{{orientation}}` / `{{output}}` — by kind. Feat: `horizontal` and the landscape OUTPUT block from the template header (7:5, ≥ 1050 × 750 px, compose across the width). Every other kind: `vertical` and the portrait block (5:7, ≥ 750 × 1050 px). For a landscape feat, also write the `{{scene}}` so it reads left to right — subject on one side, what it acts on across the frame.
 - `{{extra_note}}` — optional whole line. Spell with a `damage` field: `The visual centers on <damage.type joined with "/"> damage.` Weapon mastery: `Weapons that carry this property: <names of weapons in src/data/gear/weapons.json whose mastery is this id>.` Every other case: remove the line (no blank placeholder).
 
 Strip the HTML comment header from the output.
@@ -112,6 +115,7 @@ Issue body format:
 | Name | <name> |
 | <School / Class / Weapons> | <value> |
 | <Level, spells only> | <level> |
+| Orientation | <portrait 5:7 | landscape 7:5> |
 
 ## Image-generation prompt (paste into ChatGPT)
 
@@ -121,7 +125,7 @@ Issue body format:
 
 ## Acceptance criteria
 
-- [ ] PR adds `public/art/<asset-id>.png` — 5:7 portrait (MTG card ratio), ≥ 750 × 1050 px
+- [ ] PR adds `public/art/<asset-id>.png` — <5:7 portrait, ≥ 750 × 1050 px | 7:5 landscape, ≥ 1050 × 750 px>
 - [ ] PR body references `Closes #<this issue number>`
 ```
 

@@ -49,12 +49,12 @@ Card art is **AI-generated outside the repo** — there is no generation step in
 | | |
 |---|---|
 | Path | `public/art/<asset-id>.png` — served at `/art/<asset-id>.png` |
-| Format | 5:7 portrait (MTG card ratio), ≥ 750 × 1050 px |
+| Format | portrait 5:7, ≥ 750 × 1050 px for spell, resource and mastery cards; landscape 7:5, ≥ 1050 × 750 px for feat cards (§ *Deck scope*) |
 | Id | spells: the spell id (`fire-bolt`); feats and resources: their class-prefixed JSON id (`rogue-sneak-attack`, `barbarian-rage`); weapon masteries: `mastery-<id>` (`mastery-cleave`) |
 
 **Every `DeckCard` kind gets one asset** (spell, feat, resource, weapon mastery — see `src/decks/deck.model.ts`). Spells and mastery properties are shared across classes: `fire-bolt.png` serves both Wizard and Sorcerer, `mastery-cleave.png` every martial deck. Class identity lives in card *style* (§ *Deck scope*), never in shared art — so there are no per-class spell variants to keep in sync. Feats and resources are class-specific by nature, hence their class-prefixed ids.
 
-**Full-card background, not a boxed vignette.** The house style (`DECK BACKGROUND STYLE v2`, in `.claude/skills/asset/asset.template.prompt.md`) forbids borders, frames, UI, text and reserved empty areas: the asset is a standalone painting that the card's chrome sits on top of. 5:7 maps 1:1 onto the card face (`--card-width` × `--card-height` = 63.5 × 88.9 mm), so the image needs no cropping.
+**Full-card background, not a boxed vignette.** The house style (`DECK BACKGROUND STYLE v2`, in `.claude/skills/asset/asset.template.prompt.md`) forbids borders, frames, UI, text and reserved empty areas: the asset is a standalone painting that the card's chrome sits on top of. 5:7 maps 1:1 onto the card face (`--card-width` × `--card-height` = 63.5 × 88.9 mm), and 7:5 onto the swapped feat card, so the image needs no cropping.
 
 **Missing art degrades silently** — no broken-image icon, no layout shift. Today every card renders the school-letter placeholder in the `.art` box (`spell-card.component.tsx`); painting the background layer and falling back to the `--school-color` wash is #18. No assets ship yet — `public/art/` does not exist until the first one lands.
 

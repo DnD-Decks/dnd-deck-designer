@@ -2,9 +2,13 @@
 Template for the /asset skill — background artwork prompt for any deck card
 (spell, class feature, class resource, weapon-mastery property).
 
-The SCENE block is the only data-driven part. Everything from `## VISUAL STYLE`
-down is the shared house style: keep it verbatim on every asset so the whole
-deck reads as one set.
+Two things are data-driven: the SCENE block and the ORIENTATION (the
+`{{orientation}}` word up top and the whole OUTPUT block). Everything from
+`## VISUAL STYLE` down to `## OUTPUT` is the shared house style: keep it
+verbatim on every asset so the whole deck reads as one set.
+
+Orientation follows the card kind, never a judgment call (see ARCHITECTURE.md
+§ Deck scope): feat cards are landscape, every other kind is portrait.
 
 The SCENE comes FIRST on purpose. Image models weight the opening of a prompt;
 with the scene buried under the style block they paint "a generic fantasy
@@ -16,7 +20,7 @@ Style history:
   v2  same family, nudged toward silhouette and shadow: less rendered detail,
       simpler uncluttered backgrounds, figures read by outline and rim light.
       Scene moved to the top and written as a concrete subject brief.
-      Covers every card kind.
+      Covers every card kind; landscape output for feat cards.
 
 Placeholders (filled by SKILL.md § 2):
 
@@ -26,11 +30,18 @@ Placeholders (filled by SKILL.md § 2):
   {{extra_note}}  optional whole line; omit it entirely when the kind has none:
                     spell with damage  → "The visual centers on <type> damage."
                     weapon mastery     → "Weapons that carry this property: <list>."
+  {{orientation}} "vertical" (spell, resource, weapon mastery) or "horizontal" (feat)
+  {{output}}      the whole OUTPUT block body — pick one:
+                    portrait  → Vertical 5:7 portrait aspect ratio — standard trading-card proportions (63 x 88 mm).
+                                At least 750 x 1050 px.
+                    landscape → Horizontal 7:5 landscape aspect ratio — a trading card turned on its side (88 x 63 mm).
+                                At least 1050 x 750 px.
+                                Compose across the width: the subject and its action read left to right, with room for atmosphere on both sides.
 -->
 
 # DECK BACKGROUND STYLE v2
 
-Create a vertical fantasy illustration intended to be used purely as background artwork for a Dungeons & Dragons card deck.
+Create a {{orientation}} fantasy illustration intended to be used purely as background artwork for a Dungeons & Dragons card deck.
 
 ## SCENE
 
@@ -86,5 +97,4 @@ No reserved text boxes or artificially empty areas designed for card information
 
 ## OUTPUT
 
-Vertical 5:7 portrait aspect ratio — standard trading-card proportions (63 x 88 mm).
-At least 750 x 1050 px.
+{{output}}

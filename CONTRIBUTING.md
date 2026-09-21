@@ -34,7 +34,7 @@ Card art is generated outside the repo — a PR delivering an asset carries the 
 1. **Pick an open issue** labelled `ASSET` — titled ``[asset]: `<name>` <kind>`` (spell, `<class>` feat, `<class>` resource or weapon mastery).
 2. **Copy the prompt** from the issue body (it is written for ChatGPT, but any image tool works).
 3. **Generate the image.**
-4. **Save it as `public/art/<asset-id>.png`** — 5:7 portrait (MTG card ratio), ≥ 750 × 1050 px. The id is in the issue's *Asset ID* block.
+4. **Save it as `public/art/<asset-id>.png`** — 5:7 portrait, ≥ 750 × 1050 px; feat cards are landscape, 7:5, ≥ 1050 × 750 px. The id and orientation are in the issue's *Asset ID* / *Card data snapshot* blocks.
 5. **Open a PR** with `Closes #<issue>` in the body. One asset per PR.
 6. **Run `pnpm blue-ball`** — the build must stay green.
 
