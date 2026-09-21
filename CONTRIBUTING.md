@@ -31,19 +31,19 @@ Decks are data-driven — there is no per-class UI code.
 
 Card art is generated outside the repo — a PR delivering an asset carries the PNG and nothing else.
 
-1. **Pick an open issue** labelled `ASSET` — titled ``[asset]: `<spell>` spell``.
-2. **Copy the prompt** from the issue body (it is written for ChatGPT, but any image tool works).
+1. **Pick an open issue** labelled `ASSET` — titled ``[asset]: `<name>` <kind>``.
+2. **Copy the prompt** from the issue body (written for ChatGPT; any image tool works).
 3. **Generate the image.**
-4. **Save it as `public/art/<spell-id>.png`** — 5:7 portrait (MTG card ratio), ≥ 750 × 1050 px. The id is in the issue's *Asset ID* block.
-5. **Open a PR** with `Closes #<issue>` in the body. One spell per PR.
+4. **Save it as `public/art/<asset-id>.png`.** The id, orientation and minimum size are in the issue body.
+5. **Open a PR** with `Closes #<issue>` in the body. One asset per PR.
 6. **Run `pnpm blue-ball`** — the build must stay green.
 
-Asset identity is **per spell, shared across classes** — `fire-bolt.png` serves both the Wizard and Sorcerer decks. Never add per-class variants.
+Which cards share art across classes, and why, is in `ARCHITECTURE.md` § *Art assets*.
 
-To regenerate or inspect the prompt for an asset, run the `/asset` skill (`.claude/skills/asset/`):
+To inspect or regenerate a prompt, run the `/asset` skill (`.claude/skills/asset/`):
 
 ```
-/asset <spell name>
+/asset <card name | id | class + name> [--dry-run]
 ```
 
-It re-renders the prompt and upserts the matching issue — re-running it edits the existing one instead of opening a duplicate. Background: `ARCHITECTURE.md` § *Art assets*.
+It re-renders the prompt and creates or updates the matching issue, never a duplicate. `--dry-run` prints the prompt without touching GitHub. `/asset all` walks every level-1 card.

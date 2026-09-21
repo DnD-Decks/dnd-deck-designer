@@ -19,9 +19,10 @@ SRD-derived data needs this reference for audit purposes.
 
 ## Why it's here
 
-Before building the master asset inventory (`src/assets/asset-manifest.json`), we need a canonical
-reference to audit `src/data/spells/*.json` against — verifying spell names, schools, and levels
-are faithful to the SRD. See issue #12 and the asset-pipeline epic #19.
+The card data in `src/data/` (spells, class features, resources, weapon masteries) is audited
+against this reference — names, schools, levels and rules text must be faithful to the SRD. The
+`/asset` skill builds its card inventory straight from `src/data/`, so the data has to be right
+first. See issue #12 and the asset-pipeline epic #19.
 
 ## Re-extracting the markdown
 
