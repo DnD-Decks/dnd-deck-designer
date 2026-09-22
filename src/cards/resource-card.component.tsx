@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Icon } from "src/lib/icon.component";
 import type { ActionTiming } from "src/models/actions/combat.model";
 import { ACTION_TIMING_ICONS } from "src/models/actions/combat.model";
@@ -22,7 +23,7 @@ const TIMING_LABELS: Record<ActionTiming, string> = {
 };
 
 export function ResourceCard({ resource }: Props) {
-  const headingId = `resource-card-${resource.id}`;
+  const headingId = useId();
 
   return (
     <article className={styles.card} aria-labelledby={headingId}>

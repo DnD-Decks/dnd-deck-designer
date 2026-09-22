@@ -76,6 +76,26 @@
   align-items: flex-start;
 }
 
+.slot {
+  position: relative;
+}
+
+/* transparent control over the card face: the card itself is the affordance */
+.zoom {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.zoom:focus-visible {
+  outline: 2px solid var(--gold-soft);
+  outline-offset: 3px;
+}
+
 /* lift the card off the mat on hover — screen only, never reaches print */
 .cardRow > * {
   transition: transform 0.18s ease;
@@ -125,7 +145,8 @@
 @media print {
   /* keep screen chrome out of print output; cards keep their physical size */
   .sectionTitle,
-  .emptySlot {
+  .emptySlot,
+  .zoom {
     display: none;
   }
 

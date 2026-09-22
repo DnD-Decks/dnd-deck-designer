@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { type CSSProperties, useId } from "react";
 import { Icon } from "src/lib/icon.component";
 import { weaponIcon } from "src/models/gear/weapons.model";
 import type { WeaponMastery } from "src/models/weapon-masteries/weapon-masteries.model";
@@ -13,7 +13,7 @@ const MASTERY_STYLE = {
 } as CSSProperties;
 
 export function WeaponMasteryCard({ mastery }: Props) {
-  const headingId = `mastery-card-${mastery.id}`;
+  const headingId = useId();
 
   return (
     <article className={styles.card} style={MASTERY_STYLE} aria-labelledby={headingId}>
