@@ -11,6 +11,7 @@ This repository contains material under two separate licenses:
 |-------|---------|
 | Project source code (`src/`, configs, tooling) | MIT — see LICENSE |
 | SRD 5.2.1 content (`reference/srd/`, SRD-derived data in `src/data/`) | CC-BY-4.0 — see below |
+| Alegreya typefaces (`public/fonts/`) | OFL-1.1 — see `public/fonts/OFL.txt` |
 
 ---
 

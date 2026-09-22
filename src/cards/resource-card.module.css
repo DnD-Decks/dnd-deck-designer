@@ -11,7 +11,7 @@
   overflow: hidden;
   /* fallback wash — visible wherever no painting covers the card */
   background: color-mix(in srgb, var(--resource-color) 12%, var(--parchment));
-  font-family: var(--font-display);
+  font-family: var(--font-serif);
   box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.35);
   content-visibility: auto;
   contain-intrinsic-size: 0 var(--card-height);
