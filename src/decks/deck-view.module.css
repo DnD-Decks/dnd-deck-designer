@@ -89,7 +89,7 @@
   padding: 0;
   background: none;
   border-radius: 8px;
-  cursor: zoom-in;
+  cursor: pointer;
 }
 
 .zoom:focus-visible {

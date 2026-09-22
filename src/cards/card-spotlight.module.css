@@ -16,7 +16,6 @@
   background: none;
   color: var(--text-hi);
   overflow: hidden;
-  cursor: zoom-out;
 }
 
 .stage:focus-visible {
