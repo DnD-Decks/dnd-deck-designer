@@ -1,3 +1,62 @@
+/* Alegreya superfamily — self-hosted latin subsets (OFL, see public/fonts/OFL.txt).
+   Self-hosting keeps every machine on the same metrics: the Playwright image has no
+   system serif beyond Liberation, so screenshot baselines used to be Times. */
+@font-face {
+  font-family: "Alegreya";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("/fonts/alegreya-latin-var.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Alegreya";
+  font-style: italic;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("/fonts/alegreya-italic-latin-var.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Alegreya SC";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/alegreya-sc-latin-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Alegreya SC";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/alegreya-sc-latin-700.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/alegreya-sans-latin-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/alegreya-sans-latin-700.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/alegreya-sans-italic-latin-400.woff2") format("woff2");
+}
+
 /* Design tokens */
 :root {
   --card-width: 63.5mm;
@@ -15,7 +74,9 @@
   --text-hi: #e8e2d4;
   --text-mid: #a9a395;
   --text-low: #6f6a5e;
-  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-serif: "Alegreya", Georgia, serif;
+  --font-caps: "Alegreya SC", Georgia, serif;
+  --font-sans: "Alegreya Sans", system-ui, sans-serif;
 
   /* Spell school color identities */
   --school-abjuration: #4a6fa5; /* warding blue */
@@ -40,7 +101,7 @@
 
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
 
 /* Print layout */

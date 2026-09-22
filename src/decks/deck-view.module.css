@@ -38,10 +38,9 @@
   align-items: baseline;
   gap: 0.75rem;
   margin: 0;
-  font-family: var(--font-display);
-  font-variant: small-caps;
+  font-family: var(--font-caps);
   font-size: 19px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--parchment);
 }
@@ -62,8 +61,8 @@
 }
 
 .count {
+  font-family: var(--font-serif);
   font-size: 12px;
-  font-variant: normal;
   font-style: italic;
   letter-spacing: 0.03em;
   color: var(--text-mid);
@@ -125,7 +124,7 @@
 .emptyState {
   margin: 0;
   text-align: center;
-  font-family: var(--font-display);
+  font-family: var(--font-serif);
   font-style: italic;
   font-size: 13px;
   line-height: 1.5;

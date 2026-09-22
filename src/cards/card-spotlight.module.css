@@ -83,7 +83,7 @@
   padding: 4px 2px;
   background: none;
   color: var(--text-low);
-  font-family: var(--font-display);
+  font-family: var(--font-serif);
   font-style: italic;
   font-size: 14px;
   letter-spacing: 0.03em;
@@ -125,8 +125,7 @@
   padding: 4px 2px;
   background: none;
   color: var(--text-mid);
-  font-family: var(--font-display);
-  font-variant: small-caps;
+  font-family: var(--font-caps);
   font-size: 15px;
   letter-spacing: 0.1em;
   cursor: pointer;
