@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Icon } from "src/lib/icon.component";
 import {
   CONCENTRATION_ICON,
@@ -15,7 +16,7 @@ const levelLabel = (level: Spell["level"]) => (level === 0 ? "Cantrip" : `Level 
 type Props = { spell: Spell };
 
 export function SpellCard({ spell }: Props) {
-  const headingId = `spell-card-${spell.id}`;
+  const headingId = useId();
   const action = actionIcon(spell.castingTime);
 
   return (

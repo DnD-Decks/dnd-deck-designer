@@ -12,6 +12,8 @@ export function createHomePage(page: Page) {
     sectionTitles: deck.getByRole("heading", { level: 2 }),
     cards: deck.getByRole("article"),
     images: deck.getByRole("img"),
+    spotlight: page.getByRole("dialog"),
+    dismissSpotlight: page.getByRole("button", { name: "Put it back" }),
 
     classButton(label: string) {
       return classSelector.getByRole("button", { name: label });
@@ -24,6 +26,11 @@ export function createHomePage(page: Page) {
     // exact: card names overlap as substrings ("Light" is inside "Dancing Lights")
     card(name: string) {
       return deck.getByRole("article", { name, exact: true });
+    },
+
+    // the control that lifts a card off the mat, one per card
+    zoom(name: string) {
+      return deck.getByRole("button", { name: `Zoom ${name}` });
     },
 
     async goto(cls?: string) {

@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Icon } from "src/lib/icon.component";
 import type { Feat } from "src/models/feats/feats.model";
 import { CardArt } from "./card-art.component";
@@ -6,7 +7,7 @@ import styles from "./feat-card.module.css";
 type Props = { feat: Feat };
 
 export function FeatCard({ feat }: Props) {
-  const headingId = `feat-card-${feat.id}`;
+  const headingId = useId();
 
   return (
     <article className={styles.card} aria-labelledby={headingId}>

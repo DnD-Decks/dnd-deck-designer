@@ -24,7 +24,7 @@ Spells shared between classes are intentionally duplicated — visual class iden
 2. Create model `src/models/<domain>/<domain>.model.ts` exporting a single object with `findAll({cls})`.
 3. Add a new union arm to `DeckCard` in `src/decks/deck.model.ts`.
 4. Assemble cards in `decks.get()` in the desired section order.
-5. Add arms to the three `switch(card.kind)` functions in `src/decks/deck-view.component.tsx` (`sectionLabel`, `cardKey`, `renderCard`). The `assertNever` default guards make missing arms compile errors.
+5. Add arms to the four `switch(card.kind)` functions in `src/decks/deck-view.component.tsx` (`sectionLabel`, `cardKey`, `cardName`, `renderCard`). The `assertNever` default guards make missing arms compile errors.
 6. Create `src/cards/<kind>-card.component.tsx` + CSS module.
 
 ---
@@ -39,6 +39,7 @@ Cards are React components with **fixed physical proportions** — the goal is W
 - **Horizontal feat cards** swap dimensions: `width: var(--card-height); height: var(--card-width)`.
 - **Weapon-mastery cards** reuse `spell-card.module.css` directly (same-folder relative import), overriding `--school-color` via inline style.
 - **Background art** is a layer behind frosted panels — see § *Art assets*. Cards are `position: relative` for it; panels print with `print-color-adjust: exact`.
+- **Click to inspect**: every card in a row sits in a slot with a transparent `Zoom <name>` button over its face. Clicking one holds it in `CardSpotlight` — a `<dialog open>` that blurs the mat behind it and scales the *same* card component up (up to 2.6×, viewport permitting), so what you inspect is what prints. The deck behind is `inert` + `aria-hidden` while a card is held; Escape, the mat and *Put it back* all return it, and focus goes back to the card in the row. **← / →** (and the two named neighbours in the caption) walk the whole deck in reading order, crossing section boundaries and refitting the lift when the card shape changes; `deck-view` keeps a `cardKey → button` ref map so the card you arrive at is the one focus returns to. Because a card can be on the mat and in the spotlight at once, heading ids come from `useId()`, never from the card id.
 - Use semantic HTML (`<article>`, `<h3>`) so cards are role-queryable in RTL and Playwright tests. Deck sections carry an `aria-label` (their section name) and keep the card tally *outside* the `<h2>`, so a heading reads "Level 1", not "Level 123 cards".
 
 ---

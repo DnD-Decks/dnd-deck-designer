@@ -76,6 +76,27 @@
   align-items: flex-start;
 }
 
+/* a card in the row: the card itself plus the control that picks it up */
+.slot {
+  position: relative;
+}
+
+/* invisible control over the card face — the card is the affordance, not a button on it */
+.zoom {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: none;
+  border-radius: 8px;
+  cursor: zoom-in;
+}
+
+.zoom:focus-visible {
+  outline: 2px solid var(--gold-soft);
+  outline-offset: 3px;
+}
+
 /* lift the card off the mat on hover — screen only, never reaches print */
 .cardRow > * {
   transition: transform 0.18s ease;
@@ -125,7 +146,8 @@
 @media print {
   /* keep screen chrome out of print output; cards keep their physical size */
   .sectionTitle,
-  .emptySlot {
+  .emptySlot,
+  .zoom {
     display: none;
   }
 

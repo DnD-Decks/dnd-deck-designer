@@ -1,0 +1,180 @@
+/* A card lifted off the mat and held under the lamp. */
+/* `.stage` is a <dialog open>, so the UA's box (auto margins, border, padding) is reset here. */
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-hi);
+  overflow: hidden;
+  cursor: zoom-out;
+}
+
+.stage:focus-visible {
+  outline: none;
+}
+
+/* The mat itself, thrown out of focus, with the workbench's gold wash pooled behind the card. */
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(18px) saturate(0.7) brightness(0.4);
+  -webkit-backdrop-filter: blur(18px) saturate(0.7) brightness(0.4);
+  background: radial-gradient(46vmin 46vmin at 50% 47%, rgba(192, 160, 32, 0.2), transparent 72%),
+    radial-gradient(110vmax 110vmax at 50% 50%, rgba(18, 20, 24, 0.55), rgba(18, 20, 24, 0.93));
+  transition: opacity 0.22s ease;
+}
+
+.lift {
+  transform-origin: center;
+  transition: transform 0.3s cubic-bezier(0.22, 0.8, 0.3, 1);
+  will-change: transform;
+}
+
+/* Shadow and rim are drawn pre-scaled: the whole card grows with the lift. */
+.held {
+  border-radius: 8px;
+  box-shadow: 0 6px 16px -4px rgba(0, 0, 0, 0.75), 0 0 0 0.5px rgba(212, 181, 74, 0.55);
+  cursor: default;
+}
+
+/* A neighbour deals in from the side you asked for; the first card of a hand just arrives. */
+.held[data-deal] {
+  animation: deal 0.22s ease both;
+}
+
+@keyframes deal {
+  from {
+    opacity: 0;
+    transform: translateX(var(--deal-from, 0));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* One quiet line of chrome: where you can go, and the way out. */
+.caption {
+  position: absolute;
+  bottom: max(2.5vh, 16px);
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0 1.5rem;
+  transition: opacity 0.22s ease;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  border: 0;
+  padding: 4px 2px;
+  background: none;
+  color: var(--text-low);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.step[data-step="previous"] {
+  grid-column: 1;
+  justify-self: end;
+}
+
+.step[data-step="next"] {
+  grid-column: 3;
+  justify-self: start;
+}
+
+.stepName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.step:hover {
+  color: var(--parchment);
+}
+
+.step:focus-visible {
+  outline: 2px solid var(--gold-soft);
+  outline-offset: 6px;
+}
+
+.dismiss {
+  grid-column: 2;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  padding: 4px 2px;
+  background: none;
+  color: var(--text-mid);
+  font-family: var(--font-display);
+  font-variant: small-caps;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.dismiss:hover {
+  color: var(--parchment);
+  border-bottom-color: var(--gold);
+}
+
+.dismiss:focus-visible {
+  outline: 2px solid var(--gold-soft);
+  outline-offset: 6px;
+}
+
+/* Arriving and leaving: the mat and the caption fade, the card travels. */
+.stage[data-phase="entering"]::before,
+.stage[data-phase="returning"]::before,
+.stage[data-phase="entering"] .caption,
+.stage[data-phase="returning"] .caption {
+  opacity: 0;
+}
+
+.stage[data-phase="returning"] .lift {
+  transition-duration: 0.18s;
+  transition-timing-function: ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage::before,
+  .lift,
+  .caption,
+  .step,
+  .dismiss {
+    transition: none;
+  }
+
+  .held[data-deal] {
+    animation: none;
+  }
+}
+
+@media print {
+  /* the spotlight is a reading aid on the workbench, never part of the sheet */
+  .stage {
+    display: none;
+  }
+}
