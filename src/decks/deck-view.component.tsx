@@ -169,7 +169,9 @@ export function DeckView({ cls }: Props) {
             {/* tally outside the h2: the heading should read "Level 1", not "Level 123 cards" */}
             <header className={styles.sectionTitle}>
               <h2 className={styles.sectionLabel}>{label}</h2>
-              <span className={styles.count}>{cards.length} cards</span>
+              <span className={styles.count}>
+                {cards.length} card{cards.length === 1 ? "" : "s"}
+              </span>
             </header>
             <div className={styles.cardRow}>
               {cards.map((card) => (

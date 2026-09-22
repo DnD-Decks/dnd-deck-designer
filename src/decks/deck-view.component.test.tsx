@@ -24,6 +24,11 @@ test("wizard deck has no 'Level 2' section heading (L1-only scope)", () => {
   expect(level2).toBeNull();
 });
 
+test("a section holding one card counts it in the singular", () => {
+  render(<DeckView cls="wizard" />);
+  screen.getByText("1 card");
+});
+
 test("wizard deck contains the Fire Bolt spell card", () => {
   render(<DeckView cls="wizard" />);
   screen.getByRole("heading", { name: /fire bolt/i, level: 3 });
