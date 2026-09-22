@@ -2,7 +2,6 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
 import { CardSpotlight } from "./card-spotlight.component.tsx";
 
-/** Stands in for the control on the mat that picked the card up. */
 function trigger() {
   const button = document.createElement("button");
   button.textContent = "Zoom Fire Bolt";

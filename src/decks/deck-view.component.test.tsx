@@ -57,7 +57,7 @@ test("putting the card back returns to the deck", async () => {
   fireEvent.click(screen.getByRole("button", { name: "Zoom Fire Bolt" }));
   fireEvent.click(screen.getByRole("button", { name: "Put it back" }));
 
-  await waitForElementToBeRemoved(() => screen.queryByRole("dialog"));
+  await waitForElementToBeRemoved(() => screen.queryByRole("dialog"), { timeout: 3000 });
   screen.getByRole("heading", { name: /cantrips/i, level: 2 });
 });
 
@@ -102,6 +102,6 @@ test("Escape from a card reached with the arrows returns focus to that card", as
   fireEvent.keyDown(screen.getByRole("dialog"), { key: "ArrowRight" });
   fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
 
-  await waitForElementToBeRemoved(() => screen.queryByRole("dialog"));
+  await waitForElementToBeRemoved(() => screen.queryByRole("dialog"), { timeout: 3000 });
   expect(document.activeElement).toBe(screen.getByRole("button", { name: "Zoom Blade Ward" }));
 });

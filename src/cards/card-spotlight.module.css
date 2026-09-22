@@ -1,4 +1,3 @@
-/* A card lifted off the mat and held under the lamp. */
 /* `.stage` is a <dialog open>, so the UA's box (auto margins, border, padding) is reset here. */
 .stage {
   position: fixed;
@@ -22,7 +21,7 @@
   outline: none;
 }
 
-/* The mat itself, thrown out of focus, with the workbench's gold wash pooled behind the card. */
+/* The mat, thrown out of focus, with the workbench's gold wash pooled behind the card. */
 .stage::before {
   content: "";
   position: absolute;
@@ -47,7 +46,6 @@
   cursor: default;
 }
 
-/* A neighbour deals in from the side you asked for; the first card of a hand just arrives. */
 .held[data-deal] {
   animation: deal 0.22s ease both;
 }
@@ -63,7 +61,6 @@
   }
 }
 
-/* One quiet line of chrome: where you can go, and the way out. */
 .caption {
   position: absolute;
   bottom: max(2.5vh, 16px);
@@ -78,10 +75,10 @@
 }
 
 .step {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   border: 0;
   padding: 4px 2px;
   background: none;
@@ -99,15 +96,17 @@
   justify-self: end;
 }
 
+.step[data-step="previous"]::before {
+  content: "‹ ";
+}
+
 .step[data-step="next"] {
   grid-column: 3;
   justify-self: start;
 }
 
-.stepName {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.step[data-step="next"]::after {
+  content: " ›";
 }
 
 .step:hover {
@@ -144,7 +143,6 @@
   outline-offset: 6px;
 }
 
-/* Arriving and leaving: the mat and the caption fade, the card travels. */
 .stage[data-phase="entering"]::before,
 .stage[data-phase="returning"]::before,
 .stage[data-phase="entering"] .caption,
@@ -172,7 +170,6 @@
 }
 
 @media print {
-  /* the spotlight is a reading aid on the workbench, never part of the sheet */
   .stage {
     display: none;
   }

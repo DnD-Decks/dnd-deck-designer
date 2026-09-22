@@ -12,7 +12,6 @@ import styles from "./deck-view.module.css";
 
 type Props = { cls: CharacterClass };
 
-/** The card being held under the lamp: its place in the deck, and the control that picked it up. */
 type Held = { index: number; trigger: HTMLElement };
 
 function sectionLabel(card: DeckCard) {
@@ -87,10 +86,49 @@ function sections(cards: readonly DeckCard[]) {
   return [...bySection.entries()];
 }
 
+type SlotProps = {
+  card: DeckCard;
+  triggers: Map<string, HTMLButtonElement>;
+  onZoom: () => void;
+};
+
+/** A card on the mat, under a transparent control that picks it up. */
+function CardSlot({ card, triggers, onZoom }: SlotProps) {
+  const key = cardKey(card);
+
+  return (
+    <div className={styles.slot}>
+      {renderCard(card)}
+      <button
+        type="button"
+        className={styles.zoom}
+        aria-label={`Zoom ${cardName(card)}`}
+        ref={(element) => {
+          if (element) triggers.set(key, element);
+          return () => {
+            triggers.delete(key);
+          };
+        }}
+        onClick={onZoom}
+      />
+    </div>
+  );
+}
+
+function EmptyDeck({ cls, label }: { cls: CharacterClass; label: string }) {
+  return (
+    <main className={styles.deck} data-class={cls}>
+      <div className={styles.emptySlot}>
+        <p className={styles.emptyState}>No cards vendored for {label} yet.</p>
+      </div>
+    </main>
+  );
+}
+
 export function DeckView({ cls }: Props) {
   const deck = decks.get({ cls });
   const grouped = sections(deck.cards);
-  // the deck in reading order, so the arrows can cross from one section into the next
+  // flattened from the rendered groups, so arrow order is the order you see
   const ordered = grouped.flatMap(([, cards]) => cards);
   const triggers = useRef(new Map<string, HTMLButtonElement>());
   const [held, setHeld] = useState<Held | null>(null);
@@ -103,7 +141,6 @@ export function DeckView({ cls }: Props) {
     setHeld(null);
   }
 
-  /** Pick up the card at `index` from its own control in the row. */
   const hold = (index: number) => {
     const card = ordered[index];
     const trigger = card && triggers.current.get(cardKey(card));
@@ -117,19 +154,10 @@ export function DeckView({ cls }: Props) {
 
   const heldCard = held ? ordered[held.index] : undefined;
 
-  if (deck.cards.length === 0) {
-    return (
-      <main className={styles.deck} data-class={cls}>
-        <div className={styles.emptySlot}>
-          <p className={styles.emptyState}>No cards vendored for {deck.cls.label} yet.</p>
-        </div>
-      </main>
-    );
-  }
+  if (deck.cards.length === 0) return <EmptyDeck cls={cls} label={deck.cls.label} />;
 
   return (
     <>
-      {/* while a card is held, the mat behind it is out of reach for pointer, keyboard and AT */}
       <main
         className={styles.deck}
         data-class={cls}
@@ -145,30 +173,19 @@ export function DeckView({ cls }: Props) {
             </header>
             <div className={styles.cardRow}>
               {cards.map((card) => (
-                <div key={cardKey(card)} className={styles.slot}>
-                  {renderCard(card)}
-                  {/* the whole card face is the target — print never sees it */}
-                  <button
-                    type="button"
-                    className={styles.zoom}
-                    aria-label={`Zoom ${cardName(card)}`}
-                    ref={(element) => {
-                      const key = cardKey(card);
-                      if (element) triggers.current.set(key, element);
-                      return () => {
-                        triggers.current.delete(key);
-                      };
-                    }}
-                    onClick={() => hold(ordered.indexOf(card))}
-                  />
-                </div>
+                <CardSlot
+                  key={cardKey(card)}
+                  card={card}
+                  triggers={triggers.current}
+                  onZoom={() => hold(ordered.indexOf(card))}
+                />
               ))}
             </div>
           </section>
         ))}
       </main>
 
-      {held && heldCard ? (
+      {held && heldCard && (
         <CardSpotlight
           label={cardName(heldCard)}
           liftedFrom={held.trigger}
@@ -178,7 +195,7 @@ export function DeckView({ cls }: Props) {
         >
           {renderCard(heldCard)}
         </CardSpotlight>
-      ) : null}
+      )}
     </>
   );
 }

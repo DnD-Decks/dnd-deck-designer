@@ -76,12 +76,11 @@
   align-items: flex-start;
 }
 
-/* a card in the row: the card itself plus the control that picks it up */
 .slot {
   position: relative;
 }
 
-/* invisible control over the card face — the card is the affordance, not a button on it */
+/* transparent control over the card face: the card itself is the affordance */
 .zoom {
   position: absolute;
   inset: 0;
