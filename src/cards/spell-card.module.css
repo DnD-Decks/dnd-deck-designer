@@ -7,7 +7,7 @@
   position: relative; /* anchors the CardArt background layer */
   display: flex;
   flex-direction: column;
-  border: 2px solid var(--ink-900);
+  border: 4px solid var(--ink-900);
   border-radius: 8px;
   overflow: hidden;
   /* fallback wash — visible wherever no painting covers the card */
@@ -125,8 +125,9 @@
 /* ── Art window ──────────────────────────────────────────────────────────── */
 /* Transparent spacer: the painting (or the fallback wash) shows through here unblurred. */
 .artWindow {
-  height: 26mm;
-  flex-shrink: 0;
+  /* takes whatever the text panel leaves, never less than the old fixed window */
+  flex: 1;
+  min-height: 26mm;
 }
 
 /* ── Type line ───────────────────────────────────────────────────────────── */
@@ -166,17 +167,20 @@
 
 /* ── Text box ────────────────────────────────────────────────────────────── */
 .textBox {
-  flex: 1;
+  flex: 0 1 auto;
+  /* the painting wins the space, but the panel never drops below a third of the card */
+  min-height: 30mm;
   display: flex;
   flex-direction: column;
   margin: 4px;
   padding: 5px 8px 4px;
   overflow-y: auto;
-  background: color-mix(in srgb, var(--parchment) 62%, transparent);
-  border: 1px solid color-mix(in srgb, var(--school-color) 20%, #8a7a5a);
-  border-radius: 4px;
+  --wash: color-mix(in srgb, var(--parchment) 47%, transparent);
+  background: var(--wash);
+  /* no hard edge: the same wash blurs outward so the panel dissolves into the painting */
+  box-shadow: 0 0 5px 3px var(--wash);
+  border-radius: 6px;
   gap: 4px;
-  min-height: 0;
 }
 
 @media print {
