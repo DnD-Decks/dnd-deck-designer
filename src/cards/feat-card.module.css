@@ -7,7 +7,7 @@
   position: relative; /* anchors the CardArt background layer */
   display: flex;
   flex-direction: column;
-  border: 3px solid var(--ink-900);
+  border: 4px solid var(--ink-900);
   border-radius: 8px;
   overflow: hidden;
   /* fallback wash — visible wherever no painting covers the card */
@@ -93,7 +93,7 @@
   margin: 4px;
   padding: 5px 8px 4px;
   overflow-y: auto;
-  --wash: color-mix(in srgb, var(--parchment) 52%, transparent);
+  --wash: color-mix(in srgb, var(--parchment) 47%, transparent);
   background: var(--wash);
   /* no hard edge: the same wash blurs outward so the panel dissolves into the painting */
   box-shadow: 0 0 5px 3px var(--wash);
