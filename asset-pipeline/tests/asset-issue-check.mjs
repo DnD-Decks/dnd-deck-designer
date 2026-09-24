@@ -1,19 +1,30 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import worker, { finalDimensions, parseAssetIssue, previewDimensions, promptForDimensions } from "../worker/index.js";
+import worker, {
+  finalDimensions,
+  parseAssetIssue,
+  previewDimensions,
+  promptForDimensions,
+} from "../worker/index.js";
 
-function issue({ number = 99, orientation = "portrait 5:7", id = "thunderwave", path, closeNumber = number } = {}) {
-  const outputPath = path || "public/art/" + id + ".png";
+function issue({
+  number = 99,
+  orientation = "portrait 5:7",
+  id = "thunderwave",
+  path,
+  closeNumber = number,
+} = {}) {
+  const outputPath = path || `public/art/${id}.png`;
   return {
     number,
     state: "open",
     title: "[asset]: `Thunderwave` spell",
-    html_url: "https://github.com/DnD-Decks/dnd-deck-designer/issues/" + number,
+    html_url: `https://github.com/DnD-Decks/dnd-deck-designer/issues/${number}`,
     labels: [{ name: "ASSET" }],
     body: [
       "## Asset ID",
       "",
-      "`" + id + "`",
+      `\`${id}\``,
       "",
       "## Card data snapshot",
       "",
@@ -23,7 +34,7 @@ function issue({ number = 99, orientation = "portrait 5:7", id = "thunderwave", 
       "| Name | Thunderwave |",
       "| School | Evocation |",
       "| Level | 1 |",
-      "| Orientation | " + orientation + " |",
+      `| Orientation | ${orientation} |`,
       "",
       "## Image-generation prompt (paste into ChatGPT)",
       "",
@@ -34,14 +45,16 @@ function issue({ number = 99, orientation = "portrait 5:7", id = "thunderwave", 
       "",
       "## OUTPUT",
       "",
-      orientation === "landscape 7:5" ? "Horizontal 7:5 portrait aspect ratio." : "Vertical 5:7 portrait aspect ratio.",
+      orientation === "landscape 7:5"
+        ? "Horizontal 7:5 portrait aspect ratio."
+        : "Vertical 5:7 portrait aspect ratio.",
       "At least 750 x 1050 px.",
       "```",
       "",
       "## Acceptance criteria",
       "",
-      "- [ ] PR adds `" + outputPath + "` — correct dimensions",
-      "- [ ] PR body references `Closes #" + closeNumber + "`",
+      `- [ ] PR adds \`${outputPath}\` — correct dimensions`,
+      `- [ ] PR body references \`Closes #${closeNumber}\``,
     ].join("\n"),
   };
 }
@@ -59,7 +72,9 @@ test("parses an open portrait asset issue and validates its output path", () => 
 });
 
 test("supports landscape feat cards and exact 7:5 dimensions", () => {
-  const parsed = parseAssetIssue(issue({ number: 42, id: "rogue-sneak-attack", orientation: "landscape 7:5" }));
+  const parsed = parseAssetIssue(
+    issue({ number: 42, id: "rogue-sneak-attack", orientation: "landscape 7:5" })
+  );
   assert.equal(parsed.orientation, "landscape");
   assert.deepEqual(previewDimensions(parsed.orientation), { width: 672, height: 480 });
   assert.deepEqual(finalDimensions(parsed.orientation), { width: 1120, height: 800 });
@@ -83,7 +98,12 @@ test("rejects unsafe or inconsistent output paths and a mismatched close referen
 });
 
 test("replaces the prompt output block with the requested pixels and composition direction", () => {
-  const prompt = promptForDimensions("## SCENE\nA scene.\n\n## SELECTED PREVIEW\n\nKeep its composition.\n\n## OUTPUT\n\nAt least 750 x 1050 px.", 480, 672, "Place the action centrally.");
+  const prompt = promptForDimensions(
+    "## SCENE\nA scene.\n\n## SELECTED PREVIEW\n\nKeep its composition.\n\n## OUTPUT\n\nAt least 750 x 1050 px.",
+    480,
+    672,
+    "Place the action centrally."
+  );
   assert.match(prompt, /480 × 672 pixels/);
   assert.match(prompt, /Keep its composition\./);
   assert.match(prompt, /Place the action centrally\./);
