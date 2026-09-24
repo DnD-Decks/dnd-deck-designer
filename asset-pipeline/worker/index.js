@@ -473,35 +473,60 @@ document.addEventListener("keydown", function(event) {
 start();
 `;
 
-export const previewDimensions = (orientation) => orientation === "landscape" ? { width: 672, height: 480 } : { width: 480, height: 672 };
-export const finalDimensions = (orientation) => orientation === "landscape" ? { width: 1120, height: 800 } : { width: 800, height: 1120 };
+export const previewDimensions = (orientation) =>
+  orientation === "landscape" ? { width: 672, height: 480 } : { width: 480, height: 672 };
+export const finalDimensions = (orientation) =>
+  orientation === "landscape" ? { width: 1120, height: 800 } : { width: 800, height: 1120 };
 
 export function parseAssetIssue(issue) {
   const body = String(issue.body || "");
   const assetId = body.match(/^## Asset ID\s*\n+\s*`([^`]+)`/im)?.[1]?.trim() || null;
-  const getCell = (name) => body.match(new RegExp("^\\|\\s*" + name + "\\s*\\|\\s*([^|]+)\\|", "im"))?.[1]?.trim() || "";
-  const prompt = body.match(/## Image-generation prompt[^\n]*\r?\n+```[^\r\n]*\r?\n([\s\S]*?)\r?\n```/i)?.[1]?.trim() || "";
+  const getCell = (name) =>
+    body.match(new RegExp(`^\\|\\s*${name}\\s*\\|\\s*([^|]+)\\|`, "im"))?.[1]?.trim() || "";
+  const prompt =
+    body
+      .match(/## Image-generation prompt[^\n]*\r?\n+```[^\r\n]*\r?\n([\s\S]*?)\r?\n```/i)?.[1]
+      ?.trim() || "";
   const orientationValue = getCell("Orientation").toLowerCase();
-  const orientation = /landscape|7\s*:\s*5/.test(orientationValue) ? "landscape" : (/portrait|vertical|5\s*:\s*7/.test(orientationValue) ? "portrait" : "");
+  const orientation = /landscape|7\s*:\s*5/.test(orientationValue)
+    ? "landscape"
+    : /portrait|vertical|5\s*:\s*7/.test(orientationValue)
+      ? "portrait"
+      : "";
   const targetPath = body.match(/PR adds `((?:public\/art\/)[a-z0-9][a-z0-9-]*\.png)`/i)?.[1] || "";
   const criteriaClose = body.match(/Closes\s+#(\d+)/i)?.[1] || "";
   const validAssetId = Boolean(assetId && /^[a-z0-9][a-z0-9-]*$/.test(assetId));
-  const targetMatchesId = !targetPath || targetPath === "public/art/" + assetId + ".png";
+  const targetMatchesId = !targetPath || targetPath === `public/art/${assetId}.png`;
   const issues = [];
   if (!validAssetId) issues.push("Missing or invalid Asset ID.");
   if (!prompt) issues.push("No fenced image-generation prompt was found.");
   if (!orientation) issues.push("Card orientation must state portrait 5:7 or landscape 7:5.");
   if (!targetPath) issues.push("Acceptance criteria must name a public/art/*.png output file.");
   if (!targetMatchesId) issues.push("Acceptance-criteria image path does not match the Asset ID.");
-  if (criteriaClose && Number(criteriaClose) !== Number(issue.number)) issues.push("Acceptance-criteria issue number does not match this issue.");
+  if (criteriaClose && Number(criteriaClose) !== Number(issue.number))
+    issues.push("Acceptance-criteria issue number does not match this issue.");
   const type = getCell("Kind");
-  const name = getCell("Name") || String(issue.title || "").replace(/^\[asset\]:\s*/i, "").replace(/`/g, "");
-  const subtitle = [getCell("School"), getCell("Level") && (getCell("Level") === "0" ? "cantrip" : "level " + getCell("Level")), type === "feat" ? getCell("Class") + " feat" : ""].filter(Boolean).join(" · ");
-  const orientationLabel = orientation ? (orientation === "landscape" ? "Landscape 7:5" : "Portrait 5:7") : "Orientation missing";
+  const name =
+    getCell("Name") ||
+    String(issue.title || "")
+      .replace(/^\[asset\]:\s*/i, "")
+      .replace(/`/g, "");
+  const subtitle = [
+    getCell("School"),
+    getCell("Level") && (getCell("Level") === "0" ? "cantrip" : `level ${getCell("Level")}`),
+    type === "feat" ? `${getCell("Class")} feat` : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  const orientationLabel = orientation
+    ? orientation === "landscape"
+      ? "Landscape 7:5"
+      : "Portrait 5:7"
+    : "Orientation missing";
   return {
     number: Number(issue.number),
-    title: issue.title || "Asset issue #" + issue.number,
-    htmlUrl: issue.html_url || "https://github.com/" + OWNER + "/" + REPOSITORY + "/issues/" + issue.number,
+    title: issue.title || `Asset issue #${issue.number}`,
+    htmlUrl: issue.html_url || `https://github.com/${OWNER}/${REPOSITORY}/issues/${issue.number}`,
     name,
     assetId,
     kind: type,
@@ -518,14 +543,16 @@ export function parseAssetIssue(issue) {
 }
 
 export function promptForDimensions(prompt, width, height, variation) {
-  const output = "## OUTPUT\n\nExact image dimensions: " + width + " × " + height + " pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI.";
+  const output = `## OUTPUT\n\nExact image dimensions: ${width} × ${height} pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI.`;
   const outputHeader = /^## OUTPUT\s*$/im;
   const outputIndex = prompt.search(outputHeader);
-  const body = outputIndex >= 0 ? prompt.slice(0, outputIndex) + output : prompt + "\n\n" + output;
-  const direction = "## COMPOSITION DIRECTION FOR THIS CANDIDATE\n\n" + variation + "\n\n";
+  const body = outputIndex >= 0 ? prompt.slice(0, outputIndex) + output : `${prompt}\n\n${output}`;
+  const direction = `## COMPOSITION DIRECTION FOR THIS CANDIDATE\n\n${variation}\n\n`;
   const styleHeader = /^## VISUAL STYLE\s*$/im;
   const styleIndex = body.search(styleHeader);
-  return styleIndex >= 0 ? body.slice(0, styleIndex) + direction + body.slice(styleIndex) : body + "\n\n" + direction;
+  return styleIndex >= 0
+    ? body.slice(0, styleIndex) + direction + body.slice(styleIndex)
+    : `${body}\n\n${direction}`;
 }
 
 function jsonResponse(data, status) {
@@ -540,7 +567,8 @@ function htmlResponse() {
     headers: {
       "content-type": "text/html; charset=utf-8",
       "cache-control": "no-store",
-      "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+      "content-security-policy":
+        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
       "referrer-policy": "strict-origin-when-cross-origin",
       "x-content-type-options": "nosniff",
     },
@@ -553,11 +581,13 @@ function makePipelineError(message, status) {
 
 function assertSameOrigin(request) {
   const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin) throw makePipelineError("Cross-origin requests are not allowed.", 403);
+  if (origin && origin !== new URL(request.url).origin)
+    throw makePipelineError("Cross-origin requests are not allowed.", 403);
 }
 
 function requireBucket(env) {
-  if (!env.BUCKET || typeof env.BUCKET.get !== "function") throw makePipelineError("Image storage is not configured for this Site.", 503);
+  if (!env.BUCKET || typeof env.BUCKET.get !== "function")
+    throw makePipelineError("Image storage is not configured for this Site.", 503);
   return env.BUCKET;
 }
 
@@ -566,15 +596,25 @@ async function githubJson(path, env, options, authenticated) {
   headers.set("accept", "application/vnd.github+json");
   headers.set("x-github-api-version", "2022-11-28");
   headers.set("user-agent", "dnd-deck-asset-pipeline");
-  if (authenticated !== false && env.GITHUB_TOKEN) headers.set("authorization", "Bearer " + env.GITHUB_TOKEN);
+  if (authenticated !== false && env.GITHUB_TOKEN)
+    headers.set("authorization", `Bearer ${env.GITHUB_TOKEN}`);
   if (options?.body) headers.set("content-type", "application/json");
   const response = await fetch(GITHUB_API + path, { ...options, headers });
   const raw = await response.text();
   let data;
-  try { data = raw ? JSON.parse(raw) : {}; } catch { data = {}; }
+  try {
+    data = raw ? JSON.parse(raw) : {};
+  } catch {
+    data = {};
+  }
   if (!response.ok) {
-    const detail = data.message ? String(data.message).slice(0, 220) : "GitHub API returned " + response.status;
-    throw makePipelineError("GitHub request failed: " + detail, response.status === 401 || response.status === 403 ? 502 : response.status);
+    const detail = data.message
+      ? String(data.message).slice(0, 220)
+      : `GitHub API returned ${response.status}`;
+    throw makePipelineError(
+      `GitHub request failed: ${detail}`,
+      response.status === 401 || response.status === 403 ? 502 : response.status
+    );
   }
   return data;
 }
@@ -582,9 +622,20 @@ async function githubJson(path, env, options, authenticated) {
 async function openIssues(env) {
   const output = [];
   for (let pageNumber = 1; pageNumber <= 10; pageNumber += 1) {
-    const query = new URLSearchParams({ state: "open", labels: "ASSET", per_page: "100", page: String(pageNumber) });
-    const rows = await githubJson("/repos/" + OWNER + "/" + REPOSITORY + "/issues?" + query, env, undefined, false);
-    if (!Array.isArray(rows)) throw makePipelineError("GitHub returned an unexpected issue list.", 502);
+    const query = new URLSearchParams({
+      state: "open",
+      labels: "ASSET",
+      per_page: "100",
+      page: String(pageNumber),
+    });
+    const rows = await githubJson(
+      `/repos/${OWNER}/${REPOSITORY}/issues?${query}`,
+      env,
+      undefined,
+      false
+    );
+    if (!Array.isArray(rows))
+      throw makePipelineError("GitHub returned an unexpected issue list.", 502);
     output.push(...rows.filter((issue) => !issue.pull_request).map(parseAssetIssue));
     if (rows.length < 100) break;
   }
@@ -593,8 +644,17 @@ async function openIssues(env) {
 }
 
 async function getIssue(number, env) {
-  const raw = await githubJson("/repos/" + OWNER + "/" + REPOSITORY + "/issues/" + number, env, undefined, false);
-  if (raw.pull_request || raw.state !== "open" || !(raw.labels || []).some((label) => String(label.name).toLowerCase() === "asset")) {
+  const raw = await githubJson(
+    `/repos/${OWNER}/${REPOSITORY}/issues/${number}`,
+    env,
+    undefined,
+    false
+  );
+  if (
+    raw.pull_request ||
+    raw.state !== "open" ||
+    !(raw.labels || []).some((label) => String(label.name).toLowerCase() === "asset")
+  ) {
     throw makePipelineError("This is no longer an open ASSET issue.", 404);
   }
   return { raw, parsed: parseAssetIssue(raw) };
@@ -619,18 +679,32 @@ function toBase64(buffer) {
 async function openAIJson(response) {
   const body = await response.json().catch(() => ({}));
   if (!response.ok) {
-    const detail = body?.error?.message ? String(body.error.message).slice(0, 260) : "OpenAI API returned " + response.status;
-    throw makePipelineError("OpenAI image request failed: " + detail, 502);
+    const detail = body?.error?.message
+      ? String(body.error.message).slice(0, 260)
+      : `OpenAI API returned ${response.status}`;
+    throw makePipelineError(`OpenAI image request failed: ${detail}`, 502);
   }
   return body;
 }
 
 async function generateImage(prompt, env, size, quality) {
-  if (!env.OPENAI_API_KEY) throw makePipelineError("OpenAI image generation is not configured. Add OPENAI_API_KEY as a Site secret.", 503);
+  if (!env.OPENAI_API_KEY)
+    throw makePipelineError(
+      "OpenAI image generation is not configured. Add OPENAI_API_KEY as a Site secret.",
+      503
+    );
   const response = await fetch("https://api.openai.com/v1/images/generations", {
     method: "POST",
-    headers: { authorization: "Bearer " + env.OPENAI_API_KEY, "content-type": "application/json" },
-    body: JSON.stringify({ model: IMAGE_MODEL, prompt, n: 1, size, quality, output_format: "png", background: "opaque" }),
+    headers: { authorization: `Bearer ${env.OPENAI_API_KEY}`, "content-type": "application/json" },
+    body: JSON.stringify({
+      model: IMAGE_MODEL,
+      prompt,
+      n: 1,
+      size,
+      quality,
+      output_format: "png",
+      background: "opaque",
+    }),
   });
   const body = await openAIJson(response);
   const image = body.data?.[0]?.b64_json;
@@ -639,7 +713,11 @@ async function generateImage(prompt, env, size, quality) {
 }
 
 async function editImage(prompt, sourceBytes, env, size) {
-  if (!env.OPENAI_API_KEY) throw makePipelineError("OpenAI image generation is not configured. Add OPENAI_API_KEY as a Site secret.", 503);
+  if (!env.OPENAI_API_KEY)
+    throw makePipelineError(
+      "OpenAI image generation is not configured. Add OPENAI_API_KEY as a Site secret.",
+      503
+    );
   const form = new FormData();
   form.set("model", IMAGE_MODEL);
   form.set("prompt", prompt);
@@ -650,7 +728,7 @@ async function editImage(prompt, sourceBytes, env, size) {
   form.append("image", new Blob([sourceBytes], { type: "image/png" }), "selected-preview.png");
   const response = await fetch("https://api.openai.com/v1/images/edits", {
     method: "POST",
-    headers: { authorization: "Bearer " + env.OPENAI_API_KEY },
+    headers: { authorization: `Bearer ${env.OPENAI_API_KEY}` },
     body: form,
   });
   const body = await openAIJson(response);
@@ -660,7 +738,14 @@ async function editImage(prompt, sourceBytes, env, size) {
 }
 
 function pngDimensions(bytes) {
-  if (bytes.length < 24 || bytes[0] !== 137 || bytes[1] !== 80 || bytes[2] !== 78 || bytes[3] !== 71) return null;
+  if (
+    bytes.length < 24 ||
+    bytes[0] !== 137 ||
+    bytes[1] !== 80 ||
+    bytes[2] !== 78 ||
+    bytes[3] !== 71
+  )
+    return null;
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   return { width: view.getUint32(16), height: view.getUint32(20) };
 }
@@ -670,7 +755,7 @@ function validRunId(value) {
 }
 
 function runPrefix(number, runId) {
-  return "issues/" + number + "/runs/" + runId + "/";
+  return `issues/${number}/runs/${runId}/`;
 }
 
 async function saveManifest(bucket, manifest) {
@@ -681,59 +766,93 @@ async function saveManifest(bucket, manifest) {
 
 async function readManifest(bucket, number, runId) {
   if (!validRunId(runId)) throw makePipelineError("Invalid draft run ID.", 400);
-  const manifestKey = runPrefix(number, runId) + "manifest.json";
+  const manifestKey = `${runPrefix(number, runId)}manifest.json`;
   const object = await bucket.get(manifestKey);
   if (!object) throw makePipelineError("Draft run not found. Generate previews again.", 404);
   const manifest = await object.json();
-  if (Number(manifest.issueNumber) !== number || manifest.runId !== runId) throw makePipelineError("Draft run does not belong to this issue.", 404);
+  if (Number(manifest.issueNumber) !== number || manifest.runId !== runId)
+    throw makePipelineError("Draft run does not belong to this issue.", 404);
   return manifest;
 }
 
 async function getRuns(number, env) {
   const bucket = requireBucket(env);
-  const prefix = "issues/" + number + "/runs/";
+  const prefix = `issues/${number}/runs/`;
   let cursor;
   const keys = [];
   for (let pageNumber = 0; pageNumber < 4; pageNumber += 1) {
     const page = await bucket.list({ prefix, cursor, limit: 100 });
-    keys.push(...page.objects.filter((item) => item.key.endsWith("/manifest.json")).map((item) => item.key));
+    keys.push(
+      ...page.objects.filter((item) => item.key.endsWith("/manifest.json")).map((item) => item.key)
+    );
     if (!page.truncated || !page.cursor) break;
     cursor = page.cursor;
   }
-  const manifests = await Promise.all(keys.map(async (key) => {
-    const object = await bucket.get(key);
-    return object ? object.json() : null;
-  }));
-  return manifests.filter(Boolean).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))).slice(0, 8);
+  const manifests = await Promise.all(
+    keys.map(async (key) => {
+      const object = await bucket.get(key);
+      return object ? object.json() : null;
+    })
+  );
+  return manifests
+    .filter(Boolean)
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
+    .slice(0, 8);
 }
 
 async function makeDrafts(number, env) {
   const bucket = requireBucket(env);
-  if (!env.OPENAI_API_KEY) throw makePipelineError("OpenAI image generation is not configured. Add OPENAI_API_KEY as a Site secret.", 503);
+  if (!env.OPENAI_API_KEY)
+    throw makePipelineError(
+      "OpenAI image generation is not configured. Add OPENAI_API_KEY as a Site secret.",
+      503
+    );
   const { raw, parsed } = await getIssue(number, env);
   if (!parsed.ready) throw makePipelineError(parsed.errors.join(" "), 422);
   const dimensions = previewDimensions(parsed.orientation);
   const runId = crypto.randomUUID();
   const prefix = runPrefix(number, runId);
-  const attempts = await Promise.allSettled(PREVIEW_VARIANTS.map(async (variant) => {
-    const prompt = promptForDimensions(parsed.prompt, dimensions.width, dimensions.height, variant.note);
-    const bytes = await generateImage(prompt, env, dimensions.width + "x" + dimensions.height, "low");
-    const size = pngDimensions(bytes);
-    if (!size || size.width !== dimensions.width || size.height !== dimensions.height) {
-      throw makePipelineError("A preview returned unexpected dimensions.", 502);
-    }
-    const key = prefix + "candidate-" + variant.id + ".png";
-    await bucket.put(key, bytes, {
-      httpMetadata: { contentType: "image/png", cacheControl: "private, max-age=3600" },
-      customMetadata: { issue: String(number), run: runId, candidate: String(variant.id) },
-    });
-    return { id: variant.id, title: variant.title, description: variant.note, key, width: size.width, height: size.height };
-  }));
+  const attempts = await Promise.allSettled(
+    PREVIEW_VARIANTS.map(async (variant) => {
+      const prompt = promptForDimensions(
+        parsed.prompt,
+        dimensions.width,
+        dimensions.height,
+        variant.note
+      );
+      const bytes = await generateImage(
+        prompt,
+        env,
+        `${dimensions.width}x${dimensions.height}`,
+        "low"
+      );
+      const size = pngDimensions(bytes);
+      if (!size || size.width !== dimensions.width || size.height !== dimensions.height) {
+        throw makePipelineError("A preview returned unexpected dimensions.", 502);
+      }
+      const key = `${prefix}candidate-${variant.id}.png`;
+      await bucket.put(key, bytes, {
+        httpMetadata: { contentType: "image/png", cacheControl: "private, max-age=3600" },
+        customMetadata: { issue: String(number), run: runId, candidate: String(variant.id) },
+      });
+      return {
+        id: variant.id,
+        title: variant.title,
+        description: variant.note,
+        key,
+        width: size.width,
+        height: size.height,
+      };
+    })
+  );
   const candidates = [];
   const failures = [];
   attempts.forEach((attempt, index) => {
     if (attempt.status === "fulfilled") candidates.push(attempt.value);
-    else failures.push("Draft 0" + PREVIEW_VARIANTS[index].id + ": " + String(attempt.reason?.message || "request failed").slice(0, 160));
+    else
+      failures.push(
+        `Draft 0${PREVIEW_VARIANTS[index].id}: ${String(attempt.reason?.message || "request failed").slice(0, 160)}`
+      );
   });
   const manifest = {
     issueNumber: number,
@@ -743,7 +862,7 @@ async function makeDrafts(number, env) {
     orientation: parsed.orientation,
     orientationLabel: parsed.orientationLabel,
     runId,
-    manifestKey: prefix + "manifest.json",
+    manifestKey: `${prefix}manifest.json`,
     createdAt: new Date().toISOString(),
     previewQuality: "low",
     previewModel: IMAGE_MODEL,
@@ -753,7 +872,8 @@ async function makeDrafts(number, env) {
     finals: {},
   };
   await saveManifest(bucket, manifest);
-  if (!candidates.length) throw makePipelineError("All four preview requests failed. " + failures.join(" "), 502);
+  if (!candidates.length)
+    throw makePipelineError(`All four preview requests failed. ${failures.join(" ")}`, 502);
   return manifest;
 }
 
@@ -776,23 +896,50 @@ async function renderFinalImage(number, body, env) {
   if (!previewObject) throw makePipelineError("The selected preview is no longer available.", 404);
   const sourceBytes = new Uint8Array(await previewObject.arrayBuffer());
   const dimensions = finalDimensions(parsed.orientation);
-  const referenceBrief = "## SELECTED PREVIEW\n\nThe supplied reference image is the composition selected by the user. Preserve its main action, subject placement, camera view, dominant color mood, and silhouette. Refine the painterly image at higher quality for print. Do not introduce new story elements or change the card scene.";
+  const referenceBrief =
+    "## SELECTED PREVIEW\n\nThe supplied reference image is the composition selected by the user. Preserve its main action, subject placement, camera view, dominant color mood, and silhouette. Refine the painterly image at higher quality for print. Do not introduce new story elements or change the card scene.";
   const outputHeader = /^## OUTPUT\s*$/im;
   const finalPromptSource = outputHeader.test(parsed.prompt)
-    ? parsed.prompt.replace(outputHeader, referenceBrief + "\n\n## OUTPUT")
-    : parsed.prompt + "\n\n" + referenceBrief;
-  const prompt = promptForDimensions(finalPromptSource, dimensions.width, dimensions.height, candidate.description);
-  const finalBytes = await editImage(prompt, sourceBytes, env, dimensions.width + "x" + dimensions.height);
+    ? parsed.prompt.replace(outputHeader, `${referenceBrief}\n\n## OUTPUT`)
+    : `${parsed.prompt}\n\n${referenceBrief}`;
+  const prompt = promptForDimensions(
+    finalPromptSource,
+    dimensions.width,
+    dimensions.height,
+    candidate.description
+  );
+  const finalBytes = await editImage(
+    prompt,
+    sourceBytes,
+    env,
+    `${dimensions.width}x${dimensions.height}`
+  );
   const actual = pngDimensions(finalBytes);
   if (!actual || actual.width !== dimensions.width || actual.height !== dimensions.height) {
-    throw makePipelineError("Final render dimensions were " + (actual ? actual.width + " × " + actual.height : "unreadable") + "; expected " + dimensions.width + " × " + dimensions.height + ". No PR was opened.", 502);
+    throw makePipelineError(
+      `Final render dimensions were ${actual ? `${actual.width} × ${actual.height}` : "unreadable"}; expected ${dimensions.width} × ${dimensions.height}. No PR was opened.`,
+      502
+    );
   }
-  const key = runPrefix(number, manifest.runId) + "final-" + candidate.id + ".png";
+  const key = `${runPrefix(number, manifest.runId)}final-${candidate.id}.png`;
   await bucket.put(key, finalBytes, {
     httpMetadata: { contentType: "image/png", cacheControl: "private, max-age=3600" },
-    customMetadata: { issue: String(number), run: manifest.runId, candidate: String(candidate.id), stage: "final" },
+    customMetadata: {
+      issue: String(number),
+      run: manifest.runId,
+      candidate: String(candidate.id),
+      stage: "final",
+    },
   });
-  const final = { key, width: actual.width, height: actual.height, quality: "high", model: IMAGE_MODEL, createdAt: new Date().toISOString(), candidateId: candidate.id };
+  const final = {
+    key,
+    width: actual.width,
+    height: actual.height,
+    quality: "high",
+    model: IMAGE_MODEL,
+    createdAt: new Date().toISOString(),
+    candidateId: candidate.id,
+  };
   manifest.finals = { ...(manifest.finals || {}), [keyName]: final };
   await saveManifest(bucket, manifest);
   return { manifest, final };
@@ -803,26 +950,36 @@ function refPath(branch) {
 }
 
 async function openPullRequest(number, body, env) {
-  if (!env.GITHUB_TOKEN) throw makePipelineError("Pull-request creation is not configured. Add a repository-scoped GITHUB_TOKEN as a Site secret.", 503);
+  if (!env.GITHUB_TOKEN)
+    throw makePipelineError(
+      "Pull-request creation is not configured. Add a repository-scoped GITHUB_TOKEN as a Site secret.",
+      503
+    );
   const bucket = requireBucket(env);
   const manifest = await readManifest(bucket, number, body.runId);
   const candidate = validateCandidate(manifest, body.candidateId);
   const final = manifest.finals?.[String(candidate.id)];
-  if (!final) throw makePipelineError("Render and review the final image before creating a pull request.", 409);
+  if (!final)
+    throw makePipelineError(
+      "Render and review the final image before creating a pull request.",
+      409
+    );
   if (final.prUrl) return { manifest, final };
   const { raw, parsed } = await getIssue(number, env);
   if (!parsed.ready) throw makePipelineError(parsed.errors.join(" "), 422);
   const finalObject = await bucket.get(final.key);
-  if (!finalObject) throw makePipelineError("The rendered final image is no longer available.", 404);
+  if (!finalObject)
+    throw makePipelineError("The rendered final image is no longer available.", 404);
   const finalBytes = await finalObject.arrayBuffer();
   const actual = pngDimensions(new Uint8Array(finalBytes));
-  if (!actual || actual.width !== final.width || actual.height !== final.height) throw makePipelineError("Final image dimensions failed validation.", 422);
+  if (!actual || actual.width !== final.width || actual.height !== final.height)
+    throw makePipelineError("Final image dimensions failed validation.", 422);
 
-  const repo = await githubJson("/repos/" + OWNER + "/" + REPOSITORY, env);
+  const repo = await githubJson(`/repos/${OWNER}/${REPOSITORY}`, env);
   const base = repo.default_branch || "main";
-  const branch = "asset/issue-" + number + "-" + parsed.assetId + "-" + manifest.runId.slice(0, 8) + "-c" + candidate.id;
-  const pullsQuery = new URLSearchParams({ state: "open", head: OWNER + ":" + branch });
-  const existingPulls = await githubJson("/repos/" + OWNER + "/" + REPOSITORY + "/pulls?" + pullsQuery, env);
+  const branch = `asset/issue-${number}-${parsed.assetId}-${manifest.runId.slice(0, 8)}-c${candidate.id}`;
+  const pullsQuery = new URLSearchParams({ state: "open", head: `${OWNER}:${branch}` });
+  const existingPulls = await githubJson(`/repos/${OWNER}/${REPOSITORY}/pulls?${pullsQuery}`, env);
   if (existingPulls.length) {
     final.prUrl = existingPulls[0].html_url;
     final.prNumber = existingPulls[0].number;
@@ -831,53 +988,59 @@ async function openPullRequest(number, body, env) {
     return { manifest, final };
   }
 
-  const baseRef = await githubJson("/repos/" + OWNER + "/" + REPOSITORY + "/git/ref/heads/" + encodeURIComponent(base), env);
+  const baseRef = await githubJson(
+    `/repos/${OWNER}/${REPOSITORY}/git/ref/heads/${encodeURIComponent(base)}`,
+    env
+  );
   const baseSha = baseRef.object.sha;
-  const baseCommit = await githubJson("/repos/" + OWNER + "/" + REPOSITORY + "/git/commits/" + baseSha, env);
-  const blob = await githubJson("/repos/" + OWNER + "/" + REPOSITORY + "/git/blobs", env, {
+  const baseCommit = await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/commits/${baseSha}`, env);
+  const blob = await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/blobs`, env, {
     method: "POST",
     body: JSON.stringify({ content: toBase64(finalBytes), encoding: "base64" }),
   });
-  const tree = await githubJson("/repos/" + OWNER + "/" + REPOSITORY + "/git/trees", env, {
+  const tree = await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/trees`, env, {
     method: "POST",
     body: JSON.stringify({
       base_tree: baseCommit.tree.sha,
       tree: [{ path: parsed.targetPath, mode: "100644", type: "blob", sha: blob.sha }],
     }),
   });
-  const commit = await githubJson("/repos/" + OWNER + "/" + REPOSITORY + "/git/commits", env, {
+  const commit = await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/commits`, env, {
     method: "POST",
     body: JSON.stringify({
-      message: "Add " + parsed.name + " card artwork",
+      message: `Add ${parsed.name} card artwork`,
       tree: tree.sha,
       parents: [baseSha],
     }),
   });
   let branchRef;
   try {
-    branchRef = await githubJson("/repos/" + OWNER + "/" + REPOSITORY + "/git/ref/heads/" + refPath(branch), env);
+    branchRef = await githubJson(
+      `/repos/${OWNER}/${REPOSITORY}/git/ref/heads/${refPath(branch)}`,
+      env
+    );
   } catch (error) {
     if (error.status !== 404) throw error;
   }
   if (branchRef) {
-    await githubJson("/repos/" + OWNER + "/" + REPOSITORY + "/git/refs/heads/" + refPath(branch), env, {
+    await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/refs/heads/${refPath(branch)}`, env, {
       method: "PATCH",
       body: JSON.stringify({ sha: commit.sha, force: false }),
     });
   } else {
-    await githubJson("/repos/" + OWNER + "/" + REPOSITORY + "/git/refs", env, {
+    await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/refs`, env, {
       method: "POST",
-      body: JSON.stringify({ ref: "refs/heads/" + branch, sha: commit.sha }),
+      body: JSON.stringify({ ref: `refs/heads/${branch}`, sha: commit.sha }),
     });
   }
-  const dimensions = final.width + " × " + final.height;
-  const pull = await githubJson("/repos/" + OWNER + "/" + REPOSITORY + "/pulls", env, {
+  const dimensions = `${final.width} × ${final.height}`;
+  const pull = await githubJson(`/repos/${OWNER}/${REPOSITORY}/pulls`, env, {
     method: "POST",
     body: JSON.stringify({
-      title: "[asset] " + parsed.name + " artwork",
+      title: `[asset] ${parsed.name} artwork`,
       head: branch,
       base,
-      body: "## Generated card artwork\n\n- Asset: `" + parsed.assetId + "`\n- Image: `" + parsed.targetPath + "`\n- Dimensions: " + dimensions + " px (" + parsed.orientationLabel + ")\n- Generated with `" + IMAGE_MODEL + "` from the prompt in issue #" + number + ".\n\nCloses #" + number,
+      body: `## Generated card artwork\n\n- Asset: \`${parsed.assetId}\`\n- Image: \`${parsed.targetPath}\`\n- Dimensions: ${dimensions} px (${parsed.orientationLabel})\n- Generated with \`${IMAGE_MODEL}\` from the prompt in issue #${number}.\n\nCloses #${number}`,
     }),
   });
   final.prUrl = pull.html_url;
@@ -891,36 +1054,50 @@ async function openPullRequest(number, body, env) {
 async function handleApi(request, env, url) {
   const path = url.pathname;
   if (path === "/api/health" && request.method === "GET") {
-    return jsonResponse({ openAI: Boolean(env.OPENAI_API_KEY), github: Boolean(env.GITHUB_TOKEN), storage: Boolean(env.BUCKET) });
+    return jsonResponse({
+      openAI: Boolean(env.OPENAI_API_KEY),
+      github: Boolean(env.GITHUB_TOKEN),
+      storage: Boolean(env.BUCKET),
+    });
   }
   if (path === "/api/issues" && request.method === "GET") {
     return jsonResponse({ issues: await openIssues(env) });
   }
   if (path === "/api/image" && request.method === "GET") {
     const key = url.searchParams.get("key") || "";
-    if (!/^issues\/\d+\/runs\/[0-9a-f-]{20,40}\/(?:candidate-[1-4]|final-[1-4])\.png$/i.test(key)) throw makePipelineError("Image not found.", 404);
+    if (!/^issues\/\d+\/runs\/[0-9a-f-]{20,40}\/(?:candidate-[1-4]|final-[1-4])\.png$/i.test(key))
+      throw makePipelineError("Image not found.", 404);
     const image = await requireBucket(env).get(key);
     if (!image) throw makePipelineError("Image not found.", 404);
-    const headers = new Headers({ "content-type": "image/png", "cache-control": "private, max-age=3600", "x-content-type-options": "nosniff" });
+    const headers = new Headers({
+      "content-type": "image/png",
+      "cache-control": "private, max-age=3600",
+      "x-content-type-options": "nosniff",
+    });
     image.writeHttpMetadata(headers);
     return new Response(image.body, { headers });
   }
   const match = path.match(/^\/api\/issues\/(\d+)(?:\/(runs|generations|finals|pull-requests))?$/);
   if (!match) return jsonResponse({ error: "Not found." }, 404);
   const number = Number(match[1]);
-  if (!Number.isSafeInteger(number) || number < 1) throw makePipelineError("Invalid issue number.", 400);
+  if (!Number.isSafeInteger(number) || number < 1)
+    throw makePipelineError("Invalid issue number.", 400);
   const action = match[2] || "detail";
   if (request.method === "GET" && action === "detail") {
     const { parsed } = await getIssue(number, env);
     return jsonResponse(parsed);
   }
-  if (request.method === "GET" && action === "runs") return jsonResponse({ runs: await getRuns(number, env) });
-  if (request.method !== "POST" || !["generations", "finals", "pull-requests"].includes(action)) return jsonResponse({ error: "Method not allowed." }, 405);
+  if (request.method === "GET" && action === "runs")
+    return jsonResponse({ runs: await getRuns(number, env) });
+  if (request.method !== "POST" || !["generations", "finals", "pull-requests"].includes(action))
+    return jsonResponse({ error: "Method not allowed." }, 405);
   assertSameOrigin(request);
-  if (Number(request.headers.get("content-length") || 0) > 12000) throw makePipelineError("Request is too large.", 413);
+  if (Number(request.headers.get("content-length") || 0) > 12000)
+    throw makePipelineError("Request is too large.", 413);
   if (action === "generations") return jsonResponse({ run: await makeDrafts(number, env) });
   const body = await request.json().catch(() => ({}));
-  if (!validRunId(body.runId) || ![1, 2, 3, 4].includes(Number(body.candidateId))) throw makePipelineError("A valid draft run and candidate are required.", 400);
+  if (!validRunId(body.runId) || ![1, 2, 3, 4].includes(Number(body.candidateId)))
+    throw makePipelineError("A valid draft run and candidate are required.", 400);
   if (action === "finals") {
     const result = await renderFinalImage(number, body, env);
     return jsonResponse({ run: result.manifest, final: result.final });
@@ -935,13 +1112,31 @@ export default {
     try {
       if (url.pathname.startsWith("/api/")) return await handleApi(request, env || {}, url);
       if (url.pathname === "/favicon.ico" || url.pathname === "/favicon.svg") {
-        return new Response("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' rx='10' fill='#11161b'/><path d='M21 5 11 23h8l-1 12 11-20h-8z' fill='#e1b96b'/></svg>", { headers: { "content-type": "image/svg+xml", "cache-control": "public, max-age=86400" } });
+        return new Response(
+          "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' rx='10' fill='#11161b'/><path d='M21 5 11 23h8l-1 12 11-20h-8z' fill='#e1b96b'/></svg>",
+          { headers: { "content-type": "image/svg+xml", "cache-control": "public, max-age=86400" } }
+        );
       }
-      if (url.pathname === "/" && (request.method === "GET" || request.method === "HEAD")) return request.method === "HEAD" ? new Response(null, { headers: { "content-type": "text/html; charset=utf-8" } }) : htmlResponse();
-      return new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8", "x-content-type-options": "nosniff" } });
+      if (url.pathname === "/" && (request.method === "GET" || request.method === "HEAD"))
+        return request.method === "HEAD"
+          ? new Response(null, { headers: { "content-type": "text/html; charset=utf-8" } })
+          : htmlResponse();
+      return new Response("Not found", {
+        status: 404,
+        headers: {
+          "content-type": "text/plain; charset=utf-8",
+          "x-content-type-options": "nosniff",
+        },
+      });
     } catch (error) {
-      console.error("Asset pipeline request failed", { path: url.pathname, message: String(error?.message || error) });
-      return jsonResponse({ error: error instanceof Error ? error.message : "Unexpected server error." }, error.status || 500);
+      console.error("Asset pipeline request failed", {
+        path: url.pathname,
+        message: String(error?.message || error),
+      });
+      return jsonResponse(
+        { error: error instanceof Error ? error.message : "Unexpected server error." },
+        error.status || 500
+      );
     }
   },
 };
