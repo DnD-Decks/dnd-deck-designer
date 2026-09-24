@@ -19,7 +19,7 @@ const workerModule = await import(moduleUrl);
 assert.equal(
   typeof workerModule.default?.fetch,
   "function",
-  `${pathToFileURL(workerPath)} must export default.fetch`,
+  `${pathToFileURL(workerPath)} must export default.fetch`
 );
 
 console.log("Artifact is valid ESM and exports default.fetch");
