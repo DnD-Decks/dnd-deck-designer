@@ -591,13 +591,12 @@ function requireBucket(env) {
   return env.BUCKET;
 }
 
-async function githubJson(path, env, options, authenticated) {
+async function githubJson(path, env, options) {
   const headers = new Headers(options?.headers || {});
   headers.set("accept", "application/vnd.github+json");
   headers.set("x-github-api-version", "2022-11-28");
   headers.set("user-agent", "dnd-deck-asset-pipeline");
-  if (authenticated !== false && env.GITHUB_TOKEN)
-    headers.set("authorization", `Bearer ${env.GITHUB_TOKEN}`);
+  if (env.GITHUB_TOKEN) headers.set("authorization", `Bearer ${env.GITHUB_TOKEN}`);
   if (options?.body) headers.set("content-type", "application/json");
   const response = await fetch(GITHUB_API + path, { ...options, headers });
   const raw = await response.text();
@@ -628,12 +627,7 @@ async function openIssues(env) {
       per_page: "100",
       page: String(pageNumber),
     });
-    const rows = await githubJson(
-      `/repos/${OWNER}/${REPOSITORY}/issues?${query}`,
-      env,
-      undefined,
-      false
-    );
+    const rows = await githubJson(`/repos/${OWNER}/${REPOSITORY}/issues?${query}`, env);
     if (!Array.isArray(rows))
       throw makePipelineError("GitHub returned an unexpected issue list.", 502);
     output.push(...rows.filter((issue) => !issue.pull_request).map(parseAssetIssue));
@@ -644,12 +638,7 @@ async function openIssues(env) {
 }
 
 async function getIssue(number, env) {
-  const raw = await githubJson(
-    `/repos/${OWNER}/${REPOSITORY}/issues/${number}`,
-    env,
-    undefined,
-    false
-  );
+  const raw = await githubJson(`/repos/${OWNER}/${REPOSITORY}/issues/${number}`, env);
   if (
     raw.pull_request ||
     raw.state !== "open" ||
