@@ -37,5 +37,19 @@
     }
   ],
   "failures": [],
-  "finalVersions": {}
+  "finalVersions": {
+    "4": [
+      {
+        "key": "issues/186/runs/7113a00e-74ec-48fe-a19c-9d3049826116/final-4-d92550cd-c9c1-4b29-89c1-9a4c93678056.png",
+        "width": 800,
+        "height": 1120,
+        "quality": "high",
+        "model": "gpt-image-2",
+        "createdAt": "2026-09-26T17:59:25.871Z",
+        "candidateId": 4,
+        "tuning": "",
+        "generationPrompt": "# DECK BACKGROUND STYLE v2\n\nCreate a vertical fantasy illustration intended to be used purely as background artwork for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Favored Enemy** — Ranger class resource.\n\nA ranger crouches on a cliff edge, gazing down at a distant camp where one hulking shadowed figure is faintly outlined in orange light. A moonlit valley. Cold blue moonlight with the orange outline as accent.\n\n## COMPOSITION DIRECTION FOR THIS CANDIDATE\n\nInterpret the card concept from an unusual viewpoint or with a visual metaphor.\n\n## VISUAL STYLE\n\nModern high-fantasy tabletop RPG illustration with a traditional painterly feeling.\n\nExpressive, clearly visible brushwork and soft pigment texture.\nAtmospheric, evocative and impressionistic, leaning slightly abstract.\n\nPrioritize large shapes, silhouettes, lighting and color masses over fine detail.\nThe image should read at a glance as a few bold shapes set against light and atmosphere, and the subject of the SCENE must be the first thing the eye lands on.\n\nLow detail.\nForms should dissolve naturally into light, shadow, mist, smoke or atmosphere.\nCharacters and objects lean toward silhouette: readable through their outline and major shapes, with interior detail kept minimal and often lost in shadow.\nThis applies to every figure in the picture, not only the main one: secondary figures, foes and bystanders are at least as simplified as the subject, never more rendered than it.\nPrefer figures in shadow or backlit, defined by rim light or by the light source named in the SCENE rather than by rendered surfaces.\n\nUse broad areas of light and shadow with dramatic but soft atmospheric lighting.\nRich but controlled fantasy colors, avoiding excessive saturation.\nFavor one dominant color mood with a single accent glow over many competing hues.\nMostly soft, lost edges; only one or two deliberately sharper focal edges.\n\nThe image should suggest rather than describe.\nFaces, armor, clothing, architecture and scenery should stay simplified masses with little or no intricate detail.\nBackgrounds should be simple, hazy and uncluttered — never a fully rendered environment.\n\nAvoid the polished, hyper-detailed look of digital concept art.\nAvoid photorealism, 3D-render aesthetics, glossy surfaces and cinematic photography.\nAvoid busy compositions with many small elements.\n\n## COMPOSITION\n\nThe artwork is an independent fantasy illustration.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, and silhouette. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected painterly image at higher quality for print without introducing new story elements.\n\n## OUTPUT\n\nExact image dimensions: 800 × 1120 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+      }
+    ]
+  }
 }
