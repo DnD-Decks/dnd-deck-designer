@@ -1,6 +1,7 @@
 const OWNER = "DnD-Decks";
 const REPOSITORY = "dnd-deck-designer";
 const IMAGE_MODEL = "gpt-image-2";
+const DRAFT_MODEL = "gpt-image-2.5-flare";
 const GITHUB_API = "https://api.github.com";
 const PREVIEW_VARIANTS = [
   {
@@ -73,7 +74,7 @@ const buildPage = () => String.raw`<!doctype html>
               <div><span>02</span><b>Compare four drafts</b></div><i></i>
               <div><span>03</span><b>Render &amp; submit</b></div>
             </div>
-            <div class="welcome-note"><span class="note-icon">i</span><span>Previews use low quality at 480 × 672 or 672 × 480. Final renders use the card's exact 5:7 or 7:5 ratio. The OpenAI API account is billed for each image.</span></div>
+            <div class="welcome-note"><span class="note-icon">i</span><span>Previews use low quality at 720 × 1008 or 1008 × 720. Final renders use the card's exact 5:7 or 7:5 ratio. The OpenAI API account is billed for each image.</span></div>
           </section>
           <section class="issue-workspace hidden" id="issue-workspace" aria-live="polite">
             <div class="issue-header">
@@ -84,7 +85,7 @@ const buildPage = () => String.raw`<!doctype html>
               </div>
               <div class="path-chip"><span>OUTPUT FILE</span><code id="output-path">—</code></div>
             </div>
-            <div class="prompt-toggle"><details><summary><span class="prompt-icon">⌘</span> View image-generation prompt <span class="chevron">⌄</span></summary><pre id="prompt-text"></pre></details></div>
+            <div class="prompt-toggle"><details open><summary><span class="prompt-icon">⌘</span> Image-generation prompt <span class="chevron">⌄</span></summary><div class="prompt-editor"><label for="prompt-text">Edit the issue prompt before generating drafts</label><textarea id="prompt-text" rows="12" maxlength="32000" spellcheck="false"></textarea><div class="prompt-actions"><span>The final render uses the prompt saved with the selected draft run.</span><button class="button button-subtle" id="reset-prompt" type="button">Restore issue prompt</button></div></div></details></div>
             <section class="candidate-section" aria-labelledby="candidate-heading">
               <div class="section-heading">
                 <div><div class="section-kicker">CONCEPT EXPLORATION</div><h2 id="candidate-heading">Four compositions</h2></div>
@@ -94,6 +95,7 @@ const buildPage = () => String.raw`<!doctype html>
               <div class="candidate-grid" id="candidate-grid">
                 <div class="empty-candidates"><div class="empty-art" aria-hidden="true">✧</div><strong>Your concepts will appear here</strong><span>Each draft keeps the issue's art direction and explores a different composition.</span></div>
               </div>
+              <div class="draft-storage" id="draft-storage"></div>
               <div class="workflow-message" id="workflow-message" role="status"></div>
             </section>
             <section class="final-section hidden" id="final-section" aria-labelledby="final-heading">
@@ -115,6 +117,7 @@ const styles = String.raw`
 @media(max-width:980px){.app-shell{grid-template-columns:255px minmax(0,1fr)}.sidebar{padding-left:12px;padding-right:12px}.workspace{padding:45px 28px 70px}.topbar{padding:0 28px}.candidate-image{height:260px}}
 @media(max-width:720px){.app-shell{display:block}.sidebar{min-height:0;height:auto;padding:13px 15px 10px;border-right:0;border-bottom:1px solid var(--line)}.brand{margin:0 3px 12px}.brand-mark{width:31px;height:31px;font-size:17px}.sidebar-heading{margin-bottom:7px}.search-box{margin-bottom:7px}.issue-list{display:flex;overflow-x:auto;gap:6px;min-height:0;max-height:76px}.issue-row{width:190px;flex:none;padding:8px}.sidebar-footer{display:none}.list-state{padding:12px}.topbar{height:51px;padding:0 17px}.workspace{padding:31px 17px 55px}.welcome-panel{padding-top:9px}.welcome-panel h1{font-size:39px}.welcome-panel>p{font-size:13px}.workflow-strip{gap:9px;padding:12px;margin-top:27px;width:100%;overflow:auto}.workflow-strip div{gap:6px}.workflow-strip b{font-size:9px}.workflow-strip>i{width:13px;flex:none}.welcome-note{font-size:10px}.issue-header{display:block}.issue-header h1{font-size:28px}.path-chip{display:inline-block;text-align:left;margin-top:14px;min-width:0}.section-heading{align-items:flex-start}.section-heading h2{font-size:19px}.button-primary{padding:9px 10px;font-size:10px}.candidate-grid{grid-template-columns:1fr;gap:11px}.candidate-image{height:min(116vw,420px)}.candidate-image-wrap{min-height:180px}.candidate-placeholder{height:180px}.candidate-info p{min-height:0}.final-panel{grid-template-columns:110px minmax(0,1fr);gap:13px;padding:10px}.final-copy h3{font-size:13px}.final-copy p{font-size:10px}.service-status{gap:4px}.status-pill{padding:4px 6px;font-size:8px}.crumbs{font-size:10px;gap:7px}}
 @media(max-width:390px){.workflow-strip{gap:6px}.workflow-strip b{white-space:normal}.section-heading{display:block}.section-heading .button{margin-top:11px}.service-status .status-pill{font-size:0;gap:0;width:15px;height:15px;padding:0;justify-content:center}.status-pill i{width:6px;height:6px}}
+.prompt-editor{border-top:1px solid #29343a;padding:14px}.prompt-editor label{display:block;color:#c8d0cb;font-size:14px;margin-bottom:9px}.prompt-editor textarea{display:block;width:100%;min-height:230px;resize:vertical;border:1px solid #3d494d;border-radius:6px;background:#11171c;color:#d5ddd6;padding:13px;font:13px/1.55 var(--mono)}.prompt-editor textarea:focus{outline:2px solid #a88b55;outline-offset:2px}.prompt-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:9px;color:#a1ada8;font-size:13px}.prompt-actions .button{flex:none}.draft-storage{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:13px 0;color:#aab6af;font-size:13px}.draft-storage a{color:var(--gold-2);text-decoration:underline;text-underline-offset:3px}.draft-storage .button{padding:6px 10px;min-height:32px}.draft-storage.error{color:var(--red)}@media(max-width:720px){.prompt-actions{align-items:flex-start;flex-direction:column}}
 `;
 
 const clientScript = String.raw`
@@ -201,7 +204,8 @@ function renderIssue(issue) {
   $("#issue-number").textContent = "#" + issue.number;
   $("#issue-link").href = issue.htmlUrl;
   $("#output-path").textContent = issue.targetPath || "Prompt needs a valid output path";
-  $("#prompt-text").textContent = issue.prompt || "No image-generation prompt was found in this issue.";
+  $("#prompt-text").value = issue.prompt || "";
+  $("#draft-storage").replaceChildren();
   const metadata = $("#card-metadata");
   metadata.replaceChildren();
   [issue.kind || "asset", issue.subtitle, issue.orientationLabel].filter(Boolean).forEach(function(value) {
@@ -222,6 +226,30 @@ function imageUrl(key) { return "/api/image?key=" + encodeURIComponent(key); }
 
 function renderGallery(manifest) {
   state.manifest = manifest;
+  const storage = $("#draft-storage");
+  storage.replaceChildren();
+  storage.classList.toggle("error", Boolean(manifest.gitError));
+  if (manifest.candidates && manifest.candidates.length) {
+    const status = document.createElement("span");
+    status.textContent = manifest.gitError ? "Drafts saved in Site storage. Git save failed: " + manifest.gitError : "Drafts committed to the repository's default branch:";
+    storage.append(status);
+    if (manifest.draftUrl) {
+      const link = document.createElement("a");
+      link.href = manifest.draftUrl;
+      link.target = "_blank";
+      link.rel = "noreferrer";
+      link.textContent = manifest.draftPath + " ↗";
+      storage.append(link);
+    }
+    if (manifest.gitError) {
+      const retry = document.createElement("button");
+      retry.type = "button";
+      retry.className = "button button-subtle";
+      retry.textContent = "Retry Git save";
+      retry.addEventListener("click", syncDrafts);
+      storage.append(retry);
+    }
+  }
   const grid = $("#candidate-grid");
   grid.replaceChildren();
   if (!manifest.candidates || !manifest.candidates.length) {
@@ -302,7 +330,7 @@ function renderFinalPanel() {
   heading.textContent = state.final ? "Final image ready for review" : "Render the selected composition";
   const para = document.createElement("p");
   para.textContent = state.final
-    ? "Check this image at the target size. If it looks right, create a branch and open a pull request against the deck."
+    ? "Check this image at the target size. If it looks right, open a pull request for the final artwork. Drafts are already on the default branch."
     : "The selected low-quality draft will guide one final high-quality image edit. The final size exactly matches the card orientation.";
   const actions = document.createElement("div");
   actions.className = "final-actions";
@@ -356,7 +384,10 @@ async function openIssue(number) {
     const issue = await request("/api/issues/" + number);
     renderIssue(issue);
     const response = await request("/api/issues/" + number + "/runs");
-    if (response.runs && response.runs.length) renderGallery(response.runs[0]);
+    if (response.runs && response.runs.length) {
+      renderGallery(response.runs[0]);
+      if (response.runs[0].prompt) $("#prompt-text").value = response.runs[0].prompt;
+    }
     setMessage("", "");
     const url = new URL(window.location.href);
     url.searchParams.set("issue", String(number));
@@ -377,23 +408,44 @@ function selectCandidate(id) {
 
 async function generateDrafts() {
   const button = $("#generate-button");
+  const prompt = $("#prompt-text").value.trim();
+  if (!prompt || prompt.length > 32000) {
+    setMessage("Enter a prompt of at most 32,000 characters before generating.", "error");
+    return;
+  }
   button.disabled = true;
   $("#generation-progress").classList.remove("hidden");
   $("#candidate-grid").innerHTML = '<div class="empty-candidates"><span class="loader"></span><strong>Creating four compositions</strong><span>Each draft uses low-quality output to keep preview cost down.</span></div>';
   setMessage("Generating four previews. Keep this page open until they finish.", "");
   try {
-    const data = await request("/api/issues/" + state.active.number + "/generations", { method: "POST" });
+    const data = await request("/api/issues/" + state.active.number + "/generations", {
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ prompt }),
+    });
     state.selected = null;
     state.final = null;
     renderGallery(data.run);
     renderFinalPanel();
-    setMessage("Created " + data.run.candidates.length + " preview(s). Choose the composition you want to carry forward.", data.run.candidates.length ? "success" : "error");
+    setMessage("Created " + data.run.candidates.length + " preview(s). " + (data.run.gitError ? "Retry Git save before opening a pull request." : "Choose a composition to carry forward."), data.run.gitError ? "error" : "success");
   } catch (error) {
     setMessage(error.message, "error");
     $("#candidate-grid").innerHTML = '<div class="empty-candidates"><div class="empty-art" aria-hidden="true">!</div><strong>Draft generation did not finish</strong><span>Check the service status and try again. Completed previews are kept when available.</span></div>';
   } finally {
     button.disabled = !state.active.ready;
     $("#generation-progress").classList.add("hidden");
+  }
+}
+
+async function syncDrafts() {
+  const button = $("#draft-storage button");
+  if (button) button.disabled = true;
+  setMessage("Saving the completed drafts in the repository…", "");
+  try {
+    const data = await request("/api/issues/" + state.active.number + "/runs/" + state.manifest.runId + "/sync", { method: "POST" });
+    renderGallery(data.run);
+    setMessage("Drafts saved in the repository.", "success");
+  } catch (error) {
+    setMessage(error.message, "error");
+    if (button) button.disabled = false;
   }
 }
 
@@ -463,6 +515,9 @@ $("#issue-search").addEventListener("input", function(event) {
   renderIssueList();
 });
 $("#generate-button").addEventListener("click", generateDrafts);
+$("#reset-prompt").addEventListener("click", function() {
+  if (state.active) $("#prompt-text").value = state.active.prompt || "";
+});
 $("#back-to-issues").addEventListener("click", function() { setSurface("welcome"); history.replaceState(null, "", "/"); });
 document.addEventListener("keydown", function(event) {
   if (event.key === "/" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
@@ -474,7 +529,7 @@ start();
 `;
 
 export const previewDimensions = (orientation) =>
-  orientation === "landscape" ? { width: 672, height: 480 } : { width: 480, height: 672 };
+  orientation === "landscape" ? { width: 1008, height: 720 } : { width: 720, height: 1008 };
 export const finalDimensions = (orientation) =>
   orientation === "landscape" ? { width: 1120, height: 800 } : { width: 800, height: 1120 };
 
@@ -676,7 +731,7 @@ async function openAIJson(response) {
   return body;
 }
 
-async function generateImage(prompt, env, size, quality) {
+async function generateImage(prompt, env, size) {
   if (!env.OPENAI_API_KEY)
     throw makePipelineError(
       "OpenAI image generation is not configured. Add OPENAI_API_KEY as a Site secret.",
@@ -686,12 +741,13 @@ async function generateImage(prompt, env, size, quality) {
     method: "POST",
     headers: { authorization: `Bearer ${env.OPENAI_API_KEY}`, "content-type": "application/json" },
     body: JSON.stringify({
-      model: IMAGE_MODEL,
+      model: DRAFT_MODEL,
       prompt,
       n: 1,
       size,
-      quality,
-      output_format: "png",
+      quality: "low",
+      output_format: "jpeg",
+      output_compression: 65,
       background: "opaque",
     }),
   });
@@ -701,7 +757,7 @@ async function generateImage(prompt, env, size, quality) {
   return toBytes(image);
 }
 
-async function editImage(prompt, sourceBytes, env, size) {
+async function editImage(prompt, sourceBytes, env, size, sourceFormat) {
   if (!env.OPENAI_API_KEY)
     throw makePipelineError(
       "OpenAI image generation is not configured. Add OPENAI_API_KEY as a Site secret.",
@@ -714,7 +770,11 @@ async function editImage(prompt, sourceBytes, env, size) {
   form.set("quality", "high");
   form.set("output_format", "png");
   form.set("background", "opaque");
-  form.append("image", new Blob([sourceBytes], { type: "image/png" }), "selected-preview.png");
+  form.append(
+    "image",
+    new Blob([sourceBytes], { type: sourceFormat === "jpeg" ? "image/jpeg" : "image/png" }),
+    sourceFormat === "jpeg" ? "selected-preview.jpg" : "selected-preview.png"
+  );
   const response = await fetch("https://api.openai.com/v1/images/edits", {
     method: "POST",
     headers: { authorization: `Bearer ${env.OPENAI_API_KEY}` },
@@ -739,12 +799,170 @@ function pngDimensions(bytes) {
   return { width: view.getUint32(16), height: view.getUint32(20) };
 }
 
+function jpegDimensions(bytes) {
+  if (bytes[0] !== 0xff || bytes[1] !== 0xd8) return null;
+  let offset = 2;
+  while (offset + 9 < bytes.length) {
+    if (bytes[offset] !== 0xff) return null;
+    while (bytes[offset] === 0xff) offset += 1;
+    const marker = bytes[offset++];
+    if (marker === 0xda || marker === 0xd9) break;
+    if (marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) continue;
+    if (offset + 2 > bytes.length) break;
+    const length = (bytes[offset] << 8) | bytes[offset + 1];
+    if (length < 2 || offset + length > bytes.length) return null;
+    if (
+      [0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf].includes(
+        marker
+      )
+    ) {
+      if (length < 7) return null;
+      return {
+        height: (bytes[offset + 3] << 8) | bytes[offset + 4],
+        width: (bytes[offset + 5] << 8) | bytes[offset + 6],
+      };
+    }
+    offset += length;
+  }
+  return null;
+}
+
 function validRunId(value) {
   return typeof value === "string" && /^[0-9a-f-]{20,40}$/i.test(value);
 }
 
 function runPrefix(number, runId) {
   return `issues/${number}/runs/${runId}/`;
+}
+
+function draftFolder(number, name) {
+  const slug = name
+    .normalize("NFKD")
+    .replace(/\p{Mark}/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 70)
+    .replace(/-$/g, "");
+  return `asset-pipeline/drafts/${number}-${slug || "card"}`;
+}
+
+function issueBranch(number, assetId) {
+  return `asset/issue-${number}-${assetId}`;
+}
+
+async function writeFilesToBranch(branch, files, message, env) {
+  const repo = await githubJson(`/repos/${OWNER}/${REPOSITORY}`, env);
+  const base = repo.default_branch || "main";
+  const branchRefPath = `/repos/${OWNER}/${REPOSITORY}/git/ref/heads/${refPath(branch)}`;
+  let branchRef;
+  try {
+    branchRef = await githubJson(branchRefPath, env);
+  } catch (error) {
+    if (error.status !== 404) throw error;
+  }
+  if (!branchRef) {
+    const baseRef = await githubJson(
+      `/repos/${OWNER}/${REPOSITORY}/git/ref/heads/${refPath(base)}`,
+      env
+    );
+    try {
+      branchRef = await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/refs`, env, {
+        method: "POST",
+        body: JSON.stringify({ ref: `refs/heads/${branch}`, sha: baseRef.object.sha }),
+      });
+    } catch (error) {
+      if (error.status !== 422) throw error;
+      branchRef = await githubJson(branchRefPath, env);
+    }
+  }
+  const blobs = await Promise.all(
+    files.map(async ({ path, bytes }) => {
+      const blob = await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/blobs`, env, {
+        method: "POST",
+        body: JSON.stringify({ content: toBase64(bytes), encoding: "base64" }),
+      });
+      return { path, mode: "100644", type: "blob", sha: blob.sha };
+    })
+  );
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const parent = branchRef.object.sha;
+    const baseCommit = await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/commits/${parent}`, env);
+    const tree = await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/trees`, env, {
+      method: "POST",
+      body: JSON.stringify({ base_tree: baseCommit.tree.sha, tree: blobs }),
+    });
+    if (tree.sha === baseCommit.tree.sha) return { branch, base };
+    const commit = await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/commits`, env, {
+      method: "POST",
+      body: JSON.stringify({ message, tree: tree.sha, parents: [parent] }),
+    });
+    try {
+      await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/refs/heads/${refPath(branch)}`, env, {
+        method: "PATCH",
+        body: JSON.stringify({ sha: commit.sha, force: false }),
+      });
+      return { branch, base };
+    } catch (error) {
+      if (error.status !== 409 && error.status !== 422) throw error;
+      branchRef = await githubJson(branchRefPath, env);
+      if (branchRef.object.sha === parent) throw error;
+    }
+  }
+  throw makePipelineError("The draft branch changed during saving. Retry Git save.", 409);
+}
+
+async function syncDraftRun(number, manifest, env) {
+  if (!env.GITHUB_TOKEN)
+    throw makePipelineError("GITHUB_TOKEN is required to save drafts in the repository.", 503);
+  const bucket = requireBucket(env);
+  const folder =
+    manifest.draftPath ||
+    draftFolder(number, manifest.issueTitle.replace(/^\[asset\]:\s*/i, "").replace(/`/g, ""));
+  const repo = await githubJson(`/repos/${OWNER}/${REPOSITORY}`, env);
+  const branch = repo.default_branch || "main";
+  const files = await Promise.all(
+    manifest.candidates.map(async (candidate) => {
+      const object = await bucket.get(candidate.key);
+      if (!object) throw makePipelineError(`Draft 0${candidate.id} is missing from storage.`, 404);
+      return {
+        path: `${folder}/${manifest.runId}/draft-0${candidate.id}.${candidate.format === "jpeg" ? "jpg" : "png"}`,
+        bytes: new Uint8Array(await object.arrayBuffer()),
+      };
+    })
+  );
+  const details = {
+    issue: number,
+    runId: manifest.runId,
+    createdAt: manifest.createdAt,
+    prompt: manifest.prompt,
+    model: manifest.previewModel,
+    quality: manifest.previewQuality,
+    format: manifest.previewFormat,
+    size: manifest.previewSize,
+    candidates: manifest.candidates.map(({ id, title, description }) => ({
+      id,
+      title,
+      description,
+    })),
+    failures: manifest.failures,
+  };
+  files.push({
+    path: `${folder}/${manifest.runId}/run.json`,
+    bytes: new TextEncoder().encode(`${JSON.stringify(details, null, 2)}\n`),
+  });
+  await writeFilesToBranch(
+    branch,
+    files,
+    `Save issue #${number} artwork drafts (${manifest.runId.slice(0, 8)})`,
+    env
+  );
+  manifest.draftPath = folder;
+  manifest.draftBranch = branch;
+  manifest.draftUrl = `https://github.com/${OWNER}/${REPOSITORY}/tree/${encodeURIComponent(branch)}/${folder}/${manifest.runId}`;
+  manifest.gitError = undefined;
+  await saveManifest(bucket, manifest);
+  return manifest;
 }
 
 async function saveManifest(bucket, manifest) {
@@ -789,39 +1007,43 @@ async function getRuns(number, env) {
     .slice(0, 8);
 }
 
-async function makeDrafts(number, env) {
+async function makeDrafts(number, body, env) {
   const bucket = requireBucket(env);
   if (!env.OPENAI_API_KEY)
     throw makePipelineError(
       "OpenAI image generation is not configured. Add OPENAI_API_KEY as a Site secret.",
       503
     );
+  if (!env.GITHUB_TOKEN)
+    throw makePipelineError("GITHUB_TOKEN is required to save drafts in the repository.", 503);
   const { raw, parsed } = await getIssue(number, env);
   if (!parsed.ready) throw makePipelineError(parsed.errors.join(" "), 422);
+  const prompt = typeof body.prompt === "string" ? body.prompt.trim() : parsed.prompt;
+  if (!prompt || prompt.length > 32000)
+    throw makePipelineError("The draft prompt must contain 1–32,000 characters.", 400);
   const dimensions = previewDimensions(parsed.orientation);
   const runId = crypto.randomUUID();
   const prefix = runPrefix(number, runId);
   const attempts = await Promise.allSettled(
     PREVIEW_VARIANTS.map(async (variant) => {
-      const prompt = promptForDimensions(
-        parsed.prompt,
+      const candidatePrompt = promptForDimensions(
+        prompt,
         dimensions.width,
         dimensions.height,
         variant.note
       );
       const bytes = await generateImage(
-        prompt,
+        candidatePrompt,
         env,
-        `${dimensions.width}x${dimensions.height}`,
-        "low"
+        `${dimensions.width}x${dimensions.height}`
       );
-      const size = pngDimensions(bytes);
+      const size = jpegDimensions(bytes);
       if (!size || size.width !== dimensions.width || size.height !== dimensions.height) {
         throw makePipelineError("A preview returned unexpected dimensions.", 502);
       }
-      const key = `${prefix}candidate-${variant.id}.png`;
+      const key = `${prefix}candidate-${variant.id}.jpg`;
       await bucket.put(key, bytes, {
-        httpMetadata: { contentType: "image/png", cacheControl: "private, max-age=3600" },
+        httpMetadata: { contentType: "image/jpeg", cacheControl: "private, max-age=3600" },
         customMetadata: { issue: String(number), run: runId, candidate: String(variant.id) },
       });
       return {
@@ -831,6 +1053,7 @@ async function makeDrafts(number, env) {
         key,
         width: size.width,
         height: size.height,
+        format: "jpeg",
       };
     })
   );
@@ -854,8 +1077,11 @@ async function makeDrafts(number, env) {
     manifestKey: `${prefix}manifest.json`,
     createdAt: new Date().toISOString(),
     previewQuality: "low",
-    previewModel: IMAGE_MODEL,
+    previewModel: DRAFT_MODEL,
+    previewFormat: "jpeg",
     previewSize: dimensions,
+    prompt,
+    draftPath: draftFolder(number, parsed.title.replace(/^\[asset\]:\s*/i, "").replace(/`/g, "")),
     candidates,
     failures,
     finals: {},
@@ -863,6 +1089,12 @@ async function makeDrafts(number, env) {
   await saveManifest(bucket, manifest);
   if (!candidates.length)
     throw makePipelineError(`All four preview requests failed. ${failures.join(" ")}`, 502);
+  try {
+    await syncDraftRun(number, manifest, env);
+  } catch (error) {
+    manifest.gitError = String(error.message || "Git save failed").slice(0, 260);
+    await saveManifest(bucket, manifest);
+  }
   return manifest;
 }
 
@@ -888,9 +1120,10 @@ async function renderFinalImage(number, body, env) {
   const referenceBrief =
     "## SELECTED PREVIEW\n\nThe supplied reference image is the composition selected by the user. Preserve its main action, subject placement, camera view, dominant color mood, and silhouette. Refine the painterly image at higher quality for print. Do not introduce new story elements or change the card scene.";
   const outputHeader = /^## OUTPUT\s*$/im;
-  const finalPromptSource = outputHeader.test(parsed.prompt)
-    ? parsed.prompt.replace(outputHeader, `${referenceBrief}\n\n## OUTPUT`)
-    : `${parsed.prompt}\n\n${referenceBrief}`;
+  const savedPrompt = manifest.prompt || parsed.prompt;
+  const finalPromptSource = outputHeader.test(savedPrompt)
+    ? savedPrompt.replace(outputHeader, `${referenceBrief}\n\n## OUTPUT`)
+    : `${savedPrompt}\n\n${referenceBrief}`;
   const prompt = promptForDimensions(
     finalPromptSource,
     dimensions.width,
@@ -901,7 +1134,8 @@ async function renderFinalImage(number, body, env) {
     prompt,
     sourceBytes,
     env,
-    `${dimensions.width}x${dimensions.height}`
+    `${dimensions.width}x${dimensions.height}`,
+    candidate.format
   );
   const actual = pngDimensions(finalBytes);
   if (!actual || actual.width !== dimensions.width || actual.height !== dimensions.height) {
@@ -954,6 +1188,7 @@ async function openPullRequest(number, body, env) {
       409
     );
   if (final.prUrl) return { manifest, final };
+  if (!manifest.draftUrl) await syncDraftRun(number, manifest, env);
   const { raw, parsed } = await getIssue(number, env);
   if (!parsed.ready) throw makePipelineError(parsed.errors.join(" "), 422);
   const finalObject = await bucket.get(final.key);
@@ -964,9 +1199,13 @@ async function openPullRequest(number, body, env) {
   if (!actual || actual.width !== final.width || actual.height !== final.height)
     throw makePipelineError("Final image dimensions failed validation.", 422);
 
-  const repo = await githubJson(`/repos/${OWNER}/${REPOSITORY}`, env);
-  const base = repo.default_branch || "main";
-  const branch = `asset/issue-${number}-${parsed.assetId}-${manifest.runId.slice(0, 8)}-c${candidate.id}`;
+  const branch = `${issueBranch(number, parsed.assetId)}-${manifest.runId.slice(0, 8)}-c${candidate.id}`;
+  const { base } = await writeFilesToBranch(
+    branch,
+    [{ path: parsed.targetPath, bytes: new Uint8Array(finalBytes) }],
+    `Add ${parsed.name} card artwork`,
+    env
+  );
   const pullsQuery = new URLSearchParams({ state: "open", head: `${OWNER}:${branch}` });
   const existingPulls = await githubJson(`/repos/${OWNER}/${REPOSITORY}/pulls?${pullsQuery}`, env);
   if (existingPulls.length) {
@@ -977,51 +1216,6 @@ async function openPullRequest(number, body, env) {
     return { manifest, final };
   }
 
-  const baseRef = await githubJson(
-    `/repos/${OWNER}/${REPOSITORY}/git/ref/heads/${encodeURIComponent(base)}`,
-    env
-  );
-  const baseSha = baseRef.object.sha;
-  const baseCommit = await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/commits/${baseSha}`, env);
-  const blob = await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/blobs`, env, {
-    method: "POST",
-    body: JSON.stringify({ content: toBase64(finalBytes), encoding: "base64" }),
-  });
-  const tree = await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/trees`, env, {
-    method: "POST",
-    body: JSON.stringify({
-      base_tree: baseCommit.tree.sha,
-      tree: [{ path: parsed.targetPath, mode: "100644", type: "blob", sha: blob.sha }],
-    }),
-  });
-  const commit = await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/commits`, env, {
-    method: "POST",
-    body: JSON.stringify({
-      message: `Add ${parsed.name} card artwork`,
-      tree: tree.sha,
-      parents: [baseSha],
-    }),
-  });
-  let branchRef;
-  try {
-    branchRef = await githubJson(
-      `/repos/${OWNER}/${REPOSITORY}/git/ref/heads/${refPath(branch)}`,
-      env
-    );
-  } catch (error) {
-    if (error.status !== 404) throw error;
-  }
-  if (branchRef) {
-    await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/refs/heads/${refPath(branch)}`, env, {
-      method: "PATCH",
-      body: JSON.stringify({ sha: commit.sha, force: false }),
-    });
-  } else {
-    await githubJson(`/repos/${OWNER}/${REPOSITORY}/git/refs`, env, {
-      method: "POST",
-      body: JSON.stringify({ ref: `refs/heads/${branch}`, sha: commit.sha }),
-    });
-  }
   const dimensions = `${final.width} × ${final.height}`;
   const pull = await githubJson(`/repos/${OWNER}/${REPOSITORY}/pulls`, env, {
     method: "POST",
@@ -1029,7 +1223,7 @@ async function openPullRequest(number, body, env) {
       title: `[asset] ${parsed.name} artwork`,
       head: branch,
       base,
-      body: `## Generated card artwork\n\n- Asset: \`${parsed.assetId}\`\n- Image: \`${parsed.targetPath}\`\n- Dimensions: ${dimensions} px (${parsed.orientationLabel})\n- Generated with \`${IMAGE_MODEL}\` from the prompt in issue #${number}.\n\nCloses #${number}`,
+      body: `## Generated card artwork\n\n- Asset: \`${parsed.assetId}\`\n- Image: \`${parsed.targetPath}\`\n- Drafts and edited prompt: \`${manifest.draftPath}/\`\n- Dimensions: ${dimensions} px (${parsed.orientationLabel})\n- Generated with \`${IMAGE_MODEL}\` from the prompt saved with this draft run.\n\nCloses #${number}`,
     }),
   });
   final.prUrl = pull.html_url;
@@ -1054,17 +1248,30 @@ async function handleApi(request, env, url) {
   }
   if (path === "/api/image" && request.method === "GET") {
     const key = url.searchParams.get("key") || "";
-    if (!/^issues\/\d+\/runs\/[0-9a-f-]{20,40}\/(?:candidate-[1-4]|final-[1-4])\.png$/i.test(key))
+    if (
+      !/^issues\/\d+\/runs\/[0-9a-f-]{20,40}\/(?:candidate-[1-4]\.(?:jpg|png)|final-[1-4]\.png)$/i.test(
+        key
+      )
+    )
       throw makePipelineError("Image not found.", 404);
     const image = await requireBucket(env).get(key);
     if (!image) throw makePipelineError("Image not found.", 404);
     const headers = new Headers({
-      "content-type": "image/png",
+      "content-type": key.endsWith(".jpg") ? "image/jpeg" : "image/png",
       "cache-control": "private, max-age=3600",
       "x-content-type-options": "nosniff",
     });
     image.writeHttpMetadata(headers);
     return new Response(image.body, { headers });
+  }
+  const syncMatch = path.match(/^\/api\/issues\/(\d+)\/runs\/([0-9a-f-]{20,40})\/sync$/i);
+  if (syncMatch) {
+    if (request.method !== "POST") return jsonResponse({ error: "Method not allowed." }, 405);
+    assertSameOrigin(request);
+    const number = Number(syncMatch[1]);
+    const manifest = await readManifest(requireBucket(env), number, syncMatch[2]);
+    await getIssue(number, env);
+    return jsonResponse({ run: await syncDraftRun(number, manifest, env) });
   }
   const match = path.match(/^\/api\/issues\/(\d+)(?:\/(runs|generations|finals|pull-requests))?$/);
   if (!match) return jsonResponse({ error: "Not found." }, 404);
@@ -1081,10 +1288,10 @@ async function handleApi(request, env, url) {
   if (request.method !== "POST" || !["generations", "finals", "pull-requests"].includes(action))
     return jsonResponse({ error: "Method not allowed." }, 405);
   assertSameOrigin(request);
-  if (Number(request.headers.get("content-length") || 0) > 12000)
+  if (Number(request.headers.get("content-length") || 0) > 40000)
     throw makePipelineError("Request is too large.", 413);
-  if (action === "generations") return jsonResponse({ run: await makeDrafts(number, env) });
   const body = await request.json().catch(() => ({}));
+  if (action === "generations") return jsonResponse({ run: await makeDrafts(number, body, env) });
   if (!validRunId(body.runId) || ![1, 2, 3, 4].includes(Number(body.candidateId)))
     throw makePipelineError("A valid draft run and candidate are required.", 400);
   if (action === "finals") {
