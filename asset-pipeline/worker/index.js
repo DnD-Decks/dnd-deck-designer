@@ -6,23 +6,27 @@ const GITHUB_API = "https://api.github.com";
 const PREVIEW_VARIANTS = [
   {
     id: 1,
-    title: "Centered focal action",
-    note: "Keep the main action near the center, with a clear silhouette and an immediate focal read.",
+    title: "The thing itself",
+    note: "Isolate the spell, weapon, effect, or object; leave the actor out of frame.",
+    direction: "Make the named spell, weapon, effect, or object the whole story. No visible person or creature unless the concept cannot be understood without one. Use a bold close view, motion, material, and negative space. For a fireball, show the fireball hurtling through darkness, with no caster. Do not reconstruct the full encounter described in SCENE.",
   },
   {
     id: 2,
-    title: "Strong diagonal movement",
-    note: "Build a strong diagonal through the action so movement and force read at a glance.",
+    title: "The person behind it",
+    note: "Show a recognizable character actively using the ability or object.",
+    direction: "Center a clearly defined person or creature using the named ability, spell, weapon, or object. Their gesture, intent, and silhouette should tell the story; the effect is visible but secondary. For a fireball, show a distinct caster mid-throw. Choose a camera angle and setting unlike the other concepts. Avoid an isolated object or anonymous silhouette.",
   },
   {
     id: 3,
-    title: "Wider setting",
-    note: "Show more of the named setting as broad atmospheric shapes while keeping the card subject unmistakable.",
+    title: "A figure in the atmosphere",
+    note: "Use a small or shadowy silhouette and let light, scale, and setting carry the scene.",
+    direction: "Make atmosphere, scale, and consequence dominant. A small or partly obscured humanoid silhouette may imply the action, but do not render a defined protagonist or an object close-up. For a fireball, a shadowy caster facing a huge burst of light could occupy only a sliver of the picture. Compose in a wide-feeling space within the required card shape, with unexpected lighting and bold empty areas.",
   },
   {
     id: 4,
-    title: "Closer dramatic view",
-    note: "Move closer to the key action and emphasize its silhouette, light, and shadow without adding detail.",
+    title: "The unexpected idea",
+    note: "Interpret the card concept from an unusual viewpoint or with a visual metaphor.",
+    direction: "Take a genuinely surprising visual approach to the named concept: an unusual point of view, a trace left behind, a strong visual metaphor, or an unfamiliar moment before or after the action. You may omit the people, props, and setting in SCENE when they make the result resemble a conventional action illustration. Keep the card concept legible and the requested painterly style. Avoid the isolated hero object, defined character, and distant silhouette approaches of the other three drafts.",
   },
 ];
 
@@ -88,12 +92,13 @@ const buildPage = () => String.raw`<!doctype html>
             <div class="prompt-toggle"><details open><summary><span class="prompt-icon">⌘</span> Image-generation prompt <span class="chevron">⌄</span></summary><div class="prompt-editor"><label for="prompt-text">Edit the issue prompt before generating drafts</label><textarea id="prompt-text" rows="12" maxlength="32000" spellcheck="false"></textarea><div class="prompt-actions"><span>The final render uses the prompt saved with the selected draft run.</span><button class="button button-subtle" id="reset-prompt" type="button">Restore issue prompt</button></div></div></details></div>
             <section class="candidate-section" aria-labelledby="candidate-heading">
               <div class="section-heading">
-                <div><div class="section-kicker">CONCEPT EXPLORATION</div><h2 id="candidate-heading">Four compositions</h2></div>
+                <div><div class="section-kicker">CONCEPT EXPLORATION</div><h2 id="candidate-heading">Four distinct approaches</h2></div>
                 <button class="button button-primary" id="generate-button" type="button"><span class="button-icon">✦</span> Generate four drafts</button>
               </div>
+              <p class="concept-note">The issue prompt sets the card concept and visual style. Draft directions may omit its specific characters or setting to explore new ideas.</p>
               <div class="progress-line hidden" id="generation-progress"><span class="loader"></span><span>Generating four low-quality drafts in parallel…</span></div>
               <div class="candidate-grid" id="candidate-grid">
-                <div class="empty-candidates"><div class="empty-art" aria-hidden="true">✧</div><strong>Your concepts will appear here</strong><span>Each draft keeps the issue's art direction and explores a different composition.</span></div>
+                <div class="empty-candidates"><div class="empty-art" aria-hidden="true">✧</div><strong>Your concepts will appear here</strong><span>Explore the object, the actor, the atmosphere, and an unexpected interpretation.</span></div>
               </div>
               <div class="draft-storage" id="draft-storage"></div>
               <div class="workflow-message" id="workflow-message" role="status"></div>
@@ -107,6 +112,16 @@ const buildPage = () => String.raw`<!doctype html>
         </div>
       </main>
     </div>
+    <dialog class="image-dialog" id="image-dialog" aria-labelledby="image-dialog-title">
+      <div class="image-dialog-toolbar">
+        <div><strong id="image-dialog-title">Artwork</strong><span id="image-dialog-size"></span></div>
+        <div class="image-dialog-actions">
+          <button type="button" class="button button-subtle" id="image-dialog-zoom" aria-pressed="false">View at 100%</button>
+          <button type="button" class="button button-subtle" id="image-dialog-close" aria-label="Close image viewer">Close ✕</button>
+        </div>
+      </div>
+      <div class="image-dialog-scroll" id="image-dialog-scroll"><img id="image-dialog-image" alt=""></div>
+    </dialog>
     <script>${clientScript}</script>
   </body>
 </html>`;
@@ -118,6 +133,8 @@ const styles = String.raw`
 @media(max-width:720px){.app-shell{display:block}.sidebar{min-height:0;height:auto;padding:13px 15px 10px;border-right:0;border-bottom:1px solid var(--line)}.brand{margin:0 3px 12px}.brand-mark{width:31px;height:31px;font-size:17px}.sidebar-heading{margin-bottom:7px}.search-box{margin-bottom:7px}.issue-list{display:flex;overflow-x:auto;gap:6px;min-height:0;max-height:76px}.issue-row{width:190px;flex:none;padding:8px}.sidebar-footer{display:none}.list-state{padding:12px}.topbar{height:51px;padding:0 17px}.workspace{padding:31px 17px 55px}.welcome-panel{padding-top:9px}.welcome-panel h1{font-size:39px}.welcome-panel>p{font-size:13px}.workflow-strip{gap:9px;padding:12px;margin-top:27px;width:100%;overflow:auto}.workflow-strip div{gap:6px}.workflow-strip b{font-size:9px}.workflow-strip>i{width:13px;flex:none}.welcome-note{font-size:10px}.issue-header{display:block}.issue-header h1{font-size:28px}.path-chip{display:inline-block;text-align:left;margin-top:14px;min-width:0}.section-heading{align-items:flex-start}.section-heading h2{font-size:19px}.button-primary{padding:9px 10px;font-size:10px}.candidate-grid{grid-template-columns:1fr;gap:11px}.candidate-image{height:min(116vw,420px)}.candidate-image-wrap{min-height:180px}.candidate-placeholder{height:180px}.candidate-info p{min-height:0}.final-panel{grid-template-columns:110px minmax(0,1fr);gap:13px;padding:10px}.final-copy h3{font-size:13px}.final-copy p{font-size:10px}.service-status{gap:4px}.status-pill{padding:4px 6px;font-size:8px}.crumbs{font-size:10px;gap:7px}}
 @media(max-width:390px){.workflow-strip{gap:6px}.workflow-strip b{white-space:normal}.section-heading{display:block}.section-heading .button{margin-top:11px}.service-status .status-pill{font-size:0;gap:0;width:15px;height:15px;padding:0;justify-content:center}.status-pill i{width:6px;height:6px}}
 .prompt-editor{border-top:1px solid #29343a;padding:14px}.prompt-editor label{display:block;color:#c8d0cb;font-size:14px;margin-bottom:9px}.prompt-editor textarea{display:block;width:100%;min-height:230px;resize:vertical;border:1px solid #3d494d;border-radius:6px;background:#11171c;color:#d5ddd6;padding:13px;font:13px/1.55 var(--mono)}.prompt-editor textarea:focus{outline:2px solid #a88b55;outline-offset:2px}.prompt-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:9px;color:#a1ada8;font-size:13px}.prompt-actions .button{flex:none}.draft-storage{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:13px 0;color:#aab6af;font-size:13px}.draft-storage a{color:var(--gold-2);text-decoration:underline;text-underline-offset:3px}.draft-storage .button{padding:6px 10px;min-height:32px}.draft-storage.error{color:var(--red)}@media(max-width:720px){.prompt-actions{align-items:flex-start;flex-direction:column}}
+.image-view-button{position:absolute;right:10px;top:10px;z-index:2;border:1px solid #737c7a;background:#11171ce8;color:#f0f2ee;padding:7px 10px;border-radius:6px;font-size:12px}.image-view-button:hover,.image-view-button:focus-visible{border-color:var(--gold);color:var(--gold)}.candidate-image,.final-preview img{cursor:zoom-in}.final-preview{position:relative}.final-progress{display:flex;align-items:center;gap:10px;margin:12px 0;color:var(--gold-2);font-size:13px}.final-progress span:last-child{color:#a9b5ac}.image-dialog{position:fixed;inset:0;width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;background:#10151a;color:var(--text);overflow:hidden}.image-dialog::backdrop{background:#080c10e8}.image-dialog[open]{display:flex;flex-direction:column}.image-dialog-toolbar{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:12px clamp(12px,3vw,30px);background:#192127;border-bottom:1px solid #39454b;min-height:68px}.image-dialog-toolbar strong,.image-dialog-toolbar span{display:block}.image-dialog-toolbar strong{font-size:16px;font-weight:600}.image-dialog-toolbar span{font-size:13px;color:#aeb9b2}.image-dialog-actions{display:flex;gap:8px;flex-shrink:0}.image-dialog-actions button{font-size:13px}.image-dialog-scroll{flex:1;min-height:0;overflow:auto;display:flex;align-items:safe center;justify-content:safe center;padding:14px;overscroll-behavior:contain}.image-dialog-scroll img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}.image-dialog-scroll.original{display:block;text-align:center}.image-dialog-scroll.original img{max-width:none;max-height:none;width:auto;height:auto;margin:auto}.image-dialog button:focus-visible,.image-view-button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}@media(max-width:600px){.image-dialog-toolbar{align-items:flex-start;flex-direction:column;gap:8px}.image-dialog-actions{width:100%}.image-dialog-actions button{flex:1}.image-dialog-scroll{padding:6px}}
+.concept-note{margin:-7px 0 17px;color:#a7b2ac;font-size:13px;line-height:1.55}
 `;
 
 const clientScript = String.raw`
@@ -214,7 +231,7 @@ function renderIssue(issue) {
     tag.textContent = value;
     metadata.append(tag);
   });
-  $("#candidate-grid").innerHTML = '<div class="empty-candidates"><div class="empty-art" aria-hidden="true">✧</div><strong>Your concepts will appear here</strong><span>Each draft keeps the issue\'s art direction and explores a different composition.</span></div>';
+  $("#candidate-grid").innerHTML = '<div class="empty-candidates"><div class="empty-art" aria-hidden="true">✧</div><strong>Your concepts will appear here</strong><span>Explore the object, the actor, the atmosphere, and an unexpected interpretation.</span></div>';
   $("#final-section").classList.add("hidden");
   $("#generate-button").disabled = !issue.ready;
   $("#generate-button").title = issue.ready ? "" : issue.errors.join(" ");
@@ -223,6 +240,32 @@ function renderIssue(issue) {
 }
 
 function imageUrl(key) { return "/api/image?key=" + encodeURIComponent(key); }
+
+function showImage(key, title, width, height) {
+  const dialog = $("#image-dialog");
+  const scroll = $("#image-dialog-scroll");
+  scroll.classList.remove("original");
+  scroll.scrollTo(0, 0);
+  $("#image-dialog-zoom").textContent = "View at 100%";
+  $("#image-dialog-zoom").setAttribute("aria-pressed", "false");
+  $("#image-dialog-title").textContent = title;
+  $("#image-dialog-size").textContent = width + " × " + height + " px · fit to screen";
+  const image = $("#image-dialog-image");
+  image.src = imageUrl(key);
+  image.alt = title;
+  dialog.showModal();
+  $("#image-dialog-close").focus();
+}
+
+function viewImageButton(key, title, width, height) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "image-view-button";
+  button.textContent = "⤢ View full image";
+  button.setAttribute("aria-label", "View " + title + " at full resolution");
+  button.addEventListener("click", function() { showImage(key, title, width, height); });
+  return button;
+}
 
 function renderGallery(manifest) {
   state.manifest = manifest;
@@ -272,7 +315,8 @@ function renderGallery(manifest) {
     image.src = imageUrl(candidate.key);
     image.alt = candidate.title + " composition for " + (state.active.name || "the card");
     image.loading = "lazy";
-    imageWrap.append(number, image);
+    image.addEventListener("click", function() { showImage(candidate.key, candidate.title, candidate.width, candidate.height); });
+    imageWrap.append(number, image, viewImageButton(candidate.key, candidate.title, candidate.width, candidate.height));
     const info = document.createElement("div");
     info.className = "candidate-info";
     const title = document.createElement("h3");
@@ -319,7 +363,8 @@ function renderFinalPanel() {
   if (finalImage) {
     finalImage.src = imageUrl(state.final.key);
     finalImage.alt = "Final render for " + state.active.name;
-    preview.append(finalImage);
+    finalImage.addEventListener("click", function() { showImage(state.final.key, "Final render for " + state.active.name, state.final.width, state.final.height); });
+    preview.append(finalImage, viewImageButton(state.final.key, "Final render for " + state.active.name, state.final.width, state.final.height));
   } else {
     preview.innerHTML = '<div class="candidate-placeholder"><span class="empty-art">✦</span><span>Final render not made</span></div>';
   }
@@ -348,6 +393,14 @@ function renderFinalPanel() {
     button.addEventListener("click", renderFinal);
   }
   actions.append(button);
+  if (!state.final) {
+    const progress = document.createElement("div");
+    progress.className = "final-progress hidden";
+    progress.id = "final-progress";
+    progress.setAttribute("role", "status");
+    progress.innerHTML = '<span class="loader" aria-hidden="true"></span><span>Rendering the full-size image… <span id="final-elapsed">0</span>s elapsed. Keep this page open.</span>';
+    actions.after(progress);
+  }
   const dimensions = document.createElement("div");
   dimensions.className = "final-dimensions";
   dimensions.textContent = (state.final ? "FINAL SIZE · " : "TARGET SIZE · ") + finalDimensions(state.active) + " px · exact " + state.active.orientationLabel;
@@ -450,23 +503,37 @@ async function syncDrafts() {
 }
 
 async function renderFinal() {
-  const buttons = $("#final-content").querySelectorAll("button");
-  const button = buttons[0];
+  const button = $("#final-content .final-actions button");
+  const progress = $("#final-progress");
+  const issueNumber = state.active.number;
+  const runId = state.manifest.runId;
+  const candidateId = state.selected;
+  const started = Date.now();
+  progress.classList.remove("hidden");
+  const timer = setInterval(function() {
+    const counter = $("#final-elapsed", progress);
+    if (counter) counter.textContent = String(Math.floor((Date.now() - started) / 1000));
+  }, 1000);
   setBusy(button, "final", true, "Rendering one high-quality final image…");
+  button.textContent = "Rendering…";
   try {
-    const data = await request("/api/issues/" + state.active.number + "/finals", {
+    const data = await request("/api/issues/" + issueNumber + "/finals", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ runId: state.manifest.runId, candidateId: state.selected }),
+      body: JSON.stringify({ runId, candidateId }),
     });
+    if (state.active.number !== issueNumber || state.manifest?.runId !== runId || state.selected !== candidateId) return;
     state.manifest = data.run;
     state.final = data.final;
     renderGallery(state.manifest);
     renderFinalPanel();
     setMessage("Final image rendered at " + finalDimensions(state.active) + " px. Review it, then create a pull request.", "success");
   } catch (error) {
+    if (state.active.number !== issueNumber || state.manifest?.runId !== runId || state.selected !== candidateId) return;
     setMessage(error.message, "error");
     renderFinalPanel();
+  } finally {
+    clearInterval(timer);
   }
 }
 
@@ -519,7 +586,17 @@ $("#reset-prompt").addEventListener("click", function() {
   if (state.active) $("#prompt-text").value = state.active.prompt || "";
 });
 $("#back-to-issues").addEventListener("click", function() { setSurface("welcome"); history.replaceState(null, "", "/"); });
+$("#image-dialog-close").addEventListener("click", function() { $("#image-dialog").close(); });
+$("#image-dialog-zoom").addEventListener("click", function() {
+  const scroll = $("#image-dialog-scroll");
+  const original = scroll.classList.toggle("original");
+  this.textContent = original ? "Fit to screen" : "View at 100%";
+  this.setAttribute("aria-pressed", String(original));
+  $("#image-dialog-size").textContent = $("#image-dialog-image").naturalWidth + " × " + $("#image-dialog-image").naturalHeight + " px · " + (original ? "100%" : "fit to screen");
+});
+$("#image-dialog").addEventListener("click", function(event) { if (event.target === this) this.close(); });
 document.addEventListener("keydown", function(event) {
+  if ($("#image-dialog").open) return;
   if (event.key === "/" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
     event.preventDefault();
     $("#issue-search").focus();
@@ -940,10 +1017,11 @@ async function syncDraftRun(number, manifest, env) {
     quality: manifest.previewQuality,
     format: manifest.previewFormat,
     size: manifest.previewSize,
-    candidates: manifest.candidates.map(({ id, title, description }) => ({
+    candidates: manifest.candidates.map(({ id, title, description, generationPrompt }) => ({
       id,
       title,
       description,
+      generationPrompt,
     })),
     failures: manifest.failures,
   };
@@ -1030,7 +1108,7 @@ async function makeDrafts(number, body, env) {
         prompt,
         dimensions.width,
         dimensions.height,
-        variant.note
+        `This is an early brainstorming draft. Keep the named card concept, its recognizable effect, and the requested painterly visual style. Treat SCENE as source material rather than a shot list: omit its actors, props, setting, or specific staging when needed to explore a genuinely different interpretation of the same concept. If scene framing conflicts with this candidate's direction, use this direction. Do not add card text or a border.\n\n${variant.direction}`
       );
       const bytes = await generateImage(
         candidatePrompt,
@@ -1050,6 +1128,7 @@ async function makeDrafts(number, body, env) {
         id: variant.id,
         title: variant.title,
         description: variant.note,
+        generationPrompt: candidatePrompt,
         key,
         width: size.width,
         height: size.height,
@@ -1118,7 +1197,7 @@ async function renderFinalImage(number, body, env) {
   const sourceBytes = new Uint8Array(await previewObject.arrayBuffer());
   const dimensions = finalDimensions(parsed.orientation);
   const referenceBrief =
-    "## SELECTED PREVIEW\n\nThe supplied reference image is the composition selected by the user. Preserve its main action, subject placement, camera view, dominant color mood, and silhouette. Refine the painterly image at higher quality for print. Do not introduce new story elements or change the card scene.";
+    "## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, and silhouette. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected painterly image at higher quality for print without introducing new story elements.";
   const outputHeader = /^## OUTPUT\s*$/im;
   const savedPrompt = manifest.prompt || parsed.prompt;
   const finalPromptSource = outputHeader.test(savedPrompt)
