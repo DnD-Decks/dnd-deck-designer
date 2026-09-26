@@ -192,6 +192,12 @@ test("custom prompt produces valid previews, commits each run to the issue folde
           prompt.includes("one raven")
       )
     );
+    assert.equal(new Set(imageRequests.slice(0, 4).map(({ prompt }) => prompt)).size, 4);
+    assert.match(imageRequests[0].prompt, /No visible person or creature/);
+    assert.match(imageRequests[1].prompt, /clearly defined person or creature/);
+    assert.match(imageRequests[2].prompt, /small or partly obscured humanoid silhouette/);
+    assert.match(imageRequests[3].prompt, /genuinely surprising visual approach/);
+    assert.ok(first.candidates.every((candidate, index) => candidate.generationPrompt === imageRequests[index].prompt));
     assert.equal(first.draftBranch, "main");
     assert.equal(branchCreations, 0);
     assert.equal(concurrentUpdate, false);
@@ -204,6 +210,8 @@ test("custom prompt produces valid previews, commits each run to the issue folde
       Buffer.from(runBlob.content, "base64").toString(),
       /Customized illustration with one raven/
     );
+    const savedRun = JSON.parse(Buffer.from(runBlob.content, "base64").toString());
+    assert.deepEqual(savedRun.candidates.map(({ generationPrompt }) => generationPrompt), imageRequests.slice(0, 4).map(({ prompt }) => prompt));
 
     const second = await generate("Different illustrated scene.");
     assert.equal(branchCreations, 0);
@@ -221,6 +229,7 @@ test("custom prompt produces valid previews, commits each run to the issue folde
     assert.equal(finalResponse.status, 200, await finalResponse.clone().text());
     assert.match(editPrompt, /Customized illustration with one raven/);
     assert.doesNotMatch(editPrompt, /Different illustrated scene/);
+    assert.match(editPrompt, /do not add them back/);
     const prResponse = await worker.fetch(
       new Request("https://pipeline.example/api/issues/190/pull-requests", {
         method: "POST",

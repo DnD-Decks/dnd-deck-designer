@@ -119,6 +119,9 @@ test("home page returns a complete, syntactically valid inline client script", a
   assert.equal(response.status, 200);
   assert.match(html, /Generate four drafts/);
   assert.match(html, /Edit the issue prompt before generating drafts/);
+  assert.match(html, /<dialog class="image-dialog"/);
+  assert.match(html, /View at 100%/);
+  assert.match(html, /Rendering the full-size image…/);
   assert.ok(client);
   assert.doesNotThrow(() => new Function(client));
 });
