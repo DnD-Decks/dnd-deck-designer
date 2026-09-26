@@ -76,16 +76,18 @@ test("supports landscape feat cards and exact 7:5 dimensions", () => {
     issue({ number: 42, id: "rogue-sneak-attack", orientation: "landscape 7:5" })
   );
   assert.equal(parsed.orientation, "landscape");
-  assert.deepEqual(previewDimensions(parsed.orientation), { width: 672, height: 480 });
+  assert.deepEqual(previewDimensions(parsed.orientation), { width: 1008, height: 720 });
   assert.deepEqual(finalDimensions(parsed.orientation), { width: 1120, height: 800 });
-  assert.equal(672 / 480, 7 / 5);
+  assert.equal(1008 / 720, 7 / 5);
+  assert.ok(1008 * 720 >= 655360);
   assert.ok(1120 >= 1050 && 800 >= 750);
 });
 
 test("portrait image sizes match exact 5:7 and satisfy the issue minimum", () => {
-  assert.deepEqual(previewDimensions("portrait"), { width: 480, height: 672 });
+  assert.deepEqual(previewDimensions("portrait"), { width: 720, height: 1008 });
   assert.deepEqual(finalDimensions("portrait"), { width: 800, height: 1120 });
-  assert.equal(480 / 672, 5 / 7);
+  assert.equal(720 / 1008, 5 / 7);
+  assert.ok(720 * 1008 >= 655360);
   assert.equal(800 / 1120, 5 / 7);
   assert.ok(800 >= 750 && 1120 >= 1050);
 });
@@ -100,11 +102,11 @@ test("rejects unsafe or inconsistent output paths and a mismatched close referen
 test("replaces the prompt output block with the requested pixels and composition direction", () => {
   const prompt = promptForDimensions(
     "## SCENE\nA scene.\n\n## SELECTED PREVIEW\n\nKeep its composition.\n\n## OUTPUT\n\nAt least 750 x 1050 px.",
-    480,
-    672,
+    720,
+    1008,
     "Place the action centrally."
   );
-  assert.match(prompt, /480 × 672 pixels/);
+  assert.match(prompt, /720 × 1008 pixels/);
   assert.match(prompt, /Keep its composition\./);
   assert.match(prompt, /Place the action centrally\./);
   assert.doesNotMatch(prompt, /At least 750 x 1050 px/);
@@ -116,6 +118,7 @@ test("home page returns a complete, syntactically valid inline client script", a
   const client = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
   assert.equal(response.status, 200);
   assert.match(html, /Generate four drafts/);
+  assert.match(html, /Edit the issue prompt before generating drafts/);
   assert.ok(client);
   assert.doesNotThrow(() => new Function(client));
 });
