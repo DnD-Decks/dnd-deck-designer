@@ -19,9 +19,9 @@ Configure these as runtime secrets in Sites. Do not commit them or place them in
 | Secret | Purpose |
 | --- | --- |
 | `OPENAI_API_KEY` | Calls the OpenAI Images API for four low-quality previews and one high-quality edit. |
-| `GITHUB_TOKEN` | Writes one image to a feature branch and opens its pull request. Use a fine-grained token restricted to `DnD-Decks/dnd-deck-designer` with Contents read/write and Pull requests read/write. |
+| `GITHUB_TOKEN` | Reads the issue list and details, writes one image to a feature branch, and opens its pull request. Use a fine-grained token restricted to `DnD-Decks/dnd-deck-designer` with Issues read, Contents read/write, and Pull requests read/write. |
 
-Issue reading is public and does not use the GitHub token. Keep the Site private because it can spend from the configured OpenAI account and create repository pull requests.
+Issue reading uses the token to avoid GitHub's shared anonymous API rate limit. Keep the Site private because it can spend from the configured OpenAI account and create repository pull requests.
 
 Image requests use the [OpenAI image generation](https://developers.openai.com/api/reference/resources/images/methods/generate) and [image editing](https://developers.openai.com/api/reference/resources/images/methods/edit) endpoints. GPT Image 2 accepts custom dimensions divisible by 16, which makes exact 5:7 and 7:5 output possible at both draft and final sizes.
 
