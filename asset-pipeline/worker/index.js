@@ -48,6 +48,11 @@ const buildPage = () => String.raw`<!doctype html>
           <span class="brand-mark" aria-hidden="true">✦</span>
           <span><strong>DECKS</strong><small>ART PIPELINE</small></span>
         </a>
+        <button class="mobile-issues-toggle" id="mobile-issues-toggle" type="button" aria-expanded="false">
+          <span class="mobile-issues-label">OPEN ISSUES</span>
+          <strong id="mobile-active-issue">Choose an asset</strong>
+          <span class="mobile-issues-chevron" aria-hidden="true">⌄</span>
+        </button>
         <div class="sidebar-heading"><span>OPEN ASSET ISSUES</span><span class="count" id="issue-count">—</span></div>
         <label class="search-box">
           <span class="sr-only">Filter issues</span>
@@ -72,10 +77,10 @@ const buildPage = () => String.raw`<!doctype html>
           <section class="welcome-panel" id="welcome-panel">
             <div class="welcome-kicker"><span class="sparkle">✦</span> ILLUSTRATION WORKBENCH</div>
             <h1>Choose the image<br><em>that tells the story.</em></h1>
-            <p>Pick an open card issue, compare four low-cost compositions, then render the selected image at card resolution and open a pull request.</p>
+            <p>Pick an open card issue, compare low-cost compositions, then render the selected image at card resolution and open a pull request.</p>
             <div class="workflow-strip" aria-label="Artwork process">
               <div><span>01</span><b>Select an issue</b></div><i></i>
-              <div><span>02</span><b>Compare four drafts</b></div><i></i>
+              <div><span>02</span><b>Compare drafts</b></div><i></i>
               <div><span>03</span><b>Render &amp; submit</b></div>
             </div>
             <div class="welcome-note"><span class="note-icon">i</span><span>Previews use low quality at 720 × 1008 or 1008 × 720. Final renders use the card's exact 5:7 or 7:5 ratio. The OpenAI API account is billed for each image.</span></div>
@@ -89,14 +94,22 @@ const buildPage = () => String.raw`<!doctype html>
               </div>
               <div class="path-chip"><span>OUTPUT FILE</span><code id="output-path">—</code></div>
             </div>
-            <div class="prompt-toggle"><details open><summary><span class="prompt-icon">⌘</span> Image-generation prompt <span class="chevron">⌄</span></summary><div class="prompt-editor"><label for="prompt-text">Edit the issue prompt before generating drafts</label><textarea id="prompt-text" rows="12" maxlength="32000" spellcheck="false"></textarea><div class="prompt-actions"><span>The final render uses the prompt saved with the selected draft run.</span><button class="button button-subtle" id="reset-prompt" type="button">Restore issue prompt</button></div></div></details></div>
+            <div class="prompt-toggle"><details><summary><span class="prompt-icon">⌘</span> Image-generation prompt <span class="prompt-summary-note">Read, edit &amp; brainstorm</span><span class="chevron">⌄</span></summary><div class="prompt-editor"><label for="prompt-text">Read, edit, or brainstorm the issue prompt before generating drafts</label><textarea id="prompt-text" rows="12" maxlength="32000" spellcheck="false"></textarea><div class="prompt-actions"><span>The final render uses the prompt saved with the selected draft run.</span><button class="button button-subtle" id="reset-prompt" type="button">Restore issue prompt</button></div></div></details></div>
             <section class="candidate-section" aria-labelledby="candidate-heading">
               <div class="section-heading">
-                <div><div class="section-kicker">CONCEPT EXPLORATION</div><h2 id="candidate-heading">Four distinct approaches</h2></div>
-                <button class="button button-primary" id="generate-button" type="button"><span class="button-icon">✦</span> Generate four drafts</button>
+                <div><div class="section-kicker">CONCEPT EXPLORATION</div><h2 id="candidate-heading">Distinct approaches</h2></div>
+                <div class="generation-controls">
+                  <fieldset class="variant-picker">
+                    <legend>Drafts</legend>
+                    <label><input type="radio" name="variant-count" value="1"><span>1</span></label>
+                    <label><input type="radio" name="variant-count" value="2" checked><span>2</span></label>
+                    <label><input type="radio" name="variant-count" value="4"><span>4</span></label>
+                  </fieldset>
+                  <button class="button button-primary" id="generate-button" type="button"><span class="button-icon">✦</span> Generate 2 drafts</button>
+                </div>
               </div>
               <p class="concept-note">The issue prompt sets the card concept and visual style. Draft directions may omit its specific characters or setting to explore new ideas.</p>
-              <div class="progress-line hidden" id="generation-progress"><span class="loader"></span><span>Generating four low-quality drafts in parallel…</span></div>
+              <div class="progress-line hidden" id="generation-progress"><span class="loader"></span><span id="generation-progress-text">Generating 2 low-quality drafts in parallel…</span></div>
               <div class="candidate-grid" id="candidate-grid">
                 <div class="empty-candidates"><div class="empty-art" aria-hidden="true">✧</div><strong>Your concepts will appear here</strong><span>Explore the object, the actor, the atmosphere, and an unexpected interpretation.</span></div>
               </div>
@@ -135,6 +148,9 @@ const styles = String.raw`
 .prompt-editor{border-top:1px solid #29343a;padding:14px}.prompt-editor label{display:block;color:#c8d0cb;font-size:14px;margin-bottom:9px}.prompt-editor textarea{display:block;width:100%;min-height:230px;resize:vertical;border:1px solid #3d494d;border-radius:6px;background:#11171c;color:#d5ddd6;padding:13px;font:13px/1.55 var(--mono)}.prompt-editor textarea:focus{outline:2px solid #a88b55;outline-offset:2px}.prompt-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:9px;color:#a1ada8;font-size:13px}.prompt-actions .button{flex:none}.draft-storage{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:13px 0;color:#aab6af;font-size:13px}.draft-storage a{color:var(--gold-2);text-decoration:underline;text-underline-offset:3px}.draft-storage .button{padding:6px 10px;min-height:32px}.draft-storage.error{color:var(--red)}@media(max-width:720px){.prompt-actions{align-items:flex-start;flex-direction:column}}
 .image-view-button{position:absolute;right:10px;top:10px;z-index:2;border:1px solid #737c7a;background:#11171ce8;color:#f0f2ee;padding:7px 10px;border-radius:6px;font-size:12px}.image-view-button:hover,.image-view-button:focus-visible{border-color:var(--gold);color:var(--gold)}.candidate-image,.final-preview img{cursor:zoom-in}.final-preview{position:relative}.final-progress{display:flex;align-items:center;gap:10px;margin:12px 0;color:var(--gold-2);font-size:13px}.final-progress span:last-child{color:#a9b5ac}.image-dialog{position:fixed;inset:0;width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;background:#10151a;color:var(--text);overflow:hidden}.image-dialog::backdrop{background:#080c10e8}.image-dialog[open]{display:flex;flex-direction:column}.image-dialog-toolbar{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:12px clamp(12px,3vw,30px);background:#192127;border-bottom:1px solid #39454b;min-height:68px}.image-dialog-toolbar strong,.image-dialog-toolbar span{display:block}.image-dialog-toolbar strong{font-size:16px;font-weight:600}.image-dialog-toolbar span{font-size:13px;color:#aeb9b2}.image-dialog-actions{display:flex;gap:8px;flex-shrink:0}.image-dialog-actions button{font-size:13px}.image-dialog-scroll{flex:1;min-height:0;overflow:auto;display:flex;align-items:safe center;justify-content:safe center;padding:14px;overscroll-behavior:contain}.image-dialog-scroll img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}.image-dialog-scroll.original{display:block;text-align:center}.image-dialog-scroll.original img{max-width:none;max-height:none;width:auto;height:auto;margin:auto}.image-dialog button:focus-visible,.image-view-button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}@media(max-width:600px){.image-dialog-toolbar{align-items:flex-start;flex-direction:column;gap:8px}.image-dialog-actions{width:100%}.image-dialog-actions button{flex:1}.image-dialog-scroll{padding:6px}}
 .concept-note{margin:-7px 0 17px;color:#a7b2ac;font-size:13px;line-height:1.55}
+.mobile-issues-toggle{display:none}.prompt-summary-note{color:#707c82;font:9px var(--mono);letter-spacing:.04em}.generation-controls{display:flex;align-items:flex-end;gap:10px}.variant-picker{display:flex;align-items:center;gap:3px;margin:0;padding:0;border:0}.variant-picker legend{float:left;margin-right:6px;color:#7f8b91;font:9px var(--mono);letter-spacing:.08em;text-transform:uppercase}.variant-picker label{position:relative;cursor:pointer}.variant-picker input{position:absolute;opacity:0;pointer-events:none}.variant-picker label span{display:grid;place-items:center;min-width:33px;height:39px;border:1px solid #344047;background:#1b2328;color:#aab4ae;font:11px var(--mono);transition:border-color .15s,background .15s,color .15s}.variant-picker label:first-of-type span{border-radius:7px 0 0 7px}.variant-picker label:last-of-type span{border-radius:0 7px 7px 0}.variant-picker label+label span{margin-left:-4px}.variant-picker input:checked+span{position:relative;z-index:1;border-color:#9a7d48;background:#30291d;color:var(--gold-2)}.variant-picker input:focus-visible+span{outline:2px solid var(--gold);outline-offset:2px}.variant-picker input:disabled+span{opacity:.52;cursor:wait}
+@media(max-width:720px){.sidebar{position:sticky;top:0;z-index:20;box-shadow:0 8px 22px #070a0d99}.mobile-issues-toggle{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-height:45px;padding:8px 10px;border:1px solid #303940;border-radius:8px;background:#11171c;color:var(--text);text-align:left}.mobile-issues-label{color:var(--gold);font:9px var(--mono);letter-spacing:.1em}.mobile-issues-toggle strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:500}.mobile-issues-chevron{color:#89949c;transition:transform .15s}.mobile-issues-toggle[aria-expanded="true"] .mobile-issues-chevron{transform:rotate(180deg)}.sidebar-heading,.sidebar .search-box,.sidebar .issue-list{display:none}.sidebar.issues-open .sidebar-heading{display:flex;margin-top:12px}.sidebar.issues-open .search-box{display:flex}.sidebar.issues-open .issue-list{display:block;max-height:52dvh;overflow-y:auto;overflow-x:hidden;padding-right:2px}.sidebar.issues-open .issue-row{width:100%;min-height:54px;margin:3px 0;padding:10px 11px}.sidebar .search-box kbd{display:none}.prompt-summary-note{display:none}.prompt-editor textarea,.search-box input{font-size:16px}.generation-controls{gap:7px}.variant-picker legend{display:none}}
+@media(max-width:390px){.generation-controls{margin-top:11px;justify-content:space-between;width:100%}.section-heading .button{margin-top:0}.variant-picker label span{min-width:36px}}
 `;
 
 const clientScript = String.raw`
@@ -170,6 +186,32 @@ function visibleIssues() {
   });
 }
 
+function selectedVariantCount() {
+  const selected = document.querySelector('input[name="variant-count"]:checked');
+  return selected ? Number(selected.value) : 2;
+}
+
+function updateGenerationControls() {
+  const count = selectedVariantCount();
+  $("#generate-button").innerHTML = '<span class="button-icon">✦</span> Generate ' + count + ' draft' + (count === 1 ? "" : "s");
+  $("#generation-progress-text").textContent = "Generating " + count + " low-quality draft" + (count === 1 ? "" : "s") + " in parallel…";
+}
+
+function setVariantPickerDisabled(disabled) {
+  document.querySelectorAll('input[name="variant-count"]').forEach(function(input) { input.disabled = disabled; });
+}
+
+function setMobileIssueMenu(open) {
+  const sidebar = $(".sidebar");
+  const toggle = $("#mobile-issues-toggle");
+  sidebar.classList.toggle("issues-open", open);
+  toggle.setAttribute("aria-expanded", String(open));
+  if (open) requestAnimationFrame(function() {
+    const selected = listNode.querySelector(".selected");
+    if (selected) selected.scrollIntoView({ block: "nearest" });
+  });
+}
+
 function renderIssueList() {
   const issues = visibleIssues();
   $("#issue-count").textContent = state.issues.length;
@@ -200,7 +242,10 @@ function renderIssueList() {
       meta.append(part);
     });
     button.append(top, meta);
-    button.addEventListener("click", function() { openIssue(issue.number); });
+    button.addEventListener("click", function() {
+      setMobileIssueMenu(false);
+      openIssue(issue.number);
+    });
     listNode.append(button);
   });
 }
@@ -222,6 +267,8 @@ function renderIssue(issue) {
   $("#issue-link").href = issue.htmlUrl;
   $("#output-path").textContent = issue.targetPath || "Prompt needs a valid output path";
   $("#prompt-text").value = issue.prompt || "";
+  $(".prompt-toggle details").open = false;
+  $("#mobile-active-issue").textContent = issue.name || issue.title || ("Issue #" + issue.number);
   $("#draft-storage").replaceChildren();
   const metadata = $("#card-metadata");
   metadata.replaceChildren();
@@ -462,17 +509,19 @@ function selectCandidate(id) {
 async function generateDrafts() {
   const button = $("#generate-button");
   const prompt = $("#prompt-text").value.trim();
+  const variantCount = selectedVariantCount();
   if (!prompt || prompt.length > 32000) {
     setMessage("Enter a prompt of at most 32,000 characters before generating.", "error");
     return;
   }
   button.disabled = true;
+  setVariantPickerDisabled(true);
   $("#generation-progress").classList.remove("hidden");
-  $("#candidate-grid").innerHTML = '<div class="empty-candidates"><span class="loader"></span><strong>Creating four compositions</strong><span>Each draft uses low-quality output to keep preview cost down.</span></div>';
-  setMessage("Generating four previews. Keep this page open until they finish.", "");
+  $("#candidate-grid").innerHTML = '<div class="empty-candidates"><span class="loader"></span><strong>Creating ' + variantCount + ' composition' + (variantCount === 1 ? "" : "s") + '</strong><span>Each draft uses low-quality output to keep preview cost down.</span></div>';
+  setMessage("Generating " + variantCount + " preview" + (variantCount === 1 ? "" : "s") + ". Keep this page open until " + (variantCount === 1 ? "it finishes." : "they finish."), "");
   try {
     const data = await request("/api/issues/" + state.active.number + "/generations", {
-      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ prompt }),
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ prompt, variantCount }),
     });
     state.selected = null;
     state.final = null;
@@ -484,7 +533,9 @@ async function generateDrafts() {
     $("#candidate-grid").innerHTML = '<div class="empty-candidates"><div class="empty-art" aria-hidden="true">!</div><strong>Draft generation did not finish</strong><span>Check the service status and try again. Completed previews are kept when available.</span></div>';
   } finally {
     button.disabled = !state.active.ready;
+    setVariantPickerDisabled(false);
     $("#generation-progress").classList.add("hidden");
+    updateGenerationControls();
   }
 }
 
@@ -582,6 +633,12 @@ $("#issue-search").addEventListener("input", function(event) {
   renderIssueList();
 });
 $("#generate-button").addEventListener("click", generateDrafts);
+document.querySelectorAll('input[name="variant-count"]').forEach(function(input) {
+  input.addEventListener("change", updateGenerationControls);
+});
+$("#mobile-issues-toggle").addEventListener("click", function() {
+  setMobileIssueMenu(!$(".sidebar").classList.contains("issues-open"));
+});
 $("#reset-prompt").addEventListener("click", function() {
   if (state.active) $("#prompt-text").value = state.active.prompt || "";
 });
@@ -1099,11 +1156,15 @@ async function makeDrafts(number, body, env) {
   const prompt = typeof body.prompt === "string" ? body.prompt.trim() : parsed.prompt;
   if (!prompt || prompt.length > 32000)
     throw makePipelineError("The draft prompt must contain 1–32,000 characters.", 400);
+  const variantCount = body.variantCount == null ? 2 : Number(body.variantCount);
+  if (![1, 2, 4].includes(variantCount))
+    throw makePipelineError("Draft variant count must be 1, 2, or 4.", 400);
+  const variants = PREVIEW_VARIANTS.slice(0, variantCount);
   const dimensions = previewDimensions(parsed.orientation);
   const runId = crypto.randomUUID();
   const prefix = runPrefix(number, runId);
   const attempts = await Promise.allSettled(
-    PREVIEW_VARIANTS.map(async (variant) => {
+    variants.map(async (variant) => {
       const candidatePrompt = promptForDimensions(
         prompt,
         dimensions.width,
@@ -1142,7 +1203,7 @@ async function makeDrafts(number, body, env) {
     if (attempt.status === "fulfilled") candidates.push(attempt.value);
     else
       failures.push(
-        `Draft 0${PREVIEW_VARIANTS[index].id}: ${String(attempt.reason?.message || "request failed").slice(0, 160)}`
+        `Draft 0${variants[index].id}: ${String(attempt.reason?.message || "request failed").slice(0, 160)}`
       );
   });
   const manifest = {
@@ -1157,6 +1218,7 @@ async function makeDrafts(number, body, env) {
     createdAt: new Date().toISOString(),
     previewQuality: "low",
     previewModel: DRAFT_MODEL,
+    previewVariantCount: variants.length,
     previewFormat: "jpeg",
     previewSize: dimensions,
     prompt,

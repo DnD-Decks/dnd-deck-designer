@@ -60,6 +60,17 @@ const issue = {
   ].join("\n"),
 };
 
+test("workbench defaults to two variants with a collapsed prompt and mobile issue menu", async () => {
+  const response = await worker.fetch(new Request("https://pipeline.example/"), {});
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /id="mobile-issues-toggle"/);
+  assert.match(html, /name="variant-count" value="2" checked/);
+  assert.match(html, /Generate 2 drafts/);
+  assert.doesNotMatch(html, /<details open>/);
+  assert.match(html, /\.prompt-editor textarea,.search-box input\{font-size:16px\}/);
+});
+
 test("custom prompt produces valid previews, commits each run to the issue folder, and guides the final edit", async () => {
   const previousFetch = globalThis.fetch;
   const objects = new Map();
@@ -165,12 +176,12 @@ test("custom prompt produces valid previews, commits each run to the issue folde
   };
   try {
     const env = { GITHUB_TOKEN: "mock-token", OPENAI_API_KEY: "mock-key", BUCKET: bucket };
-    const generate = async (prompt) => {
+    const generate = async (prompt, variantCount) => {
       const response = await worker.fetch(
         new Request("https://pipeline.example/api/issues/190/generations", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ prompt }),
+          body: JSON.stringify(variantCount == null ? { prompt } : { prompt, variantCount }),
         }),
         env
       );
@@ -178,7 +189,8 @@ test("custom prompt produces valid previews, commits each run to the issue folde
       return (await response.json()).run;
     };
     const first = await generate("Customized illustration with one raven.");
-    assert.equal(first.candidates.length, 4);
+    assert.equal(first.candidates.length, 2);
+    assert.equal(first.previewVariantCount, 2);
     assert.equal(first.prompt, "Customized illustration with one raven.");
     assert.equal(first.draftPath, "asset-pipeline/drafts/190-vex-weapon-mastery");
     assert.match(first.draftUrl, /asset-pipeline\/drafts\/190-vex-weapon-mastery/);
@@ -192,31 +204,45 @@ test("custom prompt produces valid previews, commits each run to the issue folde
           prompt.includes("one raven")
       )
     );
-    assert.equal(new Set(imageRequests.slice(0, 4).map(({ prompt }) => prompt)).size, 4);
+    assert.equal(new Set(imageRequests.slice(0, 2).map(({ prompt }) => prompt)).size, 2);
     assert.match(imageRequests[0].prompt, /No visible person or creature/);
     assert.match(imageRequests[1].prompt, /clearly defined person or creature/);
-    assert.match(imageRequests[2].prompt, /small or partly obscured humanoid silhouette/);
-    assert.match(imageRequests[3].prompt, /genuinely surprising visual approach/);
     assert.ok(first.candidates.every((candidate, index) => candidate.generationPrompt === imageRequests[index].prompt));
     assert.equal(first.draftBranch, "main");
     assert.equal(branchCreations, 0);
     assert.equal(concurrentUpdate, false);
     assert.equal(trees.length, 2);
-    assert.equal(trees[0].tree.length, 5);
+    assert.equal(trees[0].tree.length, 3);
     assert.ok(trees[0].tree.some(({ path }) => path.endsWith(`/${first.runId}/draft-01.jpg`)));
     assert.ok(trees[0].tree.some(({ path }) => path.endsWith(`/${first.runId}/run.json`)));
-    const runBlob = blobs[4];
+    const runBlob = blobs[2];
     assert.match(
       Buffer.from(runBlob.content, "base64").toString(),
       /Customized illustration with one raven/
     );
     const savedRun = JSON.parse(Buffer.from(runBlob.content, "base64").toString());
-    assert.deepEqual(savedRun.candidates.map(({ generationPrompt }) => generationPrompt), imageRequests.slice(0, 4).map(({ prompt }) => prompt));
+    assert.deepEqual(savedRun.candidates.map(({ generationPrompt }) => generationPrompt), imageRequests.slice(0, 2).map(({ prompt }) => prompt));
 
-    const second = await generate("Different illustrated scene.");
+    const second = await generate("Different illustrated scene.", 4);
+    assert.equal(second.candidates.length, 4);
+    assert.equal(second.previewVariantCount, 4);
+    assert.equal(new Set(imageRequests.slice(2, 6).map(({ prompt }) => prompt)).size, 4);
+    assert.match(imageRequests[4].prompt, /small or partly obscured humanoid silhouette/);
+    assert.match(imageRequests[5].prompt, /genuinely surprising visual approach/);
     assert.equal(branchCreations, 0);
     assert.equal(second.draftBranch, first.draftBranch);
     assert.ok(trees[2].tree.some(({ path }) => path.includes(second.runId)));
+
+    const invalidCountResponse = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/generations", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ prompt: "Invalid count.", variantCount: 3 }),
+      }),
+      env
+    );
+    assert.equal(invalidCountResponse.status, 400);
+    assert.match((await invalidCountResponse.json()).error, /1, 2, or 4/);
 
     const finalResponse = await worker.fetch(
       new Request("https://pipeline.example/api/issues/190/finals", {
