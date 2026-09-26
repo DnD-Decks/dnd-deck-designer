@@ -119,3 +119,38 @@ test("home page returns a complete, syntactically valid inline client script", a
   assert.ok(client);
   assert.doesNotThrow(() => new Function(client));
 });
+
+test("issue list and detail requests use the configured GitHub token", async () => {
+  const originalFetch = globalThis.fetch;
+  const requests = [];
+  globalThis.fetch = async (url, options) => {
+    const path = new URL(url).pathname;
+    requests.push({ path, authorization: options.headers.get("authorization") });
+    return new Response(JSON.stringify(path.endsWith("/99") ? issue() : [issue()]), {
+      headers: { "content-type": "application/json" },
+    });
+  };
+  try {
+    const env = { GITHUB_TOKEN: "test-token" };
+    const list = await worker.fetch(new Request("https://pipeline.example/api/issues"), env);
+    assert.equal(list.status, 200);
+    assert.equal((await list.json()).issues[0].assetId, "thunderwave");
+
+    const detail = await worker.fetch(new Request("https://pipeline.example/api/issues/99"), env);
+    assert.equal(detail.status, 200);
+    assert.equal((await detail.json()).number, 99);
+
+    assert.deepEqual(requests, [
+      {
+        path: "/repos/DnD-Decks/dnd-deck-designer/issues",
+        authorization: "Bearer test-token",
+      },
+      {
+        path: "/repos/DnD-Decks/dnd-deck-designer/issues/99",
+        authorization: "Bearer test-token",
+      },
+    ]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
