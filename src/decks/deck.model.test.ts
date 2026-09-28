@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
-import { test } from "vitest";
+import { describe, test } from "vitest";
 
 import { decks } from "./deck.model.ts";
+
+import type { Character } from "src/characters/character.model";
 
 // --- wizard level-1 deck ---
 
@@ -67,4 +69,79 @@ test("barbarian deck has resource, feat, and weapon cards", () => {
   assert.ok(deck.cards.some((card) => card.kind === "resource"));
   assert.ok(deck.cards.some((card) => card.kind === "feat"));
   assert.ok(deck.cards.some((card) => card.kind === "weapon"));
+});
+
+// --- character decks ---
+const wizard: Character = {
+  id: "w",
+  name: "Wizard",
+  cls: "wizard",
+  level: 1,
+  picks: {
+    cantrips: ["fire-bolt", "light", "mage-hand"],
+    prepared: ["magic-missile", "shield", "mage-armor", "detect-magic"],
+    weapons: ["dagger"],
+  },
+};
+
+describe("decks.forCharacter()", () => {
+  test("keeps only the picked spells and weapons", () => {
+    const { entries } = decks.forCharacter(wizard);
+    const spellIds = entries.flatMap(({ card }) => (card.kind === "spell" ? [card.spell.id] : []));
+    const weaponIds = entries.flatMap(({ card }) =>
+      card.kind === "weapon" ? [card.weapon.id] : []
+    );
+    assert.deepEqual(spellIds.sort(), [
+      "detect-magic",
+      "fire-bolt",
+      "light",
+      "mage-armor",
+      "mage-hand",
+      "magic-missile",
+      "shield",
+    ]);
+    assert.deepEqual(weaponIds, ["dagger"]);
+  });
+
+  test("keeps every feat of the class", () => {
+    const featCount = decks.get({ cls: "wizard" }).cards.filter((c) => c.kind === "feat").length;
+    const { entries } = decks.forCharacter(wizard);
+    assert.equal(entries.filter(({ card }) => card.kind === "feat").length, featCount);
+  });
+
+  test("expands stacked resources into one card per use", () => {
+    const { entries } = decks.forCharacter(wizard);
+    const mana = entries.filter(({ card }) => card.kind === "resource");
+    assert.deepEqual(
+      mana.map(({ key }) => key),
+      ["resource-wizard-mana-0", "resource-wizard-mana-1"]
+    );
+  });
+
+  test("keeps a pool resource as a single card", () => {
+    const paladin: Character = { id: "p", name: "Paladin", cls: "paladin", level: 1, picks: {} };
+    const keys = decks.forCharacter(paladin).entries.map(({ key }) => key);
+    assert.deepEqual(
+      keys.filter((key) => key.startsWith("resource-")),
+      ["resource-paladin-mana-0", "resource-paladin-mana-1", "resource-paladin-lay-on-hands-0"]
+    );
+  });
+
+  test("keys are unique", () => {
+    const { entries } = decks.forCharacter(wizard);
+    assert.equal(new Set(entries.map(({ key }) => key)).size, entries.length);
+  });
+
+  test("ignores picks the class cannot take", () => {
+    const fighter: Character = {
+      id: "f",
+      name: "Fighter",
+      cls: "fighter",
+      level: 1,
+      picks: { weapons: ["longsword"], prepared: ["magic-missile"] },
+    };
+    const { entries } = decks.forCharacter(fighter);
+    assert.ok(entries.every(({ card }) => card.kind !== "spell"));
+    assert.equal(entries.filter(({ card }) => card.kind === "resource").length, 2);
+  });
 });

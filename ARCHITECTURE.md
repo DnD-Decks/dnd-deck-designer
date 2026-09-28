@@ -16,6 +16,8 @@
 
 Spells shared between classes are intentionally duplicated — visual class identity is in card style, not shared components. Decks show cantrips + level-1 only (`SPELL_LEVELS = [0, 1]` in `deck.model.ts`). Section order: Resources → Class Features → Spells → Weapons.
 
+**Template vs character.** `decks.get({ cls })` is the class template (the catalog). `decks.forCharacter(character)` narrows it to the character's picks (`src/characters/choices.model.ts`, rules in `src/data/choices/class-choices.json`) and expands resources marked `stack: true` into one card per use (Mana ×2 → 2 cards); pools such as Lay on Hands stay one card.
+
 ---
 
 ## Routes
@@ -38,7 +40,7 @@ Tests render `<App hook={memoryLocation(...).hook} />`, so no test touches `wind
 2. Create model `src/models/<domain>/<domain>.model.ts` exporting a single object with `findAll({cls})`.
 3. Add a new union arm to `DeckCard` in `src/decks/deck.model.ts`.
 4. Assemble cards in `decks.get()` in the desired section order.
-5. Add arms to the four `switch(card.kind)` functions in `src/decks/deck-view.component.tsx` (`sectionLabel`, `cardKey`, `cardName`, `renderCard`). The `assertNever` default guards make missing arms compile errors.
+5. Add arms to the `switch(card.kind)` functions in `src/decks/deck-view.component.tsx` (`sectionLabel`, `cardName`, `renderCard`) and to `cardKey` in `src/decks/deck.model.ts`. The `assertNever` default guards make missing arms compile errors.
 6. Create `src/cards/<kind>-card.component.tsx` + CSS module.
 
 ---

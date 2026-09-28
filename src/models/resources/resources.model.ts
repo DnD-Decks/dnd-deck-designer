@@ -27,6 +27,8 @@ export type Resource = {
   id: string;
   name: string;
   uses: number;
+  /** one card per use in a character deck; pools like Lay on Hands stay a single card */
+  stack?: boolean;
   recharge: RestType;
   action?: ActionTiming;
   description: string;

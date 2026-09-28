@@ -4,6 +4,7 @@
     "name": "Mana",
     "icon": "/icons/mana.png",
     "uses": 2,
+    "stack": true,
     "recharge": "long-rest",
     "description": "You have 2 level-1 spell slots. Expend one to cast a prepared level-1 spell. You regain all expended mana after a Long Rest."
   },
@@ -12,6 +13,7 @@
     "name": "Bardic Inspiration",
     "icon": "/icons/resource-bardic-inspiration.png",
     "uses": 3,
+    "stack": true,
     "recharge": "long-rest",
     "action": "bonus-action",
     "description": "As a Bonus Action, inspire a creature within 60 feet who can see or hear you: it gains a Bardic Inspiration die (d6). Within the next hour, it can add the die to one d20 test after rolling. You have uses equal to your Charisma modifier (minimum 1, typically 3); regain all on a Long Rest."

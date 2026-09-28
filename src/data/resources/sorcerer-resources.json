@@ -4,6 +4,7 @@
     "name": "Mana",
     "icon": "/icons/mana.png",
     "uses": 2,
+    "stack": true,
     "recharge": "long-rest",
     "description": "You have 2 level-1 spell slots. Expend one to cast a prepared level-1 spell. You regain all expended mana after a Long Rest."
   },
@@ -12,6 +13,7 @@
     "name": "Innate Sorcery",
     "icon": "/icons/resource-sorcery-points.png",
     "uses": 2,
+    "stack": true,
     "recharge": "long-rest",
     "action": "bonus-action",
     "description": "As a Bonus Action, you unleash your simmering magic for 1 minute: the spell save DC of your Sorcerer spells increases by 1, and you have Advantage on the attack rolls of Sorcerer spells you cast. You regain all expended uses after a Long Rest."
