@@ -11,10 +11,10 @@
 | Resource | `resource` | vertical | ✓ 10 classes with L1 resources (monk, rogue: none) | "Mana ×2", "Second Wind ×1" |
 | Class feature / feat | `feat` | horizontal (landscape) | ✓ all 12 classes (L1) | "Arcane Recovery", "Fighting Style" |
 | Spell | `spell` | vertical | ✓ all 8 caster classes (L1 only) | "Fire Bolt" (Wizard) |
-| Weapon mastery | `weapon-mastery` | vertical (spell layout) | ✓ 5 mastery classes (all 8 properties) | "Cleave", "Graze" |
+| Weapon | `weapon` | vertical (spell layout) | ✓ all 12 classes — every weapon the class is proficient with; the card carries its mastery property | "Longsword", "Shortbow" |
 | Companion stats | `companion` | — | deferred | Ranger's beast companion |
 
-Spells shared between classes are intentionally duplicated — visual class identity is in card style, not shared components. Decks show cantrips + level-1 only (`SPELL_LEVELS = [0, 1]` in `deck.model.ts`). Section order: Resources → Class Features → Spells → Weapon Masteries.
+Spells shared between classes are intentionally duplicated — visual class identity is in card style, not shared components. Decks show cantrips + level-1 only (`SPELL_LEVELS = [0, 1]` in `deck.model.ts`). Section order: Resources → Class Features → Spells → Weapons.
 
 ---
 
@@ -37,7 +37,7 @@ Cards are React components with **fixed physical proportions** — the goal is W
     - Screen view: grid of cards at a comfortable reading scale.
     - Print view: `@media print` overrides — mm units, bleed/cut margins, page breaks between decks.
 - **Horizontal feat cards** swap dimensions: `width: var(--card-height); height: var(--card-width)`.
-- **Weapon-mastery cards** reuse `spell-card.module.css` directly (same-folder relative import), overriding `--school-color` via inline style.
+- **Weapon cards** reuse `spell-card.module.css` for the shell (same-folder relative import), overriding `--school-color` via inline style; `weapon-card.module.css` adds the properties line and the *Weapon Mastery* block.
 - **Background art** is a layer behind frosted panels — see § *Art assets*. Cards are `position: relative` for it; panels print with `print-color-adjust: exact`.
 - **Click to inspect**: every card in a row sits in a slot with a transparent `Zoom <name>` button over its face. Clicking one holds it in `CardSpotlight` — a `<dialog open>` that blurs the mat behind it and scales the *same* card component up (up to 2.6×, viewport permitting), so what you inspect is what prints. The deck behind is `inert` + `aria-hidden` while a card is held; Escape, the mat and *Put it back* all return it, and focus goes back to the card in the row. **← / →** (and the two named neighbours in the caption) walk the whole deck in reading order, crossing section boundaries and refitting the lift when the card shape changes; `deck-view` keeps a `cardKey → button` ref map so the card you arrive at is the one focus returns to. Because a card can be on the mat and in the spotlight at once, heading ids come from `useId()`, never from the card id.
 - Use semantic HTML (`<article>`, `<h3>`) so cards are role-queryable in RTL and Playwright tests. Deck sections carry an `aria-label` (their section name) and keep the card tally *outside* the `<h2>`, so a heading reads "Level 1", not "Level 123 cards".
@@ -53,9 +53,9 @@ Card art is **AI-generated outside the repo** — no generation step, no image p
 | spell | spell id — `fire-bolt` | portrait 5:7, ≥ 750 × 1050 px | yes — one painting per spell |
 | feat | class-prefixed JSON id — `rogue-sneak-attack` | landscape 7:5, ≥ 1050 × 750 px | no |
 | resource | class-prefixed JSON id — `barbarian-rage` | portrait 5:7, ≥ 750 × 1050 px | no |
-| weapon mastery | `mastery-<id>` — `mastery-cleave` | portrait 5:7, ≥ 750 × 1050 px | yes — the same property card sits in every martial deck |
+| weapon | `weapon-<id>` — `weapon-longsword` | portrait 5:7, ≥ 750 × 1050 px | yes — one painting per weapon |
 
-Class identity lives in card *style* (§ *Deck scope*), never in shared art, so there are no per-class spell variants. The `mastery-` prefix keeps mastery ids clear of spell ids (`slow` is both).
+Class identity lives in card *style* (§ *Deck scope*), never in shared art, so there are no per-class spell variants. The `weapon-` prefix keeps weapon ids clear of spell ids.
 
 **Full-card background, not a boxed vignette.** The house style (`DECK BACKGROUND STYLE v2`, in `.claude/skills/asset/asset.template.prompt.md`) forbids borders, frames, UI, text and reserved empty areas: the asset is a standalone painting that the card's chrome sits on top of. Each ratio matches its card face 1:1, so the image needs no cropping.
 
@@ -78,7 +78,7 @@ imported as modules. The map from domain value to file lives with the domain it 
 | Spell | casting time, mana, ritual/concentration, range, duration, save, dice, damage type | `src/models/spells/spell-icon.model.ts` (+ `ACTION_TIMING_ICONS` in `actions/combat.model.ts`) |
 | Resource | resource icon (`Resource.icon` in `src/data/resources/*.json`), action timing | data + `actions/combat.model.ts` |
 | Class feature | class badge, decorative | `feats.model.ts` projects `ClassDetails.icon` (`src/data/classes/<cls>.json`) |
-| Weapon mastery | one weapon icon per weapon carrying the property (name always, icon when BG3 has one) | `weaponIcon()` in `gear/weapons.model.ts`; `WeaponMastery.weapons` |
+| Weapon | weapon icon (decorative, when BG3 has one), dice, damage type, range | `weaponIcon()` in `gear/weapons.model.ts` + `spell-icon.model.ts` |
 | Class selector | class badge, decorative | `ClassDetails.icon` |
 
 A badge shown next to visible text is rendered `decorative` (empty `alt`) so it does not change the
@@ -88,7 +88,7 @@ element's accessible name; standalone glyphs keep `alt` = their label, which is 
 
 ## Data source
 
-JSON for spells is vendored from sibling repo [`dnd-beginner-character-sheet-5e-2024/src/data`](https://github.com/manuartero/dnd-beginner-character-sheet-5e-2024/tree/main/src/data). Class features, resources, and weapon masteries are authored by hand in this repo.
+JSON for spells is vendored from sibling repo [`dnd-beginner-character-sheet-5e-2024/src/data`](https://github.com/manuartero/dnd-beginner-character-sheet-5e-2024/tree/main/src/data). Class features and resources are authored by hand in this repo.
 
 ### Present data
 
@@ -102,7 +102,8 @@ JSON for spells is vendored from sibling repo [`dnd-beginner-character-sheet-5e-
 | `classes/class-resources.json` | Level-progression resource data for all 12 classes (consumed by `class-resources.model.ts`) |
 | `resources/<cls>-resources.json` | L1 resources for 10 classes (monk, rogue: none) |
 | `feats/<cls>-feats.json` | L1 class features for all 12 classes |
-| `gear/weapon-mastery.json` | All 8 PHB 2024 mastery properties, SRD-audited (class-agnostic; also feeds the card-facing `weapon-masteries` model) |
+| `gear/weapons.json` | 38 SRD weapons: damage, properties, mastery (feeds the weapon cards) |
+| `gear/weapon-mastery.json` | All 8 PHB 2024 mastery properties, SRD-audited (printed on each weapon card) |
 
 ### Deferred
 
@@ -148,6 +149,6 @@ Current modules:
 | `src/models/class/classes.model.ts` | `classes` — all 12 PHB class details |
 | `src/models/resources/resources.model.ts` | `resources` — class resources; `findAll({cls})` |
 | `src/models/feats/feats.model.ts` | `feats` — class features; `findAll({cls})` |
-| `src/models/weapon-masteries/weapon-masteries.model.ts` | `weaponMasteries` — mastery properties; `findAll({cls})`, `list()` |
+| `src/models/gear/weapons.model.ts` | `weapons` — SRD weapons; `findAll({cls})` filters by class proficiency |
 
 Conventions follow [`dnd-beginner-character-sheet-5e-2024/src/models/CLAUDE.md`](https://github.com/manuartero/dnd-beginner-character-sheet-5e-2024/blob/main/src/models/CLAUDE.md).

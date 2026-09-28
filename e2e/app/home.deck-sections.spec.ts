@@ -4,7 +4,7 @@ import { globalSetup } from "../integration/global.setup";
 globalSetup();
 
 test.describe("home: deck sections", () => {
-  test("groups the wizard deck into resources, features, then spells by level", async ({
+  test("groups the wizard deck into resources, features, spells by level, then weapons", async ({
     homePage,
   }) => {
     await homePage.goto("wizard");
@@ -14,13 +14,14 @@ test.describe("home: deck sections", () => {
       "Class Features",
       "Cantrips",
       "Level 1",
+      "Weapons",
     ]);
   });
 
   test("renders a card for every kind the deck holds", async ({ homePage }) => {
     await homePage.goto("ranger"); // the one class whose deck has all four card kinds
 
-    for (const label of ["Resources", "Class Features", "Level 1", "Weapon Masteries"]) {
+    for (const label of ["Resources", "Class Features", "Level 1", "Weapons"]) {
       await expect.soft(homePage.section(label).getByRole("article").first()).toBeVisible();
     }
   });

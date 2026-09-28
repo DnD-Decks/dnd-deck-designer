@@ -1,0 +1,38 @@
+/* Weapon card — shell, panels and stat strip come from spell-card.module.css */
+
+.weaponIcon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-left: 6px;
+}
+
+.properties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-sans);
+  font-size: 7px;
+  font-weight: 700;
+  color: var(--ink-900);
+  flex-shrink: 0;
+}
+
+.mastery {
+  flex: 1;
+  padding-left: 5px;
+  border-left: 2px solid var(--school-color);
+}
+
+.masteryTitle {
+  margin: 0 0 1px;
+  font-family: var(--font-caps);
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--school-color);
+}

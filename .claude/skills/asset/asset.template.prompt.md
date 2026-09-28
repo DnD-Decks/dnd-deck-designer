@@ -1,6 +1,6 @@
 <!--
 Template for the /asset skill — background artwork prompt for any deck card
-(spell, class feature, class resource, weapon-mastery property).
+(spell, class feature, class resource, weapon).
 
 Two things are data-driven: the SCENE block and the ORIENTATION (the
 `{{orientation}}` word up top and the whole OUTPUT block). Everything from
@@ -31,8 +31,8 @@ Placeholders (filled by SKILL.md § 2):
   {{scene}}       2–3 sentences: SUBJECT, ACTION, SETTING, LIGHT — concrete nouns, no rules text
   {{extra_note}}  optional whole line; omit it entirely when the kind has none:
                     spell with damage  → "The visual centers on <type> damage."
-                    weapon mastery     → "Weapons that carry this property: <list>."
-  {{orientation}} "vertical" (spell, resource, weapon mastery) or "horizontal" (feat)
+                    weapon             → "The weapon deals <type> damage; its mastery is <Mastery>."
+  {{orientation}} "vertical" (spell, resource, weapon) or "horizontal" (feat)
   {{output}}      the whole OUTPUT block body — pick one:
                     portrait  → Vertical 5:7 portrait aspect ratio — standard trading-card proportions (63 x 88 mm).
                                 At least 750 x 1050 px.

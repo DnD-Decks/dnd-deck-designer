@@ -20,9 +20,11 @@ test("wizard deck section order: resource → feat → spell", () => {
   assert.ok(firstFeat < firstSpell, "feats before spells");
 });
 
-test("wizard deck has no weapon-mastery cards", () => {
+test("wizard deck carries simple weapons only", () => {
   const deck = decks.get({ cls: "wizard" });
-  assert.equal(deck.cards.filter((c) => c.kind === "weapon-mastery").length, 0);
+  const weaponCards = deck.cards.filter((c) => c.kind === "weapon");
+  assert.ok(weaponCards.length > 0);
+  assert.ok(weaponCards.every((c) => c.weapon.proficiency === "simple"));
 });
 
 // --- fighter level-1 deck ---
@@ -47,22 +49,22 @@ for (const cls of CASTER_CLASSES) {
   });
 }
 
-test("ranger deck has all four card kinds (resource, feat, spell, mastery)", () => {
+test("ranger deck has all four card kinds (resource, feat, spell, weapon)", () => {
   const deck = decks.get({ cls: "ranger" });
   assert.equal(deck.cls.label, "Ranger");
   const kinds = new Set(deck.cards.map((card) => card.kind));
-  assert.deepEqual([...kinds].sort(), ["feat", "resource", "spell", "weapon-mastery"]);
+  assert.deepEqual([...kinds].sort(), ["feat", "resource", "spell", "weapon"]);
 });
 
-test("paladin deck has all four card kinds (resource, feat, spell, mastery)", () => {
+test("paladin deck has all four card kinds (resource, feat, spell, weapon)", () => {
   const deck = decks.get({ cls: "paladin" });
   const kinds = new Set(deck.cards.map((card) => card.kind));
-  assert.deepEqual([...kinds].sort(), ["feat", "resource", "spell", "weapon-mastery"]);
+  assert.deepEqual([...kinds].sort(), ["feat", "resource", "spell", "weapon"]);
 });
 
-test("barbarian deck has resource, feat, and mastery cards", () => {
+test("barbarian deck has resource, feat, and weapon cards", () => {
   const deck = decks.get({ cls: "barbarian" });
   assert.ok(deck.cards.some((card) => card.kind === "resource"));
   assert.ok(deck.cards.some((card) => card.kind === "feat"));
-  assert.ok(deck.cards.some((card) => card.kind === "weapon-mastery"));
+  assert.ok(deck.cards.some((card) => card.kind === "weapon"));
 });
