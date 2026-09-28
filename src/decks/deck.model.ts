@@ -2,21 +2,21 @@
 // (the src/* alias only exists for tsc and vite).
 import { classes } from "../models/class/classes.model.ts";
 import { feats } from "../models/feats/feats.model.ts";
+import { weapons } from "../models/gear/weapons.model.ts";
 import { resources } from "../models/resources/resources.model.ts";
 import { spells } from "../models/spells/spells.model.ts";
-import { weaponMasteries } from "../models/weapon-masteries/weapon-masteries.model.ts";
 
 import type { CharacterClass, ClassDetails } from "src/models/class/classes.model";
 import type { Feat } from "src/models/feats/feats.model";
+import type { Weapon } from "src/models/gear/weapons.model";
 import type { Resource } from "src/models/resources/resources.model";
 import type { Spell, SpellLevel } from "src/models/spells/spells.model";
-import type { WeaponMastery } from "src/models/weapon-masteries/weapon-masteries.model";
 
 export type DeckCard =
   | { kind: "spell"; spell: Spell }
   | { kind: "resource"; resource: Resource }
   | { kind: "feat"; feat: Feat }
-  | { kind: "weapon-mastery"; mastery: WeaponMastery };
+  | { kind: "weapon"; weapon: Weapon };
 
 export type Deck = { cls: ClassDetails; cards: readonly DeckCard[] };
 
@@ -42,13 +42,13 @@ export const decks = {
       spells.findAll({ cls, level }).map((spell): DeckCard => ({ kind: "spell", spell }))
     );
 
-    const masteryCards: DeckCard[] = weaponMasteries
+    const weaponCards: DeckCard[] = weapons
       .findAll({ cls })
-      .map((mastery): DeckCard => ({ kind: "weapon-mastery", mastery }));
+      .map((weapon): DeckCard => ({ kind: "weapon", weapon }));
 
     const deck: Deck = {
       cls: classes.get({ id: cls }),
-      cards: [...resourceCards, ...featCards, ...spellCards, ...masteryCards],
+      cards: [...resourceCards, ...featCards, ...spellCards, ...weaponCards],
     };
     CACHE.set(cls, deck);
     return deck;

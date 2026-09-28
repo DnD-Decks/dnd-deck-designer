@@ -1,6 +1,6 @@
 ---
 name: asset
-description: Render the image-generation prompt for a deck card's background art (spell, class feature, class resource or weapon-mastery property — ChatGPT-oriented) and create or update its `[asset]:` GitHub issue. Also runs in batch over every level-1 card. Use when asked for card art prompts or asset issues, e.g. `/asset fire bolt`, `/asset rogue sneak attack`, `/asset all`.
+description: Render the image-generation prompt for a deck card's background art (spell, class feature, class resource or weapon — ChatGPT-oriented) and create or update its `[asset]:` GitHub issue. Also runs in batch over every level-1 card. Use when asked for card art prompts or asset issues, e.g. `/asset fire bolt`, `/asset rogue sneak attack`, `/asset all`.
 argument-hint: <card name | card id | class + name | all [spells|feats|resources|masteries]> [--dry-run]
 ---
 
@@ -21,11 +21,11 @@ Every card the deck renders (`src/decks/deck.model.ts` → `DeckCard`) gets exac
 | spell | `src/data/spells/spells-level-*.json` (objects keyed by spell id) | `<spell-id>` — `fire-bolt` | portrait 5:7 | yes: one painting per spell, Wizard and Sorcerer both use `fire-bolt.png`. Never create per-class variants. |
 | feat (class feature) | `src/data/feats/<class>-feats.json` (arrays) | the JSON `id`, already class-prefixed — `rogue-sneak-attack` | **landscape 7:5** | no: `wizard-spellcasting` and `cleric-spellcasting` are different paintings (their text and imagery differ). |
 | resource | `src/data/resources/<class>-resources.json` (arrays) | the JSON `id`, already class-prefixed — `barbarian-rage` | portrait 5:7 | no, same reason. |
-| weapon mastery | `src/data/gear/weapon-mastery.json` (object keyed by property id) | `mastery-<id>` — `mastery-cleave` | portrait 5:7 | yes: the same property card sits in every martial deck. The `mastery-` prefix keeps it clear of spell ids (`slow` is both a mastery and a spell). |
+| weapon | `src/data/gear/weapons.json` (array) | `weapon-<id>` — `weapon-longsword` | portrait 5:7 | yes: the same weapon card sits in every deck proficient with it. The `weapon-` prefix keeps it clear of spell ids. |
 
 Orientation is decided by the card kind, never by how "active" the text sounds: feat cards are the passive, text-heavy ones and the deck renders them horizontal (`feat-card.module.css` swaps the poker dimensions). Everything else is a portrait card.
 
-Level-1 scope of a batch run: spells listed under `cantrips` or `level1` in any `src/data/spells/<class>-spells.json`, every feat, every resource, every mastery property.
+Level-1 scope of a batch run: spells listed under `cantrips` or `level1` in any `src/data/spells/<class>-spells.json`, every feat, every resource, every weapon.
 
 ## Steps
 
@@ -33,7 +33,7 @@ Level-1 scope of a batch run: spells listed under `cantrips` or `level1` in any 
 
 Accept a name, an id, or `<class> <name>`. Trim a trailing `--dry-run` first.
 
-1. Kebab-case the argument (lowercase, spaces → `-`). Look that key up, in order, in: spell files, feat arrays (`id`), resource arrays (`id`), mastery object keys (also accept a `mastery-` prefix).
+1. Kebab-case the argument (lowercase, spaces → `-`). Look that key up, in order, in: spell files, feat arrays (`id`), resource arrays (`id`), weapon ids (also accept a `weapon-` prefix).
 2. No id hit: case-insensitive match on `name` across all four kinds.
    - Exactly one hit → use it.
    - Several hits (`spellcasting` × 7 feats, `mana` × 9 resources, `weapon mastery` × 4 feats): if the argument starts with a class name (`rogue sneak attack`, `wizard spellcasting`), keep the hit from that class. Otherwise list the candidate ids and stop.
@@ -45,18 +45,18 @@ Report the resolved `kind`, `asset id` and, for feats and resources, the `class`
 
 Fill `asset.template.prompt.md` (same folder as this file). Two parts are data-driven: the `SCENE` block (first in the prompt) and the orientation (`{{orientation}}` in the opening line plus the `OUTPUT` block). Everything from `## VISUAL STYLE` down to `## OUTPUT` is the shared house style — reproduce it **verbatim**, never reworded per card.
 
-- `{{name}}` — verbatim from the JSON (`name`; for masteries the capitalised key: `cleave` → `Cleave`).
+- `{{name}}` — verbatim from the JSON (`name`).
 - `{{subtitle}}` — per kind:
   - spell: `<School> cantrip` when `level` is `0`, otherwise `<School> level N spell`.
   - feat: `<Class> level 1 class feature` (the `source` field says it: `Rogue Level 1`).
   - resource: `<Class> class resource`.
-  - weapon mastery: `weapon mastery property`.
+  - weapon: `<Proficiency> <range> weapon` (`Martial melee weapon`).
 - `{{scene}}` — **2–3 sentences that a painter could act on**, in this order: SUBJECT (who or what), ACTION (the spell or feature happening, visibly), SETTING (one simple environment), LIGHT (where the light comes from and its colour). Concrete nouns only. No dice, numbers, rule words (Advantage, Bonus Action, saving throw, resistance, feet).
   - Spells usually already describe imagery: take the first 1–2 sentences of `description` and only add the missing SETTING/LIGHT beats.
-  - Feats, resources and masteries are rules text: translate the mechanic into what it *looks like*. `Sneak Attack` → a rogue mid-lunge from a dark alcove into the exposed back of a distracted foe, blade catching the only light. `Rage` → a barbarian mid-roar, veins of red-hot light, weapon raised, dust and embers around. `Cleave` → one great axe swing carrying through two foes in a single arc.
+  - Feats and resources are rules text; weapons are objects: translate the mechanic into what it *looks like*. `Sneak Attack` → a rogue mid-lunge from a dark alcove into the exposed back of a distracted foe, blade catching the only light. `Rage` → a barbarian mid-roar, veins of red-hot light, weapon raised, dust and embers around. `Greataxe` → one great axe swing carrying through two foes in a single arc (the weapon is the subject; its mastery can hint the action).
   - Abstract resources like `Mana` get a symbolic scene (a well of arcane light, a hand cupping a flame of the class's colour), still concrete.
 - `{{orientation}}` / `{{output}}` — by kind. Feat: `horizontal` and the landscape OUTPUT block from the template header (7:5, ≥ 1050 × 750 px, compose across the width). Every other kind: `vertical` and the portrait block (5:7, ≥ 750 × 1050 px). For a landscape feat, also write the `{{scene}}` so it reads left to right — subject on one side, what it acts on across the frame.
-- `{{extra_note}}` — optional whole line. Spell with a `damage` field: `The visual centers on <damage.type joined with "/"> damage.` Weapon mastery: `Weapons that carry this property: <names of weapons in src/data/gear/weapons.json whose mastery is this id>.` Every other case: remove the line (no blank placeholder).
+- `{{extra_note}}` — optional whole line. Spell with a `damage` field: `The visual centers on <damage.type joined with "/"> damage.` Weapon: `The weapon deals <damage.type> damage; its mastery is <Mastery>.` Every other case: remove the line (no blank placeholder).
 
 Strip the HTML comment header from the output.
 
@@ -73,7 +73,7 @@ Title, per kind — the class makes feat and resource titles unique:
 | spell | ``[asset]: `Fire Bolt` spell`` |
 | feat | ``[asset]: `Sneak Attack` rogue feat`` |
 | resource | ``[asset]: `Rage` barbarian resource`` |
-| weapon mastery | ``[asset]: `Cleave` weapon mastery`` |
+| weapon | ``[asset]: `Longsword` weapon`` |
 
 Skip entirely (report "already delivered") when `public/art/<asset-id>.png` exists.
 
@@ -111,7 +111,7 @@ Issue body format:
 
 | Field | Value |
 | --- | --- |
-| Kind | <spell | feat | resource | weapon mastery> |
+| Kind | <spell | feat | resource | weapon> |
 | Name | <name> |
 | <School / Class / Weapons> | <value> |
 | <Level, spells only> | <level> |

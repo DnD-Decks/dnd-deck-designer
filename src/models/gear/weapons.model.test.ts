@@ -39,6 +39,25 @@ test("list contains both melee and ranged weapons", () => {
   assert.ok(all.some((w) => w.range === "ranged"));
 });
 
+// --- weapons.findAll ---
+
+test("martial classes are proficient with every weapon", () => {
+  assert.equal(weapons.findAll({ cls: "fighter" }).length, weapons.list().length);
+});
+
+test("wizards get simple weapons only", () => {
+  const found = weapons.findAll({ cls: "wizard" });
+  assert.ok(found.length > 0);
+  assert.ok(found.every((w) => w.proficiency === "simple"));
+});
+
+test("rogues get martial weapons only with Finesse or Light", () => {
+  const martial = weapons.findAll({ cls: "rogue" }).filter((w) => w.proficiency === "martial");
+  const ids = martial.map((w) => w.id);
+  assert.ok(ids.includes("rapier") && ids.includes("hand-crossbow"));
+  assert.ok(!ids.includes("longsword"));
+});
+
 // --- weaponIcon ---
 
 test("weaponIcon follows the /icons/weapon-<id>.png convention", () => {
