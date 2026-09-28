@@ -3,15 +3,15 @@ import { globalSetup } from "../integration/global.setup";
 
 globalSetup();
 
-test.describe("home: offline by construction", () => {
-  test("every icon the deck references actually loads", async ({ homePage }) => {
-    await homePage.goto("wizard");
-    await expect(homePage.cards.first()).toBeVisible();
+test.describe("catalog: offline by construction", () => {
+  test("every icon the deck references actually loads", async ({ catalogPage }) => {
+    await catalogPage.goto("wizard");
+    await expect(catalogPage.cards.first()).toBeVisible();
 
     // icon paths are plain strings in spell-icon.model — a renamed file only breaks in a browser
     await expect
       .poll(() =>
-        homePage.images.evaluateAll((images) =>
+        catalogPage.images.evaluateAll((images) =>
           images
             .filter((image) => !(image as HTMLImageElement).naturalWidth)
             .map((image) => image.getAttribute("src"))
@@ -20,7 +20,7 @@ test.describe("home: offline by construction", () => {
       .toEqual([]);
   });
 
-  test("nothing the deck renders leaves the app origin", async ({ page, network, homePage }) => {
+  test("nothing the deck renders leaves the app origin", async ({ page, network, catalogPage }) => {
     const foreign: string[] = [];
     page.on("request", (request) => {
       const url = new URL(request.url());
@@ -29,8 +29,8 @@ test.describe("home: offline by construction", () => {
       }
     });
 
-    await homePage.goto("wizard");
-    await expect(homePage.card("Fire Bolt")).toBeVisible();
+    await catalogPage.goto("wizard");
+    await expect(catalogPage.card("Fire Bolt")).toBeVisible();
 
     expect(foreign).toEqual([]);
   });

@@ -3,14 +3,14 @@ import { globalSetup } from "../integration/global.setup";
 
 globalSetup();
 
-test.describe("home: card spotlight", () => {
-  test("clicking a card holds it above the blurred mat", async ({ homePage, page }) => {
-    await homePage.goto("wizard");
-    const onTheMat = await homePage.card("Fire Bolt").boundingBox();
-    await homePage.zoom("Fire Bolt").click();
+test.describe("catalog: card spotlight", () => {
+  test("clicking a card holds it above the blurred mat", async ({ catalogPage, page }) => {
+    await catalogPage.goto("wizard");
+    const onTheMat = await catalogPage.card("Fire Bolt").boundingBox();
+    await catalogPage.zoom("Fire Bolt").click();
 
-    await expect(homePage.spotlight).toBeVisible();
-    const held = homePage.spotlight.getByRole("article", { name: "Fire Bolt", exact: true });
+    await expect(catalogPage.spotlight).toBeVisible();
+    const held = catalogPage.spotlight.getByRole("article", { name: "Fire Bolt", exact: true });
 
     // the lift is a real CSS transform, which is why this test needs a browser — poll it out
     await expect
@@ -19,22 +19,22 @@ test.describe("home: card spotlight", () => {
     // the mat is inert while a card is held: no <main> left in the accessibility tree
     await expect.soft(page.getByRole("main")).toHaveCount(0);
 
-    await homePage.dismissSpotlight.click();
-    await expect(homePage.spotlight).toBeHidden();
+    await catalogPage.dismissSpotlight.click();
+    await expect(catalogPage.spotlight).toBeHidden();
     await expect(page.getByRole("main")).toBeVisible();
   });
 
   test("the arrows walk the deck, refitting a card of a different shape", async ({
-    homePage,
+    catalogPage,
     page,
   }) => {
-    await homePage.goto("wizard");
-    await homePage.zoom("Acid Splash").click();
-    await expect(homePage.spotlight).toBeVisible();
+    await catalogPage.goto("wizard");
+    await catalogPage.zoom("Acid Splash").click();
+    await expect(catalogPage.spotlight).toBeVisible();
 
     // the card before the first cantrip is the last class feature — and those are landscape
     await page.keyboard.press("ArrowLeft");
-    const feature = homePage.spotlight.getByRole("article", {
+    const feature = catalogPage.spotlight.getByRole("article", {
       name: "Arcane Recovery",
       exact: true,
     });
@@ -53,13 +53,13 @@ test.describe("home: card spotlight", () => {
       .toEqual({ landscape: true, fits: true });
   });
 
-  test("Escape puts the card back and returns focus to it", async ({ homePage, page }) => {
-    await homePage.goto("wizard");
-    await homePage.zoom("Magic Missile").click();
-    await expect(homePage.spotlight).toBeVisible();
+  test("Escape puts the card back and returns focus to it", async ({ catalogPage, page }) => {
+    await catalogPage.goto("wizard");
+    await catalogPage.zoom("Magic Missile").click();
+    await expect(catalogPage.spotlight).toBeVisible();
 
     await page.keyboard.press("Escape");
-    await expect(homePage.spotlight).toBeHidden();
-    await expect(homePage.zoom("Magic Missile")).toBeFocused();
+    await expect(catalogPage.spotlight).toBeHidden();
+    await expect(catalogPage.zoom("Magic Missile")).toBeFocused();
   });
 });

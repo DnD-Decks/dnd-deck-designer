@@ -21,6 +21,7 @@
 
 .header {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
@@ -41,13 +42,43 @@
   color: var(--gold);
 }
 
-.tagline {
-  margin: 0;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 13px;
-  letter-spacing: 0.06em;
+.nav {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.navLink {
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+  font-family: var(--font-sans);
+  font-size: 15px;
   color: var(--text-mid);
+  text-decoration: none;
+}
+
+.navLink:hover {
+  color: var(--text-hi);
+}
+
+.navLink[aria-current="page"] {
+  border-bottom-color: var(--gold);
+  color: var(--parchment);
+}
+
+.navLink:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .root {
+    gap: 1.25rem;
+    padding: 1rem 1rem 3rem;
+  }
+
+  .title {
+    font-size: 20px;
+  }
 }
 
 @media print {
