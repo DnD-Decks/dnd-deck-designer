@@ -3,7 +3,7 @@ import { CardSpotlight } from "src/cards/card-spotlight.component";
 import { FeatCard } from "src/cards/feat-card.component";
 import { ResourceCard } from "src/cards/resource-card.component";
 import { SpellCard } from "src/cards/spell-card.component";
-import { WeaponMasteryCard } from "src/cards/weapon-mastery-card.component";
+import { WeaponCard } from "src/cards/weapon-card.component";
 import type { DeckCard } from "src/decks/deck.model";
 import { decks } from "src/decks/deck.model";
 import { assertNever } from "src/lib/assert-never";
@@ -22,8 +22,8 @@ function sectionLabel(card: DeckCard) {
       return "Class Features";
     case "spell":
       return card.spell.level === 0 ? "Cantrips" : `Level ${card.spell.level}`;
-    case "weapon-mastery":
-      return "Weapon Masteries";
+    case "weapon":
+      return "Weapons";
     default:
       return assertNever(card);
   }
@@ -37,8 +37,8 @@ function cardKey(card: DeckCard) {
       return `feat-${card.feat.id}`;
     case "spell":
       return `spell-${card.spell.id}`;
-    case "weapon-mastery":
-      return `mastery-${card.mastery.id}`;
+    case "weapon":
+      return `weapon-${card.weapon.id}`;
     default:
       return assertNever(card);
   }
@@ -52,8 +52,8 @@ function cardName(card: DeckCard) {
       return card.feat.name;
     case "spell":
       return card.spell.name;
-    case "weapon-mastery":
-      return card.mastery.name;
+    case "weapon":
+      return card.weapon.name;
     default:
       return assertNever(card);
   }
@@ -67,8 +67,8 @@ function renderCard(card: DeckCard) {
       return <FeatCard feat={card.feat} />;
     case "spell":
       return <SpellCard spell={card.spell} />;
-    case "weapon-mastery":
-      return <WeaponMasteryCard mastery={card.mastery} />;
+    case "weapon":
+      return <WeaponCard weapon={card.weapon} />;
     default:
       return assertNever(card);
   }
