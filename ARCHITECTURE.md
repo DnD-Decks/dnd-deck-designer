@@ -18,6 +18,20 @@ Spells shared between classes are intentionally duplicated — visual class iden
 
 ---
 
+## Routes
+
+Hash routing with [wouter](https://github.com/molefrog/wouter) (`wouter/use-hash-location`), table in `src/app/app.routes.tsx`. Hash URLs need no host rewrite rules and keep the app a static bundle.
+
+| Path | Page |
+|---|---|
+| `#/` | Your characters (`src/characters/characters.page.tsx`) |
+| `#/catalog/<cls>` | Card catalog: every card a class can have (`src/decks/catalog.page.tsx`); `#/catalog` and unknown classes go to the wizard |
+| `#<cls>` | pre-routing link, redirected to `#/catalog/<cls>` |
+
+Tests render `<App hook={memoryLocation(...).hook} />`, so no test touches `window.location`.
+
+---
+
 ## Adding a new card kind
 
 1. Author JSON in `src/data/<domain>/`.

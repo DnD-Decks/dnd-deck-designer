@@ -12,7 +12,8 @@ e2e/
 ├── integration/                # plumbing only, no test cases
 │   ├── global.setup.ts         # called at module level by every spec
 │   ├── network.guard.ts        # catch-all route: same-origin through, cross-origin aborted
-│   ├── home.page.ts            # page object: locators + intent helpers, no assertions
+│   ├── catalog.page.ts         # page objects: locators + intent helpers, no assertions
+│   ├── home.page.ts            #   (one per route: home = your characters, catalog = every class's cards)
 │   └── fixtures/test.extend.ts # `test`/`expect` every spec imports
 ├── playwright.config.ts
 ├── Dockerfile
