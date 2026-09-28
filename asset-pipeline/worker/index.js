@@ -8,25 +8,29 @@ const PREVIEW_VARIANTS = [
     id: 1,
     title: "The thing itself",
     note: "Isolate the spell, weapon, effect, or object; leave the actor out of frame.",
-    direction: "Make the named spell, weapon, effect, or object the whole story. No visible person or creature unless the concept cannot be understood without one. Use a bold close view, motion, material, and negative space. For a fireball, show the fireball hurtling through darkness, with no caster. Do not reconstruct the full encounter described in SCENE.",
+    direction:
+      "Make the named spell, weapon, effect, or object the whole story. No visible person or creature unless the concept cannot be understood without one. Use a bold close view, motion, material, and negative space. For a fireball, show the fireball hurtling through darkness, with no caster. Do not reconstruct the full encounter described in SCENE.",
   },
   {
     id: 2,
     title: "The person behind it",
     note: "Show a recognizable character actively using the ability or object.",
-    direction: "Center a clearly defined person or creature using the named ability, spell, weapon, or object. Their gesture, intent, and silhouette should tell the story; the effect is visible but secondary. For a fireball, show a distinct caster mid-throw. Choose a camera angle and setting unlike the other concepts. Avoid an isolated object or anonymous silhouette.",
+    direction:
+      "Center a clearly defined person or creature using the named ability, spell, weapon, or object. Their gesture, intent, and silhouette should tell the story; the effect is visible but secondary. For a fireball, show a distinct caster mid-throw. Choose a camera angle and setting unlike the other concepts. Avoid an isolated object or anonymous silhouette.",
   },
   {
     id: 3,
     title: "A figure in the atmosphere",
     note: "Use a small or shadowy silhouette and let light, scale, and setting carry the scene.",
-    direction: "Make atmosphere, scale, and consequence dominant. A small or partly obscured humanoid silhouette may imply the action, but do not render a defined protagonist or an object close-up. For a fireball, a shadowy caster facing a huge burst of light could occupy only a sliver of the picture. Compose in a wide-feeling space within the required card shape, with unexpected lighting and bold empty areas.",
+    direction:
+      "Make atmosphere, scale, and consequence dominant. A small or partly obscured humanoid silhouette may imply the action, but do not render a defined protagonist or an object close-up. For a fireball, a shadowy caster facing a huge burst of light could occupy only a sliver of the picture. Compose in a wide-feeling space within the required card shape, with unexpected lighting and bold empty areas.",
   },
   {
     id: 4,
     title: "The unexpected idea",
     note: "Interpret the card concept from an unusual viewpoint or with a visual metaphor.",
-    direction: "Take a genuinely surprising visual approach to the named concept: an unusual point of view, a trace left behind, a strong visual metaphor, or an unfamiliar moment before or after the action. You may omit the people, props, and setting in SCENE when they make the result resemble a conventional action illustration. Keep the card concept legible and the requested painterly style. Avoid the isolated hero object, defined character, and distant silhouette approaches of the other three drafts.",
+    direction:
+      "Take a genuinely surprising visual approach to the named concept: an unusual point of view, a trace left behind, a strong visual metaphor, or an unfamiliar moment before or after the action. You may omit the people, props, and setting in SCENE when they make the result resemble a conventional action illustration. Keep the card concept legible and the requested painterly style. Avoid the isolated hero object, defined character, and distant silhouette approaches of the other three drafts.",
   },
 ];
 
