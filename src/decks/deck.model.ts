@@ -87,9 +87,17 @@ export const decks = {
 
     const entries = cards
       .filter((card) => {
-        if (card.kind === "spell") return picked.spell.has(card.spell.id);
-        if (card.kind === "weapon") return picked.weapon.has(card.weapon.id);
-        return true;
+        switch (card.kind) {
+          case "spell":
+            return picked.spell.has(card.spell.id);
+          case "weapon":
+            return picked.weapon.has(card.weapon.id);
+          case "resource":
+          case "feat":
+            return true;
+          default:
+            return assertNever(card);
+        }
       })
       .flatMap((card) =>
         Array.from({ length: copies(card) }, (_, n) => ({

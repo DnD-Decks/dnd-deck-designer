@@ -1,4 +1,5 @@
 import classChoicesData from "../data/choices/class-choices.json" with { type: "json" };
+import { assertNever } from "../lib/assert-never.ts";
 import { weapons } from "../models/gear/weapons.model.ts";
 import { spells } from "../models/spells/spells.model.ts";
 
@@ -8,8 +9,10 @@ import type { SpellLevel } from "src/models/spells/spells.model";
 
 export type ChoiceSource = { kind: "spell"; level: SpellLevel } | { kind: "weapon" };
 
+export type ChoiceRuleId = "cantrips" | "prepared" | "weapons";
+
 export type ChoiceRule = {
-  id: string;
+  id: ChoiceRuleId;
   label: string;
   pick: number;
   /** up to `pick`, none required (weapons for classes without Weapon Mastery) */
@@ -24,17 +27,25 @@ export type ChoiceIssue =
 
 type Build = Pick<Character, "cls" | "level" | "picks">;
 
-const DATA = classChoicesData as Record<CharacterClass, Record<string, ChoiceRule[]>>;
+type LevelRules = Partial<Record<CharacterLevel, ChoiceRule[]>>;
+type ClassChoices = Record<CharacterClass, LevelRules>;
+
+const DATA = classChoicesData as ClassChoices;
 
 export const choices = {
   for({ cls, level }: { cls: CharacterClass; level: CharacterLevel }): readonly ChoiceRule[] {
     return DATA[cls][level] ?? [];
   },
 
-  options({ cls, rule }: { cls: CharacterClass; rule: ChoiceRule }): readonly string[] {
-    return rule.from.kind === "spell"
-      ? spells.findAll({ cls, level: rule.from.level }).map((s) => s.id)
-      : weapons.findAll({ cls }).map((w) => w.id);
+  options({ cls, rule }: { cls: CharacterClass; rule: ChoiceRule }) {
+    switch (rule.from.kind) {
+      case "spell":
+        return spells.findAll({ cls, level: rule.from.level }).map((s) => s.id);
+      case "weapon":
+        return weapons.findAll({ cls }).map((w) => w.id);
+      default:
+        return assertNever(rule.from);
+    }
   },
 
   /** everything that keeps a build from being complete; empty means ready to play */

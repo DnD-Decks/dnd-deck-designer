@@ -1,9 +1,10 @@
+import type { ChoiceRuleId } from "src/characters/choices.model";
 import type { CharacterClass } from "src/models/class/classes.model";
 
 export type CharacterLevel = 1;
 
-/** picked ids per choice rule, keyed by `ChoiceRule.id` */
-export type Picks = Readonly<Record<string, readonly string[]>>;
+/** picked ids per choice rule */
+export type Picks = Readonly<Partial<Record<ChoiceRuleId, readonly string[]>>>;
 
 export type Character = {
   id: string;
