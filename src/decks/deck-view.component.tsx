@@ -5,7 +5,7 @@ import { ResourceCard } from "src/cards/resource-card.component";
 import { SpellCard } from "src/cards/spell-card.component";
 import { WeaponCard } from "src/cards/weapon-card.component";
 import type { DeckCard } from "src/decks/deck.model";
-import { decks } from "src/decks/deck.model";
+import { cardKey, decks } from "src/decks/deck.model";
 import { assertNever } from "src/lib/assert-never";
 import type { CharacterClass } from "src/models/class/classes.model";
 import styles from "./deck-view.module.css";
@@ -24,21 +24,6 @@ function sectionLabel(card: DeckCard) {
       return card.spell.level === 0 ? "Cantrips" : `Level ${card.spell.level}`;
     case "weapon":
       return "Weapons";
-    default:
-      return assertNever(card);
-  }
-}
-
-function cardKey(card: DeckCard) {
-  switch (card.kind) {
-    case "resource":
-      return `resource-${card.resource.id}`;
-    case "feat":
-      return `feat-${card.feat.id}`;
-    case "spell":
-      return `spell-${card.spell.id}`;
-    case "weapon":
-      return `weapon-${card.weapon.id}`;
     default:
       return assertNever(card);
   }

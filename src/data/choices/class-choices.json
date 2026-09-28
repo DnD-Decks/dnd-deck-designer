@@ -1,0 +1,279 @@
+{
+  "barbarian": {
+    "1": [
+      {
+        "id": "weapons",
+        "label": "Weapon Mastery",
+        "pick": 2,
+        "from": {
+          "kind": "weapon"
+        }
+      }
+    ]
+  },
+  "bard": {
+    "1": [
+      {
+        "id": "cantrips",
+        "label": "Cantrips",
+        "pick": 2,
+        "from": {
+          "kind": "spell",
+          "level": 0
+        }
+      },
+      {
+        "id": "prepared",
+        "label": "Prepared spells",
+        "pick": 4,
+        "from": {
+          "kind": "spell",
+          "level": 1
+        }
+      },
+      {
+        "id": "weapons",
+        "label": "Weapons",
+        "pick": 2,
+        "optional": true,
+        "from": {
+          "kind": "weapon"
+        }
+      }
+    ]
+  },
+  "cleric": {
+    "1": [
+      {
+        "id": "cantrips",
+        "label": "Cantrips",
+        "pick": 3,
+        "from": {
+          "kind": "spell",
+          "level": 0
+        }
+      },
+      {
+        "id": "prepared",
+        "label": "Prepared spells",
+        "pick": 4,
+        "from": {
+          "kind": "spell",
+          "level": 1
+        }
+      },
+      {
+        "id": "weapons",
+        "label": "Weapons",
+        "pick": 2,
+        "optional": true,
+        "from": {
+          "kind": "weapon"
+        }
+      }
+    ]
+  },
+  "druid": {
+    "1": [
+      {
+        "id": "cantrips",
+        "label": "Cantrips",
+        "pick": 2,
+        "from": {
+          "kind": "spell",
+          "level": 0
+        }
+      },
+      {
+        "id": "prepared",
+        "label": "Prepared spells",
+        "pick": 4,
+        "from": {
+          "kind": "spell",
+          "level": 1
+        }
+      },
+      {
+        "id": "weapons",
+        "label": "Weapons",
+        "pick": 2,
+        "optional": true,
+        "from": {
+          "kind": "weapon"
+        }
+      }
+    ]
+  },
+  "fighter": {
+    "1": [
+      {
+        "id": "weapons",
+        "label": "Weapon Mastery",
+        "pick": 3,
+        "from": {
+          "kind": "weapon"
+        }
+      }
+    ]
+  },
+  "monk": {
+    "1": [
+      {
+        "id": "weapons",
+        "label": "Weapons",
+        "pick": 2,
+        "optional": true,
+        "from": {
+          "kind": "weapon"
+        }
+      }
+    ]
+  },
+  "paladin": {
+    "1": [
+      {
+        "id": "prepared",
+        "label": "Prepared spells",
+        "pick": 2,
+        "from": {
+          "kind": "spell",
+          "level": 1
+        }
+      },
+      {
+        "id": "weapons",
+        "label": "Weapon Mastery",
+        "pick": 2,
+        "from": {
+          "kind": "weapon"
+        }
+      }
+    ]
+  },
+  "ranger": {
+    "1": [
+      {
+        "id": "prepared",
+        "label": "Prepared spells",
+        "pick": 2,
+        "from": {
+          "kind": "spell",
+          "level": 1
+        }
+      },
+      {
+        "id": "weapons",
+        "label": "Weapon Mastery",
+        "pick": 2,
+        "from": {
+          "kind": "weapon"
+        }
+      }
+    ]
+  },
+  "rogue": {
+    "1": [
+      {
+        "id": "weapons",
+        "label": "Weapon Mastery",
+        "pick": 2,
+        "from": {
+          "kind": "weapon"
+        }
+      }
+    ]
+  },
+  "sorcerer": {
+    "1": [
+      {
+        "id": "cantrips",
+        "label": "Cantrips",
+        "pick": 4,
+        "from": {
+          "kind": "spell",
+          "level": 0
+        }
+      },
+      {
+        "id": "prepared",
+        "label": "Prepared spells",
+        "pick": 2,
+        "from": {
+          "kind": "spell",
+          "level": 1
+        }
+      },
+      {
+        "id": "weapons",
+        "label": "Weapons",
+        "pick": 2,
+        "optional": true,
+        "from": {
+          "kind": "weapon"
+        }
+      }
+    ]
+  },
+  "warlock": {
+    "1": [
+      {
+        "id": "cantrips",
+        "label": "Cantrips",
+        "pick": 2,
+        "from": {
+          "kind": "spell",
+          "level": 0
+        }
+      },
+      {
+        "id": "prepared",
+        "label": "Prepared spells",
+        "pick": 2,
+        "from": {
+          "kind": "spell",
+          "level": 1
+        }
+      },
+      {
+        "id": "weapons",
+        "label": "Weapons",
+        "pick": 2,
+        "optional": true,
+        "from": {
+          "kind": "weapon"
+        }
+      }
+    ]
+  },
+  "wizard": {
+    "1": [
+      {
+        "id": "cantrips",
+        "label": "Cantrips",
+        "pick": 3,
+        "from": {
+          "kind": "spell",
+          "level": 0
+        }
+      },
+      {
+        "id": "prepared",
+        "label": "Prepared spells",
+        "pick": 4,
+        "from": {
+          "kind": "spell",
+          "level": 1
+        }
+      },
+      {
+        "id": "weapons",
+        "label": "Weapons",
+        "pick": 2,
+        "optional": true,
+        "from": {
+          "kind": "weapon"
+        }
+      }
+    ]
+  }
+}

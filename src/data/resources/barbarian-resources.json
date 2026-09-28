@@ -4,6 +4,7 @@
     "name": "Rage",
     "icon": "/icons/resource-rage.png",
     "uses": 2,
+    "stack": true,
     "recharge": "long-rest",
     "action": "bonus-action",
     "description": "Enter as a Bonus Action if you aren't wearing Heavy armor. While raging: Resistance to Bludgeoning, Piercing, and Slashing damage; +2 bonus to Strength-based attack damage; Advantage on Strength checks and saves; you can't maintain Concentration or cast spells. Lasts until the end of your next turn unless extended by attacking, forcing a save, or a Bonus Action — up to 10 minutes. Regain one use on a Short Rest, all on a Long Rest."

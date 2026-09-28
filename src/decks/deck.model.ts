@@ -1,11 +1,14 @@
 // Runtime imports are relative with .ts extension so node:test can resolve them
 // (the src/* alias only exists for tsc and vite).
+import { choices } from "../characters/choices.model.ts";
+import { assertNever } from "../lib/assert-never.ts";
 import { classes } from "../models/class/classes.model.ts";
 import { feats } from "../models/feats/feats.model.ts";
 import { weapons } from "../models/gear/weapons.model.ts";
 import { resources } from "../models/resources/resources.model.ts";
 import { spells } from "../models/spells/spells.model.ts";
 
+import type { Character } from "src/characters/character.model";
 import type { CharacterClass, ClassDetails } from "src/models/class/classes.model";
 import type { Feat } from "src/models/feats/feats.model";
 import type { Weapon } from "src/models/gear/weapons.model";
@@ -19,6 +22,29 @@ export type DeckCard =
   | { kind: "weapon"; weapon: Weapon };
 
 export type Deck = { cls: ClassDetails; cards: readonly DeckCard[] };
+
+/** `key` is `kind-id-n`: stable across renders, unique per copy of a stacked card */
+export type DeckEntry = { key: string; card: DeckCard };
+
+export type CharacterDeck = { cls: ClassDetails; entries: readonly DeckEntry[] };
+
+export function cardKey(card: DeckCard) {
+  switch (card.kind) {
+    case "resource":
+      return `resource-${card.resource.id}`;
+    case "feat":
+      return `feat-${card.feat.id}`;
+    case "spell":
+      return `spell-${card.spell.id}`;
+    case "weapon":
+      return `weapon-${card.weapon.id}`;
+    default:
+      return assertNever(card);
+  }
+}
+
+const copies = (card: DeckCard) =>
+  card.kind === "resource" && card.resource.stack ? card.resource.uses : 1;
 
 const SPELL_LEVELS: SpellLevel[] = [0, 1];
 
@@ -52,5 +78,26 @@ export const decks = {
     };
     CACHE.set(cls, deck);
     return deck;
+  },
+
+  /** the class template narrowed to a character's picks, stacked resources expanded per use */
+  forCharacter(character: Character): CharacterDeck {
+    const { cls, cards } = decks.get({ cls: character.cls });
+    const picked = choices.picked(character);
+
+    const entries = cards
+      .filter((card) => {
+        if (card.kind === "spell") return picked.spell.has(card.spell.id);
+        if (card.kind === "weapon") return picked.weapon.has(card.weapon.id);
+        return true;
+      })
+      .flatMap((card) =>
+        Array.from({ length: copies(card) }, (_, n) => ({
+          key: `${cardKey(card)}-${n}`,
+          card,
+        }))
+      );
+
+    return { cls, entries };
   },
 };
