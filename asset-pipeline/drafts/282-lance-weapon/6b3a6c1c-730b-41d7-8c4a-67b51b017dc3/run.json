@@ -63,5 +63,19 @@
     }
   ],
   "failures": [],
-  "finalVersions": {}
+  "finalVersions": {
+    "1": [
+      {
+        "key": "issues/282/runs/6b3a6c1c-730b-41d7-8c4a-67b51b017dc3/final-1-a489319f-27fc-44a1-a07b-e664457fc6a1.png",
+        "width": 800,
+        "height": 1120,
+        "quality": "medium",
+        "model": "gpt-image-2.5-flare",
+        "createdAt": "2026-09-29T20:46:28.674Z",
+        "candidateId": 1,
+        "tuning": "",
+        "generationPrompt": "# DECK BACKGROUND\n\nCreate a vertical background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Lance** — Martial melee weapon.\n\nA mounted knight's lance strikes a shadowed foe's shield dead-centre, lifting them off their feet and hurling them to the ground. A dusty jousting field at noon. Bright white sunlight on the lance tip and a haze of dust.\nThe weapon deals piercing damage; its mastery is Topple.\n\n## VISUAL STYLE\n\nTranslate the action into an elegant astronomical chart. Silhouettes retain the identities of the weapon, creature, or magical object; thin orbital paths and intersecting arcs reveal how they move and where they meet. Treat the marks as visual explanation, not as text or game notation. Use an indigo field, ivory lines, and a single bright accent at the focal point. Keep the diagram sparse enough to read as an image at card size. Exclude numerals, letters, legends, and frames.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, silhouette, and selected visual style. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected image for print without introducing new story elements.\n\n## OUTPUT\n\nExact image dimensions: 800 × 1120 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+      }
+    ]
+  }
 }
