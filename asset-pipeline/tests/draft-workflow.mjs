@@ -75,6 +75,7 @@ test("custom prompt produces valid previews, commits each run to the issue folde
   let editPrompt = "";
   const editPrompts = [];
   const backgroundResponses = new Map();
+  let rateLimitOnce = false;
   const bucket = {
     async put(key, value) {
       objects.set(key, value);
@@ -121,6 +122,17 @@ test("custom prompt produces valid previews, commits each run to the issue folde
     if (path === "/v1/responses") {
       const body = JSON.parse(options.body);
       if (body.background && body.tools?.[0]?.type === "image_generation") {
+        if (rateLimitOnce) {
+          rateLimitOnce = false;
+          return reply(
+            {
+              error: {
+                message: "Rate limit reached on input-images per min. Please try again in 12s.",
+              },
+            },
+            429
+          );
+        }
         backgroundPrompts.push(body.input[0].content[0].text);
         assert.equal(body.store, true);
         assert.equal(body.tool_choice.type, "image_generation");
@@ -675,6 +687,19 @@ test("custom prompt produces valid previews, commits each run to the issue folde
     );
     assert.equal(broadResponse.status, 202, await broadResponse.clone().text());
     const broadJob = (await broadResponse.json()).job;
+    assert.equal(JSON.parse(objects.get(`issues/190/jobs/${broadJob.id}.json`)).requests.length, 4);
+    rateLimitOnce = true;
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const key = `issues/190/jobs/${broadJob.id}.json`;
+      const saved = JSON.parse(objects.get(key));
+      if (saved.requests.length === 19) break;
+      saved.nextSubmitAt = new Date(0).toISOString();
+      objects.set(key, JSON.stringify(saved));
+      await worker.fetch(
+        new Request(`https://pipeline.example/api/issues/190/jobs/${broadJob.id}`),
+        env
+      );
+    }
     assert.equal(
       JSON.parse(objects.get(`issues/190/jobs/${broadJob.id}.json`)).requests.length,
       19
@@ -696,6 +721,52 @@ test("custom prompt produces valid previews, commits each run to the issue folde
     assert.doesNotMatch(
       broadManifest.candidates[18].generationPrompt,
       /COMPOSITION DIRECTION FOR THIS CANDIDATE/
+    );
+    const acceptedBeforeRetry = backgroundPrompts.length;
+    const oldJob = JSON.parse(objects.get(`issues/190/jobs/${broadJob.id}.json`));
+    oldJob.requests = [
+      ...oldJob.requests.slice(0, 4),
+      ...oldJob.requests.slice(4).map(({ id }) => ({ id, error: "Rate limit reached" })),
+    ];
+    oldJob.status = "completed";
+    objects.set(`issues/190/jobs/${broadJob.id}.json`, JSON.stringify(oldJob));
+    broadManifest.candidates = broadManifest.candidates.slice(0, 4);
+    broadManifest.failures = Array.from(
+      { length: 15 },
+      (_, index) => `Draft ${index + 5}: Rate limit reached`
+    );
+    objects.set(`issues/190/runs/${broadJob.runId}/manifest.json`, JSON.stringify(broadManifest));
+    const resumed = await worker.fetch(
+      new Request(`https://pipeline.example/api/issues/190/jobs/${broadJob.id}/retry`, {
+        method: "POST",
+      }),
+      env
+    );
+    assert.equal(resumed.status, 202, await resumed.clone().text());
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const key = `issues/190/jobs/${broadJob.id}.json`;
+      const saved = JSON.parse(objects.get(key));
+      if (saved.requests.length === 19) break;
+      saved.nextSubmitAt = new Date(0).toISOString();
+      objects.set(key, JSON.stringify(saved));
+      await worker.fetch(
+        new Request(`https://pipeline.example/api/issues/190/jobs/${broadJob.id}`),
+        env
+      );
+    }
+    await worker.fetch(
+      new Request(`https://pipeline.example/api/issues/190/jobs/${broadJob.id}`),
+      env
+    );
+    const resumedFinished = await worker.fetch(
+      new Request(`https://pipeline.example/api/issues/190/jobs/${broadJob.id}`),
+      env
+    );
+    assert.equal((await resumedFinished.json()).job.status, "completed");
+    assert.equal(backgroundPrompts.length - acceptedBeforeRetry, 15);
+    assert.equal(
+      JSON.parse(objects.get(`issues/190/runs/${broadJob.runId}/manifest.json`)).candidates.length,
+      19
     );
     const lastFinal = await worker.fetch(
       new Request("https://pipeline.example/api/issues/190/jobs", {

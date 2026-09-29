@@ -584,9 +584,37 @@ function renderGallery(manifest) {
   if (manifest.failures && manifest.failures.length) {
     const fail = document.createElement("p");
     fail.className = "workflow-message error";
-    fail.textContent = manifest.failures.length + " draft request(s) failed: " + manifest.failures.join(" · ");
+    fail.textContent = manifest.failures.length + " draft request(s) failed.";
     grid.append(fail);
+    const job = state.jobs.find(function(item) { return item.type === "draft" && item.runId === manifest.runId; });
+    if (job?.status === "completed") {
+      const retry = document.createElement("button");
+      retry.className = "button button-subtle";
+      retry.type = "button";
+      retry.textContent = "Retry " + manifest.failures.length + " failed drafts";
+      retry.addEventListener("click", function() { retryFailedDrafts(job.id, retry); });
+      grid.append(retry);
+    }
+    const details = document.createElement("details");
+    details.className = "draft-failures";
+    const summary = document.createElement("summary");
+    summary.textContent = "Show failure details";
+    const list = document.createElement("ol");
+    manifest.failures.forEach(function(message) { const item = document.createElement("li"); item.textContent = message; list.append(item); });
+    details.append(summary, list);
+    grid.append(details);
   }
+}
+
+async function retryFailedDrafts(id, button) {
+  button.disabled = true;
+  setMessage("Retrying only the failed drafts in this run…", "");
+  try {
+    const data = await request("/api/issues/" + state.active.number + "/jobs/" + id + "/retry", { method: "POST" });
+    state.jobs = [data.job, ...state.jobs.filter(function(item) { return item.id !== id; })];
+    renderGallery(state.manifest);
+    renderJobs();
+  } catch (error) { button.disabled = false; setMessage(error.message, "error"); }
 }
 
 function activateRun(manifest) {
@@ -945,7 +973,7 @@ async function generateDrafts() {
     });
     state.jobs.unshift(data.job);
     renderJobs();
-    setMessage("Drafts are running in the background. You may close this page and return later.", "success");
+    setMessage(data.job.status === "starting" ? "Draft submission started. Keep this page open until all requests are accepted." : "Drafts are running in the background. You may close this page and return later.", "success");
   } catch (error) {
     setMessage(error.message, "error");
   } finally {
@@ -1009,6 +1037,7 @@ async function refreshJobs() {
     const data = await request("/api/issues/" + number + "/jobs");
     if (state.active?.number !== number) return;
     state.jobs = data.jobs;
+    if (state.manifest?.failures?.length) renderGallery(state.manifest);
     const active = data.jobs.filter(function(job) { return ["starting", "in_progress"].includes(job.status); });
     let completed = false;
     for (const item of active.slice(0, 8)) {
@@ -1042,7 +1071,11 @@ async function refreshJobs() {
 function renderJobs() {
   const active = state.jobs.filter(function(job) { return ["starting", "in_progress"].includes(job.status); });
   const failed = state.jobs.filter(function(job) { return job.status === "failed"; });
-  $("#job-status").textContent = active.length ? active.length + " image job(s) running. You may close the page; results will load when you return." : failed.length ? "Image job failed: " + (failed[0].error || "Please try again.") : "";
+  const draft = active.find(function(job) { return job.type === "draft"; });
+  $("#job-status").textContent = draft?.status === "starting"
+    ? "Submitted " + (draft.submittedCount || 0) + " of " + (draft.variantCount || "?") + " drafts. Keep this page open while remaining requests are queued; accepted images continue in the background. Closing the page pauses submissions until you return."
+    : active.length ? active.length + " image job(s) running. You may close the page; results will load when you return."
+    : failed.length ? "Image job failed: " + (failed[0].error || "Please try again.") : "";
   $("#generation-progress").classList.toggle("hidden", !active.some(function(job) { return job.type === "draft"; }));
   updateStyleSummary();
   const signature = active.filter(function(job) { return job.type === "final"; }).map(function(job) { return job.id; }).join(",");
@@ -1992,6 +2025,15 @@ async function submitImageJob(prompt, env, options) {
       ],
     }),
   });
+  if (response.status === 429) {
+    const body = await response.json().catch(() => ({}));
+    const detail = String(body?.error?.message || "Image rate limit reached.");
+    const retryHeader = Number(response.headers.get("retry-after"));
+    const retryText = Number(detail.match(/try again in\s+(\d+(?:\.\d+)?)s/i)?.[1]);
+    const error = makePipelineError("Image rate limit reached. Waiting to retry.", 429);
+    error.retryDelayMs = Math.max(15000, Math.min(120000, (retryHeader || retryText || 60) * 1000));
+    throw error;
+  }
   const data = await openAIJson(response, "background image");
   if (!data.id || !["queued", "in_progress", "completed"].includes(data.status))
     throw makePipelineError("OpenAI did not accept the background image job.", 502);
@@ -2038,12 +2080,13 @@ async function startDraftJob(number, body, env) {
 }
 
 async function queueDraftRequests(job, env) {
+  if (Date.now() < Date.parse(job.nextSubmitAt || 0)) return;
   const remaining = (job.plan || draftPlan({ variantCount: job.variantCount }, job.prompt)).filter(
     (item) => !job.requests.some((request) => request.id === item.id)
   );
-  for (let offset = 0; offset < remaining.length; offset += 4) {
+  if (remaining.length) {
     const batch = await Promise.all(
-      remaining.slice(offset, offset + 4).map(async (variant) => {
+      remaining.slice(0, 4).map(async (variant) => {
         const generationPrompt =
           variant.generationPrompt ||
           promptForDimensions(
@@ -2071,15 +2114,45 @@ async function queueDraftRequests(job, env) {
             responseId,
           };
         } catch (error) {
+          if (error.status === 429) return { id: variant.id, rateLimitDelayMs: error.retryDelayMs };
           return { id: variant.id, error: String(error.message).slice(0, 260) };
         }
       })
     );
-    job.requests.push(...batch);
+    job.requests.push(...batch.filter((item) => !item.rateLimitDelayMs));
+    job.nextSubmitAt = new Date(
+      Date.now() + Math.max(65000, ...batch.map((item) => item.rateLimitDelayMs || 0))
+    ).toISOString();
     await saveJob(requireBucket(env), job);
   }
-  job.status = job.requests.some((item) => item.responseId) ? "in_progress" : "failed";
+  if (job.requests.length === job.plan.length)
+    job.status = job.requests.some((item) => item.responseId) ? "in_progress" : "failed";
   await saveJob(requireBucket(env), job);
+}
+
+async function retryDraftJob(number, id, env) {
+  const bucket = requireBucket(env);
+  const object = await bucket.get(jobKey(number, id));
+  if (!object) throw makePipelineError("Draft job not found.", 404);
+  const job = await object.json();
+  if (job.type !== "draft" || job.status !== "completed" || !Array.isArray(job.plan))
+    throw makePipelineError("This draft job cannot be retried.", 409);
+  const manifest = await readManifest(bucket, number, job.runId);
+  const successful = new Set(manifest.candidates.map((candidate) => candidate.id));
+  if (!manifest.failures?.length || !successful.size)
+    throw makePipelineError("This run has no failed drafts to retry.", 409);
+  job.requests = job.requests.filter((request) => successful.has(request.id) && request.responseId);
+  if (job.requests.length !== successful.size)
+    throw makePipelineError(
+      "Saved draft responses are unavailable. Start a separate run for the missing styles.",
+      409
+    );
+  job.status = "starting";
+  job.nextSubmitAt = null;
+  job.error = undefined;
+  await saveJob(bucket, job);
+  await queueDraftRequests(job, env);
+  return job;
 }
 
 async function startFinalJob(number, body, env) {
@@ -2159,6 +2232,7 @@ async function advanceJob(job, env) {
     if (job.type === "draft") await queueDraftRequests(job, env);
     else return job;
   }
+  if (job.type === "draft" && job.requests.length !== job.plan.length) return job;
   const bucket = requireBucket(env);
   const results = await Promise.all(
     (job.type === "draft" ? job.requests.filter((item) => item.responseId) : [job]).map(
@@ -2228,7 +2302,12 @@ async function advanceJob(job, env) {
       job.status = "failed";
       job.error = failures.join(" · ");
     } else {
+      const previousObject = await bucket.get(
+        `${runPrefix(job.issueNumber, job.runId)}manifest.json`
+      );
+      const previous = previousObject ? await previousObject.json() : null;
       const manifest = {
+        ...(previous || {}),
         issueNumber: job.issueNumber,
         issueTitle: job.issueTitle,
         assetId: job.assetId,
@@ -2247,7 +2326,7 @@ async function advanceJob(job, env) {
         draftPath: job.draftPath,
         candidates,
         failures,
-        finals: {},
+        finals: previous?.finals || {},
       };
       await saveManifest(bucket, manifest);
       try {
@@ -2317,7 +2396,7 @@ async function issueJobs(number, env) {
   const objects = await Promise.all(page.objects.map((entry) => bucket.get(entry.key)));
   return (await Promise.all(objects.filter(Boolean).map((object) => object.json())))
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
-    .map(({ id, type, status, error, runId, candidateId, createdAt }) => ({
+    .map(({ id, type, status, error, runId, candidateId, createdAt, requests, variantCount }) => ({
       id,
       type,
       status,
@@ -2325,6 +2404,8 @@ async function issueJobs(number, env) {
       runId,
       candidateId,
       createdAt,
+      submittedCount: requests?.filter((item) => item.responseId).length,
+      variantCount,
     }));
 }
 
@@ -2669,6 +2750,27 @@ async function handleApi(request, env, url) {
     await getIssue(number, env);
     return jsonResponse({ run: await syncDraftRun(number, manifest, env) });
   }
+  const retryMatch = path.match(/^\/api\/issues\/(\d+)\/jobs\/([0-9a-f-]{20,40})\/retry$/i);
+  if (retryMatch && request.method === "POST") {
+    assertSameOrigin(request);
+    const number = Number(retryMatch[1]);
+    await getIssue(number, env);
+    const job = await retryDraftJob(number, retryMatch[2], env);
+    return jsonResponse(
+      {
+        job: {
+          id: job.id,
+          type: job.type,
+          status: job.status,
+          runId: job.runId,
+          createdAt: job.createdAt,
+          submittedCount: job.requests.filter((item) => item.responseId).length,
+          variantCount: job.variantCount,
+        },
+      },
+      202
+    );
+  }
   const jobMatch = path.match(/^\/api\/issues\/(\d+)\/jobs(?:\/([0-9a-f-]{20,40}))?$/i);
   if (jobMatch) {
     const number = Number(jobMatch[1]);
@@ -2688,6 +2790,8 @@ async function handleApi(request, env, url) {
           runId: job.runId,
           candidateId: job.candidateId,
           createdAt: job.createdAt,
+          submittedCount: job.requests?.filter((item) => item.responseId).length,
+          variantCount: job.variantCount,
         },
       });
     }
@@ -2708,6 +2812,8 @@ async function handleApi(request, env, url) {
             type: job.type,
             status: job.status,
             runId: job.runId,
+            submittedCount: job.requests?.filter((item) => item.responseId).length,
+            variantCount: job.variantCount,
             candidateId: job.candidateId,
             createdAt: job.createdAt,
           },
