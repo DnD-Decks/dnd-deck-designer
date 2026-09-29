@@ -66,6 +66,7 @@ test("custom prompt produces valid previews, commits each run to the issue folde
   const blobs = [];
   const trees = [];
   const imageRequests = [];
+  const backgroundPrompts = [];
   const refs = [];
   let branchSha = null;
   let mainSha = "main-commit";
@@ -120,6 +121,7 @@ test("custom prompt produces valid previews, commits each run to the issue folde
     if (path === "/v1/responses") {
       const body = JSON.parse(options.body);
       if (body.background && body.tools?.[0]?.type === "image_generation") {
+        backgroundPrompts.push(body.input[0].content[0].text);
         assert.equal(body.store, true);
         assert.equal(body.tool_choice.type, "image_generation");
         assert.ok(["gpt-image-2.5-flare", "gpt-image-2.5-sunburst"].includes(body.tools[0].model));
@@ -259,9 +261,8 @@ test("custom prompt produces valid previews, commits each run to the issue folde
           prompt.includes("one raven")
       )
     );
-    assert.equal(new Set(imageRequests.slice(0, 2).map(({ prompt }) => prompt)).size, 2);
-    assert.match(imageRequests[0].prompt, /No visible person or creature/);
-    assert.match(imageRequests[1].prompt, /clearly defined person or creature/);
+    assert.equal(new Set(imageRequests.slice(0, 2).map(({ prompt }) => prompt)).size, 1);
+    assert.doesNotMatch(imageRequests[0].prompt, /COMPOSITION DIRECTION FOR THIS CANDIDATE/);
     assert.ok(
       first.candidates.every(
         (candidate, index) => candidate.generationPrompt === imageRequests[index].prompt
@@ -293,8 +294,7 @@ test("custom prompt produces valid previews, commits each run to the issue folde
     const second = await generate("Different illustrated scene.", 4);
     assert.equal(second.candidates.length, 4);
     assert.equal(second.previewVariantCount, 4);
-    assert.match(imageRequests[4].prompt, /small or partly obscured humanoid silhouette/);
-    assert.match(imageRequests[5].prompt, /genuinely surprising visual approach/);
+    assert.equal(new Set(imageRequests.slice(2, 6).map(({ prompt }) => prompt)).size, 1);
     assert.equal(branchCreations, 0);
     assert.equal(second.draftBranch, first.draftBranch);
     assert.ok(trees[2].tree.some(({ path }) => path.includes(second.runId)));
@@ -542,6 +542,170 @@ test("custom prompt produces valid previews, commits each run to the issue folde
     assert.equal(advancedManifest.finals["1"].model, "gpt-image-2.5-sunburst");
     assert.equal(advancedManifest.finals["1"].quality, "high");
     assert.equal(advancedManifest.finals["1"].width, 1200);
+
+    const standardPrompt =
+      "# DECK BACKGROUND STYLE v2\n\nCreate a vertical fantasy illustration intended to be used purely as background artwork for a Dungeons & Dragons card deck.\n\n## SCENE\n\nA blade sweeps.\n\n## VISUAL STYLE\n\nPainterly brushwork.\n\n## COMPOSITION\n\nThe artwork is an independent fantasy illustration.\nNo text.\n\n## OUTPUT\n\nPortrait.";
+    const mixedPlan = [
+      { styleId: "engraved-print-01", count: 2 },
+      { styleId: "biomorphic-surrealism-03", count: 1 },
+    ];
+    const preview = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/preview-prompts", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ prompt: standardPrompt, stylePlan: mixedPlan }),
+      }),
+      env
+    );
+    assert.equal(preview.status, 200, await preview.clone().text());
+    const reviewed = await preview.json();
+    assert.equal(reviewed.drafts.length, 3);
+    assert.equal(reviewed.drafts[0].generationPrompt, reviewed.drafts[1].generationPrompt);
+    const stale = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/jobs", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          type: "draft",
+          prompt: standardPrompt,
+          stylePlan: mixedPlan,
+          promptSignature: "stale",
+        }),
+      }),
+      env
+    );
+    assert.equal(stale.status, 409);
+    const customStyles = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/preview-prompts", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          prompt: "Painterly nebula without sections.",
+          stylePlan: mixedPlan,
+        }),
+      }),
+      env
+    );
+    assert.equal(customStyles.status, 422);
+    const mixedResponse = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/jobs", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          type: "draft",
+          prompt: standardPrompt,
+          stylePlan: mixedPlan,
+          promptSignature: reviewed.signature,
+        }),
+      }),
+      env
+    );
+    assert.equal(mixedResponse.status, 202, await mixedResponse.clone().text());
+    const mixedJob = (await mixedResponse.json()).job;
+    const mixedRequests = JSON.parse(objects.get(`issues/190/jobs/${mixedJob.id}.json`)).requests;
+    assert.equal(mixedRequests.length, 3);
+    assert.deepEqual(
+      mixedRequests.map(({ styleName }) => styleName),
+      ["Ink & Ivory", "Ink & Ivory", "Whimsical Scene"]
+    );
+    assert.ok(
+      mixedRequests.every(
+        ({ generationPrompt }) => !generationPrompt.includes("Painterly brushwork.")
+      )
+    );
+    assert.match(mixedRequests[0].generationPrompt, /old engraved fantasy print/i);
+    assert.match(mixedRequests[2].generationPrompt, /whimsical constellation/i);
+    assert.deepEqual(
+      mixedRequests.map(({ generationPrompt }) => generationPrompt),
+      reviewed.drafts.map(({ generationPrompt }) => generationPrompt)
+    );
+    await worker.fetch(
+      new Request(`https://pipeline.example/api/issues/190/jobs/${mixedJob.id}`),
+      env
+    );
+    const mixedFinished = await worker.fetch(
+      new Request(`https://pipeline.example/api/issues/190/jobs/${mixedJob.id}`),
+      env
+    );
+    assert.equal((await mixedFinished.json()).job.status, "completed");
+    const mixedManifest = JSON.parse(
+      objects.get(`issues/190/runs/${mixedJob.runId}/manifest.json`)
+    );
+    assert.equal(mixedManifest.candidates[2].styleName, "Whimsical Scene");
+    const mixedFinal = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/jobs", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ type: "final", runId: mixedJob.runId, candidateId: 3 }),
+      }),
+      env
+    );
+    assert.equal(mixedFinal.status, 202, await mixedFinal.clone().text());
+    assert.match(backgroundPrompts.at(-1), /whimsical constellation/i);
+    assert.doesNotMatch(backgroundPrompts.at(-1), /old engraved fantasy print/i);
+    const savedMixed = JSON.parse(Buffer.from(blobs.at(-1).content, "base64").toString());
+    assert.equal(savedMixed.candidates[2].styleName, "Whimsical Scene");
+
+    const catalog = (
+      await (await worker.fetch(new Request("https://pipeline.example/api/styles"), env)).json()
+    ).styles;
+    const broadPlan = catalog.map(({ id }) => ({ styleId: id, count: 1 }));
+    const broadPreview = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/preview-prompts", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ prompt: standardPrompt, stylePlan: broadPlan }),
+      }),
+      env
+    );
+    assert.equal(broadPreview.status, 200, await broadPreview.clone().text());
+    const broadSignature = (await broadPreview.json()).signature;
+    const broadResponse = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/jobs", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          type: "draft",
+          prompt: standardPrompt,
+          stylePlan: broadPlan,
+          promptSignature: broadSignature,
+        }),
+      }),
+      env
+    );
+    assert.equal(broadResponse.status, 202, await broadResponse.clone().text());
+    const broadJob = (await broadResponse.json()).job;
+    assert.equal(
+      JSON.parse(objects.get(`issues/190/jobs/${broadJob.id}.json`)).requests.length,
+      19
+    );
+    await worker.fetch(
+      new Request(`https://pipeline.example/api/issues/190/jobs/${broadJob.id}`),
+      env
+    );
+    const broadFinished = await worker.fetch(
+      new Request(`https://pipeline.example/api/issues/190/jobs/${broadJob.id}`),
+      env
+    );
+    assert.equal((await broadFinished.json()).job.status, "completed");
+    const broadManifest = JSON.parse(
+      objects.get(`issues/190/runs/${broadJob.runId}/manifest.json`)
+    );
+    assert.equal(broadManifest.candidates.length, 19);
+    assert.equal(broadManifest.candidates[18].id, 19);
+    assert.doesNotMatch(
+      broadManifest.candidates[18].generationPrompt,
+      /COMPOSITION DIRECTION FOR THIS CANDIDATE/
+    );
+    const lastFinal = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/jobs", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ type: "final", runId: broadJob.runId, candidateId: 19 }),
+      }),
+      env
+    );
+    assert.equal(lastFinal.status, 202, await lastFinal.clone().text());
   } finally {
     globalThis.fetch = previousFetch;
   }

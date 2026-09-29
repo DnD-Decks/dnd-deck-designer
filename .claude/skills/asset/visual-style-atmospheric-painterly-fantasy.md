@@ -1,3 +1,8 @@
+---
+name: Original
+family: Atmospheric Painterly Fantasy
+---
+
 Modern high-fantasy tabletop RPG illustration with a traditional painterly feeling.
 
 Expressive, clearly visible brushwork and soft pigment texture.

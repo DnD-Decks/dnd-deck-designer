@@ -1,1 +1,6 @@
+---
+name: Bold Shapes
+family: Geometric Screen Print
+---
+
 A bold geometric screen print. Construct the subject and action from flat silhouettes and sharply cut color shapes. Limit the palette to three to five inks on paper. Convey motion through pose, overlap, scale, and negative space. Keep the image instantly readable at card size. No gradients, painterly shading, type, or border.

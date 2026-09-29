@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import worker, {
   finalDimensions,
+  applyVisualStyle,
+  canSwapVisualStyle,
   parseAssetIssue,
   previewDimensions,
   promptForDimensions,
@@ -118,7 +120,8 @@ test("home page returns a complete, syntactically valid inline client script", a
   const client = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
   assert.equal(response.status, 200);
   assert.match(html, /Generate 2 drafts/);
-  assert.match(html, /name="variant-count" value="4"/);
+  assert.match(html, /Compare all 19 styles/);
+  assert.match(html, /id="style-rows"/);
   assert.match(html, /Edit the issue prompt before generating drafts/);
   assert.match(html, /<dialog class="image-dialog"/);
   assert.match(html, /View at 100%/);
@@ -138,6 +141,29 @@ test("home page returns a complete, syntactically valid inline client script", a
   assert.match(html, /Optional refinements for this render/);
   assert.ok(client);
   assert.doesNotThrow(() => new Function(client));
+});
+
+test("style substitution strips the legacy block and neutralizes its illustration shell", async () => {
+  const original =
+    "# DECK BACKGROUND STYLE v2\n\nCreate a vertical fantasy illustration intended to be used purely as background artwork for a Dungeons & Dragons card deck.\n\n## SCENE\n\nA blade sweeps past.\n\n## VISUAL STYLE\n\nOld painterly prose.\n\n## COMPOSITION\n\nThe artwork is an independent fantasy illustration.\nNo text.\n\n## OUTPUT\n\nPortrait.";
+  assert.equal(canSwapVisualStyle(original), true);
+  const replaced = applyVisualStyle(original, "Ink and ivory.");
+  assert.match(replaced, /## SCENE\n\nA blade sweeps past/);
+  assert.match(replaced, /## VISUAL STYLE\n\nInk and ivory/);
+  assert.doesNotMatch(replaced, /Old painterly prose/);
+  assert.doesNotMatch(replaced, /fantasy illustration/);
+  assert.match(replaced, /background image/);
+  assert.match(replaced, /## COMPOSITION\n\nThe image is independent background artwork/);
+  const custom = "## Shared visual language\n\nPainterly nebula.\n\n## OUTPUT\n\nPortrait.";
+  assert.equal(canSwapVisualStyle(custom), false);
+  assert.throws(() => applyVisualStyle(custom, "Thread and fabric."), /custom visual instructions/);
+  assert.equal(applyVisualStyle(original, null), original);
+  const response = await worker.fetch(new Request("https://pipeline.example/api/styles"), {});
+  const styles = (await response.json()).styles;
+  assert.equal(styles.length, 19);
+  assert.ok(
+    styles.some(({ name, family }) => name === "Ink & Ivory" && family === "Engraved Print")
+  );
 });
 
 test("issue list and detail requests use the configured GitHub token", async () => {

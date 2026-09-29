@@ -3,7 +3,7 @@ Template for the /asset skill — background artwork prompt for any deck card
 (spell, class feature, class resource, weapon).
 
 The SCENE, ORIENTATION, and VISUAL STYLE are data-driven. The style block is
-loaded from one visual-style-*.md file in this folder and inserted verbatim.
+loaded from one visual-style-*.md file in this folder, excluding its YAML metadata.
 
 Orientation follows the card kind, never a judgment call (see ARCHITECTURE.md
 § Deck scope): feat cards are landscape, every other kind is portrait.

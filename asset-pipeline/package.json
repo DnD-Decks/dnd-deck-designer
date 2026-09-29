@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "styles": "node scripts/style-catalog.mjs",
     "build": "bash scripts/build.sh",
     "validate": "node scripts/validate-artifact.mjs",
     "test": "node --test tests/*.mjs"

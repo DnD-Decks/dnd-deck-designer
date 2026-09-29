@@ -27,7 +27,7 @@
     }
   },
   "files": {
-    "ignore": ["node_modules", "dist"]
+    "ignore": ["node_modules", "dist", "asset-pipeline/worker/visual-styles.js"]
   },
   "overrides": [
     {
