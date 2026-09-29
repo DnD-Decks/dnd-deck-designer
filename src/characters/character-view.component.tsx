@@ -6,22 +6,32 @@ import styles from "./characters.module.css";
 
 type Props = { character: Character; actions: ReactNode };
 
+function CharacterHeader({
+  title,
+  subtitle,
+  actions,
+}: { title: string; subtitle: string; actions: ReactNode }) {
+  return (
+    <header className={styles.sheetHeader}>
+      <hgroup>
+        <h2 className={styles.heading}>{title}</h2>
+        <p className={styles.subtitle}>{subtitle}</p>
+      </hgroup>
+      <div className={styles.actions}>{actions}</div>
+    </header>
+  );
+}
+
 export function CharacterView({ character, actions }: Props) {
   const { cls, entries } = decks.forCharacter(character);
   const cards = [...new Set(entries.map(({ card }) => card))];
-
-  return (
-    <>
-      <header className={styles.sheetHeader}>
-        <div>
-          <h2 className={styles.heading}>{character.name}</h2>
-          <p className={styles.subtitle}>
-            Level {character.level} {cls.label}
-          </p>
-        </div>
-        <div className={styles.actions}>{actions}</div>
-      </header>
-      <DeckView cls={character.cls} cards={cards} />
-    </>
+  const header = (
+    <CharacterHeader
+      title={character.name}
+      subtitle={`Level ${character.level} ${cls.label}`}
+      actions={actions}
+    />
   );
+
+  return <DeckView cls={character.cls} cards={cards} intro={header} />;
 }

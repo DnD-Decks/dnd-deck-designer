@@ -25,7 +25,10 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const isStringList = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every((item) => typeof item === "string");
 
-function parseBuild(value: unknown): Build | undefined {
+const hasUnknownPick = (build: Build) =>
+  choices.validate(build).some((issue) => issue.problem === "unknown");
+
+function parseBuild(value: unknown) {
   if (!isRecord(value)) return undefined;
   const { name, cls, level, picks } = value;
   if (typeof name !== "string" || name.trim() === "") return undefined;
@@ -35,12 +38,11 @@ function parseBuild(value: unknown): Build | undefined {
   if (!found) return undefined;
 
   const ruleIds = new Set<string>(choices.for({ cls: found.id, level }).map((rule) => rule.id));
-  const entries = Object.entries(picks);
-  if (entries.some(([rule, ids]) => !ruleIds.has(rule) || !isStringList(ids))) return undefined;
+  const badRule = ([rule, ids]: [string, unknown]) => !ruleIds.has(rule) || !isStringList(ids);
+  if (Object.entries(picks).some(badRule)) return undefined;
 
   const build: Build = { name, cls: found.id, level, picks: picks as Picks };
-  const unknownPick = choices.validate(build).some((issue) => issue.problem === "unknown");
-  return unknownPick ? undefined : build;
+  return hasUnknownPick(build) ? undefined : build;
 }
 
 function toBase64Url(text: string) {
@@ -60,8 +62,7 @@ export const characters = {
     return { id: crypto.randomUUID(), name, cls, level: 1, picks: {} };
   },
 
-  /** a stored character, or undefined when the value is not one */
-  parse(value: unknown): Character | undefined {
+  parse(value: unknown) {
     if (!isRecord(value) || typeof value.id !== "string" || value.id === "") return undefined;
     const build = parseBuild(value);
     return build && { id: value.id, ...build };
@@ -71,10 +72,10 @@ export const characters = {
     return toBase64Url(JSON.stringify({ cls, level, name, picks }));
   },
 
-  /** the build in a share code as a new character, or undefined when the code is broken */
-  fromShareCode(code: string): Character | undefined {
+  fromShareCode(code: string) {
     try {
-      const build = parseBuild(JSON.parse(fromBase64Url(code)));
+      const json = fromBase64Url(code);
+      const build = parseBuild(JSON.parse(json));
       return build && { id: crypto.randomUUID(), ...build };
     } catch {
       return undefined;

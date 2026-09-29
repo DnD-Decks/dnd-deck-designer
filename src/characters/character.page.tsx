@@ -10,7 +10,8 @@ type Shared = { copied: true } | { copied: false; link: string };
 
 function shareLink(character: Character) {
   const base = window.location.href.split("#")[0];
-  return `${base}#/import/${characters.toShareCode(character)}`;
+  const code = characters.toShareCode(character);
+  return `${base}#/import/${code}`;
 }
 
 function ShareButton({ character }: { character: Character }) {

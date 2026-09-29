@@ -24,7 +24,7 @@ test.describe("import: share link", () => {
 
     await importPage.save.click();
 
-    await expect.soft(page).toHaveURL(/#\/c\/[\w-]+$/);
+    await expect.soft(page).toHaveURL(/#\/character\/[\w-]+$/);
     await expect.soft(importPage.share).toBeVisible();
 
     await homePage.goto();

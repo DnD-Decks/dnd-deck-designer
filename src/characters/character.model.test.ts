@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
 
-import type { Character } from "src/characters/character.model";
+import { brunhilde } from "./character.fixture.ts";
 import { characters } from "./character.model.ts";
 
 describe("characters.create()", () => {
@@ -19,53 +19,66 @@ describe("characters.create()", () => {
   });
 });
 
-const fighter: Character = {
-  id: "f1",
-  name: "Brünhilde",
-  cls: "fighter",
-  level: 1,
-  picks: { weapons: ["longsword", "shortbow", "dagger"] },
-};
-
 describe("characters.parse()", () => {
   test("keeps a well-formed character", () => {
-    assert.deepEqual(characters.parse(structuredClone(fighter)), fighter);
+    assert.deepEqual(characters.parse(brunhilde()), {
+      id: "f1",
+      name: "Brünhilde",
+      cls: "fighter",
+      level: 1,
+      picks: { weapons: ["longsword", "shortbow", "dagger"] },
+    });
   });
 
-  test.each([
+  [
     { label: "a non-object", value: "fighter" },
-    { label: "a missing id", value: { ...fighter, id: undefined } },
-    { label: "a blank name", value: { ...fighter, name: "  " } },
-    { label: "an unknown class", value: { ...fighter, cls: "illithid" } },
-    { label: "a level beyond 1", value: { ...fighter, level: 2 } },
-    { label: "a rule the class does not have", value: { ...fighter, picks: { cantrips: [] } } },
-    { label: "picks that are not strings", value: { ...fighter, picks: { weapons: [1] } } },
-    { label: "a weapon the class cannot pick", value: { ...fighter, picks: { weapons: ["x"] } } },
-  ])("rejects $label", ({ value }) => {
-    assert.equal(characters.parse(value), undefined);
+    { label: "a missing id", value: { ...brunhilde(), id: undefined } },
+    { label: "a blank name", value: { ...brunhilde(), name: "  " } },
+    { label: "an unknown class", value: { ...brunhilde(), cls: "illithid" } },
+    { label: "a level beyond 1", value: { ...brunhilde(), level: 2 } },
+    { label: "a rule the class does not have", value: { ...brunhilde(), picks: { cantrips: [] } } },
+    { label: "picks that are not strings", value: { ...brunhilde(), picks: { weapons: [1] } } },
+    {
+      label: "a weapon the class cannot pick",
+      value: { ...brunhilde(), picks: { weapons: ["x"] } },
+    },
+  ].forEach(({ label, value }) =>
+    test(`rejects ${label}`, () => {
+      assert.equal(characters.parse(value), undefined);
+    })
+  );
+});
+
+describe("characters.toShareCode()", () => {
+  test("is URL-safe", () => {
+    assert.match(characters.toShareCode(brunhilde()), /^[A-Za-z0-9_-]+$/);
   });
 });
 
-describe("characters share code", () => {
+describe("characters.fromShareCode()", () => {
   test("round-trips the build under a new id", () => {
-    const imported = characters.fromShareCode(characters.toShareCode(fighter));
-    assert.ok(imported);
-    const { id, ...build } = imported;
-    const { id: originalId, ...original } = fighter;
-    assert.deepEqual(build, original);
-    assert.notEqual(id, originalId);
+    const imported = characters.fromShareCode(characters.toShareCode(brunhilde()));
+    assert.deepEqual(
+      { ...imported, id: "new" },
+      {
+        id: "new",
+        name: "Brünhilde",
+        cls: "fighter",
+        level: 1,
+        picks: { weapons: ["longsword", "shortbow", "dagger"] },
+      }
+    );
+    assert.notEqual(imported?.id, "f1");
   });
 
-  test("is URL-safe", () => {
-    assert.match(characters.toShareCode(fighter), /^[A-Za-z0-9_-]+$/);
-  });
-
-  test.each([
+  [
     { label: "not base64", code: "%%%" },
     { label: "not JSON", code: btoa("fighter") },
     { label: "an invalid build", code: btoa(JSON.stringify({ cls: "illithid" })) },
     { label: "empty", code: "" },
-  ])("a code that is $label decodes to nothing", ({ code }) => {
-    assert.equal(characters.fromShareCode(code), undefined);
-  });
+  ].forEach(({ label, code }) =>
+    test(`a code that is ${label} decodes to nothing`, () => {
+      assert.equal(characters.fromShareCode(code), undefined);
+    })
+  );
 });

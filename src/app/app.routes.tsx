@@ -14,7 +14,7 @@ export function AppRoutes() {
   return (
     <Switch>
       <Route path="/" component={CharactersPage} />
-      <Route path="/c/:id">{({ id }) => <CharacterPage id={id} />}</Route>
+      <Route path="/character/:id">{({ id }) => <CharacterPage id={id} />}</Route>
       <Route path="/import/:code">{({ code }) => <CharacterImportPage code={code} />}</Route>
       <Route path="/catalog">
         <Redirect to={`/catalog/${DEFAULT_CATALOG_CLASS}`} replace />

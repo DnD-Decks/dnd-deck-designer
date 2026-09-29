@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { type ReactNode, useCallback, useRef, useState } from "react";
 import { CardSpotlight } from "src/cards/card-spotlight.component";
 import { FeatCard } from "src/cards/feat-card.component";
 import { ResourceCard } from "src/cards/resource-card.component";
@@ -10,8 +10,7 @@ import { assertNever } from "src/lib/assert-never";
 import type { CharacterClass } from "src/models/class/classes.model";
 import styles from "./deck-view.module.css";
 
-/** `cards` narrows the class deck, e.g. to a character's picks */
-type Props = { cls: CharacterClass; cards?: readonly DeckCard[] };
+type Props = { cls: CharacterClass; cards?: readonly DeckCard[]; intro?: ReactNode };
 
 type Held = { index: number; trigger: HTMLElement };
 
@@ -111,7 +110,7 @@ function EmptyDeck({ cls, label }: { cls: CharacterClass; label: string }) {
   );
 }
 
-export function DeckView({ cls, cards }: Props) {
+export function DeckView({ cls, cards, intro }: Props) {
   const deck = decks.get({ cls });
   const shown = cards ?? deck.cards;
   const grouped = sections(shown);
@@ -151,6 +150,7 @@ export function DeckView({ cls, cards }: Props) {
         inert={held !== null}
         aria-hidden={held !== null || undefined}
       >
+        {intro}
         {grouped.map(([label, cards]) => (
           <section key={label} className={styles.section} aria-label={label}>
             {/* tally outside the h2: the heading should read "Level 1", not "Level 123 cards" */}

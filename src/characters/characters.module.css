@@ -75,7 +75,6 @@ button.action {
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.5rem;
 }
 
 .actions {
@@ -92,10 +91,6 @@ button.action {
   font-family: var(--font-sans);
   font-size: 14px;
   color: var(--text-mid);
-}
-
-.status:empty {
-  display: none;
 }
 
 .linkField {

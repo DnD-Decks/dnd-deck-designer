@@ -28,7 +28,7 @@ export function CharacterImportPage({ code }: { code: string }) {
   if (!character) return <BrokenLink />;
 
   const save = () => {
-    if (characterStorage.save(character)) navigate(`/c/${character.id}`, { replace: true });
+    if (characterStorage.save(character)) navigate(`/character/${character.id}`, { replace: true });
     else setFailed(true);
   };
 

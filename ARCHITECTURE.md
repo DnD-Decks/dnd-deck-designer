@@ -27,7 +27,7 @@ Hash routing with [wouter](https://github.com/molefrog/wouter) (`wouter/use-hash
 | Path | Page |
 |---|---|
 | `#/` | Your characters (`src/characters/characters.page.tsx`): the ones saved on this device |
-| `#/c/<id>` | A saved character's deck, with Share (`src/characters/character.page.tsx`) |
+| `#/character/<id>` | A saved character's deck, with Share (`src/characters/character.page.tsx`) |
 | `#/import/<code>` | Preview of a shared build with "Save to this device" (`src/characters/character-import.page.tsx`) |
 | `#/catalog/<cls>` | Card catalog: every card a class can have (`src/decks/catalog.page.tsx`); `#/catalog` and unknown classes go to the wizard |
 | `#<cls>` | pre-routing link, redirected to `#/catalog/<cls>` |

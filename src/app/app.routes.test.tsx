@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { elminster } from "src/characters/character.fixture";
 import { characterStorage } from "src/services/character.storage";
 import { beforeEach, describe, expect, test } from "vitest";
 import { memoryLocation } from "wouter/memory-location";
@@ -25,11 +26,11 @@ describe("<AppRoutes />", () => {
   });
 
   test("home lists saved characters and links to each one", () => {
-    characterStorage.save({ id: "w1", name: "Elminster", cls: "wizard", level: 1, picks: {} });
+    characterStorage.save(elminster());
     const memory = renderAt("/");
     expect(screen.queryByRole("link", { name: "Open the card catalog" })).toBeNull();
     fireEvent.click(screen.getByRole("link", { name: /Elminster/ }));
-    expect(memory.history.slice(-1)).toEqual(["/c/w1"]);
+    expect(memory.history.slice(-1)).toEqual(["/character/w1"]);
   });
 
   test("the catalog opens the class in the path", () => {

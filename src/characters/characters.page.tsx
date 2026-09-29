@@ -29,7 +29,7 @@ export function CharactersPage() {
         <ul className={styles.list}>
           {saved.map((character) => (
             <li key={character.id}>
-              <Link href={`/c/${character.id}`} className={styles.item}>
+              <Link href={`/character/${character.id}`} className={styles.item}>
                 <span className={styles.itemName}>{character.name}</span>
                 <span className={styles.subtitle}>
                   Level {character.level} {classes.get({ id: character.cls }).label}

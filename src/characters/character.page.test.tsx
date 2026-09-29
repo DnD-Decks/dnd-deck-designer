@@ -1,18 +1,10 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { App } from "src/app/app.component";
-import type { Character } from "src/characters/character.model";
+import { brunhilde } from "src/characters/character.fixture";
 import { characters } from "src/characters/character.model";
 import { characterStorage } from "src/services/character.storage";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { memoryLocation } from "wouter/memory-location";
-
-const fighter: Character = {
-  id: "f1",
-  name: "Brünhilde",
-  cls: "fighter",
-  level: 1,
-  picks: { weapons: ["longsword", "shortbow", "dagger"] },
-};
 
 const renderAt = (path: string) => {
   const memory = memoryLocation({ path, record: true });
@@ -23,9 +15,11 @@ const renderAt = (path: string) => {
 const stubClipboard = (writeText: (text: string) => Promise<void>) =>
   Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
 
+const sharedCode = (link: unknown) => String(link).split("#/import/")[1] ?? "";
+
 beforeEach(() => {
   localStorage.clear();
-  characterStorage.save(fighter);
+  characterStorage.save(brunhilde());
 });
 
 afterEach(() => {
@@ -33,40 +27,44 @@ afterEach(() => {
 });
 
 describe("<CharacterPage />", () => {
-  test("shows the saved character's deck", () => {
-    renderAt("/c/f1");
+  test("shows the saved character's name, class and picked cards", () => {
+    renderAt("/character/f1");
     screen.getByRole("heading", { name: "Brünhilde", level: 2 });
+    screen.getByText("Level 1 Fighter");
     screen.getByRole("heading", { name: "Shortbow", level: 3 });
+  });
+
+  test("the character heading sits inside the main landmark", () => {
+    renderAt("/character/f1");
+    within(screen.getByRole("main")).getByRole("heading", { name: "Brünhilde", level: 2 });
   });
 
   test("Share copies an import link that decodes back to the build", async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     stubClipboard(writeText);
-    renderAt("/c/f1");
+    renderAt("/character/f1");
 
     fireEvent.click(screen.getByRole("button", { name: "Share" }));
 
-    expect(await screen.findByRole("status")).toHaveProperty(
-      "textContent",
-      expect.stringMatching(/link copied/i)
-    );
-    const [link] = writeText.mock.calls[0] ?? [];
-    const code = String(link).split("#/import/")[1] ?? "";
-    expect(characters.fromShareCode(code)?.name).toBe("Brünhilde");
+    const status = await screen.findByText(/link copied/i);
+    expect(screen.getByRole("status")).toBe(status);
+    const imported = characters.fromShareCode(sharedCode(writeText.mock.calls[0]?.[0]));
+    expect({ ...imported, id: "new" }).toEqual({ ...brunhilde(), id: "new" });
   });
 
   test("when the clipboard refuses, the link is shown to copy by hand", async () => {
     stubClipboard(() => Promise.reject(new Error("denied")));
-    renderAt("/c/f1");
+    renderAt("/character/f1");
 
     fireEvent.click(screen.getByRole("button", { name: "Share" }));
 
     const field = await screen.findByRole("textbox", { name: "Share link" });
-    expect((field as HTMLInputElement).value).toContain("#/import/");
+    const imported = characters.fromShareCode(sharedCode((field as HTMLInputElement).value));
+    expect({ ...imported, id: "new" }).toEqual({ ...brunhilde(), id: "new" });
   });
 
   test("an unknown id says so and links home", () => {
-    renderAt("/c/nobody");
+    renderAt("/character/nobody");
     screen.getByRole("heading", { name: "Character not found", level: 2 });
     screen.getByRole("link", { name: "Back to your characters" });
   });

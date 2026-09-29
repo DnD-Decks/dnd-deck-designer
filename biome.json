@@ -5,7 +5,9 @@
     "clientKind": "git",
     "useIgnoreFile": true
   },
-  "organizeImports": { "enabled": true },
+  "organizeImports": {
+    "enabled": true
+  },
   "linter": {
     "enabled": true,
     "rules": {
@@ -26,5 +28,17 @@
   },
   "files": {
     "ignore": ["node_modules", "dist"]
-  }
+  },
+  "overrides": [
+    {
+      "include": ["**/*.test.ts", "**/*.test.tsx"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noForEach": "off"
+          }
+        }
+      }
+    }
+  ]
 }

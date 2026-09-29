@@ -5,8 +5,12 @@ const CHARACTERS_KEY = "dnd-deck-designer:characters";
 const PLAY_KEY = "dnd-deck-designer:play";
 
 type PlayState = { spent: string[] };
+type PlayStates = Record<string, PlayState>;
 
-// storage can be missing or throw (private mode, blocked site data, quota); the app runs without it
+const isStringList = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every((item) => typeof item === "string");
+
+// localStorage throws in private mode, with site data blocked, or over quota
 function read(key: string): unknown {
   try {
     const raw = localStorage.getItem(key);
@@ -16,7 +20,7 @@ function read(key: string): unknown {
   }
 }
 
-function write(key: string, value: unknown) {
+function write({ key, value }: { key: string; value: unknown }) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
     return true;
@@ -25,13 +29,18 @@ function write(key: string, value: unknown) {
   }
 }
 
-function readPlay(): Record<string, PlayState> {
+function readPlay() {
   const value = read(PLAY_KEY);
-  return typeof value === "object" && value !== null ? (value as Record<string, PlayState>) : {};
+  return typeof value === "object" && value !== null ? (value as PlayStates) : {};
+}
+
+function withoutPlay(id: string) {
+  const { [id]: _, ...rest } = readPlay();
+  return rest;
 }
 
 export const characterStorage = {
-  list(): Character[] {
+  list() {
     const value = read(CHARACTERS_KEY);
     if (!Array.isArray(value)) return [];
     return value.flatMap((item) => characters.parse(item) ?? []);
@@ -41,27 +50,23 @@ export const characterStorage = {
     return characterStorage.list().find((character) => character.id === id);
   },
 
-  /** adds or replaces by id; false when the device would not store it */
   save(character: Character) {
     const others = characterStorage.list().filter(({ id }) => id !== character.id);
-    return write(CHARACTERS_KEY, [...others, character]);
+    return write({ key: CHARACTERS_KEY, value: [...others, character] });
   },
 
   remove(id: string) {
-    const { [id]: _, ...play } = readPlay();
-    write(PLAY_KEY, play);
-    return write(
-      CHARACTERS_KEY,
-      characterStorage.list().filter((character) => character.id !== id)
-    );
+    write({ key: PLAY_KEY, value: withoutPlay(id) });
+    const kept = characterStorage.list().filter((character) => character.id !== id);
+    return write({ key: CHARACTERS_KEY, value: kept });
   },
 
-  spent(id: string): string[] {
+  spent(id: string) {
     const spent = readPlay()[id]?.spent;
-    return Array.isArray(spent) ? spent.filter((key) => typeof key === "string") : [];
+    return isStringList(spent) ? spent : [];
   },
 
-  setSpent(id: string, spent: readonly string[]) {
-    return write(PLAY_KEY, { ...readPlay(), [id]: { spent } });
+  setSpent({ id, spent }: { id: string; spent: readonly string[] }) {
+    return write({ key: PLAY_KEY, value: { ...readPlay(), [id]: { spent } } });
   },
 };
