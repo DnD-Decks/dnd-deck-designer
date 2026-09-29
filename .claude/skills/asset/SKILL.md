@@ -43,7 +43,7 @@ Report the resolved `kind`, `asset id` and, for feats and resources, the `class`
 
 ### 2. Render the prompt
 
-Fill `asset.template.prompt.md` (same folder as this file). Two parts are data-driven: the `SCENE` block (first in the prompt) and the orientation (`{{orientation}}` in the opening line plus the `OUTPUT` block). Everything from `## VISUAL STYLE` down to `## OUTPUT` is the shared house style — reproduce it **verbatim**, never reworded per card.
+Fill `asset.template.prompt.md` (same folder as this file). The `SCENE` block comes first; orientation and visual style are separate inputs. Insert the complete body of one `visual-style-*.md` file at `{{visual_style}}`. Keep `## COMPOSITION` and `## OUTPUT` from the common template, not from the style file. Numbered files are alternative wordings of one direction; do not concatenate variants. If no style is specified, use the sole unnumbered `visual-style-*.md` file to preserve existing prompts. If a direction is specified without a variant number, use its `-01.md` file; an explicit variant number selects that file.
 
 - `{{name}}` — verbatim from the JSON (`name`).
 - `{{subtitle}}` — per kind:
@@ -56,6 +56,7 @@ Fill `asset.template.prompt.md` (same folder as this file). Two parts are data-d
   - Feats and resources are rules text; weapons are objects: translate the mechanic into what it *looks like*. `Sneak Attack` → a rogue mid-lunge from a dark alcove into the exposed back of a distracted foe, blade catching the only light. `Rage` → a barbarian mid-roar, veins of red-hot light, weapon raised, dust and embers around. `Greataxe` → one great axe swing carrying through two foes in a single arc (the weapon is the subject; its mastery can hint the action).
   - Abstract resources like `Mana` get a symbolic scene (a well of arcane light, a hand cupping a flame of the class's colour), still concrete.
 - `{{orientation}}` / `{{output}}` — by kind. Feat: `horizontal` and the landscape OUTPUT block from the template header (7:5, ≥ 1050 × 750 px, compose across the width). Every other kind: `vertical` and the portrait block (5:7, ≥ 750 × 1050 px). For a landscape feat, also write the `{{scene}}` so it reads left to right — subject on one side, what it acts on across the frame.
+- `{{visual_style}}` — the selected style file's prose, verbatim. Do not include a second `## VISUAL STYLE` heading.
 - `{{extra_note}}` — optional whole line. Spell with a `damage` field: `The visual centers on <damage.type joined with "/"> damage.` Weapon: `The weapon deals <damage.type> damage; its mastery is <Mastery>.` Every other case: remove the line (no blank placeholder).
 
 Strip the HTML comment header from the output.

@@ -1,0 +1,1 @@
+A precise celestial diagram on deep indigo. Keep the scene's main figures and objects as recognizable silhouettes. Use fine arcs, trajectories, sparse stars, and measured marks to show movement and impact. Palette: ivory and one luminous accent on dark blue. Leave space around the decisive action. No numbers, writing, labels, or border.

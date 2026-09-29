@@ -1,0 +1,1 @@
+A playful figurative image made from simple biomorphic shapes, confident black lines, and generous off-white space. Use vivid red, blue, yellow, and black sparingly. Simplify the scene while keeping its named object and action recognizable. Small marks may suggest motion or magic. Do not make it purely abstract. No lettering or border.
