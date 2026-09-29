@@ -103,5 +103,19 @@
     }
   ],
   "failures": [],
-  "finalVersions": {}
+  "finalVersions": {
+    "4": [
+      {
+        "key": "issues/283/runs/02c18966-5a13-4d83-9264-8eae891952cd/final-4-100d5d3d-5284-4f7d-9d18-e9c96d08b7ff.png",
+        "width": 800,
+        "height": 1120,
+        "quality": "medium",
+        "model": "gpt-image-2.5-flare",
+        "createdAt": "2026-09-29T21:07:33.841Z",
+        "candidateId": 4,
+        "tuning": "",
+        "generationPrompt": "# DECK BACKGROUND\n\nCreate a vertical background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Longsword** — Martial melee weapon.\n\nA longsword crashes against the helm of a shadowed foe, whose head snaps sideways and sword arm drops, dazed. A ruined chapel at night. A single shaft of cold moonlight falling on the blade.\nThe weapon deals slashing damage; its mastery is Sap.\n\n## VISUAL STYLE\n\nReduce the scene to a few lively organic forms floating on a warm pale ground. Draw with economical, calligraphic black lines and assign each strong color a purpose: a red focal object, a blue counterform, a yellow spark. Distort scale and anatomy freely, yet retain enough recognizable structure to tell what is happening. Let dots, arcs, and stars carry energy without becoming game icons. Keep abundant breathing room and exclude text and framing.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, silhouette, and selected visual style. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected image for print without introducing new story elements.\n\n## OUTPUT\n\nExact image dimensions: 800 × 1120 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+      }
+    ]
+  }
 }
