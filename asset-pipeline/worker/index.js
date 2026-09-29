@@ -78,9 +78,9 @@ const buildPage = () => String.raw`<!doctype html>
             <section class="candidate-section" aria-labelledby="candidate-heading">
               <div class="section-heading">
                 <div><div class="section-kicker">STYLE EXPLORATION</div><h2 id="candidate-heading">Compare visual styles</h2></div>
-                <div class="generation-controls"><button class="button button-subtle" id="preview-prompts" type="button">Review prompts</button><button class="button button-primary" id="generate-button" type="button" disabled><span class="button-icon">✦</span> Generate 2 drafts</button></div>
+                <div class="generation-controls"><button class="button button-primary" id="preview-prompts" type="button">1 · Review prompts</button><button class="button button-subtle" id="generate-button" type="button" disabled title="Review the exact prompts first"><span class="button-icon">✦</span> 2 · Generate 2 drafts</button></div>
               </div>
-              <p class="concept-note">Choose styles and draft counts, then review the exact prompts before generation. Each image is billed separately.</p>
+              <p class="concept-note" id="generation-instruction">Step 1 of 2: Choose styles and draft counts, then select Review prompts to unlock generation. Each image is billed separately.</p>
               <details class="style-config" open><summary>Visual styles · <span id="style-total">2 drafts</span></summary><div id="style-rows" class="style-rows"></div><div class="style-actions"><button class="button button-subtle" id="add-style" type="button">+ Add style</button><button class="button button-subtle" id="one-each" type="button">One of each selected</button><button class="button button-subtle" id="all-styles" type="button">Compare all 19 styles</button></div><p id="style-note" class="style-note"></p></details>
               <div id="prompt-preview" class="prompt-preview" aria-live="polite"></div>
               <div class="progress-line hidden" id="generation-progress"><span class="loader"></span><span id="generation-progress-text">Generating 2 low-quality drafts in the background…</span></div>
@@ -138,7 +138,7 @@ const styles = String.raw`
 
 const clientScript = String.raw`
 const $ = (selector, root) => (root || document).querySelector(selector);
-const state = { issues: [], styles: [], stylePlan: [{ styleId: "atmospheric-painterly-fantasy", count: 2 }], previewSignature: null, active: null, manifest: null, runs: [], selected: null, final: null, search: "", chat: [], finalTuning: "", finalModel: "gpt-image-2.5-flare", finalQuality: "medium", finalSize: "card", finalAdvancedOpen: false, jobs: [], jobTimer: null, prBusy: false, recorder: null };
+const state = { issues: [], styles: [], stylePlan: [{ styleId: "atmospheric-painterly-fantasy", count: 2 }], previewSignature: null, reviewingPrompts: false, active: null, manifest: null, runs: [], selected: null, final: null, search: "", chat: [], finalTuning: "", finalModel: "gpt-image-2.5-flare", finalQuality: "medium", finalSize: "card", finalAdvancedOpen: false, jobs: [], jobTimer: null, prBusy: false, recorder: null };
 const listNode = $("#issue-list");
 const messageNode = $("#workflow-message");
 const mobileQuery = window.matchMedia("(max-width: 720px)");
@@ -238,10 +238,21 @@ function updateStyleSummary() {
   const valid = Number.isInteger(total) && total >= 1 && total <= 24 && state.stylePlan.every(function(item) { return Number.isInteger(item.count) && item.count >= 1 && item.count <= 24; });
   const label = total + " draft" + (total === 1 ? "" : "s");
   $("#style-total").textContent = label;
-  $("#generate-button").innerHTML = '<span class="button-icon">✦</span> Generate ' + label;
+  const generate = $("#generate-button");
+  const review = $("#preview-prompts");
+  generate.innerHTML = '<span class="button-icon">✦</span> 2 · Generate ' + label;
   const busy = state.jobs.some(function(job) { return job.type === "draft" && ["starting", "in_progress"].includes(job.status); });
-  $("#generate-button").disabled = !valid || !state.previewSignature || !state.active?.ready || busy;
-  $("#preview-prompts").disabled = !valid || !state.active?.ready || busy;
+  generate.disabled = !valid || !state.previewSignature || !state.active?.ready || busy || state.reviewingPrompts;
+  generate.title = !state.active?.ready ? (state.active?.errors || []).join(" ") : !valid ? "Choose 1–24 drafts in total" : !state.previewSignature ? "Review the exact prompts first" : "";
+  generate.classList.toggle("button-primary", Boolean(state.previewSignature));
+  generate.classList.toggle("button-subtle", !state.previewSignature);
+  review.disabled = !valid || !state.active?.ready || busy || state.reviewingPrompts;
+  review.textContent = state.reviewingPrompts ? "Preparing prompts…" : state.previewSignature ? "✓ Prompts reviewed" : "1 · Review prompts";
+  review.classList.toggle("button-primary", !state.previewSignature);
+  review.classList.toggle("button-subtle", Boolean(state.previewSignature));
+  $("#generation-instruction").textContent = state.previewSignature
+    ? "Step 2 of 2: The exact prompts are displayed below. Select Generate to create " + label + ". Each image is billed separately."
+    : "Step 1 of 2: Choose styles and draft counts, then select Review prompts to unlock generation. Each image is billed separately.";
   $("#generation-progress-text").textContent = "Generating " + label + " in the background…";
   const note = $("#style-note");
   note.classList.toggle("warning", !state.active?.styleSwappable);
@@ -879,11 +890,12 @@ function selectCandidate(id) {
 }
 
 async function reviewPrompts() {
+  if (state.reviewingPrompts) return;
   const prompt = $("#prompt-text").value.trim();
   const stylePlan = state.stylePlan.map(function(item) { return { styleId: item.styleId, count: item.count }; });
-  const button = $("#preview-prompts");
   const issueNumber = state.active.number;
-  button.disabled = true;
+  let reviewed = false;
+  state.reviewingPrompts = true;
   invalidatePromptPreview();
   try {
     const data = await request("/api/issues/" + issueNumber + "/preview-prompts", {
@@ -905,10 +917,14 @@ async function reviewPrompts() {
       panel.append(details);
     });
     state.previewSignature = data.signature;
-    updateStyleSummary();
+    reviewed = true;
     setMessage("Prompts reviewed. Generate when ready.", "success");
   } catch (error) { setMessage(error.message, "error"); }
-  finally { updateStyleSummary(); }
+  finally {
+    state.reviewingPrompts = false;
+    updateStyleSummary();
+    if (reviewed) $("#generate-button").focus();
+  }
 }
 
 async function generateDrafts() {
