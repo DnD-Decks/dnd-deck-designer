@@ -117,11 +117,25 @@ test("home page returns a complete, syntactically valid inline client script", a
   const html = await response.text();
   const client = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
   assert.equal(response.status, 200);
-  assert.match(html, /Generate four drafts/);
+  assert.match(html, /Generate 2 drafts/);
+  assert.match(html, /name="variant-count" value="4"/);
   assert.match(html, /Edit the issue prompt before generating drafts/);
   assert.match(html, /<dialog class="image-dialog"/);
   assert.match(html, /View at 100%/);
-  assert.match(html, /Rendering the full-size image…/);
+  assert.match(html, /Rendering in the background…/);
+  assert.match(html, /Creating pull request…/);
+  assert.match(html, /Advanced render options/);
+  assert.match(html, /gpt-image-2.5-sunburst/);
+  assert.doesNotMatch(html, /class="prompt-toggle"><details open>/);
+  assert.match(html, /id="mobile-open"/);
+  assert.match(html, /id="filter-pr"/);
+  assert.match(
+    html,
+    /copy\.append\(heading, para, tuning, actions, progress, prProgress, dimensions\)/
+  );
+  assert.match(html, /Brainstorm the prompt/);
+  assert.match(html, /Dictate/);
+  assert.match(html, /Optional refinements for this render/);
   assert.ok(client);
   assert.doesNotThrow(() => new Function(client));
 });
@@ -132,15 +146,26 @@ test("issue list and detail requests use the configured GitHub token", async () 
   globalThis.fetch = async (url, options) => {
     const path = new URL(url).pathname;
     requests.push({ path, authorization: options.headers.get("authorization") });
-    return new Response(JSON.stringify(path.endsWith("/99") ? issue() : [issue()]), {
-      headers: { "content-type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify(
+        path.endsWith("/99")
+          ? issue()
+          : path.endsWith("/pulls")
+            ? [{ state: "open", head: { ref: "asset/issue-99-thunderwave" } }]
+            : [issue()]
+      ),
+      {
+        headers: { "content-type": "application/json" },
+      }
+    );
   };
   try {
     const env = { GITHUB_TOKEN: "test-token" };
     const list = await worker.fetch(new Request("https://pipeline.example/api/issues"), env);
     assert.equal(list.status, 200);
-    assert.equal((await list.json()).issues[0].assetId, "thunderwave");
+    const listed = (await list.json()).issues[0];
+    assert.equal(listed.assetId, "thunderwave");
+    assert.equal(listed.prStatus, "open");
 
     const detail = await worker.fetch(new Request("https://pipeline.example/api/issues/99"), env);
     assert.equal(detail.status, 200);
@@ -149,6 +174,10 @@ test("issue list and detail requests use the configured GitHub token", async () 
     assert.deepEqual(requests, [
       {
         path: "/repos/DnD-Decks/dnd-deck-designer/issues",
+        authorization: "Bearer test-token",
+      },
+      {
+        path: "/repos/DnD-Decks/dnd-deck-designer/pulls",
         authorization: "Bearer test-token",
       },
       {
