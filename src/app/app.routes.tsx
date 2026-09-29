@@ -1,3 +1,5 @@
+import { CharacterImportPage } from "src/characters/character-import.page";
+import { CharacterPage } from "src/characters/character.page";
 import { CharactersPage } from "src/characters/characters.page";
 import { CatalogPage, DEFAULT_CATALOG_CLASS } from "src/decks/catalog.page";
 import { classes } from "src/models/class/classes.model";
@@ -12,6 +14,8 @@ export function AppRoutes() {
   return (
     <Switch>
       <Route path="/" component={CharactersPage} />
+      <Route path="/character/:id">{({ id }) => <CharacterPage id={id} />}</Route>
+      <Route path="/import/:code">{({ code }) => <CharacterImportPage code={code} />}</Route>
       <Route path="/catalog">
         <Redirect to={`/catalog/${DEFAULT_CATALOG_CLASS}`} replace />
       </Route>

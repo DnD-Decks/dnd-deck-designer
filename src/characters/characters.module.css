@@ -55,3 +55,85 @@
   outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
+
+button.action {
+  margin-top: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.subtitle {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.sheetHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+  max-width: 24rem;
+}
+
+.status {
+  display: block;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.linkField {
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--ink-line);
+  border-radius: 6px;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-hi);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--ink-line);
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.item:hover {
+  border-color: var(--gold);
+}
+
+.item:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.itemName {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  color: var(--text-hi);
+}

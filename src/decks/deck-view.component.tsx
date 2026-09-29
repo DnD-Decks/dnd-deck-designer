@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { type ReactNode, useCallback, useRef, useState } from "react";
 import { CardSpotlight } from "src/cards/card-spotlight.component";
 import { FeatCard } from "src/cards/feat-card.component";
 import { ResourceCard } from "src/cards/resource-card.component";
@@ -10,7 +10,7 @@ import { assertNever } from "src/lib/assert-never";
 import type { CharacterClass } from "src/models/class/classes.model";
 import styles from "./deck-view.module.css";
 
-type Props = { cls: CharacterClass };
+type Props = { cls: CharacterClass; cards?: readonly DeckCard[]; intro?: ReactNode };
 
 type Held = { index: number; trigger: HTMLElement };
 
@@ -110,9 +110,10 @@ function EmptyDeck({ cls, label }: { cls: CharacterClass; label: string }) {
   );
 }
 
-export function DeckView({ cls }: Props) {
+export function DeckView({ cls, cards, intro }: Props) {
   const deck = decks.get({ cls });
-  const grouped = sections(deck.cards);
+  const shown = cards ?? deck.cards;
+  const grouped = sections(shown);
   // flattened from the rendered groups, so arrow order is the order you see
   const ordered = grouped.flatMap(([, cards]) => cards);
   const triggers = useRef(new Map<string, HTMLButtonElement>());
@@ -139,7 +140,7 @@ export function DeckView({ cls }: Props) {
 
   const heldCard = held ? ordered[held.index] : undefined;
 
-  if (deck.cards.length === 0) return <EmptyDeck cls={cls} label={deck.cls.label} />;
+  if (shown.length === 0) return <EmptyDeck cls={cls} label={deck.cls.label} />;
 
   return (
     <>
@@ -149,6 +150,7 @@ export function DeckView({ cls }: Props) {
         inert={held !== null}
         aria-hidden={held !== null || undefined}
       >
+        {intro}
         {grouped.map(([label, cards]) => (
           <section key={label} className={styles.section} aria-label={label}>
             {/* tally outside the h2: the heading should read "Level 1", not "Level 123 cards" */}

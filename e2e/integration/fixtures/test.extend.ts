@@ -1,12 +1,14 @@
 import { test as base } from "@playwright/test";
 import { type CatalogPage, createCatalogPage } from "../catalog.page";
 import { type HomePage, createHomePage } from "../home.page";
+import { type ImportPage, createImportPage } from "../import.page";
 import { type NetworkGuard, createNetworkGuard } from "../network.guard";
 
 type Fixtures = {
   network: NetworkGuard;
   catalogPage: CatalogPage;
   homePage: HomePage;
+  importPage: ImportPage;
 };
 
 export const test = base.extend<Fixtures>({
@@ -26,6 +28,9 @@ export const test = base.extend<Fixtures>({
   },
   homePage: async ({ page }, use) => {
     await use(createHomePage(page));
+  },
+  importPage: async ({ page }, use) => {
+    await use(createImportPage(page));
   },
 });
 

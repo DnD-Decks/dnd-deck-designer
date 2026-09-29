@@ -1,5 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, test } from "vitest";
+import { elminster } from "src/characters/character.fixture";
+import { characterStorage } from "src/services/character.storage";
+import { beforeEach, describe, expect, test } from "vitest";
 import { memoryLocation } from "wouter/memory-location";
 import { App } from "./app.component.tsx";
 
@@ -9,6 +11,10 @@ const renderAt = (path: string) => {
   return memory;
 };
 
+beforeEach(() => {
+  localStorage.clear();
+});
+
 describe("<AppRoutes />", () => {
   test("home shows your characters, and the empty state points to the catalog", () => {
     renderAt("/");
@@ -17,6 +23,14 @@ describe("<AppRoutes />", () => {
     expect(screen.getByRole("link", { name: "Your characters" }).getAttribute("aria-current")).toBe(
       "page"
     );
+  });
+
+  test("home lists saved characters and links to each one", () => {
+    characterStorage.save(elminster());
+    const memory = renderAt("/");
+    expect(screen.queryByRole("link", { name: "Open the card catalog" })).toBeNull();
+    fireEvent.click(screen.getByRole("link", { name: /Elminster/ }));
+    expect(memory.history.slice(-1)).toEqual(["/character/w1"]);
   });
 
   test("the catalog opens the class in the path", () => {
