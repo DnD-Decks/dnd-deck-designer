@@ -10,7 +10,8 @@ import { assertNever } from "src/lib/assert-never";
 import type { CharacterClass } from "src/models/class/classes.model";
 import styles from "./deck-view.module.css";
 
-type Props = { cls: CharacterClass };
+/** `cards` narrows the class deck, e.g. to a character's picks */
+type Props = { cls: CharacterClass; cards?: readonly DeckCard[] };
 
 type Held = { index: number; trigger: HTMLElement };
 
@@ -110,9 +111,10 @@ function EmptyDeck({ cls, label }: { cls: CharacterClass; label: string }) {
   );
 }
 
-export function DeckView({ cls }: Props) {
+export function DeckView({ cls, cards }: Props) {
   const deck = decks.get({ cls });
-  const grouped = sections(deck.cards);
+  const shown = cards ?? deck.cards;
+  const grouped = sections(shown);
   // flattened from the rendered groups, so arrow order is the order you see
   const ordered = grouped.flatMap(([, cards]) => cards);
   const triggers = useRef(new Map<string, HTMLButtonElement>());
@@ -139,7 +141,7 @@ export function DeckView({ cls }: Props) {
 
   const heldCard = held ? ordered[held.index] : undefined;
 
-  if (deck.cards.length === 0) return <EmptyDeck cls={cls} label={deck.cls.label} />;
+  if (shown.length === 0) return <EmptyDeck cls={cls} label={deck.cls.label} />;
 
   return (
     <>
