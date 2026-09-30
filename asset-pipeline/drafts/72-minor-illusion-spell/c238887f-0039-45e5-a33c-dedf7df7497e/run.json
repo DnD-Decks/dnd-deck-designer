@@ -303,5 +303,19 @@
     }
   ],
   "failures": [],
-  "finalVersions": {}
+  "finalVersions": {
+    "6": [
+      {
+        "key": "issues/72/runs/c238887f-0039-45e5-a33c-dedf7df7497e/final-6-5284f430-6dac-46cb-ad6f-930534bca3bf.png",
+        "width": 800,
+        "height": 1120,
+        "quality": "medium",
+        "model": "gpt-image-2.5-flare",
+        "createdAt": "2026-09-30T14:53:53.388Z",
+        "candidateId": 6,
+        "tuning": "",
+        "generationPrompt": "# DECK BACKGROUND\n\nCreate a vertical background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Minor Illusion** — Illusion cantrip.\n\nAn open street at night, with a clear spatial arrangement that emphasizes concealment through an illusion. A robed trickster crouches low behind a wooden crate in the street, using it as cover so they cannot be seen by a passing guard. The crate is the thing physically hiding the trickster from the guard.\n\nA guard walks toward the camera along the street, close enough that the crouching trickster would be visible if not for the crate. The guard’s view of the trickster is blocked by the crate itself. The trickster is NOT behind a wall, corner, or doorway; there is no architectural cover. The only hiding place is the crate.\n\nThe crate looks like a normal solid wooden crate to the guard, but to the viewer it is clearly an illusion: shimmering violet tones, faint transparency at the edges, a subtle ghostly halo, and a soft magical glow that makes it feel unreal. The crate is the visual barrier that conceals the trickster, and the image should make that relationship unmistakable. The illusion is the only distinct source of eerie light in the scene.\n\n## VISUAL STYLE\n\nReduce the scene to a few lively organic forms floating on a warm pale ground. Draw with economical, calligraphic black lines and assign each strong color a purpose: a red focal object, a blue counterform, a yellow spark. Distort scale and anatomy freely, yet retain enough recognizable structure to tell what is happening. Let dots, arcs, and stars carry energy without becoming game icons. Keep abundant breathing room and exclude text and framing.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, silhouette, and selected visual style. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected image for print without introducing new story elements.\n\n## OUTPUT\n\nExact image dimensions: 800 × 1120 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+      }
+    ]
+  }
 }
