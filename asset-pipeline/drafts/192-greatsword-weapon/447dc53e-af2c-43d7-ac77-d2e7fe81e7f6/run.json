@@ -203,5 +203,19 @@
     }
   ],
   "failures": [],
-  "finalVersions": {}
+  "finalVersions": {
+    "1": [
+      {
+        "key": "issues/192/runs/447dc53e-af2c-43d7-ac77-d2e7fe81e7f6/final-1-662d0ff4-e080-4350-be81-4fdb984a5f0f.png",
+        "width": 800,
+        "height": 1120,
+        "quality": "medium",
+        "model": "gpt-image-2.5-flare",
+        "createdAt": "2026-09-30T15:31:52.512Z",
+        "candidateId": 1,
+        "tuning": "",
+        "generationPrompt": "# DECK BACKGROUND\n\nCreate a vertical background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Greatsword** — Martial melee weapon.\n\nA greatsword presented alone at the center of the frame, suspended or mounted in a minimal, abstract atmosphere. The weapon is shown in a clear three-quarter view that emphasizes its craftsmanship, engineering, and proportions: long broad blade, pronounced crossguard, wrapped grip, and heavy pommel. The blade dominates the composition like a ceremonial display object, with a subtle taper and a visible fuller catching the light. Warm fading light travels along the steel, suggesting slashing force and the mastery trait Graze without showing any wielder, foe, or action scene.\n\nThe environment should be minimal and secondary: a hazy dusk-toned void, faint stone or forge atmosphere, or a soft field of smoke and light that frames the weapon without becoming a real setting. No characters, no humanoids, no silhouettes, no extra objects.\n\n## VISUAL STYLE\n\nA precise celestial diagram on deep indigo. Keep the scene's main figures and objects as recognizable silhouettes. Use fine arcs, trajectories, sparse stars, and measured marks to show movement and impact. Palette: ivory and one luminous accent on dark blue. Leave space around the decisive action. No numbers, writing, labels, or border.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, silhouette, and selected visual style. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected image for print without introducing new story elements.\n\n## OUTPUT\n\nExact image dimensions: 800 × 1120 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+      }
+    ]
+  }
 }
