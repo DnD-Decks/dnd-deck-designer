@@ -1,0 +1,40 @@
+{
+  "issue": 172,
+  "runId": "9092b463-e02f-4572-b740-0641dd865f26",
+  "createdAt": "2026-09-30T16:25:21.848Z",
+  "prompt": "# DECK BACKGROUND STYLE v2\n\nCreate a horizontal fantasy illustration intended to be used purely as background artwork for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Eldritch Invocations** — Warlock level 1 class feature.\n\nA warlock on the left reads from a floating open tome bound in dark leather, and violet symbols lift from the pages and drift across the frame into the darkness on the right. A shadowed study at night. Faint violet light only.\n\n## VISUAL STYLE\n\nModern high-fantasy tabletop RPG illustration with a traditional painterly feeling.\n\nExpressive, clearly visible brushwork and soft pigment texture.\nAtmospheric, evocative and impressionistic, leaning slightly abstract.\n\nPrioritize large shapes, silhouettes, lighting and color masses over fine detail.\nThe image should read at a glance as a few bold shapes set against light and atmosphere, and the subject of the SCENE must be the first thing the eye lands on.\n\nLow detail.\nForms should dissolve naturally into light, shadow, mist, smoke or atmosphere.\nCharacters and objects lean toward silhouette: readable through their outline and major shapes, with interior detail kept minimal and often lost in shadow.\nThis applies to every figure in the picture, not only the main one: secondary figures, foes and bystanders are at least as simplified as the subject, never more rendered than it.\nPrefer figures in shadow or backlit, defined by rim light or by the light source named in the SCENE rather than by rendered surfaces.\n\nUse broad areas of light and shadow with dramatic but soft atmospheric lighting.\nRich but controlled fantasy colors, avoiding excessive saturation.\nFavor one dominant color mood with a single accent glow over many competing hues.\nMostly soft, lost edges; only one or two deliberately sharper focal edges.\n\nThe image should suggest rather than describe.\nFaces, armor, clothing, architecture and scenery should stay simplified masses with little or no intricate detail.\nBackgrounds should be simple, hazy and uncluttered — never a fully rendered environment.\n\nAvoid the polished, hyper-detailed look of digital concept art.\nAvoid photorealism, 3D-render aesthetics, glossy surfaces and cinematic photography.\nAvoid busy compositions with many small elements.\n\n## COMPOSITION\n\nThe artwork is an independent fantasy illustration.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## OUTPUT\n\nHorizontal 7:5 landscape aspect ratio — a trading card turned on its side (88 x 63 mm).\nAt least 1050 x 750 px.\nCompose across the width: the subject and its action read left to right, with room for atmosphere on both sides.",
+  "model": "gpt-image-2.5-flare",
+  "quality": "low",
+  "format": "jpeg",
+  "size": {
+    "width": 1008,
+    "height": 720
+  },
+  "candidates": [
+    {
+      "id": 1,
+      "title": "Same scene",
+      "description": "Independent image using the same assembled prompt.",
+      "styleId": "biomorphic-surrealism-01",
+      "styleName": "Playful Forms",
+      "styleFamily": "Biomorphic Surrealism",
+      "stylePrompt": "A playful figurative image made from simple biomorphic shapes, confident black lines, and generous off-white space. Use vivid red, blue, yellow, and black sparingly. Simplify the scene while keeping its named object and action recognizable. Small marks may suggest motion or magic. Do not make it purely abstract. No lettering or border.",
+      "generationPrompt": "# DECK BACKGROUND\n\nCreate a horizontal background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Eldritch Invocations** — Warlock level 1 class feature.\n\nA warlock on the left reads from a floating open tome bound in dark leather, and violet symbols lift from the pages and drift across the frame into the darkness on the right. A shadowed study at night. Faint violet light only.\n\n## VISUAL STYLE\n\nA playful figurative image made from simple biomorphic shapes, confident black lines, and generous off-white space. Use vivid red, blue, yellow, and black sparingly. Simplify the scene while keeping its named object and action recognizable. Small marks may suggest motion or magic. Do not make it purely abstract. No lettering or border.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## OUTPUT\n\nExact image dimensions: 1008 × 720 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+    },
+    {
+      "id": 4,
+      "title": "Same scene",
+      "description": "Independent image using the same assembled prompt.",
+      "styleId": "paper-shadow-theater-01",
+      "styleName": "Cut Silhouettes",
+      "styleFamily": "Paper Shadow Theater",
+      "stylePrompt": "Stage the scene as a physical shadow theater made from hand-cut paper. Use a few flat paper silhouettes on separate planes, lit from behind against a simple backdrop. Communicate the named action through profile, spacing, and overlap. Show subtle fibers and cut edges. Limit colors to black, warm paper, and one accent. No text or decorative border.",
+      "generationPrompt": "# DECK BACKGROUND\n\nCreate a horizontal background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Eldritch Invocations** — Warlock level 1 class feature.\n\nA warlock on the left reads from a floating open tome bound in dark leather, and violet symbols lift from the pages and drift across the frame into the darkness on the right. A shadowed study at night. Faint violet light only.\n\n## VISUAL STYLE\n\nStage the scene as a physical shadow theater made from hand-cut paper. Use a few flat paper silhouettes on separate planes, lit from behind against a simple backdrop. Communicate the named action through profile, spacing, and overlap. Show subtle fibers and cut edges. Limit colors to black, warm paper, and one accent. No text or decorative border.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## OUTPUT\n\nExact image dimensions: 1008 × 720 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+    }
+  ],
+  "failures": [
+    "Draft 02: Rate limit reached for gpt-image-2.5-flare (for limit gpt-image) in organization org-051IUC4lNNjNUozYVHhTldbQ on input-images per min: Limit 5, Used 5, Requested 1. Please try again in 12s. Visit https://platform.openai.com/account/rate-limits to learn more.",
+    "Draft 03: Rate limit reached for gpt-image-2.5-flare (for limit gpt-image) in organization org-051IUC4lNNjNUozYVHhTldbQ on input-images per min: Limit 5, Used 5, Requested 1. Please try again in 12s. Visit https://platform.openai.com/account/rate-limits to learn more."
+  ],
+  "finalVersions": {}
+}
