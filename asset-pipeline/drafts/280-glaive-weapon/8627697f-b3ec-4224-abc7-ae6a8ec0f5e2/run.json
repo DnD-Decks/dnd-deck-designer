@@ -186,5 +186,19 @@
     "Draft 01: Rate limit reached for gpt-image-2.5-flare (for limit gpt-image) in organization org-051IUC4lNNjNUozYVHhTldbQ on input-images per min: Limit 5, Used 5, Requested 1. Please try again in 12s. Visit https://platform.openai.com/account/rate-limits to learn more.",
     "Draft 02: Rate limit reached for gpt-image-2.5-flare (for limit gpt-image) in organization org-051IUC4lNNjNUozYVHhTldbQ on input-images per min: Limit 5, Used 5, Requested 1. Please try again in 12s. Visit https://platform.openai.com/account/rate-limits to learn more."
   ],
-  "finalVersions": {}
+  "finalVersions": {
+    "5": [
+      {
+        "key": "issues/280/runs/8627697f-b3ec-4224-abc7-ae6a8ec0f5e2/final-5-b99d029a-6756-45f9-9143-86939f96e07f.png",
+        "width": 800,
+        "height": 1120,
+        "quality": "medium",
+        "model": "gpt-image-2.5-flare",
+        "createdAt": "2026-09-30T08:33:36.230Z",
+        "candidateId": 5,
+        "tuning": "",
+        "generationPrompt": "# DECK BACKGROUND\n\nCreate a vertical background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Glaive** — Martial melee weapon.\n\nA long glaive sweeps in a wide arc past a shadowed foe who leans away, yet its curved blade still grazes them in a spray of sparks. A windy parapet at dusk. Fading violet light along the blade.\nThe weapon deals slashing damage; its mastery is Graze.\n\n## VISUAL STYLE\n\nA playful figurative image made from simple biomorphic shapes, confident black lines, and generous off-white space. Use vivid red, blue, yellow, and black sparingly. Simplify the scene while keeping its named object and action recognizable. Small marks may suggest motion or magic. Do not make it purely abstract. No lettering or border.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, silhouette, and selected visual style. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected image for print without introducing new story elements.\n\n## OUTPUT\n\nExact image dimensions: 800 × 1120 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+      }
+    ]
+  }
 }
