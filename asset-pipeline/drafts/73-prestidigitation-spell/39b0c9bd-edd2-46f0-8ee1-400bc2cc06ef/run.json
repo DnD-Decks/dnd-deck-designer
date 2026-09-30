@@ -240,5 +240,19 @@
     "Draft 027: Rate limit reached for gpt-image-2.5-flare (for limit gpt-image) in organization org-051IUC4lNNjNUozYVHhTldbQ on input-images per min: Limit 5, Used 5, Requested 1. Please try again in 12s. Visit https://platform.openai.com/account/rate-limits to learn more.",
     "Draft 028: Rate limit reached for gpt-image-2.5-flare (for limit gpt-image) in organization org-051IUC4lNNjNUozYVHhTldbQ on input-images per min: Limit 5, Used 5, Requested 1. Please try again in 12s. Visit https://platform.openai.com/account/rate-limits to learn more."
   ],
-  "finalVersions": {}
+  "finalVersions": {
+    "15": [
+      {
+        "key": "issues/73/runs/39b0c9bd-edd2-46f0-8ee1-400bc2cc06ef/final-15-26c3aeb1-bc49-424d-beb1-ab76c6550adf.png",
+        "width": 800,
+        "height": 1120,
+        "quality": "medium",
+        "model": "gpt-image-2.5-flare",
+        "createdAt": "2026-09-30T14:46:00.160Z",
+        "candidateId": 15,
+        "tuning": "",
+        "generationPrompt": "# DECK BACKGROUND\n\nCreate a vertical background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Prestidigitation** — Transmutation cantrip.\n\nA young mage grins over an open hand from which a tiny harmless flame, a puff of coloured sparks and a floating spoon rise together. A cluttered tavern table at night. Warm candlelight on the face, with the small conjured sparks as the accent.\n\n## VISUAL STYLE\n\nInterpret the scene as a limited-run screen print. Simplify people, weapons, and surroundings into large interlocking color planes with hard edges and minimal interior detail. Let the main action interrupt the composition with a clear diagonal or contrasting shape. Use three to five coordinated inks, slight paper grain, and subtle registration imperfections. Avoid realistic light, soft blending, tiny marks, lettering, and framing.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, silhouette, and selected visual style. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected image for print without introducing new story elements.\n\n## OUTPUT\n\nExact image dimensions: 800 × 1120 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+      }
+    ]
+  }
 }
