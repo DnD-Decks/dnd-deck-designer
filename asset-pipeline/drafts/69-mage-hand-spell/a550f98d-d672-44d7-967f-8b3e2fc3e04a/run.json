@@ -203,5 +203,19 @@
     }
   ],
   "failures": [],
-  "finalVersions": {}
+  "finalVersions": {
+    "8": [
+      {
+        "key": "issues/69/runs/a550f98d-d672-44d7-967f-8b3e2fc3e04a/final-8-14b21dad-ccd8-4eb7-8e06-f0ff46c4ec0b.png",
+        "width": 800,
+        "height": 1120,
+        "quality": "medium",
+        "model": "gpt-image-2.5-flare",
+        "createdAt": "2026-09-30T15:04:06.594Z",
+        "candidateId": 8,
+        "tuning": "",
+        "generationPrompt": "# DECK BACKGROUND\n\nCreate a vertical background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Mage Hand** — Conjuration cantrip.\n\nA translucent spectral hand of pale blue light floats in mid-air, fingers closing around a ring of iron keys hanging from a hook. Far behind, a small robed figure gestures from the far end of a dark storeroom. Cool blue light from the hand itself; the rest of the room dissolves into shadow.\n\n## VISUAL STYLE\n\nRender the scene as a woodcut and copperplate engraving. Sharp incised contours establish the figures and objects; varied hatching carries their volume, movement, and shadows. Leave broad quiet areas of paper around the focal action so the image does not become a thicket of lines. Use black ink, aged ivory, and a single muted accent. The subject must read before its fine marks do. Omit captions, signatures, and framing.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, silhouette, and selected visual style. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected image for print without introducing new story elements.\n\n## OUTPUT\n\nExact image dimensions: 800 × 1120 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+      }
+    ]
+  }
 }
