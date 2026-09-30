@@ -120,7 +120,9 @@ test("home page returns a complete, syntactically valid inline client script", a
   const client = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
   assert.equal(response.status, 200);
   assert.match(html, /Generate 2 drafts/);
-  assert.match(html, /Compare all 19 styles/);
+  assert.match(html, /Compare all active styles/);
+  assert.match(html, /Compare all including archived/);
+  assert.match(html, /id="preset-list"/);
   assert.match(html, /id="style-rows"/);
   assert.match(html, /Edit the issue prompt before generating drafts/);
   assert.match(html, /<dialog class="image-dialog"/);
@@ -160,10 +162,22 @@ test("style substitution strips the legacy block and neutralizes its illustratio
   assert.equal(applyVisualStyle(original, null), original);
   const response = await worker.fetch(new Request("https://pipeline.example/api/styles"), {});
   const styles = (await response.json()).styles;
-  assert.equal(styles.length, 19);
+  assert.equal(styles.length, 37);
+  assert.equal(styles.filter(({ archived }) => archived).length, 8);
+  assert.equal(styles.filter(({ archived }) => !archived).length, 29);
   assert.ok(
-    styles.some(({ name, family }) => name === "Ink & Ivory" && family === "Engraved Print")
+    styles.some(
+      ({ name, family, archived }) =>
+        name === "Ink & Ivory" && family === "Engraved Print" && archived
+    )
   );
+  assert.ok(
+    styles.some(
+      ({ name, family, archived }) =>
+        name === "Cut Lines" && family === "Engraved Print" && !archived
+    )
+  );
+  assert.ok(styles.some(({ family }) => family === "Thermal Imaging"));
 });
 
 test("issue list and detail requests use the configured GitHub token", async () => {

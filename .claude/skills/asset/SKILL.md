@@ -44,6 +44,7 @@ Report the resolved `kind`, `asset id` and, for feats and resources, the `class`
 ### 2. Render the prompt
 
 Fill `asset.template.prompt.md` (same folder as this file). The `SCENE` block comes first; orientation and visual style are separate inputs. Insert the prose of one `visual-style-*.md` file at `{{visual_style}}`, omitting its YAML `name` and `family` metadata. Keep `## COMPOSITION` and `## OUTPUT` from the common template, not from the style file. Numbered files are alternative wordings of one direction; do not concatenate variants. If no style is specified, use the sole unnumbered `visual-style-*.md` file to preserve existing prompts. If a direction is specified without a variant number, use its `-01.md` file; an explicit variant number selects that file.
+The optional `archived: true` metadata marks styles that are less prominent in the app; they remain selectable here. Omit all metadata from the image prompt.
 
 - `{{name}}` — verbatim from the JSON (`name`).
 - `{{subtitle}}` — per kind:

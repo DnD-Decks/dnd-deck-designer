@@ -81,7 +81,7 @@ const buildPage = () => String.raw`<!doctype html>
                 <div class="generation-controls"><button class="button button-primary" id="preview-prompts" type="button">1 · Review prompts</button><button class="button button-subtle" id="generate-button" type="button" disabled title="Review the exact prompts first"><span class="button-icon">✦</span> 2 · Generate 2 drafts</button></div>
               </div>
               <p class="concept-note" id="generation-instruction">Step 1 of 2: Choose styles and draft counts, then select Review prompts to unlock generation. Each image is billed separately.</p>
-              <details class="style-config" open><summary>Visual styles · <span id="style-total">2 drafts</span></summary><div id="style-rows" class="style-rows"></div><div class="style-actions"><button class="button button-subtle" id="add-style" type="button">+ Add style</button><button class="button button-subtle" id="one-each" type="button">One of each selected</button><button class="button button-subtle" id="all-styles" type="button">Compare all 19 styles</button></div><div class="preset-actions"><label for="preset-name">Preset name<input id="preset-name" type="text" maxlength="60" placeholder="e.g. Broad exploration"></label><button class="button button-subtle" id="save-preset" type="button">Save preset</button><label for="preset-list">Saved presets<select id="preset-list"><option value="">Choose a preset…</option></select></label><button class="button button-subtle" id="load-preset" type="button">Load preset</button><button class="button button-subtle" id="delete-preset" type="button">Delete preset</button></div><p id="preset-status" class="preset-status" role="status"></p><p id="style-note" class="style-note"></p></details>
+              <details class="style-config" open><summary>Visual styles · <span id="style-total">2 drafts</span></summary><div id="style-rows" class="style-rows"></div><div class="style-actions"><button class="button button-subtle" id="add-style" type="button">+ Add style</button><button class="button button-subtle" id="one-each" type="button">One of each selected</button><button class="button button-subtle" id="all-styles" type="button">Compare all active styles (29)</button><button class="button button-subtle" id="all-styles-including-archived" type="button">Compare all including archived (37)</button></div><div class="preset-actions"><label for="preset-name">Preset name<input id="preset-name" type="text" maxlength="60" placeholder="e.g. Broad exploration"></label><button class="button button-subtle" id="save-preset" type="button">Save preset</button><label for="preset-list">Saved presets<select id="preset-list"><option value="">Choose a preset…</option></select></label><button class="button button-subtle" id="load-preset" type="button">Load preset</button><button class="button button-subtle" id="delete-preset" type="button">Delete preset</button></div><p id="preset-status" class="preset-status" role="status"></p><p id="style-note" class="style-note"></p></details>
               <div id="prompt-preview" class="prompt-preview" aria-live="polite"></div>
               <div class="progress-line hidden" id="generation-progress"><span class="loader"></span><span id="generation-progress-text">Generating 2 low-quality drafts in the background…</span></div>
               <div class="job-status" id="job-status" role="status" aria-live="polite"></div>
@@ -141,6 +141,7 @@ const styles = String.raw`
 
 const clientScript = String.raw`
 const $ = (selector, root) => (root || document).querySelector(selector);
+const MAX_DRAFTS = 40;
 const state = { issues: [], styles: [], stylePlan: [{ styleId: "atmospheric-painterly-fantasy", count: 2 }], previewSignature: null, reviewingPrompts: false, active: null, manifest: null, runs: [], selected: null, final: null, search: "", chat: [], finalTuning: "", finalModel: "gpt-image-2.5-flare", finalQuality: "medium", finalSize: "card", finalAdvancedOpen: false, jobs: [], jobTimer: null, prBusy: false, recorder: null };
 const ISSUE_PLAN_KEY = "asset-pipeline-style-plan-v1:";
 const PRESETS_KEY = "asset-pipeline-style-presets-v1";
@@ -190,10 +191,10 @@ function defaultStylePlan(issue) {
 }
 
 function validStylePlan(plan, issue) {
-  return Array.isArray(plan) && plan.length >= 1 && plan.length <= 20
-    && plan.every(function(row) { return row && typeof row.styleId === "string" && Number.isInteger(row.count) && row.count >= 1 && row.count <= 24
+  return Array.isArray(plan) && plan.length >= 1 && plan.length <= MAX_DRAFTS
+    && plan.every(function(row) { return row && typeof row.styleId === "string" && Number.isInteger(row.count) && row.count >= 1 && row.count <= MAX_DRAFTS
       && (issue.styleSwappable ? state.styles.some(function(style) { return style.id === row.styleId; }) : row.styleId === "issue"); })
-    && plan.reduce(function(total, row) { return total + row.count; }, 0) <= 24;
+    && plan.reduce(function(total, row) { return total + row.count; }, 0) <= MAX_DRAFTS;
 }
 
 function readLocal(key, fallback) {
@@ -245,17 +246,18 @@ function renderStylePlan() {
     issue.textContent = "Issue prompt · original style";
     if (!state.active?.styleSwappable) select.append(issue);
     const groups = new Map();
-    (state.active?.styleSwappable ? state.styles : []).forEach(function(style) {
-      if (!groups.has(style.family)) {
+    (state.active?.styleSwappable ? [...state.styles.filter(function(style) { return !style.archived; }), ...state.styles.filter(function(style) { return style.archived; })] : []).forEach(function(style) {
+      const groupName = style.archived ? "Archived · " + style.family : style.family;
+      if (!groups.has(groupName)) {
         const group = document.createElement("optgroup");
-        group.label = style.family;
-        groups.set(style.family, group);
+        group.label = groupName;
+        groups.set(groupName, group);
         select.append(group);
       }
       const option = document.createElement("option");
       option.value = style.id;
-      option.textContent = style.name;
-      groups.get(style.family).append(option);
+      option.textContent = style.family + " · " + style.name;
+      groups.get(groupName).append(option);
     });
     select.value = item.styleId;
     select.addEventListener("change", function() { item.styleId = select.value; changeStylePlan(); });
@@ -265,7 +267,7 @@ function renderStylePlan() {
     const count = document.createElement("input");
     count.type = "number";
     count.min = "1";
-    count.max = "24";
+    count.max = String(MAX_DRAFTS);
     count.value = item.count;
     count.setAttribute("aria-label", "Drafts for visual style " + (index + 1));
     count.addEventListener("input", function() { item.count = Number(count.value); changeStylePlan(); });
@@ -285,7 +287,7 @@ function renderStylePlan() {
 
 function updateStyleSummary() {
   const total = state.stylePlan.reduce(function(sum, item) { return sum + item.count; }, 0);
-  const valid = Number.isInteger(total) && total >= 1 && total <= 24 && state.stylePlan.every(function(item) { return Number.isInteger(item.count) && item.count >= 1 && item.count <= 24; });
+  const valid = Number.isInteger(total) && total >= 1 && total <= MAX_DRAFTS && state.stylePlan.every(function(item) { return Number.isInteger(item.count) && item.count >= 1 && item.count <= MAX_DRAFTS; });
   const label = total + " draft" + (total === 1 ? "" : "s");
   $("#style-total").textContent = label;
   const generate = $("#generate-button");
@@ -293,7 +295,7 @@ function updateStyleSummary() {
   generate.innerHTML = '<span class="button-icon">✦</span> 2 · Generate ' + label;
   const busy = state.jobs.some(function(job) { return job.type === "draft" && ["starting", "in_progress"].includes(job.status); });
   generate.disabled = !valid || !state.previewSignature || !state.active?.ready || busy || state.reviewingPrompts;
-  generate.title = !state.active?.ready ? (state.active?.errors || []).join(" ") : !valid ? "Choose 1–24 drafts in total" : !state.previewSignature ? "Review the exact prompts first" : "";
+  generate.title = !state.active?.ready ? (state.active?.errors || []).join(" ") : !valid ? "Choose 1–40 drafts in total" : !state.previewSignature ? "Review the exact prompts first" : "";
   generate.classList.toggle("button-primary", Boolean(state.previewSignature));
   generate.classList.toggle("button-subtle", !state.previewSignature);
   review.disabled = !valid || !state.active?.ready || busy || state.reviewingPrompts;
@@ -306,9 +308,10 @@ function updateStyleSummary() {
   $("#generation-progress-text").textContent = "Generating " + label + " in the background…";
   const note = $("#style-note");
   note.classList.toggle("warning", !state.active?.styleSwappable);
-  note.textContent = !valid ? "Choose 1–24 drafts in total." : !state.active?.styleSwappable ? "This custom issue keeps its original prompt. Style switching requires a normalized asset template." : "The old style block will be removed. Repeated drafts of one style use the same prompt; the image model may produce different results.";
+  note.textContent = !valid ? "Choose 1–40 drafts in total." : !state.active?.styleSwappable ? "This custom issue keeps its original prompt. Style switching requires a normalized asset template." : "The old style block will be removed. Archived styles remain selectable below active styles. Each image is billed separately.";
   $("#add-style").disabled = !state.active?.styleSwappable;
   $("#all-styles").disabled = !state.active?.styleSwappable;
+  $("#all-styles-including-archived").disabled = !state.active?.styleSwappable;
 }
 
 function renderStatus(health) {
@@ -1226,6 +1229,11 @@ $("#one-each").addEventListener("click", function() {
   renderStylePlan();
 });
 $("#all-styles").addEventListener("click", function() {
+  state.stylePlan = state.styles.filter(function(style) { return !style.archived; }).map(function(style) { return { styleId: style.id, count: 1 }; });
+  changeStylePlan();
+  renderStylePlan();
+});
+$("#all-styles-including-archived").addEventListener("click", function() {
   state.stylePlan = state.styles.map(function(style) { return { styleId: style.id, count: 1 }; });
   changeStylePlan();
   renderStylePlan();
@@ -1234,7 +1242,7 @@ $("#preset-list").addEventListener("change", function() { renderPresets(this.val
 $("#save-preset").addEventListener("click", function() {
   const name = $("#preset-name").value.trim();
   if (!name) { $("#preset-status").textContent = "Enter a name for the preset."; return; }
-  if (!validStylePlan(state.stylePlan, state.active)) { $("#preset-status").textContent = "Choose 1–24 valid drafts before saving."; return; }
+  if (!validStylePlan(state.stylePlan, state.active)) { $("#preset-status").textContent = "Choose 1–40 valid drafts before saving."; return; }
   const saved = presets();
   if (Object.prototype.hasOwnProperty.call(saved, name) && !confirm('Replace the preset "' + name + '"?')) return;
   saved[name] = state.stylePlan.map(function(row) { return { styleId: row.styleId, count: row.count }; });
@@ -1417,7 +1425,7 @@ function draftPlan(body, prompt) {
       throw makePipelineError("Draft variant count must be 1, 2, or 4.", 400);
     stylePlan = [{ styleId: swappable ? "atmospheric-painterly-fantasy" : "issue", count }];
   }
-  if (!Array.isArray(stylePlan) || !stylePlan.length || stylePlan.length > 20)
+  if (!Array.isArray(stylePlan) || !stylePlan.length || stylePlan.length > 40)
     throw makePipelineError("Select at least one visual style.", 400);
   const selected = [];
   for (const entry of stylePlan) {
@@ -1427,8 +1435,8 @@ function draftPlan(body, prompt) {
         ? { id: "issue", name: "Issue prompt", family: "Original prompt", prompt: null }
         : STYLE_CATALOG.find((item) => item.id === entry.styleId));
     const count = entry && Number(entry.count);
-    if (!style || !Number.isInteger(count) || count < 1 || count > 24)
-      throw makePipelineError("Select a known style and a draft count from 1 to 24.", 400);
+    if (!style || !Number.isInteger(count) || count < 1 || count > 40)
+      throw makePipelineError("Select a known style and a draft count from 1 to 40.", 400);
     if (swappable === (style.id === "issue"))
       throw makePipelineError(
         swappable
@@ -1448,7 +1456,7 @@ function draftPlan(body, prompt) {
       });
     }
   }
-  if (selected.length > 24) throw makePipelineError("Limit each run to 24 drafts.", 400);
+  if (selected.length > 40) throw makePipelineError("Limit each run to 40 drafts.", 400);
   return selected;
 }
 
@@ -2771,7 +2779,12 @@ async function handleApi(request, env, url) {
   }
   if (path === "/api/styles" && request.method === "GET") {
     return jsonResponse({
-      styles: STYLE_CATALOG.map(({ id, name, family }) => ({ id, name, family })),
+      styles: STYLE_CATALOG.map(({ id, name, family, archived }) => ({
+        id,
+        name,
+        family,
+        archived,
+      })),
     });
   }
   if (path === "/api/transcribe" && request.method === "POST") {
@@ -2784,7 +2797,7 @@ async function handleApi(request, env, url) {
   if (path === "/api/image" && request.method === "GET") {
     const key = url.searchParams.get("key") || "";
     if (
-      !/^issues\/\d+\/runs\/[0-9a-f-]{20,40}\/(?:candidate-(?:[1-9]|1\d|2[0-4])\.(?:jpg|png)|final-(?:[1-9]|1\d|2[0-4])(?:-[0-9a-f-]{20,40})?\.png)$/i.test(
+      !/^issues\/\d+\/runs\/[0-9a-f-]{20,40}\/(?:candidate-(?:[1-9]|[1-3]\d|40)\.(?:jpg|png)|final-(?:[1-9]|[1-3]\d|40)(?:-[0-9a-f-]{20,40})?\.png)$/i.test(
         key
       )
     )
@@ -2931,7 +2944,7 @@ async function handleApi(request, env, url) {
     !validRunId(body.runId) ||
     !Number.isInteger(Number(body.candidateId)) ||
     Number(body.candidateId) < 1 ||
-    Number(body.candidateId) > 24
+    Number(body.candidateId) > 40
   )
     throw makePipelineError("A valid draft run and candidate are required.", 400);
   if (action === "finals") {

@@ -689,10 +689,10 @@ test("custom prompt produces valid previews, commits each run to the issue folde
     const broadJob = (await broadResponse.json()).job;
     assert.equal(JSON.parse(objects.get(`issues/190/jobs/${broadJob.id}.json`)).requests.length, 4);
     rateLimitOnce = true;
-    for (let attempt = 0; attempt < 6; attempt++) {
+    for (let attempt = 0; attempt < 12; attempt++) {
       const key = `issues/190/jobs/${broadJob.id}.json`;
       const saved = JSON.parse(objects.get(key));
-      if (saved.requests.length === 19) break;
+      if (saved.requests.length === 37) break;
       saved.nextSubmitAt = new Date(0).toISOString();
       objects.set(key, JSON.stringify(saved));
       await worker.fetch(
@@ -702,7 +702,7 @@ test("custom prompt produces valid previews, commits each run to the issue folde
     }
     assert.equal(
       JSON.parse(objects.get(`issues/190/jobs/${broadJob.id}.json`)).requests.length,
-      19
+      37
     );
     await worker.fetch(
       new Request(`https://pipeline.example/api/issues/190/jobs/${broadJob.id}`),
@@ -716,10 +716,10 @@ test("custom prompt produces valid previews, commits each run to the issue folde
     const broadManifest = JSON.parse(
       objects.get(`issues/190/runs/${broadJob.runId}/manifest.json`)
     );
-    assert.equal(broadManifest.candidates.length, 19);
-    assert.equal(broadManifest.candidates[18].id, 19);
+    assert.equal(broadManifest.candidates.length, 37);
+    assert.equal(broadManifest.candidates[36].id, 37);
     assert.doesNotMatch(
-      broadManifest.candidates[18].generationPrompt,
+      broadManifest.candidates[36].generationPrompt,
       /COMPOSITION DIRECTION FOR THIS CANDIDATE/
     );
     const acceptedBeforeRetry = backgroundPrompts.length;
@@ -732,7 +732,7 @@ test("custom prompt produces valid previews, commits each run to the issue folde
     objects.set(`issues/190/jobs/${broadJob.id}.json`, JSON.stringify(oldJob));
     broadManifest.candidates = broadManifest.candidates.slice(0, 4);
     broadManifest.failures = Array.from(
-      { length: 15 },
+      { length: 33 },
       (_, index) => `Draft ${index + 5}: Rate limit reached`
     );
     objects.set(`issues/190/runs/${broadJob.runId}/manifest.json`, JSON.stringify(broadManifest));
@@ -743,10 +743,10 @@ test("custom prompt produces valid previews, commits each run to the issue folde
       env
     );
     assert.equal(resumed.status, 202, await resumed.clone().text());
-    for (let attempt = 0; attempt < 5; attempt++) {
+    for (let attempt = 0; attempt < 10; attempt++) {
       const key = `issues/190/jobs/${broadJob.id}.json`;
       const saved = JSON.parse(objects.get(key));
-      if (saved.requests.length === 19) break;
+      if (saved.requests.length === 37) break;
       saved.nextSubmitAt = new Date(0).toISOString();
       objects.set(key, JSON.stringify(saved));
       await worker.fetch(
@@ -763,16 +763,16 @@ test("custom prompt produces valid previews, commits each run to the issue folde
       env
     );
     assert.equal((await resumedFinished.json()).job.status, "completed");
-    assert.equal(backgroundPrompts.length - acceptedBeforeRetry, 15);
+    assert.equal(backgroundPrompts.length - acceptedBeforeRetry, 33);
     assert.equal(
       JSON.parse(objects.get(`issues/190/runs/${broadJob.runId}/manifest.json`)).candidates.length,
-      19
+      37
     );
     const lastFinal = await worker.fetch(
       new Request("https://pipeline.example/api/issues/190/jobs", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ type: "final", runId: broadJob.runId, candidateId: 19 }),
+        body: JSON.stringify({ type: "final", runId: broadJob.runId, candidateId: 37 }),
       }),
       env
     );

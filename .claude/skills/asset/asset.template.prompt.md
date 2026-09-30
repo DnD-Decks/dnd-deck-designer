@@ -32,7 +32,7 @@ Placeholders (filled by SKILL.md § 2):
 
 # DECK BACKGROUND
 
-Create a {{orientation}} fantasy illustration intended to be used purely as background artwork for a Dungeons & Dragons card deck.
+Create a {{orientation}} fantasy background image for a Dungeons & Dragons card deck.
 
 ## SCENE
 
@@ -49,7 +49,7 @@ This is the subject of the image. Every element in the picture must serve it; no
 
 ## COMPOSITION
 
-The artwork is an independent fantasy illustration.
+The image is independent background artwork.
 It must NEVER contain or imply any part of a card design.
 
 No text.
