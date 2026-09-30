@@ -85,6 +85,7 @@ const buildPage = () => String.raw`<!doctype html>
               <div id="prompt-preview" class="prompt-preview" aria-live="polite"></div>
               <div class="progress-line hidden" id="generation-progress"><span class="loader"></span><span id="generation-progress-text">Generating 2 low-quality drafts in the background…</span></div>
               <div class="job-status" id="job-status" role="status" aria-live="polite"></div>
+              <nav class="candidate-pager hidden" id="candidate-pager" aria-label="Draft navigation"><button type="button" id="candidate-prev" aria-label="Previous draft">‹</button><span id="candidate-position"></span><button type="button" id="candidate-next" aria-label="Next draft">›</button></nav>
               <div class="candidate-grid" id="candidate-grid">
                 <div class="empty-candidates"><div class="empty-art" aria-hidden="true">✧</div><strong>Your drafts will appear here</strong><span>Compare the same scene across selected styles.</span></div>
               </div>
@@ -106,11 +107,16 @@ const buildPage = () => String.raw`<!doctype html>
       <div class="image-dialog-toolbar">
         <div><strong id="image-dialog-title">Artwork</strong><span id="image-dialog-size"></span></div>
         <div class="image-dialog-actions">
+          <button type="button" class="button button-primary hidden" id="image-dialog-render">Select &amp; render final</button>
           <button type="button" class="button button-subtle" id="image-dialog-zoom" aria-pressed="false">View at 100%</button>
           <button type="button" class="button button-subtle" id="image-dialog-close" aria-label="Close image viewer">Close ✕</button>
         </div>
       </div>
-      <div class="image-dialog-scroll" id="image-dialog-scroll"><img id="image-dialog-image" alt=""></div>
+      <div class="image-dialog-stage">
+        <div class="image-dialog-scroll" id="image-dialog-scroll"><img id="image-dialog-image" alt=""></div>
+        <button type="button" class="image-dialog-arrow previous" id="image-dialog-prev" aria-label="Previous image">‹</button>
+        <button type="button" class="image-dialog-arrow next" id="image-dialog-next" aria-label="Next image">›</button>
+      </div>
       <nav class="image-dialog-gallery" aria-label="Images in this session">
         <div class="image-dialog-gallery-heading"><span>SESSION GALLERY</span><span id="image-dialog-position"></span></div>
         <div class="image-dialog-filmstrip" id="image-dialog-filmstrip"></div>
@@ -130,6 +136,9 @@ const styles = String.raw`
 .prompt-editor{border-top:1px solid #29343a;padding:14px}.prompt-editor label{display:block;color:#c8d0cb;font-size:14px;margin-bottom:9px}.prompt-editor textarea{display:block;width:100%;min-height:230px;resize:vertical;border:1px solid #3d494d;border-radius:6px;background:#11171c;color:#d5ddd6;padding:13px;font:13px/1.55 var(--mono)}.prompt-editor textarea:focus{outline:2px solid #a88b55;outline-offset:2px}.prompt-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:9px;color:#a1ada8;font-size:13px}.prompt-actions .button{flex:none}.draft-storage{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:13px 0;color:#aab6af;font-size:13px}.draft-storage a{color:var(--gold-2);text-decoration:underline;text-underline-offset:3px}.draft-storage .button{padding:6px 10px;min-height:32px}.draft-storage.error{color:var(--red)}@media(max-width:720px){.prompt-actions{align-items:flex-start;flex-direction:column}}
 .image-view-button{position:absolute;right:10px;top:10px;z-index:2;border:1px solid #737c7a;background:#11171ce8;color:#f0f2ee;padding:7px 10px;border-radius:6px;font-size:12px}.image-view-button:hover,.image-view-button:focus-visible{border-color:var(--gold);color:var(--gold)}.candidate-image,.final-preview img{cursor:zoom-in}.final-preview{position:relative}.final-progress{display:flex;align-items:center;gap:10px;margin:12px 0;color:var(--gold-2);font-size:13px}.final-progress span:last-child{color:#a9b5ac}.image-dialog{position:fixed;inset:0;width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;background:#10151a;color:var(--text);overflow:hidden}.image-dialog::backdrop{background:#080c10e8}.image-dialog[open]{display:flex;flex-direction:column}.image-dialog-toolbar{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:12px clamp(12px,3vw,30px);background:#192127;border-bottom:1px solid #39454b;min-height:68px}.image-dialog-toolbar strong,.image-dialog-toolbar span{display:block}.image-dialog-toolbar strong{font-size:16px;font-weight:600}.image-dialog-toolbar span{font-size:13px;color:#aeb9b2}.image-dialog-actions{display:flex;gap:8px;flex-shrink:0}.image-dialog-actions button{font-size:13px}.image-dialog-scroll{flex:1;min-height:0;overflow:auto;display:flex;align-items:safe center;justify-content:safe center;padding:14px;overscroll-behavior:contain}.image-dialog-scroll img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}.image-dialog-scroll.original{display:block;text-align:center}.image-dialog-scroll.original img{max-width:none;max-height:none;width:auto;height:auto;margin:auto}.image-dialog button:focus-visible,.image-view-button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}@media(max-width:600px){.image-dialog-toolbar{align-items:flex-start;flex-direction:column;gap:8px}.image-dialog-actions{width:100%}.image-dialog-actions button{flex:1}.image-dialog-scroll{padding:6px}}
 .image-dialog-gallery{flex:none;min-width:0;background:#192127;border-top:1px solid #39454b;padding:8px clamp(12px,3vw,30px) max(9px,env(safe-area-inset-bottom))}.image-dialog-gallery-heading{display:flex;justify-content:space-between;color:#aeb9b2;font:10px var(--mono);letter-spacing:.08em;margin-bottom:6px}.image-dialog-filmstrip{display:flex;gap:8px;overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-width:thin;scrollbar-color:#59635e transparent;padding:3px 2px 6px}.image-dialog-filmstrip button{flex:none;width:72px;padding:4px;border:1px solid #485258;border-radius:6px;background:#11171c;color:#aeb9b2;text-align:center}.image-dialog-filmstrip button:hover{border-color:#b5a070}.image-dialog-filmstrip button[aria-current="true"]{border-color:var(--gold);background:#302a20;color:var(--gold-2);box-shadow:0 0 0 1px var(--gold)}.image-dialog-filmstrip img{display:block;width:62px;height:67px;object-fit:contain;background:#10151a;border-radius:3px}.image-dialog-filmstrip span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:10px var(--mono);margin-top:3px}.image-dialog-filmstrip button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}@media(max-width:600px){.image-dialog-filmstrip button{width:62px}.image-dialog-filmstrip img{width:52px;height:58px}}
+.candidate-actions{display:grid;gap:7px}.candidate-actions .render-now-button{width:100%;min-height:36px}.image-dialog-stage{position:relative;display:flex;flex:1;min-height:0;min-width:0}.image-dialog-stage .image-dialog-scroll{touch-action:pan-y}.image-dialog-arrow{position:absolute;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:44px;height:52px;border:1px solid #697570;border-radius:8px;background:#141c21d9;color:#f0cf84;font:36px/1 var(--sans);z-index:2}.image-dialog-arrow.previous{left:12px}.image-dialog-arrow.next{right:12px}.image-dialog-arrow:disabled{opacity:.25;cursor:default}.image-dialog-arrow:not(:disabled):hover{background:#29342f}.image-dialog-actions .button-primary{white-space:nowrap}@media(max-width:600px){.image-dialog-arrow{width:44px;height:54px;border-radius:7px}.image-dialog-arrow.previous{left:5px}.image-dialog-arrow.next{right:5px}.image-dialog-actions{flex-wrap:wrap}.image-dialog-actions #image-dialog-render{flex-basis:100%}}
+.image-dialog-stage .image-dialog-scroll.original{touch-action:auto}
+.candidate-pager{display:none}@media(max-width:720px){.candidate-pager{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 0 9px;color:var(--soft);font:12px var(--mono)}.candidate-pager button{display:grid;place-items:center;width:44px;height:40px;border:1px solid #465259;border-radius:6px;background:#20282d;color:var(--gold-2);font-size:26px}.candidate-pager button:disabled{opacity:.3}.candidate-grid{display:flex;align-items:flex-start;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none}.candidate-grid::-webkit-scrollbar{display:none}.candidate-grid .candidate-card,.candidate-grid .empty-candidates,.candidate-grid .draft-failures,.candidate-grid .workflow-message{flex:0 0 100%;scroll-snap-align:start}}
 .concept-note{margin:-7px 0 17px;color:#a7b2ac;font-size:13px;line-height:1.55}
 .version-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.version-list strong{width:100%;font-size:13px;color:#c9d1ca}.version-list .button{font-size:12px;min-height:32px;padding:6px 9px}
 .run-library{min-width:0;margin:20px 0;padding:15px;border:1px solid var(--line);border-radius:9px;background:var(--panel-2)}.run-library h3{font-size:15px;margin:0 0 5px}.run-library p{margin:0 0 12px;color:var(--muted);font-size:12px}.run-library-items{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}.run-library-item{min-width:0;max-width:100%;border:1px solid var(--line);border-radius:8px;padding:10px}.run-library-item[aria-current="true"]{border-color:var(--gold)}.run-library-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;color:var(--soft);font-size:12px}.run-library-header span{min-width:0;overflow-wrap:anywhere}.run-library-header button{flex:none}.run-library-images{display:flex;min-width:0;max-width:100%;gap:7px;overflow-x:auto;overflow-y:hidden}.run-library-images button{flex:none;border:0;background:transparent;color:var(--soft);padding:0;text-align:center;font-size:11px}.run-library-images img{display:block;width:60px;height:80px;object-fit:cover;border-radius:4px;margin-bottom:3px}.run-library-images img:hover{outline:2px solid var(--gold)}.version-item{display:flex;align-items:center;gap:7px;flex-wrap:wrap;width:100%;padding:8px;border:1px solid var(--line);border-radius:6px}.version-item img{width:52px;height:70px;object-fit:cover;cursor:pointer;border-radius:3px}.version-item span{flex:1;min-width:105px;font-size:12px;color:var(--soft)}
@@ -546,11 +555,20 @@ async function toggleDictation() {
 
 let viewerItems = [];
 let viewerIndex = 0;
+const viewerPreloads = new Map();
+const finalRequests = new Set();
+const finalRequestKey = (runId, candidateId) => runId + ":" + candidateId;
+
+function finalIsPending(runId, candidateId) {
+  return finalRequests.has(finalRequestKey(runId, candidateId)) || state.jobs.some(function(job) {
+    return job.type === "final" && job.runId === runId && job.candidateId === candidateId && ["starting", "in_progress"].includes(job.status);
+  });
+}
 
 function galleryEntries(run) {
   if (!run) return [];
   return [...(run.candidates || []).map(function(candidate) {
-    return { key: candidate.key, title: candidate.styleName && candidate.styleId !== "issue" ? candidate.styleFamily + " · " + candidate.styleName : candidate.title, label: "Draft " + candidate.id, width: candidate.width, height: candidate.height };
+    return { key: candidate.key, title: candidate.styleName && candidate.styleId !== "issue" ? candidate.styleFamily + " · " + candidate.styleName : candidate.title, label: "Draft " + candidate.id, width: candidate.width, height: candidate.height, candidateId: candidate.id, runId: run.runId };
   }), ...Object.values(run.finalVersions || run.finals || {}).flat().map(function(final, index) {
     return { key: final.key, title: "Render " + (index + 1), label: "Render " + (index + 1), width: final.width, height: final.height };
   })];
@@ -561,7 +579,21 @@ function centerViewerThumbnail() {
   const active = strip.children[viewerIndex];
   if (!active) return;
   const left = strip.scrollLeft + active.getBoundingClientRect().left - strip.getBoundingClientRect().left - (strip.clientWidth - active.clientWidth) / 2;
-  strip.scrollTo({ left, behavior: "smooth" });
+  strip.scrollTo({ left, behavior: "auto" });
+}
+
+function preloadViewerNeighbors() {
+  const neighbors = [viewerItems[viewerIndex - 1], viewerItems[viewerIndex + 1]].filter(Boolean);
+  for (const key of viewerPreloads.keys()) {
+    if (!neighbors.some(function(entry) { return entry.key === key; })) viewerPreloads.delete(key);
+  }
+  for (const index of [viewerIndex - 1, viewerIndex + 1]) {
+    const entry = viewerItems[index];
+    if (!entry || viewerPreloads.has(entry.key)) continue;
+    const image = new Image();
+    image.src = imageUrl(entry.key);
+    viewerPreloads.set(entry.key, image);
+  }
 }
 
 function selectViewerImage(index) {
@@ -583,10 +615,21 @@ function selectViewerImage(index) {
   [...$("#image-dialog-filmstrip").children].forEach(function(button, position) {
     button.setAttribute("aria-current", String(position === index));
   });
+  $("#image-dialog-prev").disabled = index === 0;
+  $("#image-dialog-next").disabled = index === viewerItems.length - 1;
+  const render = $("#image-dialog-render");
+  render.classList.toggle("hidden", entry.candidateId == null);
+  if (entry.candidateId != null) {
+    const pending = finalIsPending(entry.runId, entry.candidateId);
+    render.disabled = pending;
+    render.textContent = pending ? "Rendering in background…" : "Select & render final";
+  }
+  preloadViewerNeighbors();
   requestAnimationFrame(centerViewerThumbnail);
 }
 
 function showImage(key, title, width, height, entries) {
+  viewerPreloads.clear();
   viewerItems = (entries || galleryEntries(state.manifest)).filter(function(entry) { return Boolean(entry.key); });
   viewerIndex = viewerItems.findIndex(function(entry) { return entry.key === key; });
   if (viewerIndex < 0) {
@@ -617,6 +660,18 @@ function showImage(key, title, width, height, entries) {
   $("#image-dialog-close").focus();
 }
 
+function queueFinalForCandidate(candidateId, runId) {
+  if (finalIsPending(runId, candidateId)) return;
+  if (state.manifest?.runId !== runId) {
+    const run = state.runs.find(function(item) { return item.runId === runId; });
+    if (!run) { setMessage("This saved session is unavailable. Reopen the issue and try again.", "error"); return; }
+    activateRun(run);
+  }
+  if (state.selected !== candidateId) state.finalTuning = "";
+  selectCandidate(candidateId);
+  renderFinal();
+}
+
 function viewImageButton(key, title, width, height) {
   const button = document.createElement("button");
   button.type = "button";
@@ -625,6 +680,32 @@ function viewImageButton(key, title, width, height) {
   button.setAttribute("aria-label", "View " + title + " at full resolution");
   button.addEventListener("click", function() { showImage(key, title, width, height); });
   return button;
+}
+
+function updateCandidatePager() {
+  const grid = $("#candidate-grid");
+  const cards = [...grid.querySelectorAll(".candidate-card")];
+  $("#candidate-pager").classList.toggle("hidden", cards.length < 2);
+  if (!cards.length) return;
+  const left = grid.getBoundingClientRect().left;
+  const index = cards.reduce(function(best, card, position) {
+    return Math.abs(card.getBoundingClientRect().left - left) < Math.abs(cards[best].getBoundingClientRect().left - left) ? position : best;
+  }, 0);
+  $("#candidate-position").textContent = (index + 1) + " / " + cards.length;
+  $("#candidate-prev").disabled = index === 0;
+  $("#candidate-next").disabled = index === cards.length - 1;
+}
+
+function moveCandidate(direction) {
+  const grid = $("#candidate-grid");
+  const cards = [...grid.querySelectorAll(".candidate-card")];
+  if (!cards.length) return;
+  const left = grid.getBoundingClientRect().left;
+  const current = cards.reduce(function(best, card, position) {
+    return Math.abs(card.getBoundingClientRect().left - left) < Math.abs(cards[best].getBoundingClientRect().left - left) ? position : best;
+  }, 0);
+  const target = cards[Math.max(0, Math.min(cards.length - 1, current + direction))];
+  grid.scrollTo({ left: grid.scrollLeft + target.getBoundingClientRect().left - left, behavior: "smooth" });
 }
 
 function renderGallery(manifest) {
@@ -656,12 +737,15 @@ function renderGallery(manifest) {
     }
   }
   const grid = $("#candidate-grid");
+  const previousScroll = grid.dataset.runId === manifest.runId ? grid.scrollLeft : 0;
+  grid.dataset.runId = manifest.runId;
   grid.replaceChildren();
   if (!manifest.candidates || !manifest.candidates.length) {
     const empty = document.createElement("div");
     empty.className = "empty-candidates";
     empty.innerHTML = '<div class="empty-art" aria-hidden="true">✧</div><strong>No complete drafts in this run</strong><span>Generate another set. Any failed request is shown below.</span>';
     grid.append(empty);
+    updateCandidatePager();
     return;
   }
   manifest.candidates.forEach(function(candidate) {
@@ -696,7 +780,17 @@ function renderGallery(manifest) {
     choose.textContent = state.selected === candidate.id ? "Selected for final render" : "Choose this composition";
     choose.setAttribute("aria-pressed", String(state.selected === candidate.id));
     choose.addEventListener("click", function() { selectCandidate(candidate.id); });
-    info.append(title, description, choose);
+    const render = document.createElement("button");
+    render.type = "button";
+    render.className = "button button-primary render-now-button";
+    const pending = finalIsPending(manifest.runId, candidate.id);
+    render.textContent = pending ? "Rendering in background…" : "Select & render final";
+    render.disabled = pending;
+    render.addEventListener("click", function() { queueFinalForCandidate(candidate.id, manifest.runId); });
+    const actions = document.createElement("div");
+    actions.className = "candidate-actions";
+    actions.append(choose, render);
+    info.append(title, description, actions);
     card.append(imageWrap, info);
     grid.append(card);
   });
@@ -723,6 +817,8 @@ function renderGallery(manifest) {
     details.append(summary, list);
     grid.append(details);
   }
+  grid.scrollLeft = previousScroll;
+  requestAnimationFrame(updateCandidatePager);
 }
 
 async function retryFailedDrafts(id, button) {
@@ -857,7 +953,7 @@ function renderFinalPanel() {
     button.addEventListener("click", renderFinal);
   }
   actions.append(button);
-  const finalPending = state.jobs.some(function(job) { return ["starting", "in_progress"].includes(job.status) && job.type === "final" && job.runId === state.manifest.runId && job.candidateId === state.selected; });
+  const finalPending = finalIsPending(state.manifest.runId, state.selected);
   button.disabled = finalPending;
   if (finalPending) button.textContent = "Rendering in background…";
   if (state.final && !state.final.prUrl) {
@@ -1116,34 +1212,38 @@ async function syncDrafts() {
 }
 
 async function renderFinal() {
-  const button = $("#final-content .final-actions .button-primary");
-  const progress = $("#final-progress");
   const issueNumber = state.active.number;
   const runId = state.manifest.runId;
   const candidateId = state.selected;
+  if (candidateId == null || finalIsPending(runId, candidateId)) return;
   const tuning = $("#final-tuning-text").value.trim();
   if (tuning.length > 1200) { setMessage("Keep refinements under 1,200 characters.", "error"); return; }
   const model = $("#final-model").value;
   const quality = $("#final-quality").value;
   const size = $("#final-size").value;
-  progress.classList.remove("hidden");
-  setBusy(button, "final", true, "Rendering one high-quality final image…");
-  button.textContent = "Starting render…";
+  const requestKey = finalRequestKey(runId, candidateId);
+  finalRequests.add(requestKey);
+  renderGallery(state.manifest);
+  renderFinalPanel();
+  setMessage("Queuing final render in the background…", "");
   try {
     const data = await request("/api/issues/" + issueNumber + "/jobs", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ type: "final", runId, candidateId, tuning, model, quality, size }),
     });
-    if (state.active.number !== issueNumber || state.manifest?.runId !== runId || state.selected !== candidateId) return;
+    if (state.active?.number !== issueNumber) return;
     state.jobs.unshift(data.job);
-    renderFinalPanel();
     renderJobs();
     setMessage("Render is running in the background. You may close this page and return later.", "success");
   } catch (error) {
-    if (state.active.number !== issueNumber || state.manifest?.runId !== runId || state.selected !== candidateId) return;
-    setMessage(error.message, "error");
-    renderFinalPanel();
+    if (state.active?.number === issueNumber) setMessage(error.message, "error");
+  } finally {
+    finalRequests.delete(requestKey);
+    if (state.active?.number === issueNumber && state.manifest?.runId === runId) {
+      renderGallery(state.manifest);
+      renderFinalPanel();
+    }
   }
 }
 
@@ -1337,7 +1437,37 @@ $("#reset-prompt").addEventListener("click", function() {
   if (state.active) { $("#prompt-text").value = state.active.prompt || ""; invalidatePromptPreview(); }
 });
 $("#back-to-issues").addEventListener("click", function() { setSurface("welcome"); history.replaceState(null, "", "/"); });
+$("#candidate-prev").addEventListener("click", function() { moveCandidate(-1); });
+$("#candidate-next").addEventListener("click", function() { moveCandidate(1); });
+let candidateScrollFrame = 0;
+$("#candidate-grid").addEventListener("scroll", function() {
+  if (candidateScrollFrame) return;
+  candidateScrollFrame = requestAnimationFrame(function() { candidateScrollFrame = 0; updateCandidatePager(); });
+}, { passive: true });
 $("#image-dialog-close").addEventListener("click", function() { $("#image-dialog").close(); });
+$("#image-dialog-prev").addEventListener("click", function() { selectViewerImage(viewerIndex - 1); });
+$("#image-dialog-next").addEventListener("click", function() { selectViewerImage(viewerIndex + 1); });
+$("#image-dialog-render").addEventListener("click", function() {
+  const entry = viewerItems[viewerIndex];
+  if (entry?.candidateId == null) return;
+  $("#image-dialog").close();
+  queueFinalForCandidate(entry.candidateId, entry.runId);
+});
+let swipeStart = null;
+$("#image-dialog-scroll").addEventListener("pointerdown", function(event) {
+  swipeStart = event.pointerType === "touch" && !this.classList.contains("original")
+    ? { id: event.pointerId, x: event.clientX, y: event.clientY } : null;
+});
+$("#image-dialog-scroll").addEventListener("pointerup", function(event) {
+  if (!swipeStart || swipeStart.id !== event.pointerId) return;
+  const dx = event.clientX - swipeStart.x;
+  const dy = event.clientY - swipeStart.y;
+  swipeStart = null;
+  if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.25) return;
+  event.preventDefault();
+  selectViewerImage(viewerIndex + (dx < 0 ? 1 : -1));
+});
+$("#image-dialog-scroll").addEventListener("pointercancel", function() { swipeStart = null; });
 $("#image-dialog-zoom").addEventListener("click", function() {
   const scroll = $("#image-dialog-scroll");
   const original = scroll.classList.toggle("original");
