@@ -68,6 +68,7 @@ test("custom prompt produces valid previews, commits each run to the issue folde
   const imageRequests = [];
   const backgroundPrompts = [];
   const refs = [];
+  const comments = [];
   let branchSha = null;
   let mainSha = "main-commit";
   let concurrentUpdate = true;
@@ -241,6 +242,12 @@ test("custom prompt produces valid previews, commits each run to the issue folde
         { html_url: "https://github.com/DnD-Decks/dnd-deck-designer/pull/999", number: 999 },
         201
       );
+    if (path.endsWith("/issues/999/comments") && method === "GET") return reply(comments);
+    if (path.endsWith("/issues/999/comments") && method === "POST") {
+      const comment = { id: comments.length + 1, body: JSON.parse(options.body).body };
+      comments.push(comment);
+      return reply(comment, 201);
+    }
     throw Error(`Unexpected request: ${method} ${path}`);
   };
   try {
@@ -335,6 +342,45 @@ test("custom prompt produces valid previews, commits each run to the issue folde
     );
     assert.equal(chatResponse.status, 200);
     assert.equal((await chatResponse.json()).proposedPrompt, "A revised card prompt.");
+    const applied = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/chat", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          type: "prompt-applied",
+          text: "“without a caster”",
+          appliedPrompt: "A revised card prompt.",
+        }),
+      }),
+      env
+    );
+    assert.equal(applied.status, 200);
+    const chatHistory = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/chat"),
+      env
+    );
+    assert.deepEqual(
+      (await chatHistory.json()).messages.map(({ role }) => role),
+      ["user", "assistant", "prompt"]
+    );
+    const legacyChat = new Request("https://pipeline.example/api/issues/191/chat", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        type: "import",
+        messages: [{ role: "user", text: "An earlier idea." }],
+      }),
+    });
+    assert.equal((await worker.fetch(legacyChat.clone(), env)).status, 200);
+    assert.equal((await worker.fetch(legacyChat, env)).status, 200);
+    const imported = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/191/chat"),
+      env
+    );
+    assert.deepEqual(
+      (await imported.json()).messages.map(({ text }) => text),
+      ["An earlier idea."]
+    );
 
     const audioForm = new FormData();
     audioForm.append(
@@ -432,6 +478,18 @@ test("custom prompt produces valid previews, commits each run to the issue folde
     );
     assert.equal(prResponse.status, 200, await prResponse.clone().text());
     assert.equal((await prResponse.json()).final.prNumber, 999);
+    assert.equal(comments.length, 1);
+    assert.ok(comments[0].body.includes(firstFinal.generationPrompt));
+    const retryPr = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/pull-requests", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ runId: first.runId, candidateId: 1 }),
+      }),
+      env
+    );
+    assert.equal(retryPr.status, 200);
+    assert.equal(comments.length, 1);
     assert.ok(trees.at(-1).tree.some(({ path }) => path === "public/art/vex.png"));
     assert.equal(branchCreations, 1);
     assert.deepEqual(refs, [`refs/heads/asset/issue-190-vex-${first.runId.slice(0, 8)}-c1`]);

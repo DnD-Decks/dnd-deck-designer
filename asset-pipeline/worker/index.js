@@ -152,6 +152,7 @@ const styles = String.raw`
 @media(min-width:721px){.workspace{max-width:1800px}.candidate-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}}
 @media(max-width:720px){.mobile-open,.mobile-close{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;border:1px solid #425056;border-radius:7px;background:#1e272d;color:var(--text);padding:0 12px;font:13px var(--sans)}.mobile-open{flex:none}.mobile-close{align-self:flex-end;margin-bottom:6px}.app-shell .sidebar{position:fixed;z-index:31;inset:0 auto 0 0;width:min(360px,calc(100vw - 35px));height:100dvh;max-height:100dvh;padding:16px;background:#141a1f;box-shadow:12px 0 40px #0008;transform:translateX(-110%);transition:transform .2s ease;display:flex;flex-direction:column;overflow:hidden}.nav-open .sidebar{transform:translateX(0)}.mobile-backdrop{position:fixed;z-index:30;inset:0;width:100%;height:100%;border:0;background:#000b}.nav-open .mobile-backdrop{display:block}.nav-open{overflow:hidden}.sidebar .issue-list{display:block;overflow-y:auto;overflow-x:hidden;flex:1;max-height:none;min-height:0}.sidebar .issue-row{display:block;width:100%;min-height:52px;padding:10px}.sidebar .search-box{margin-bottom:10px}.sidebar .issue-filters{margin-bottom:12px}.topbar{gap:8px}.topbar .crumbs{display:none}.advanced-grid{grid-template-columns:1fr}.prompt-editor textarea,.brainstorm textarea,.final-tuning textarea,.final-tuning select,.issue-filters select,.search-box input{font-size:16px}}
 .brainstorm{border-top:1px solid #29343a;margin-top:18px;padding-top:17px}.brainstorm h3{font-size:17px;margin:0 0 3px}.brainstorm p{font-size:13px;color:#aab5ad;margin:0 0 12px}.brainstorm label,.final-tuning label{display:block;font-size:13px;color:#ccd5cd;margin:8px 0}.chat-messages{display:grid;gap:10px;max-height:360px;overflow:auto;margin:0 0 10px}.chat-message{border-radius:8px;padding:11px 13px;font-size:14px;white-space:pre-wrap;line-height:1.55;max-width:94%}.chat-message.user{background:#30372f;justify-self:end}.chat-message.assistant{background:#20292d;justify-self:start}.chat-message button{display:block;margin-top:11px}.brainstorm textarea,.final-tuning textarea{width:100%;background:#11171c;border:1px solid #3d494d;border-radius:6px;color:#d5ddd6;padding:10px;font:14px/1.5 var(--sans);resize:vertical}.chat-actions{display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap;margin-top:9px}.chat-status{font-size:13px;color:var(--gold-2);min-height:20px;margin-top:6px}.final-tuning{margin:14px 0}.final-tuning textarea{min-height:82px}.final-actions{flex-wrap:wrap}
+.chat-message.prompt{justify-self:stretch;max-width:100%;background:#30291d;border:1px solid #8c703e;color:#f0cf84}.chat-message.prompt strong{display:block;font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}.chat-message.prompt span{display:block}
 `;
 
 const clientScript = String.raw`
@@ -401,9 +402,10 @@ function renderIssue(issue) {
   $("#preset-status").textContent = savedPlan && !validStylePlan(savedPlan, issue) ? "A saved selection is no longer valid for this issue; using the default." : "";
   state.manifest = null;
   state.runs = [];
+  state.jobs = [];
   state.selected = null;
   state.final = null;
-  try { state.chat = JSON.parse(sessionStorage.getItem("asset-chat-" + issue.number) || "[]").slice(-20); }
+  try { state.chat = JSON.parse(localStorage.getItem("asset-chat-" + issue.number) || sessionStorage.getItem("asset-chat-" + issue.number) || "[]").slice(-50); }
   catch { state.chat = []; }
   state.finalTuning = "";
   setSurface("issue");
@@ -437,22 +439,57 @@ function renderIssue(issue) {
 
 function imageUrl(key) { return "/api/image?key=" + encodeURIComponent(key); }
 
+function promptChangeBlurb(before, after) {
+  let start = 0;
+  while (start < before.length && start < after.length && before[start] === after[start]) start++;
+  let end = 0;
+  while (end < before.length - start && end < after.length - start && before[before.length - 1 - end] === after[after.length - 1 - end]) end++;
+  const added = after.slice(start, after.length - end).trim();
+  const removed = before.slice(start, before.length - end).trim();
+  const excerpt = (added || removed).split("\n").map(function(line) { return line.trim(); }).find(function(line) { return line && !line.startsWith("## "); }) || added || removed;
+  return (added ? "“" : "Removed “") + excerpt.slice(0, 350) + (excerpt.length > 350 ? "…" : "") + "”";
+}
+
 function renderChat() {
   const log = $("#chat-messages");
   log.replaceChildren();
   for (const message of state.chat) {
     const row = document.createElement("div");
     row.className = "chat-message " + message.role;
-    row.textContent = message.text;
+    if (message.role === "prompt") {
+      const label = document.createElement("strong");
+      label.textContent = "Applied to prompt";
+      const excerpt = document.createElement("span");
+      excerpt.textContent = message.text;
+      row.append(label, excerpt);
+    } else row.textContent = message.text;
     if (message.role === "assistant" && message.proposedPrompt) {
       const apply = document.createElement("button");
       apply.type = "button";
       apply.className = "button button-subtle";
       apply.textContent = "Apply proposed prompt to editor";
-      apply.addEventListener("click", function() {
+      apply.addEventListener("click", async function() {
+        const before = $("#prompt-text").value;
+        if (before === message.proposedPrompt) { $("#chat-status").textContent = "This prompt is already in the editor."; return; }
         $("#prompt-text").value = message.proposedPrompt;
         invalidatePromptPreview();
+        const entry = { role: "prompt", text: promptChangeBlurb(before, message.proposedPrompt), appliedPrompt: message.proposedPrompt, createdAt: new Date().toISOString() };
+        state.chat.push(entry);
+        renderChat();
         $("#chat-status").textContent = "Prompt updated. Review it before generating drafts.";
+        const issueNumber = state.active.number;
+        try {
+          await request("/api/issues/" + issueNumber + "/chat", {
+            method: "POST", headers: { "content-type": "application/json" },
+            body: JSON.stringify({ type: "prompt-applied", text: entry.text, appliedPrompt: entry.appliedPrompt }),
+          });
+        } catch (error) {
+          entry.unsynced = true;
+          if (state.active?.number === issueNumber) {
+            renderChat();
+            $("#chat-status").textContent = "Prompt updated locally, but chat sync failed: " + error.message;
+          }
+        }
       });
       row.append(apply);
     }
@@ -460,8 +497,40 @@ function renderChat() {
   }
   log.scrollTop = log.scrollHeight;
   if (state.active) {
-    try { sessionStorage.setItem("asset-chat-" + state.active.number, JSON.stringify(state.chat.slice(-20))); }
-    catch { /* Browsers can disable session storage; chat stays available until this page closes. */ }
+    try { localStorage.setItem("asset-chat-" + state.active.number, JSON.stringify(state.chat.slice(-50))); }
+    catch { /* Chat remains available in Site storage and in this page. */ }
+  }
+}
+
+async function loadChat(number) {
+  try {
+    const data = await request("/api/issues/" + number + "/chat");
+    if (state.active?.number !== number) return;
+    if (data.messages.length) {
+      const localOnly = state.chat.filter(function(item) {
+        return item.unsynced && !data.messages.some(function(saved) {
+          return saved.role === item.role && saved.text === item.text && saved.proposedPrompt === item.proposedPrompt && saved.appliedPrompt === item.appliedPrompt;
+        });
+      });
+      state.chat = [...data.messages, ...localOnly];
+    }
+    else if (state.chat.length) {
+      const legacy = state.chat.filter(function(item) { return ["user", "assistant", "prompt"].includes(item.role); });
+      if (JSON.stringify(legacy).length < 120000) {
+        await request("/api/issues/" + number + "/chat", {
+          method: "POST", headers: { "content-type": "application/json" },
+          body: JSON.stringify({ type: "import", messages: legacy }),
+        });
+      }
+    }
+    renderChat();
+    const applied = [...state.chat].reverse().find(function(item) { return item.role === "prompt" && item.appliedPrompt; });
+    if (applied && (!state.manifest || String(applied.createdAt || "") > String(state.manifest.createdAt || ""))) {
+      $("#prompt-text").value = applied.appliedPrompt;
+      invalidatePromptPreview();
+    }
+  } catch (error) {
+    if (state.active?.number === number) $("#chat-status").textContent = "Chat sync unavailable; recent messages remain in this browser.";
   }
 }
 
@@ -474,9 +543,10 @@ async function sendChat() {
   button.disabled = true;
   $("#chat-status").textContent = "Thinking through your idea…";
   const history = state.chat.slice(-10).map(function(item) {
-    return { role: item.role, content: (item.text + (item.proposedPrompt ? "\nPreviously proposed prompt:\n" + item.proposedPrompt : "")).slice(0, 8000) };
+    return { role: item.role === "prompt" ? "user" : item.role, content: ((item.role === "prompt" ? "I applied this prompt change: " : "") + item.text + (item.proposedPrompt ? "\nPreviously proposed prompt:\n" + item.proposedPrompt : "")).slice(0, 8000) };
   });
-  state.chat.push({ role: "user", text });
+  const userEntry = { role: "user", text, createdAt: new Date().toISOString() };
+  state.chat.push(userEntry);
   renderChat();
   input.value = "";
   try {
@@ -485,12 +555,14 @@ async function sendChat() {
       body: JSON.stringify({ prompt: $("#prompt-text").value, message: text, history }),
     });
     if (state.active?.number !== issueNumber) return;
-    state.chat.push({ role: "assistant", text: data.reply, proposedPrompt: data.proposedPrompt });
+    const assistantEntry = { role: "assistant", text: data.reply, proposedPrompt: data.proposedPrompt, createdAt: new Date().toISOString() };
+    if (data.saveError) { userEntry.unsynced = true; assistantEntry.unsynced = true; }
+    state.chat.push(assistantEntry);
     renderChat();
-    $("#chat-status").textContent = data.proposedPrompt ? "A proposed prompt is ready to apply." : "Ask another question or request a revised prompt.";
+    $("#chat-status").textContent = data.saveError ? "Reply received, but chat sync failed; recent messages remain in this browser." : data.proposedPrompt ? "A proposed prompt is ready to apply." : "Ask another question or request a revised prompt.";
   } catch (error) {
     if (state.active?.number !== issueNumber) return;
-    state.chat.pop();
+    state.chat = state.chat.filter(function(item) { return item !== userEntry; });
     input.value = text;
     renderChat();
     $("#chat-status").textContent = error.message;
@@ -1111,6 +1183,7 @@ async function openIssue(number) {
     const response = await request("/api/issues/" + number + "/runs");
     state.runs = response.runs || [];
     if (state.runs.length) activateRun(state.runs[0]);
+    await loadChat(number);
     await refreshJobs();
     state.jobTimer = setInterval(function() { if (document.visibilityState === "visible") refreshJobs(); }, 7000);
     setMessage("", "");
@@ -1252,33 +1325,46 @@ async function refreshJobs() {
   state.checkingJobs = true;
   const number = state.active.number;
   try {
+    const previousJobs = new Map(state.jobs.map(function(job) { return [job.id, job.status]; }));
     const data = await request("/api/issues/" + number + "/jobs");
     if (state.active?.number !== number) return;
     state.jobs = data.jobs;
     if (state.manifest?.failures?.length) renderGallery(state.manifest);
     const active = data.jobs.filter(function(job) { return ["starting", "in_progress"].includes(job.status); });
-    let completed = false;
+    let completed = data.jobs.some(function(job) { return job.status === "completed" && previousJobs.has(job.id) && previousJobs.get(job.id) !== "completed"; });
+    let completedDraft = data.jobs.find(function(job) {
+      return job.type === "draft" && job.status === "completed" && (
+        previousJobs.has(job.id) && previousJobs.get(job.id) !== "completed" ||
+        !state.runs.some(function(run) { return run.runId === job.runId && run.candidates?.length; })
+      );
+    });
+    completed ||= Boolean(completedDraft);
     for (const item of active.slice(0, 8)) {
       const result = await request("/api/issues/" + number + "/jobs/" + item.id);
       if (state.active?.number !== number) return;
       const index = state.jobs.findIndex(function(job) { return job.id === item.id; });
       if (index !== -1) state.jobs[index] = result.job;
-      if (result.job.status === "completed") completed = true;
+      if (result.job.status === "completed") {
+        completed = true;
+        if (item.type === "draft") completedDraft = result.job;
+      }
     }
     if (completed) {
       const runs = await request("/api/issues/" + number + "/runs");
       if (state.active?.number !== number) return;
       state.runs = runs.runs || [];
       for (const run of state.runs) rememberRun(run);
+      const generated = completedDraft && state.runs.find(function(run) { return run.runId === completedDraft.runId; });
       const current = state.runs.find(function(run) { return run.runId === state.manifest?.runId; });
-      if (current) {
+      if (generated) activateRun(generated);
+      else if (current) {
         state.manifest = current;
         state.final = state.selected ? current.finals?.[String(state.selected)] || null : null;
         renderGallery(current);
         renderFinalPanel();
       } else if (state.runs.length) activateRun(state.runs[0]);
       renderRunLibrary();
-      setMessage("Image generation finished. Review the saved artwork below.", "success");
+      setMessage(generated ? "Drafts finished. The new session is ready to review." : "Image generation finished. Review the saved artwork below.", "success");
     }
     renderJobs();
   } catch (error) {
@@ -1855,6 +1941,69 @@ async function openAIJson(response, requestType = "image") {
   return body;
 }
 
+function chatEntry(item) {
+  if (
+    !item ||
+    !["user", "assistant", "prompt"].includes(item.role) ||
+    typeof item.text !== "string" ||
+    !item.text.trim() ||
+    item.text.length > 5000
+  )
+    throw makePipelineError("Invalid chat message.", 400);
+  const entry = {
+    role: item.role,
+    text: item.text,
+    createdAt: /^\d{4}-\d\d-\d\dT/.test(item.createdAt || "")
+      ? item.createdAt
+      : new Date().toISOString(),
+  };
+  if (item.role === "assistant" && item.proposedPrompt) {
+    if (typeof item.proposedPrompt !== "string" || item.proposedPrompt.length > 32000)
+      throw makePipelineError("Invalid proposed prompt.", 400);
+    entry.proposedPrompt = item.proposedPrompt;
+  }
+  if (item.role === "prompt") {
+    if (
+      typeof item.appliedPrompt !== "string" ||
+      !item.appliedPrompt.trim() ||
+      item.appliedPrompt.length > 32000
+    )
+      throw makePipelineError("Invalid applied prompt.", 400);
+    entry.appliedPrompt = item.appliedPrompt;
+  }
+  return entry;
+}
+
+let lastChatWriteTime = 0;
+async function saveChatMessages(number, messages, env) {
+  const entries = messages.map(chatEntry);
+  lastChatWriteTime = Math.max(Date.now(), lastChatWriteTime + 1);
+  const key = `issues/${number}/chat/${new Date(lastChatWriteTime).toISOString()}-${crypto.randomUUID()}.json`;
+  await requireBucket(env).put(key, JSON.stringify(entries), {
+    httpMetadata: { contentType: "application/json", cacheControl: "private, no-store" },
+  });
+  return entries;
+}
+
+async function getChatMessages(number, env) {
+  const bucket = requireBucket(env);
+  const keys = [];
+  let cursor;
+  for (let pageNumber = 0; pageNumber < 20; pageNumber++) {
+    const page = await bucket.list({ prefix: `issues/${number}/chat/`, cursor, limit: 100 });
+    keys.push(...page.objects.map((item) => item.key));
+    if (!page.truncated || !page.cursor) break;
+    cursor = page.cursor;
+  }
+  const batches = await Promise.all(
+    keys.sort().map(async (key) => {
+      const object = await bucket.get(key);
+      return object ? object.json() : [];
+    })
+  );
+  return batches.flat();
+}
+
 async function brainstorm(number, body, env) {
   if (!env.OPENAI_API_KEY) throw makePipelineError("OpenAI chat is not configured.", 503);
   const { parsed } = await getIssue(number, env);
@@ -1909,11 +2058,24 @@ async function brainstorm(number, body, env) {
   }
   if (typeof result.reply !== "string" || !result.reply.trim())
     throw makePipelineError("The brainstorming response was empty. Please try again.", 502);
-  return {
+  const answer = {
     reply: result.reply.slice(0, 5000),
     proposedPrompt:
       typeof result.proposedPrompt === "string" ? result.proposedPrompt.slice(0, 32000) : "",
   };
+  try {
+    await saveChatMessages(
+      number,
+      [
+        { role: "user", text: message },
+        { role: "assistant", text: answer.reply, proposedPrompt: answer.proposedPrompt },
+      ],
+      env
+    );
+  } catch (error) {
+    answer.saveError = String(error.message || "Chat could not be saved.").slice(0, 260);
+  }
+  return answer;
 }
 
 async function transcribe(request, env) {
@@ -2905,6 +3067,31 @@ function refPath(branch) {
   return branch.split("/").map(encodeURIComponent).join("/");
 }
 
+async function ensureFinalPromptComment(manifest, final, env) {
+  if (final.promptCommentId) return;
+  const prompt = final.generationPrompt;
+  if (!prompt)
+    throw makePipelineError("The exact final render prompt is unavailable for this image.", 409);
+  const marker = `<!-- asset-pipeline-final-prompt:${final.key} -->`;
+  const commentsPath = `/repos/${OWNER}/${REPOSITORY}/issues/${final.prNumber}/comments`;
+  const existing = await githubJson(`${commentsPath}?per_page=100`, env);
+  const found = existing.find((comment) => String(comment.body || "").includes(marker));
+  if (found) final.promptCommentId = found.id;
+  else {
+    const longestTicks = Math.max(2, ...(prompt.match(/`+/g) || []).map((part) => part.length));
+    const fence = "`".repeat(longestTicks + 1);
+    const comment = await githubJson(commentsPath, env, {
+      method: "POST",
+      body: JSON.stringify({
+        body: `${marker}\n## Final image generation prompt\n\n${fence}text\n${prompt}\n${fence}`,
+      }),
+    });
+    final.promptCommentId = comment.id;
+  }
+  manifest.finals[String(final.candidateId)] = final;
+  await saveManifest(requireBucket(env), manifest);
+}
+
 async function openPullRequest(number, body, env) {
   if (!env.GITHUB_TOKEN)
     throw makePipelineError(
@@ -2920,7 +3107,10 @@ async function openPullRequest(number, body, env) {
       "Render and review the final image before creating a pull request.",
       409
     );
-  if (final.prUrl) return { manifest, final };
+  if (final.prUrl) {
+    await ensureFinalPromptComment(manifest, final, env);
+    return { manifest, final };
+  }
   if (!manifest.draftUrl || manifest.gitError) await syncDraftRun(number, manifest, env);
   const { raw, parsed } = await getIssue(number, env);
   if (!parsed.ready) throw makePipelineError(parsed.errors.join(" "), 422);
@@ -2946,6 +3136,7 @@ async function openPullRequest(number, body, env) {
     final.prNumber = existingPulls[0].number;
     manifest.finals[String(candidate.id)] = final;
     await saveManifest(bucket, manifest);
+    await ensureFinalPromptComment(manifest, final, env);
     return { manifest, final };
   }
 
@@ -2964,6 +3155,7 @@ async function openPullRequest(number, body, env) {
   final.branch = branch;
   manifest.finals[String(candidate.id)] = final;
   await saveManifest(bucket, manifest);
+  await ensureFinalPromptComment(manifest, final, env);
   return { manifest, final };
 }
 
@@ -3115,7 +3307,7 @@ async function handleApi(request, env, url) {
     return jsonResponse({ error: "Method not allowed." }, 405);
   }
   const match = path.match(
-    /^\/api\/issues\/(\d+)(?:\/(runs|generations|finals|final-selection|pull-requests|brainstorm))?$/
+    /^\/api\/issues\/(\d+)(?:\/(runs|generations|finals|final-selection|pull-requests|brainstorm|chat))?$/
   );
   if (!match) return jsonResponse({ error: "Not found." }, 404);
   const number = Number(match[1]);
@@ -3128,15 +3320,39 @@ async function handleApi(request, env, url) {
   }
   if (request.method === "GET" && action === "runs")
     return jsonResponse({ runs: await getRuns(number, env) });
+  if (request.method === "GET" && action === "chat")
+    return jsonResponse({ messages: await getChatMessages(number, env) });
   if (
     request.method !== "POST" ||
-    !["generations", "finals", "final-selection", "pull-requests", "brainstorm"].includes(action)
+    !["generations", "finals", "final-selection", "pull-requests", "brainstorm", "chat"].includes(
+      action
+    )
   )
     return jsonResponse({ error: "Method not allowed." }, 405);
   assertSameOrigin(request);
   if (Number(request.headers.get("content-length") || 0) > 160000)
     throw makePipelineError("Request is too large.", 413);
   const body = await request.json().catch(() => ({}));
+  if (action === "chat") {
+    if (body.type === "prompt-applied") {
+      const entry = chatEntry({
+        role: "prompt",
+        text: body.text,
+        appliedPrompt: body.appliedPrompt,
+      });
+      if (entry.text.length > 500)
+        throw makePipelineError("Prompt change summary is too long.", 400);
+      await saveChatMessages(number, [entry], env);
+      return jsonResponse({ saved: true });
+    }
+    if (body.type === "import" && Array.isArray(body.messages) && body.messages.length <= 50) {
+      const entries = body.messages.map(chatEntry);
+      if (!(await getChatMessages(number, env)).length && entries.length)
+        await saveChatMessages(number, entries, env);
+      return jsonResponse({ saved: true });
+    }
+    throw makePipelineError("Invalid chat update.", 400);
+  }
   if (action === "brainstorm") return jsonResponse(await brainstorm(number, body, env));
   if (action === "generations") return jsonResponse({ run: await makeDrafts(number, body, env) });
   if (
