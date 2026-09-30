@@ -253,5 +253,19 @@
     }
   ],
   "failures": [],
-  "finalVersions": {}
+  "finalVersions": {
+    "2": [
+      {
+        "key": "issues/173/runs/748fab86-edde-473e-9d3a-5fe566a19133/final-2-018bd691-10a7-46df-b36e-ef72f2635333.png",
+        "width": 1120,
+        "height": 800,
+        "quality": "medium",
+        "model": "gpt-image-2.5-flare",
+        "createdAt": "2026-09-30T16:48:24.557Z",
+        "candidateId": 2,
+        "tuning": "",
+        "generationPrompt": "# DECK BACKGROUND\n\nCreate a horizontal background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Pact Magic** — Warlock level 1 class feature.\n\nA warlock on the left kneels with a hand raised toward a vast shadowy presence filling the right of the frame, a thread of green-violet light connecting their palm to the darkness. A ruined altar at night. Sickly green-violet glow.\n\n## VISUAL STYLE\n\nA precise celestial diagram on deep indigo. Keep the scene's main figures and objects as recognizable silhouettes. Use fine arcs, trajectories, sparse stars, and measured marks to show movement and impact. Palette: ivory and one luminous accent on dark blue. Leave space around the decisive action. No numbers, writing, labels, or border.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, silhouette, and selected visual style. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected image for print without introducing new story elements.\n\n## OUTPUT\n\nExact image dimensions: 1120 × 800 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+      }
+    ]
+  }
 }
