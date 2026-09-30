@@ -53,5 +53,19 @@
     }
   ],
   "failures": [],
-  "finalVersions": {}
+  "finalVersions": {
+    "1": [
+      {
+        "key": "issues/172/runs/c08ffedd-770b-4888-9269-3ceb9162cebd/final-1-bceee95c-8f4c-4a2c-81f2-00649b2f0e78.png",
+        "width": 1120,
+        "height": 800,
+        "quality": "medium",
+        "model": "gpt-image-2.5-flare",
+        "createdAt": "2026-09-30T16:28:46.091Z",
+        "candidateId": 1,
+        "tuning": "",
+        "generationPrompt": "# DECK BACKGROUND\n\nCreate a horizontal background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Eldritch Invocations** — Warlock level 1 class feature.\n\nA lone warlock stands on the far left inside a vast, dim underwater chapel that should feel ancient but barely legible, as if the scene is half dream and half abyss. No book, no obvious spellcasting pose. Instead, the warlock slowly unspools a thin line of black thread from one hand, and along that thread hang five small impossible charms: a bone key, a tiny cracked mirror, a sealed eye, a ring of teeth, and a knot of shadow. These charms drift rightward across the frame, each one glowing faint violet from within and leaving faint trails in the dark waterlike air. The thread and charms bend reality as they pass, warping arches, silt, and drifting dust into subtle spirals. On the far right, the darkness thickens into an abstract omen — a barely perceived patron presence suggested only by pressure, ripples, and a distorted silhouette in the gloom. Faint violet light only, with the charms as the primary glow.\n\n## VISUAL STYLE\n\nA playful figurative image made from simple biomorphic shapes, confident black lines, and generous off-white space. Use vivid red, blue, yellow, and black sparingly. Simplify the scene while keeping its named object and action recognizable. Small marks may suggest motion or magic. Do not make it purely abstract. No lettering or border.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, silhouette, and selected visual style. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected image for print without introducing new story elements.\n\n## OUTPUT\n\nExact image dimensions: 1120 × 800 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+      }
+    ]
+  }
 }
