@@ -81,7 +81,7 @@ const buildPage = () => String.raw`<!doctype html>
                 <div class="generation-controls"><button class="button button-primary" id="preview-prompts" type="button">1 · Review prompts</button><button class="button button-subtle" id="generate-button" type="button" disabled title="Review the exact prompts first"><span class="button-icon">✦</span> 2 · Generate 2 drafts</button></div>
               </div>
               <p class="concept-note" id="generation-instruction">Step 1 of 2: Choose styles and draft counts, then select Review prompts to unlock generation. Each image is billed separately.</p>
-              <details class="style-config" open><summary>Visual styles · <span id="style-total">2 drafts</span></summary><div id="style-rows" class="style-rows"></div><div class="style-actions"><button class="button button-subtle" id="add-style" type="button">+ Add style</button><button class="button button-subtle" id="one-each" type="button">One of each selected</button><button class="button button-subtle" id="all-styles" type="button">Compare all 19 styles</button></div><p id="style-note" class="style-note"></p></details>
+              <details class="style-config" open><summary>Visual styles · <span id="style-total">2 drafts</span></summary><div id="style-rows" class="style-rows"></div><div class="style-actions"><button class="button button-subtle" id="add-style" type="button">+ Add style</button><button class="button button-subtle" id="one-each" type="button">One of each selected</button><button class="button button-subtle" id="all-styles" type="button">Compare all 19 styles</button></div><div class="preset-actions"><label for="preset-name">Preset name<input id="preset-name" type="text" maxlength="60" placeholder="e.g. Broad exploration"></label><button class="button button-subtle" id="save-preset" type="button">Save preset</button><label for="preset-list">Saved presets<select id="preset-list"><option value="">Choose a preset…</option></select></label><button class="button button-subtle" id="load-preset" type="button">Load preset</button><button class="button button-subtle" id="delete-preset" type="button">Delete preset</button></div><p id="preset-status" class="preset-status" role="status"></p><p id="style-note" class="style-note"></p></details>
               <div id="prompt-preview" class="prompt-preview" aria-live="polite"></div>
               <div class="progress-line hidden" id="generation-progress"><span class="loader"></span><span id="generation-progress-text">Generating 2 low-quality drafts in the background…</span></div>
               <div class="job-status" id="job-status" role="status" aria-live="polite"></div>
@@ -127,10 +127,12 @@ const styles = String.raw`
 .image-view-button{position:absolute;right:10px;top:10px;z-index:2;border:1px solid #737c7a;background:#11171ce8;color:#f0f2ee;padding:7px 10px;border-radius:6px;font-size:12px}.image-view-button:hover,.image-view-button:focus-visible{border-color:var(--gold);color:var(--gold)}.candidate-image,.final-preview img{cursor:zoom-in}.final-preview{position:relative}.final-progress{display:flex;align-items:center;gap:10px;margin:12px 0;color:var(--gold-2);font-size:13px}.final-progress span:last-child{color:#a9b5ac}.image-dialog{position:fixed;inset:0;width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;background:#10151a;color:var(--text);overflow:hidden}.image-dialog::backdrop{background:#080c10e8}.image-dialog[open]{display:flex;flex-direction:column}.image-dialog-toolbar{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:12px clamp(12px,3vw,30px);background:#192127;border-bottom:1px solid #39454b;min-height:68px}.image-dialog-toolbar strong,.image-dialog-toolbar span{display:block}.image-dialog-toolbar strong{font-size:16px;font-weight:600}.image-dialog-toolbar span{font-size:13px;color:#aeb9b2}.image-dialog-actions{display:flex;gap:8px;flex-shrink:0}.image-dialog-actions button{font-size:13px}.image-dialog-scroll{flex:1;min-height:0;overflow:auto;display:flex;align-items:safe center;justify-content:safe center;padding:14px;overscroll-behavior:contain}.image-dialog-scroll img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}.image-dialog-scroll.original{display:block;text-align:center}.image-dialog-scroll.original img{max-width:none;max-height:none;width:auto;height:auto;margin:auto}.image-dialog button:focus-visible,.image-view-button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}@media(max-width:600px){.image-dialog-toolbar{align-items:flex-start;flex-direction:column;gap:8px}.image-dialog-actions{width:100%}.image-dialog-actions button{flex:1}.image-dialog-scroll{padding:6px}}
 .concept-note{margin:-7px 0 17px;color:#a7b2ac;font-size:13px;line-height:1.55}
 .version-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.version-list strong{width:100%;font-size:13px;color:#c9d1ca}.version-list .button{font-size:12px;min-height:32px;padding:6px 9px}
-.run-library{margin:20px 0;padding:15px;border:1px solid var(--line);border-radius:9px;background:var(--panel-2)}.run-library h3{font-size:15px;margin:0 0 5px}.run-library p{margin:0 0 12px;color:var(--muted);font-size:12px}.run-library-items{display:grid;gap:10px}.run-library-item{border:1px solid var(--line);border-radius:8px;padding:10px}.run-library-item[aria-current="true"]{border-color:var(--gold)}.run-library-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;color:var(--soft);font-size:12px}.run-library-images{display:flex;gap:7px;overflow-x:auto}.run-library-images button{flex:none;border:0;background:transparent;color:var(--soft);padding:0;text-align:center;font-size:11px}.run-library-images img{display:block;width:60px;height:80px;object-fit:cover;border-radius:4px;margin-bottom:3px}.run-library-images img:hover{outline:2px solid var(--gold)}.version-item{display:flex;align-items:center;gap:7px;flex-wrap:wrap;width:100%;padding:8px;border:1px solid var(--line);border-radius:6px}.version-item img{width:52px;height:70px;object-fit:cover;cursor:pointer;border-radius:3px}.version-item span{flex:1;min-width:105px;font-size:12px;color:var(--soft)}
+.run-library{min-width:0;margin:20px 0;padding:15px;border:1px solid var(--line);border-radius:9px;background:var(--panel-2)}.run-library h3{font-size:15px;margin:0 0 5px}.run-library p{margin:0 0 12px;color:var(--muted);font-size:12px}.run-library-items{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}.run-library-item{min-width:0;max-width:100%;border:1px solid var(--line);border-radius:8px;padding:10px}.run-library-item[aria-current="true"]{border-color:var(--gold)}.run-library-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;color:var(--soft);font-size:12px}.run-library-header span{min-width:0;overflow-wrap:anywhere}.run-library-header button{flex:none}.run-library-images{display:flex;min-width:0;max-width:100%;gap:7px;overflow-x:auto;overflow-y:hidden}.run-library-images button{flex:none;border:0;background:transparent;color:var(--soft);padding:0;text-align:center;font-size:11px}.run-library-images img{display:block;width:60px;height:80px;object-fit:cover;border-radius:4px;margin-bottom:3px}.run-library-images img:hover{outline:2px solid var(--gold)}.version-item{display:flex;align-items:center;gap:7px;flex-wrap:wrap;width:100%;padding:8px;border:1px solid var(--line);border-radius:6px}.version-item img{width:52px;height:70px;object-fit:cover;cursor:pointer;border-radius:3px}.version-item span{flex:1;min-width:105px;font-size:12px;color:var(--soft)}
+@media(max-width:600px){.run-library-header{flex-wrap:wrap}}
 .issue-filters{display:grid;gap:8px;margin:2px 2px 13px}.issue-filters label{display:grid;gap:3px;color:var(--muted);font-size:12px}.issue-filters select{width:100%;min-height:36px;border:1px solid #38434a;border-radius:6px;background:#11171c;color:var(--text);font:13px var(--sans);padding:6px}.mobile-open,.mobile-close,.mobile-backdrop{display:none}.prompt-toggle details[open] .chevron{transform:rotate(180deg)}.prompt-toggle .chevron{transition:transform .15s}.advanced-options{margin:12px 0;border:1px solid var(--line);border-radius:7px;padding:0 11px}.advanced-options summary{padding:10px 0;cursor:pointer;color:var(--gold-2);font-size:13px}.advanced-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding-bottom:12px}.advanced-grid label{margin:0}.advanced-options p{font-size:12px;color:var(--muted);margin:0 0 12px}
 .generation-controls{display:flex;align-items:center;gap:10px}.variant-picker{display:flex;align-items:center;gap:3px;margin:0;padding:0;border:0}.variant-picker legend{float:left;margin-right:6px;color:var(--muted);font-size:12px}.variant-picker label{position:relative;cursor:pointer}.variant-picker input{position:absolute;opacity:0}.variant-picker label span{display:grid;place-items:center;min-width:36px;min-height:39px;border:1px solid #465259;background:#1b2328;color:var(--soft);font-size:13px}.variant-picker label:first-of-type span{border-radius:6px 0 0 6px}.variant-picker label:last-of-type span{border-radius:0 6px 6px 0}.variant-picker label+label span{margin-left:-4px}.variant-picker input:checked+span{position:relative;z-index:1;border-color:#a88b55;background:#30291d;color:var(--gold-2)}.variant-picker input:focus-visible+span{outline:2px solid var(--gold);outline-offset:2px}.variant-picker input:disabled+span{opacity:.5;cursor:wait}
 .style-config{border:1px solid var(--line);border-radius:9px;background:var(--panel-2);padding:0 14px;margin:0 0 17px}.style-config summary{cursor:pointer;padding:12px 0;color:var(--gold-2);font-weight:600}.style-config summary span{font-weight:400;color:var(--soft)}.style-rows{display:grid;gap:8px;max-height:340px;overflow:auto}.style-row{display:grid;grid-template-columns:minmax(0,1fr) 86px auto;gap:9px;align-items:end}.style-row label{display:grid;gap:3px;color:var(--soft);font-size:12px}.style-row select,.style-row input{width:100%;min-height:39px;border:1px solid #465259;border-radius:6px;background:#11171c;color:var(--text);padding:7px;font:14px var(--sans)}.style-row button{min-height:39px}.style-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}.style-actions button{font-size:12px}.style-note{margin:10px 0 12px;color:var(--muted);font-size:12px}.style-note.warning{color:var(--gold-2)}@media(max-width:720px){.style-row{grid-template-columns:minmax(0,1fr) 68px auto}.style-row select,.style-row input{font-size:16px}}
+.preset-actions{display:flex;align-items:end;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}.preset-actions label{display:grid;gap:4px;color:var(--soft);font-size:13px;min-width:170px;flex:1 1 170px}.preset-actions input,.preset-actions select{width:100%;min-height:39px;border:1px solid #465259;border-radius:6px;background:#11171c;color:var(--text);padding:7px;font:14px var(--sans)}.preset-actions button{min-height:39px}.preset-status{min-height:18px;margin:8px 0 0;color:var(--gold-2);font-size:13px}@media(max-width:720px){.preset-actions input,.preset-actions select{font-size:16px}}
 .prompt-preview{margin:0 0 17px}.prompt-preview:not(:empty){padding:12px;border:1px solid var(--line);border-radius:8px;background:#151c21}.prompt-preview>strong{display:block;margin-bottom:8px;color:var(--gold-2)}.prompt-preview details{border-top:1px solid var(--line);padding:7px 0}.prompt-preview summary{cursor:pointer;color:var(--soft)}.prompt-preview pre{max-height:340px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.5 var(--mono);color:#bec9c2}.generation-controls{flex-wrap:wrap}@media(max-width:720px){.section-heading{align-items:flex-start;flex-direction:column}.generation-controls{width:100%}.generation-controls button{flex:1}}
 @media(min-width:721px){.app-shell{height:100dvh;min-height:0}.sidebar{height:100dvh;min-height:0;overflow:hidden}.sidebar .issue-list{min-height:0;overscroll-behavior:contain}.main-content{min-height:0;overflow-y:auto;overscroll-behavior:contain}}
 @media(max-width:720px){.mobile-open,.mobile-close{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;border:1px solid #425056;border-radius:7px;background:#1e272d;color:var(--text);padding:0 12px;font:13px var(--sans)}.mobile-open{flex:none}.mobile-close{align-self:flex-end;margin-bottom:6px}.app-shell .sidebar{position:fixed;z-index:31;inset:0 auto 0 0;width:min(360px,calc(100vw - 35px));height:100dvh;max-height:100dvh;padding:16px;background:#141a1f;box-shadow:12px 0 40px #0008;transform:translateX(-110%);transition:transform .2s ease;display:flex;flex-direction:column;overflow:hidden}.nav-open .sidebar{transform:translateX(0)}.mobile-backdrop{position:fixed;z-index:30;inset:0;width:100%;height:100%;border:0;background:#000b}.nav-open .mobile-backdrop{display:block}.nav-open{overflow:hidden}.sidebar .issue-list{display:block;overflow-y:auto;overflow-x:hidden;flex:1;max-height:none;min-height:0}.sidebar .issue-row{display:block;width:100%;min-height:52px;padding:10px}.sidebar .search-box{margin-bottom:10px}.sidebar .issue-filters{margin-bottom:12px}.topbar{gap:8px}.topbar .crumbs{display:none}.advanced-grid{grid-template-columns:1fr}.prompt-editor textarea,.brainstorm textarea,.final-tuning textarea,.final-tuning select,.issue-filters select,.search-box input{font-size:16px}}
@@ -140,6 +142,8 @@ const styles = String.raw`
 const clientScript = String.raw`
 const $ = (selector, root) => (root || document).querySelector(selector);
 const state = { issues: [], styles: [], stylePlan: [{ styleId: "atmospheric-painterly-fantasy", count: 2 }], previewSignature: null, reviewingPrompts: false, active: null, manifest: null, runs: [], selected: null, final: null, search: "", chat: [], finalTuning: "", finalModel: "gpt-image-2.5-flare", finalQuality: "medium", finalSize: "card", finalAdvancedOpen: false, jobs: [], jobTimer: null, prBusy: false, recorder: null };
+const ISSUE_PLAN_KEY = "asset-pipeline-style-plan-v1:";
+const PRESETS_KEY = "asset-pipeline-style-presets-v1";
 const listNode = $("#issue-list");
 const messageNode = $("#workflow-message");
 const mobileQuery = window.matchMedia("(max-width: 720px)");
@@ -181,6 +185,51 @@ function invalidatePromptPreview() {
   updateStyleSummary();
 }
 
+function defaultStylePlan(issue) {
+  return [{ styleId: issue.styleSwappable ? "atmospheric-painterly-fantasy" : "issue", count: 2 }];
+}
+
+function validStylePlan(plan, issue) {
+  return Array.isArray(plan) && plan.length >= 1 && plan.length <= 20
+    && plan.every(function(row) { return row && typeof row.styleId === "string" && Number.isInteger(row.count) && row.count >= 1 && row.count <= 24
+      && (issue.styleSwappable ? state.styles.some(function(style) { return style.id === row.styleId; }) : row.styleId === "issue"); })
+    && plan.reduce(function(total, row) { return total + row.count; }, 0) <= 24;
+}
+
+function readLocal(key, fallback) {
+  try { const value = localStorage.getItem(key); return value === null ? fallback : JSON.parse(value); }
+  catch { return fallback; }
+}
+
+function writeLocal(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+  catch { $("#preset-status").textContent = "Browser storage is unavailable. This selection may be lost when you leave."; return false; }
+}
+
+function persistStylePlan() {
+  if (state.active) writeLocal(ISSUE_PLAN_KEY + state.active.number, state.stylePlan);
+}
+
+function changeStylePlan() {
+  persistStylePlan();
+  invalidatePromptPreview();
+}
+
+function presets() {
+  const value = readLocal(PRESETS_KEY, {});
+  return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+}
+
+function renderPresets(selected) {
+  const list = $("#preset-list");
+  list.replaceChildren(new Option("Choose a preset…", ""));
+  Object.keys(presets()).sort(function(a, b) { return a.localeCompare(b); }).forEach(function(name) { list.add(new Option(name, name)); });
+  list.value = selected || "";
+  $("#load-preset").disabled = !list.value || !state.active;
+  $("#delete-preset").disabled = !list.value;
+  $("#save-preset").disabled = !state.active;
+}
+
 function renderStylePlan() {
   const rows = $("#style-rows");
   rows.replaceChildren();
@@ -209,7 +258,7 @@ function renderStylePlan() {
       groups.get(style.family).append(option);
     });
     select.value = item.styleId;
-    select.addEventListener("change", function() { item.styleId = select.value; invalidatePromptPreview(); });
+    select.addEventListener("change", function() { item.styleId = select.value; changeStylePlan(); });
     styleLabel.append(select);
     const countLabel = document.createElement("label");
     countLabel.textContent = "Drafts";
@@ -219,7 +268,7 @@ function renderStylePlan() {
     count.max = "24";
     count.value = item.count;
     count.setAttribute("aria-label", "Drafts for visual style " + (index + 1));
-    count.addEventListener("change", function() { item.count = Number(count.value); invalidatePromptPreview(); });
+    count.addEventListener("input", function() { item.count = Number(count.value); changeStylePlan(); });
     countLabel.append(count);
     const remove = document.createElement("button");
     remove.type = "button";
@@ -227,7 +276,7 @@ function renderStylePlan() {
     remove.textContent = "Remove";
     remove.setAttribute("aria-label", "Remove visual style " + (index + 1));
     remove.disabled = state.stylePlan.length === 1;
-    remove.addEventListener("click", function() { state.stylePlan.splice(index, 1); invalidatePromptPreview(); renderStylePlan(); });
+    remove.addEventListener("click", function() { state.stylePlan.splice(index, 1); changeStylePlan(); renderStylePlan(); });
     row.append(styleLabel, countLabel, remove);
     rows.append(row);
   });
@@ -326,9 +375,12 @@ function setSurface(surface) {
 
 function renderIssue(issue) {
   state.active = issue;
-  state.stylePlan = [{ styleId: issue.styleSwappable ? "atmospheric-painterly-fantasy" : "issue", count: 2 }];
+  const savedPlan = readLocal(ISSUE_PLAN_KEY + issue.number, null);
+  state.stylePlan = validStylePlan(savedPlan, issue) ? savedPlan : defaultStylePlan(issue);
   invalidatePromptPreview();
   renderStylePlan();
+  renderPresets();
+  $("#preset-status").textContent = savedPlan && !validStylePlan(savedPlan, issue) ? "A saved selection is no longer valid for this issue; using the default." : "";
   state.manifest = null;
   state.runs = [];
   state.selected = null;
@@ -1166,17 +1218,43 @@ $("#generate-button").addEventListener("click", generateDrafts);
 $("#preview-prompts").addEventListener("click", reviewPrompts);
 $("#add-style").addEventListener("click", function() {
   const next = state.styles.find(function(style) { return !state.stylePlan.some(function(row) { return row.styleId === style.id; }); });
-  if (next) { state.stylePlan.push({ styleId: next.id, count: 1 }); invalidatePromptPreview(); renderStylePlan(); }
+  if (next) { state.stylePlan.push({ styleId: next.id, count: 1 }); changeStylePlan(); renderStylePlan(); }
 });
 $("#one-each").addEventListener("click", function() {
   state.stylePlan.forEach(function(row) { row.count = 1; });
-  invalidatePromptPreview();
+  changeStylePlan();
   renderStylePlan();
 });
 $("#all-styles").addEventListener("click", function() {
   state.stylePlan = state.styles.map(function(style) { return { styleId: style.id, count: 1 }; });
-  invalidatePromptPreview();
+  changeStylePlan();
   renderStylePlan();
+});
+$("#preset-list").addEventListener("change", function() { renderPresets(this.value); });
+$("#save-preset").addEventListener("click", function() {
+  const name = $("#preset-name").value.trim();
+  if (!name) { $("#preset-status").textContent = "Enter a name for the preset."; return; }
+  if (!validStylePlan(state.stylePlan, state.active)) { $("#preset-status").textContent = "Choose 1–24 valid drafts before saving."; return; }
+  const saved = presets();
+  if (Object.prototype.hasOwnProperty.call(saved, name) && !confirm('Replace the preset "' + name + '"?')) return;
+  saved[name] = state.stylePlan.map(function(row) { return { styleId: row.styleId, count: row.count }; });
+  if (writeLocal(PRESETS_KEY, saved)) { renderPresets(name); $("#preset-status").textContent = 'Saved "' + name + '" in this browser.'; }
+});
+$("#load-preset").addEventListener("click", function() {
+  const name = $("#preset-list").value;
+  const plan = presets()[name];
+  if (!validStylePlan(plan, state.active)) { $("#preset-status").textContent = "This preset cannot be used with this issue or contains unavailable styles."; return; }
+  state.stylePlan = plan.map(function(row) { return { styleId: row.styleId, count: row.count }; });
+  changeStylePlan();
+  renderStylePlan();
+  $("#preset-status").textContent = 'Loaded "' + name + '". Review prompts before generating.';
+});
+$("#delete-preset").addEventListener("click", function() {
+  const name = $("#preset-list").value;
+  if (!name || !confirm('Delete the preset "' + name + '"?')) return;
+  const saved = presets();
+  delete saved[name];
+  if (writeLocal(PRESETS_KEY, saved)) { renderPresets(); $("#preset-status").textContent = 'Deleted "' + name + '".'; }
 });
 $("#prompt-text").addEventListener("input", invalidatePromptPreview);
 document.addEventListener("visibilitychange", function() { if (document.visibilityState === "visible" && state.active) refreshJobs(); });
