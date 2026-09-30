@@ -53,5 +53,19 @@
     }
   ],
   "failures": [],
-  "finalVersions": {}
+  "finalVersions": {
+    "4": [
+      {
+        "key": "issues/170/runs/6c86aeb8-9c4d-4e30-bc62-569dcc1e843f/final-4-73df3353-4aa1-4bb2-a460-b338a74f7614.png",
+        "width": 1120,
+        "height": 800,
+        "quality": "medium",
+        "model": "gpt-image-2.5-flare",
+        "createdAt": "2026-09-30T16:20:45.789Z",
+        "candidateId": 4,
+        "tuning": "make the shield real looking and not just a silhouette",
+        "generationPrompt": "# DECK BACKGROUND\n\nCreate a horizontal background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Weapon Mastery** — Rogue level 1 class feature.\n\nA disciplined warrior stands in a dim moonlit training yard or old weapons court, shown in a formal combat drill rather than a real fight. The figure on the left is mid-sequence between multiple weapons: one hand has just completed a controlled transition from spear to sword, while the other has already shifted into a ready shield grip, all with calm, practiced precision. The pose should suggest trained fluency with several weapon types at once — spear, sword, dagger, shield, or similar — as if each movement is part of a repeated kata. On the right, shadowed weapon racks, practice posts, and a few hanging or leaning weapons echo the same disciplined rhythm, staying secondary to the warrior’s controlled motion. Pale moonlight filters through broken stone or open rafters, and a single sharp glint from metal acts as the accent of the image.\n\n## VISUAL STYLE\n\nStage the scene as a physical shadow theater made from hand-cut paper. Use a few flat paper silhouettes on separate planes, lit from behind against a simple backdrop. Communicate the named action through profile, spacing, and overlap. Show subtle fibers and cut edges. Limit colors to black, warm paper, and one accent. No text or decorative border.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, silhouette, and selected visual style. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected image for print without introducing new story elements.\n\n## USER REFINEMENT\n\nApply this small, specific adjustment to the selected preview while retaining its concept and composition: make the shield real looking and not just a silhouette\n\n## OUTPUT\n\nExact image dimensions: 1120 × 800 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+      }
+    ]
+  }
 }
