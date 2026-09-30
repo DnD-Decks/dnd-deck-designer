@@ -53,5 +53,19 @@
     }
   ],
   "failures": [],
-  "finalVersions": {}
+  "finalVersions": {
+    "2": [
+      {
+        "key": "issues/294/runs/16a2a1b7-a320-40f8-80c1-ce0d115fd018/final-2-c4378292-2051-47bf-9d51-8375d0c9626e.png",
+        "width": 800,
+        "height": 1120,
+        "quality": "medium",
+        "model": "gpt-image-2.5-flare",
+        "createdAt": "2026-09-30T15:13:23.085Z",
+        "candidateId": 2,
+        "tuning": "",
+        "generationPrompt": "# DECK BACKGROUND\n\nCreate a vertical background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Heavy Crossbow** — Martial ranged weapon.\n\nA static, angled technical portrait of a heavy crossbow presented as a finely made object for close inspection. The weapon is shown in three-quarter view so the viewer can clearly read the stock, prod, string, trigger mechanism, bolt groove, and loading structure at a glance. A bolt is seated in the weapon, emphasizing how it functions, but there is no firing, no impact, and no motion. Optionally, a gloved hand may lightly support or steady the crossbow to suggest scale, but the weapon itself remains the absolute subject and must dominate the composition. \n\nThe scene should feel like a careful study of craftsmanship and engineering, not a battle scene. A few spare bolts may be arranged nearby only if they help clarify the weapon’s use. The weapon deals piercing damage; its mastery is Push, but this should be implied through the weapon’s robust mechanical design rather than through action.\n\n## VISUAL STYLE\n\nRender the scene as a woodcut and copperplate engraving. Sharp incised contours establish the figures and objects; varied hatching carries their volume, movement, and shadows. Leave broad quiet areas of paper around the focal action so the image does not become a thicket of lines. Use black ink, aged ivory, and a single muted accent. The subject must read before its fine marks do. Omit captions, signatures, and framing.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, silhouette, and selected visual style. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected image for print without introducing new story elements.\n\n## OUTPUT\n\nExact image dimensions: 800 × 1120 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+      }
+    ]
+  }
 }
