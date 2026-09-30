@@ -247,5 +247,19 @@
     "Draft 02: Rate limit reached for gpt-image-2.5-flare (for limit gpt-image) in organization org-051IUC4lNNjNUozYVHhTldbQ on input-images per min: Limit 5, Used 5, Requested 1. Please try again in 12s. Visit https://platform.openai.com/account/rate-limits to learn more.",
     "Draft 03: Rate limit reached for gpt-image-2.5-flare (for limit gpt-image) in organization org-051IUC4lNNjNUozYVHhTldbQ on input-images per min: Limit 5, Used 5, Requested 1. Please try again in 12s. Visit https://platform.openai.com/account/rate-limits to learn more."
   ],
-  "finalVersions": {}
+  "finalVersions": {
+    "23": [
+      {
+        "key": "issues/76/runs/3119652f-f28e-4eb6-8562-01d081b4ffc6/final-23-57f7e9d0-6592-4e20-affd-f375e4750b66.png",
+        "width": 800,
+        "height": 1120,
+        "quality": "medium",
+        "model": "gpt-image-2.5-flare",
+        "createdAt": "2026-09-30T10:40:27.885Z",
+        "candidateId": 23,
+        "tuning": "",
+        "generationPrompt": "# DECK BACKGROUND\n\nCreate a vertical background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**True Strike** — Divination cantrip.\n\nA fighter-mage draws back a longsword whose edge is wrapped in a thin thread of white-gold radiance, the blade pointed at a shadowed opponent. A quiet duelling ground under a low overcast sky. Dim light everywhere except the glowing edge of the weapon.\nThe visual centers on radiant damage.\n\n## VISUAL STYLE\n\nThe scene is made of luminous glass fragments held in an intricate but disciplined web of lead. A blade, hand, creature, or spell remains unmistakable through its silhouette, while a few radiant panes mark the instant of motion or impact. Backlight sends jewel colors across the composition; darker glass gives the central event room to shine. Let the material feel brittle, imperfect, and radiant, with slight bubbles and uneven pigment inside each pane. Avoid a church setting unless the scene names one, and add no words, border, or emblems.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, silhouette, and selected visual style. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected image for print without introducing new story elements.\n\n## OUTPUT\n\nExact image dimensions: 800 × 1120 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
+      }
+    ]
+  }
 }
