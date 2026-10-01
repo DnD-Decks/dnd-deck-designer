@@ -90,6 +90,40 @@ describe("<CharacterBuilderPage />", () => {
     });
   });
 
+  describe("zoom{}", () => {
+    test("zoom lifts a card into the spotlight without choosing it, even when locked", async () => {
+      renderAt();
+      pickClass("Fighter");
+      next();
+      selectFighterWeapons();
+      click("Zoom Greatsword");
+      within(screen.getByRole("dialog", { name: "Greatsword" })).getByRole("article", {
+        name: "Greatsword",
+      });
+      click("Put it back");
+      await vi.waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+      expect(document.activeElement).toBe(button("Zoom Greatsword"));
+      expect(checkbox("Greatsword").checked).toBe(false);
+      screen.getByText("3 of 3 chosen");
+    });
+
+    test("the spotlight steps through the cards of the same hand", () => {
+      renderAt();
+      pickClass("Wizard");
+      next();
+      const [first, second] = choices.options({
+        cls: "wizard",
+        rule: choices.for({ cls: "wizard", level: 1 })[0],
+      });
+      const firstName = optionName({ kind: "spell", id: first });
+      const secondName = optionName({ kind: "spell", id: second });
+      click(`Zoom ${firstName}`);
+      expect(screen.queryByRole("button", { name: /^Previous card/ })).toBeNull();
+      click(`Next card: ${secondName}`);
+      screen.getByRole("dialog", { name: secondName });
+    });
+  });
+
   describe("cards{}", () => {
     test("the spells step lays out spell cards and locks Next until they are chosen", () => {
       renderAt();

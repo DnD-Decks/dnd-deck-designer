@@ -37,6 +37,23 @@ test.describe("builder.card-picking{}", () => {
     await expect.soft(page.getByRole("button", { name: "Build deck" })).toBeVisible();
   });
 
+  test("zoom fits a locked card on the phone and restores focus", async ({ page }) => {
+    await openFighterWeapons(page);
+    await selectFighterWeapons(page);
+    await page.getByRole("button", { name: "Zoom Greatsword", exact: true }).click();
+    const dialog = page.getByRole("dialog", { name: "Greatsword" });
+    // Fractional CSS pixels can make a fully visible card's intersection ratio slightly below 1.
+    await expect(dialog.getByRole("article", { name: "Greatsword" })).toBeInViewport({
+      ratio: 0.999,
+    });
+    await page.getByRole("button", { name: "Put it back" }).click();
+    await expect(dialog).toHaveCount(0);
+    await expect.soft(page.getByRole("button", { name: "Zoom Greatsword" })).toBeFocused();
+    await expect
+      .soft(page.getByRole("checkbox", { name: "Greatsword", exact: true }))
+      .not.toBeChecked();
+  });
+
   test("building a phone fighter navigates to a persistent character", async ({ page }) => {
     await buildPhoneFighter(page);
     await expect(page).toHaveURL(/#\/character\/[\w-]+$/);

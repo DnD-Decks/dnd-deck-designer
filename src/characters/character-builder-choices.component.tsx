@@ -1,4 +1,5 @@
-import { useId } from "react";
+import { useId, useRef, useState } from "react";
+import { CardSpotlight } from "src/cards/card-spotlight.component";
 import { SpellCard } from "src/cards/spell-card.component";
 import { WeaponCard } from "src/cards/weapon-card.component";
 import type { Picks } from "src/characters/character.model";
@@ -25,6 +26,8 @@ type ChoiceGroupProps = {
   onChange: (ids: readonly string[]) => void;
 };
 
+type Held = { index: number; trigger: HTMLButtonElement };
+
 function choiceCard({ id, kind }: { id: string; kind: ChoiceRule["from"]["kind"] }) {
   const weapon = kind === "weapon" ? weapons.find({ id }) : undefined;
   if (weapon) return { name: weapon.name, card: <WeaponCard weapon={weapon} /> };
@@ -32,9 +35,13 @@ function choiceCard({ id, kind }: { id: string; kind: ChoiceRule["from"]["kind"]
   return { name: spell.name, card: <SpellCard spell={spell} /> };
 }
 
-type ChoiceSlotProps = Omit<ChoiceGroupProps, "cls"> & { id: string };
+type ChoiceSlotProps = Omit<ChoiceGroupProps, "cls"> & {
+  id: string;
+  zoomTriggers: Map<string, HTMLButtonElement>;
+  onZoom: () => void;
+};
 
-function ChoiceSlot({ id, rule, picked, onChange }: ChoiceSlotProps) {
+function ChoiceSlot({ id, rule, picked, zoomTriggers, onChange, onZoom }: ChoiceSlotProps) {
   const { name, card } = choiceCard({ id, kind: rule.from.kind });
   const checked = picked.includes(id);
   const disabled = !checked && picked.length >= rule.pick;
@@ -52,6 +59,18 @@ function ChoiceSlot({ id, rule, picked, onChange }: ChoiceSlotProps) {
         disabled={disabled}
         onChange={toggle}
       />
+      <button
+        type="button"
+        className={styles.zoom}
+        aria-label={`Zoom ${name}`}
+        ref={(element) => {
+          if (element) zoomTriggers.set(id, element);
+          return () => {
+            zoomTriggers.delete(id);
+          };
+        }}
+        onClick={onZoom}
+      />
     </div>
   );
 }
@@ -60,6 +79,22 @@ function ChoiceGroup({ cls, rule, picked, onChange }: ChoiceGroupProps) {
   const hintId = useId();
   const options = choices.options({ cls, rule });
   const hint = rule.optional ? `Optional — choose up to ${rule.pick}.` : `Choose ${rule.pick}.`;
+  const zoomTriggers = useRef(new Map<string, HTMLButtonElement>());
+  const [held, setHeld] = useState<Held | null>(null);
+  const heldId = held && options[held.index];
+  const heldCard = heldId && choiceCard({ id: heldId, kind: rule.from.kind });
+
+  const hold = (index: number) => {
+    const id = options[index];
+    const trigger = id && zoomTriggers.current.get(id);
+    if (trigger) setHeld({ index, trigger });
+  };
+
+  const neighbour = (index: number) => {
+    const id = options[index];
+    if (!id) return undefined;
+    return { name: choiceCard({ id, kind: rule.from.kind }).name, hold: () => hold(index) };
+  };
 
   return (
     <fieldset className={styles.group} aria-describedby={hintId}>
@@ -71,10 +106,29 @@ function ChoiceGroup({ cls, rule, picked, onChange }: ChoiceGroupProps) {
         {hint}
       </p>
       <div className={styles.hand}>
-        {options.map((id) => (
-          <ChoiceSlot key={id} id={id} rule={rule} picked={picked} onChange={onChange} />
+        {options.map((id, index) => (
+          <ChoiceSlot
+            key={id}
+            id={id}
+            rule={rule}
+            picked={picked}
+            zoomTriggers={zoomTriggers.current}
+            onChange={onChange}
+            onZoom={() => hold(index)}
+          />
         ))}
       </div>
+      {held && heldCard && (
+        <CardSpotlight
+          label={heldCard.name}
+          liftedFrom={held.trigger}
+          previous={neighbour(held.index - 1)}
+          next={neighbour(held.index + 1)}
+          onClose={() => setHeld(null)}
+        >
+          {heldCard.card}
+        </CardSpotlight>
+      )}
     </fieldset>
   );
 }
