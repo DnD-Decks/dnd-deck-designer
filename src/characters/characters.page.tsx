@@ -8,8 +8,8 @@ function EmptyState() {
     <div className={styles.empty}>
       <p>No characters yet.</p>
       <p>
-        Building a character comes next: pick a class, choose your weapons and spells, and carry the
-        deck on your phone. Until then, every class's cards are in the catalog.
+        Pick a class, choose your weapons and spells, and carry the deck on your phone. Every
+        class's cards are also in the catalog.
       </p>
       <Link href="/catalog" className={styles.action}>
         Open the card catalog
@@ -24,6 +24,9 @@ export function CharactersPage() {
   return (
     <main className={styles.page}>
       <h2 className={styles.heading}>Your characters</h2>
+      <Link href="/new" className={styles.action}>
+        New character
+      </Link>
       {saved.length === 0 && <EmptyState />}
       {saved.length > 0 && (
         <ul className={styles.list}>

@@ -75,8 +75,8 @@ Two traps worth naming, both hit while writing this suite:
 
 - The deck empty state (`No cards vendored for …`) is unreachable in the browser: all 12 classes
   ship level-1 cards. It stays a vitest test with a mocked model.
-- One desktop project. The app is a print workbench sized in mm; a phone project would add a
-  second set of baselines without testing a supported use.
+- One desktop project; `builder.fighter-weapons` overrides the viewport to 360px to cover the
+  mobile character builder without duplicating the catalog's print-card baselines.
 
 ## Keeping Docker in step
 

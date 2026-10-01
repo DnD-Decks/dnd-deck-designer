@@ -1,3 +1,4 @@
+import { CharacterBuilderPage } from "src/characters/character-builder.page";
 import { CharacterImportPage } from "src/characters/character-import.page";
 import { CharacterPage } from "src/characters/character.page";
 import { CharactersPage } from "src/characters/characters.page";
@@ -14,6 +15,10 @@ export function AppRoutes() {
   return (
     <Switch>
       <Route path="/" component={CharactersPage} />
+      <Route path="/new">
+        <CharacterBuilderPage />
+      </Route>
+      <Route path="/character/:id/edit">{({ id }) => <CharacterBuilderPage id={id} />}</Route>
       <Route path="/character/:id">{({ id }) => <CharacterPage id={id} />}</Route>
       <Route path="/import/:code">{({ code }) => <CharacterImportPage code={code} />}</Route>
       <Route path="/catalog">

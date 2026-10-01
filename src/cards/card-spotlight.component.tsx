@@ -17,11 +17,11 @@ const MAX_LIFT = 2.6;
 const RETURN_MS = 180;
 const DEAL_PX = 14;
 
-function liftScale(origin: DOMRect) {
-  if (!origin.width || !origin.height) return 1; // unmeasured (jsdom) — hold it at rest size
-  const byWidth = (window.innerWidth - EDGE_GAP * 2) / origin.width;
-  const byHeight = (window.innerHeight - CONTROL_GAP * 2) / origin.height;
-  return Math.max(1, Math.min(byWidth, byHeight, MAX_LIFT));
+function liftScale({ width, height }: { width: number; height: number }) {
+  if (!width || !height) return 1; // unmeasured (jsdom) — hold it at rest size
+  const byWidth = (window.innerWidth - EDGE_GAP * 2) / width;
+  const byHeight = (window.innerHeight - CONTROL_GAP * 2) / height;
+  return Math.min(byWidth, byHeight, MAX_LIFT);
 }
 
 function onTheMat(origin: DOMRect) {
@@ -63,13 +63,19 @@ type Props = {
   children: ReactNode;
 };
 
-/** One card picked up off the mat and held under the lamp, the deck blurred out behind it. */
+/**
+ * Previews a card and returns focus to its trigger on dismissal.
+ * - Fits the card to the viewport.
+ * - Supports stepping when neighbours are supplied.
+ * Throws on no expected input.
+ */
 export function CardSpotlight({ label, liftedFrom, previous, next, onClose, children }: Props) {
   const stage = useRef<HTMLDialogElement>(null);
+  const card = useRef<HTMLDivElement>(null);
   const returning = useRef(false);
   const returnFocusTo = useRef(liftedFrom);
   const origin = useMemo(() => liftedFrom.getBoundingClientRect(), [liftedFrom]);
-  const [scale, setScale] = useState(() => liftScale(origin));
+  const [scale, setScale] = useState(1);
   const [phase, setPhase] = useState<"entering" | "held" | "returning">("entering");
   const [dealt, setDealt] = useState(0);
 
@@ -93,12 +99,20 @@ export function CardSpotlight({ label, liftedFrom, previous, next, onClose, chil
     return () => cancelAnimationFrame(frame);
   }, []);
 
+  // The trigger may be a small preview button, not a card. Fit the card itself,
+  // including after stepping to a card with a different size.
+  const fit = useCallback(() => {
+    const width = card.current?.offsetWidth ?? 0;
+    const height = card.current?.offsetHeight ?? 0;
+    const fittedScale = liftScale({ width, height });
+    setScale(fittedScale);
+  }, []);
+  useLayoutEffect(fit);
+
   useEffect(() => {
-    const fit = () => setScale(liftScale(origin));
-    fit();
     window.addEventListener("resize", fit);
     return () => window.removeEventListener("resize", fit);
-  }, [origin]);
+  }, [fit]);
 
   useEffect(() => {
     returnFocusTo.current = liftedFrom;
@@ -147,6 +161,7 @@ export function CardSpotlight({ label, liftedFrom, previous, next, onClose, chil
       >
         <div
           key={label}
+          ref={card}
           className={styles.held}
           data-deal={dealt || undefined}
           style={{ "--deal-from": `${dealt * DEAL_PX}px` } as CSSProperties}
