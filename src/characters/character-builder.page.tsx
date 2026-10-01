@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { CardSpotlight } from "src/cards/card-spotlight.component";
 import { SpellCard } from "src/cards/spell-card.component";
 import { WeaponCard } from "src/cards/weapon-card.component";
@@ -101,6 +101,9 @@ function ChoiceGroup({
 function Builder({ initial }: { initial?: Character }) {
   const [, navigate] = useLocation();
   const [step, setStep] = useState(0);
+  const focusStep = useCallback((heading: HTMLHeadingElement | null) => {
+    heading?.focus();
+  }, []);
   const [cls, setClass] = useState<CharacterClass | undefined>(initial?.cls);
   const [picks, setPicks] = useState<Picks>(initial?.picks ?? {});
   const [name, setName] = useState(initial?.name ?? "");
@@ -144,7 +147,9 @@ function Builder({ initial }: { initial?: Character }) {
             </li>
           ))}
         </ol>
-        <h3>{STEPS[step]}</h3>
+        <h3 key={step} ref={focusStep} tabIndex={-1}>
+          {STEPS[step]}
+        </h3>
         {step === 0 && (
           <div className={styles.classes} aria-label="Character class">
             {ALL_CLASSES.map((option) => (

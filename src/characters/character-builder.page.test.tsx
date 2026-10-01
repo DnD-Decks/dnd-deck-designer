@@ -27,6 +27,20 @@ beforeEach(() => localStorage.clear());
 afterEach(() => vi.restoreAllMocks());
 
 describe("<CharacterBuilderPage />", () => {
+  test("step navigation moves focus to the newly displayed heading", () => {
+    renderAt();
+    click("Fighter");
+    screen.getByRole("button", { name: "Next" }).focus();
+    next();
+    expect(document.activeElement).toBe(screen.getByRole("heading", { name: "Choices" }));
+    screen.getByRole("button", { name: "Next" }).focus();
+    next();
+    expect(document.activeElement).toBe(screen.getByRole("heading", { name: "Name" }));
+    screen.getByRole("button", { name: "Back" }).focus();
+    click("Back");
+    expect(document.activeElement).toBe(screen.getByRole("heading", { name: "Choices" }));
+  });
+
   test("home starts a numbered builder with an explicit class choice", () => {
     const memory = renderAt("/");
     fireEvent.click(screen.getByRole("link", { name: "New character" }));
