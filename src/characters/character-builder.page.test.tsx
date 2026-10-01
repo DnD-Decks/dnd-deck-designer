@@ -73,6 +73,19 @@ describe("<CharacterBuilderPage />", () => {
       expect(document.activeElement).toBe(screen.getByRole("heading", { name: "Choices" }));
     });
 
+    test("editing choices and name leaves focus on the active input", () => {
+      fighterChoices();
+      const longsword = checkbox("Longsword");
+      longsword.focus();
+      fireEvent.click(longsword);
+      expect(document.activeElement).toBe(longsword);
+      next();
+      const name = screen.getByRole("textbox", { name: "Character name (required)" });
+      name.focus();
+      nameCharacter("Ada");
+      expect(document.activeElement).toBe(name);
+    });
+
     test("home starts a numbered builder with an explicit class choice", () => {
       const memory = renderAt("/");
       fireEvent.click(screen.getByRole("link", { name: "New character" }));
@@ -175,6 +188,25 @@ describe("<CharacterBuilderPage />", () => {
   });
 
   describe("class choices{}", () => {
+    test("spell preview closes back to its trigger without changing picks", async () => {
+      renderAt();
+      click("Wizard");
+      next();
+      fireEvent.click(checkbox("Fire Bolt"));
+      click("Preview Fire Bolt");
+      within(screen.getByRole("dialog", { name: "Fire Bolt" })).getByRole("article", {
+        name: "Fire Bolt",
+      });
+      expect(screen.queryByRole("checkbox")).toBeNull();
+      click("Put it back");
+      await vi.waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+      expect(checkbox("Fire Bolt").checked).toBe(true);
+      expect(document.activeElement).toBe(
+        screen.getByRole("button", { name: "Preview Fire Bolt" })
+      );
+      screen.getByText("1 of 3 chosen");
+    });
+
     test("changing class clears picks; returning to the same class keeps them", () => {
       renderAt();
       click("Fighter");
