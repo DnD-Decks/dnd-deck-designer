@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { App } from "src/app/app.component";
 import { brunhilde } from "src/characters/character.fixture";
+import type { ChoiceSource } from "src/characters/choices.model";
 import { choices } from "src/characters/choices.model";
 import type { CharacterClass } from "src/models/class/classes.model";
 import { weapons } from "src/models/gear/weapons.model";
@@ -15,19 +16,17 @@ function renderAt(path = "/new") {
   return memory;
 }
 
-const click = (name: string) => fireEvent.click(screen.getByRole("button", { name }));
-const checkbox = (name: string) => screen.getByRole<HTMLInputElement>("checkbox", { name });
+const button = (name: string | RegExp) => screen.getByRole<HTMLButtonElement>("button", { name });
+const click = (name: string | RegExp) => fireEvent.click(button(name));
+const pickClass = (label: string) => click(new RegExp(`^${label}`));
 const next = () => click("Next");
-const nameCharacter = (name: string) =>
-  fireEvent.change(screen.getByRole("textbox", { name: "Character name (required)" }), {
-    target: { value: name },
-  });
-
-function fighterChoices() {
-  renderAt();
-  click("Fighter");
-  next();
-}
+const checkbox = (name: string) => screen.getByRole<HTMLInputElement>("checkbox", { name });
+const nameField = () => screen.getByRole<HTMLInputElement>("textbox", { name: "Character name" });
+const nameCharacter = (name: string) => fireEvent.change(nameField(), { target: { value: name } });
+const stepNames = () =>
+  within(screen.getByRole("list", { name: "Character builder steps" }))
+    .getAllByRole("listitem")
+    .map((item) => ({ text: item.textContent, current: item.getAttribute("aria-current") }));
 
 function selectFighterWeapons() {
   fireEvent.click(checkbox("Longsword"));
@@ -35,109 +34,88 @@ function selectFighterWeapons() {
   fireEvent.click(checkbox("Dagger"));
 }
 
-function completeRequiredChoices(cls: CharacterClass) {
-  choices.for({ cls, level: 1 }).forEach((rule) => {
-    const group = within(screen.getByRole("group", { name: rule.label }));
-    if (rule.optional) {
-      group.getByText(`Optional — choose up to ${rule.pick}.`);
-      return;
-    }
-    choices
-      .options({ cls, rule })
-      .slice(0, rule.pick)
-      .forEach((id) => {
-        const name =
-          rule.from.kind === "weapon" ? weapons.find({ id })?.name : spells.get({ id }).name;
-        fireEvent.click(group.getByRole("checkbox", { name }));
-      });
-    group.getByText(`${rule.pick} of ${rule.pick} chosen`);
-  });
+function optionName({ kind, id }: { kind: ChoiceSource["kind"]; id: string }) {
+  return kind === "weapon" ? weapons.find({ id })?.name : spells.get({ id }).name;
+}
+
+function completeRequired({ cls, kind }: { cls: CharacterClass; kind: ChoiceSource["kind"] }) {
+  const rules = choices.for({ cls, level: 1 }).filter((rule) => rule.from.kind === kind);
+  rules
+    .filter((rule) => !rule.optional)
+    .forEach((rule) => {
+      const group = within(screen.getByRole("group", { name: rule.label }));
+      choices
+        .options({ cls, rule })
+        .slice(0, rule.pick)
+        .forEach((id) => {
+          fireEvent.click(group.getByRole("checkbox", { name: optionName({ kind, id }) }));
+        });
+    });
 }
 
 beforeEach(() => localStorage.clear());
 afterEach(() => vi.restoreAllMocks());
 
 describe("<CharacterBuilderPage />", () => {
-  describe("navigation{}", () => {
-    test("step navigation moves focus to the newly displayed heading", () => {
-      renderAt();
-      click("Fighter");
-      screen.getByRole("button", { name: "Next" }).focus();
-      next();
-      expect(document.activeElement).toBe(screen.getByRole("heading", { name: "Choices" }));
-      screen.getByRole("button", { name: "Next" }).focus();
-      next();
-      expect(document.activeElement).toBe(screen.getByRole("heading", { name: "Name" }));
-      screen.getByRole("button", { name: "Back" }).focus();
-      click("Back");
-      expect(document.activeElement).toBe(screen.getByRole("heading", { name: "Choices" }));
-    });
-
-    test("editing choices and name leaves focus on the active input", () => {
-      fighterChoices();
-      const longsword = checkbox("Longsword");
-      longsword.focus();
-      fireEvent.click(longsword);
-      expect(document.activeElement).toBe(longsword);
-      next();
-      const name = screen.getByRole("textbox", { name: "Character name (required)" });
-      name.focus();
-      nameCharacter("Ada");
-      expect(document.activeElement).toBe(name);
-    });
-
-    test("home starts a numbered builder with an explicit class choice", () => {
+  describe("steps{}", () => {
+    test("home opens the builder on the class step, with Next locked", () => {
       const memory = renderAt("/");
       fireEvent.click(screen.getByRole("link", { name: "New character" }));
       expect(memory.history.slice(-1)).toEqual(["/new"]);
-      expect(screen.getByRole<HTMLButtonElement>("button", { name: "Next" }).disabled).toBe(true);
+      expect(stepNames()).toEqual([{ text: "1 Class", current: "step" }]);
+      expect(screen.queryAllByRole("button", { pressed: true })).toEqual([]);
       screen.getByText("Choose a class.");
-      const steps = within(screen.getByRole("list", { name: "Character builder steps" }));
-      expect(steps.getByText("1 Class").getAttribute("aria-current")).toBe("step");
-      screen.getByText("2 Choices");
-      screen.getByText("3 Name");
-      expect(
-        screen.getAllByRole("button", { pressed: false }).map((button) => button.textContent)
-      ).toEqual([
-        "Barbarian",
-        "Bard",
-        "Cleric",
-        "Druid",
-        "Fighter",
-        "Monk",
-        "Paladin",
-        "Ranger",
-        "Rogue",
-        "Sorcerer",
-        "Warlock",
-        "Wizard",
-      ]);
+      expect(button("Next").disabled).toBe(true);
+    });
+
+    [
+      { label: "Wizard", steps: ["1 Class", "2 Spells", "3 Weapons"] },
+      { label: "Fighter", steps: ["1 Class", "2 Weapons"] },
+    ].forEach(({ label, steps }) =>
+      test(`a ${label} walks through ${steps.join(", ")}`, () => {
+        renderAt();
+        pickClass(label);
+        expect(stepNames().map(({ text }) => text)).toEqual(steps);
+      })
+    );
+
+    test("each step moves focus to its heading, and Back returns", () => {
+      renderAt();
+      pickClass("Wizard");
+      next();
+      expect(document.activeElement).toBe(screen.getByRole("heading", { name: "Spells" }));
+      expect(stepNames()[1]).toEqual({ text: "2 Spells", current: "step" });
+      click("Back");
+      expect(document.activeElement).toBe(screen.getByRole("heading", { name: "Class" }));
     });
   });
 
-  describe("weapon choices{}", () => {
-    test("missing mastery blocks saving and Back retains the name draft", () => {
-      fighterChoices();
-      screen.getAllByText("1d8 · sap");
-      screen.getByText("0 of 3 chosen");
+  describe("cards{}", () => {
+    test("the spells step lays out spell cards and locks Next until they are chosen", () => {
+      renderAt();
+      pickClass("Wizard");
       next();
-      nameCharacter("  Ada  ");
-      expect(
-        screen.getByRole<HTMLButtonElement>("button", { name: "Save character" }).disabled
-      ).toBe(true);
-      screen.getByText("Weapon Mastery: choose 3 more.");
-      click("Back");
-      screen.getByText("0 of 3 chosen");
-      next();
-      expect(
-        screen.getByRole<HTMLInputElement>("textbox", {
-          name: "Character name (required)",
-        }).value
-      ).toBe("  Ada  ");
+      const cantrips = within(screen.getByRole("group", { name: "Cantrips" }));
+      cantrips.getByText("Choose 3.");
+      cantrips.getByRole("article", { name: "Fire Bolt" });
+      expect(screen.queryByRole("group", { name: "Weapons" })).toBeNull();
+      fireEvent.click(checkbox("Fire Bolt"));
+      cantrips.getByText("1 of 3 chosen");
+      screen.getByText("Cantrips: choose 2 more.");
+      expect(button("Next").disabled).toBe(true);
+      fireEvent.click(checkbox("Fire Bolt"));
+      completeRequired({ cls: "wizard", kind: "spell" });
+      screen.getByText("Done. Next up: Weapons.");
+      expect(button("Next").disabled).toBe(false);
     });
 
-    test("mastery limit disables unselected weapons until a slot is released", () => {
-      fighterChoices();
+    test("a full hand disables the cards left out until one is put back", () => {
+      renderAt();
+      pickClass("Fighter");
+      next();
+      within(screen.getByRole("group", { name: "Weapon Mastery" })).getByRole("article", {
+        name: "Greatsword",
+      });
       selectFighterWeapons();
       screen.getByText("3 of 3 chosen");
       expect(checkbox("Greatsword").disabled).toBe(true);
@@ -146,17 +124,46 @@ describe("<CharacterBuilderPage />", () => {
       expect(checkbox("Greatsword").disabled).toBe(false);
     });
 
-    test("required trimmed name saves a complete fighter", () => {
-      fighterChoices();
-      selectFighterWeapons();
+    test("optional choices still enforce their limit", () => {
+      renderAt();
+      pickClass("Monk");
       next();
-      nameCharacter("   ");
-      expect(
-        screen.getByRole<HTMLButtonElement>("button", { name: "Save character" }).disabled
-      ).toBe(true);
+      screen.getByText("Optional — choose up to 2.");
+      fireEvent.click(checkbox("Club"));
+      fireEvent.click(checkbox("Dagger"));
+      expect(checkbox("Quarterstaff").disabled).toBe(true);
+    });
+
+    test("changing class clears picks; picking the same class keeps them", () => {
+      renderAt();
+      pickClass("Fighter");
+      next();
+      fireEvent.click(checkbox("Longsword"));
+      click("Back");
+      pickClass("Fighter");
+      next();
+      expect(checkbox("Longsword").checked).toBe(true);
+      click("Back");
+      pickClass("Monk");
+      pickClass("Fighter");
+      next();
+      expect(checkbox("Longsword").checked).toBe(false);
+    });
+  });
+
+  describe("build deck{}", () => {
+    test("the last step asks for a name, then builds a trimmed-name fighter", () => {
+      renderAt();
+      pickClass("Fighter");
+      next();
+      screen.getByText("Weapon Mastery: choose 3 more.");
+      selectFighterWeapons();
       screen.getByText("Enter a character name.");
+      nameCharacter("   ");
+      expect(button("Build deck").disabled).toBe(true);
       nameCharacter("  Ada  ");
-      click("Save character");
+      screen.getByText("Every card is chosen.");
+      click("Build deck");
       expect(characterStorage.list()).toEqual([
         {
           id: expect.any(String),
@@ -169,68 +176,13 @@ describe("<CharacterBuilderPage />", () => {
       screen.getByRole("heading", { name: "Ada" });
     });
 
-    test("preview opens a card without changing picks, even at the limit", async () => {
-      fighterChoices();
-      selectFighterWeapons();
-      click("Preview Greatsword");
-      within(screen.getByRole("dialog", { name: "Greatsword" })).getByRole("article", {
-        name: "Greatsword",
-      });
-      expect(screen.queryByRole("checkbox")).toBeNull();
-      click("Put it back");
-      await vi.waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
-      expect(checkbox("Greatsword").checked).toBe(false);
-      expect(document.activeElement).toBe(
-        screen.getByRole("button", { name: "Preview Greatsword" })
-      );
-      screen.getByText("3 of 3 chosen");
-    });
-  });
-
-  describe("class choices{}", () => {
-    test("spell preview closes back to its trigger without changing picks", async () => {
+    test("submitting the name builds the deck", () => {
       renderAt();
-      click("Wizard");
+      pickClass("Monk");
       next();
-      fireEvent.click(checkbox("Fire Bolt"));
-      click("Preview Fire Bolt");
-      within(screen.getByRole("dialog", { name: "Fire Bolt" })).getByRole("article", {
-        name: "Fire Bolt",
-      });
-      expect(screen.queryByRole("checkbox")).toBeNull();
-      click("Put it back");
-      await vi.waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
-      expect(checkbox("Fire Bolt").checked).toBe(true);
-      expect(document.activeElement).toBe(
-        screen.getByRole("button", { name: "Preview Fire Bolt" })
-      );
-      screen.getByText("1 of 3 chosen");
-    });
-
-    test("changing class clears picks; returning to the same class keeps them", () => {
-      renderAt();
-      click("Fighter");
-      next();
-      fireEvent.click(checkbox("Longsword"));
-      click("Back");
-      click("Fighter");
-      next();
-      expect(checkbox("Longsword").checked).toBe(true);
-      click("Back");
-      click("Wizard");
-      next();
-      screen.getByText("0 of 3 chosen");
-      const spell = spells.get({
-        id: choices.options({
-          cls: "wizard",
-          rule: choices.for({ cls: "wizard", level: 1 })[0],
-        })[0],
-      });
-      screen.getAllByText(`${spell.school} · ${spell.castingTime}`);
-      click("Back");
-      click("Fighter");
-      next();
-      expect(checkbox("Longsword").checked).toBe(false);
+      nameCharacter("Kwai");
+      fireEvent.submit(screen.getByRole("form", { name: "Builder actions" }));
+      expect(characterStorage.list()[0]?.name).toBe("Kwai");
     });
 
     (
@@ -249,27 +201,20 @@ describe("<CharacterBuilderPage />", () => {
         { label: "Wizard", cls: "wizard" },
       ] satisfies { label: string; cls: CharacterClass }[]
     ).forEach(({ label, cls }) => {
-      test(`${label} can finish every required rule with optional groups empty`, () => {
+      test(`${label} builds once every required card is chosen`, () => {
         renderAt();
-        click(label);
+        pickClass(label);
+        const kinds = new Set(choices.for({ cls, level: 1 }).map((rule) => rule.from.kind));
+        if (kinds.has("spell")) {
+          next();
+          completeRequired({ cls, kind: "spell" });
+        }
         next();
-        completeRequiredChoices(cls);
-        next();
+        completeRequired({ cls, kind: "weapon" });
         nameCharacter(label);
-        click("Save character");
+        click("Build deck");
         expect(characterStorage.list()[0]?.cls).toBe(cls);
       });
-    });
-
-    test("optional choices still enforce their limit", () => {
-      renderAt();
-      click("Monk");
-      next();
-      fireEvent.click(checkbox("Club"));
-      fireEvent.click(checkbox("Dagger"));
-      expect(checkbox("Quarterstaff").disabled).toBe(true);
-      fireEvent.click(checkbox("Club"));
-      expect(checkbox("Quarterstaff").disabled).toBe(false);
     });
   });
 
@@ -280,17 +225,13 @@ describe("<CharacterBuilderPage />", () => {
       const memory = renderAt("/character/f1");
       fireEvent.click(screen.getByRole("link", { name: "Edit" }));
       expect(memory.history.slice(-1)).toEqual(["/character/f1/edit"]);
-      expect(screen.getByRole("button", { name: "Fighter" }).getAttribute("aria-pressed")).toBe(
-        "true"
-      );
+      screen.getByRole("heading", { name: "Edit character" });
+      expect(button(/^Fighter/).getAttribute("aria-pressed")).toBe("true");
       next();
       expect(checkbox("Longsword").checked).toBe(true);
-      next();
-      expect(
-        screen.getByRole<HTMLInputElement>("textbox", { name: "Character name (required)" }).value
-      ).toBe("Brünhilde");
+      expect(nameField().value).toBe("Brünhilde");
       nameCharacter("Renamed");
-      click("Save character");
+      click("Build deck");
       expect(characterStorage.list()).toEqual([
         {
           id: "f1",
@@ -311,10 +252,9 @@ describe("<CharacterBuilderPage />", () => {
         characterStorage.save(brunhilde());
         characterStorage.setSpent({ id: "f1", spent: ["second-wind"] });
         renderAt(path);
-        click("Monk");
+        pickClass("Monk");
         next();
         fireEvent.click(checkbox("Dagger"));
-        next();
         nameCharacter("Discard me");
         fireEvent.click(screen.getByRole("link", { name: "Cancel" }));
         expect(characterStorage.list()).toEqual([brunhilde()]);
@@ -324,25 +264,20 @@ describe("<CharacterBuilderPage />", () => {
 
     test("storage failures keep the draft and allow retry", () => {
       renderAt();
-      click("Monk");
+      pickClass("Monk");
       next();
       fireEvent.click(checkbox("Dagger"));
-      next();
       nameCharacter("Persistent");
       const write = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
         throw Error("quota");
       });
-      click("Save character");
+      click("Build deck");
       screen.getByRole("alert");
       expect(characterStorage.list()).toEqual([]);
-      expect(
-        screen.getByRole<HTMLInputElement>("textbox", { name: "Character name (required)" }).value
-      ).toBe("Persistent");
-      click("Back");
+      expect(nameField().value).toBe("Persistent");
       expect(checkbox("Dagger").checked).toBe(true);
-      next();
       write.mockRestore();
-      click("Save character");
+      click("Build deck");
       expect(characterStorage.list()).toEqual([
         {
           id: expect.any(String),
@@ -358,7 +293,7 @@ describe("<CharacterBuilderPage />", () => {
       renderAt("/character/missing/edit");
       screen.getByRole("heading", { name: "Character not found" });
       screen.getByRole("link", { name: "Back to your characters" });
-      expect(screen.queryByRole("button", { name: "Save character" })).toBeNull();
+      expect(screen.queryByRole("button", { name: "Build deck" })).toBeNull();
       expect(characterStorage.list()).toEqual([]);
     });
   });

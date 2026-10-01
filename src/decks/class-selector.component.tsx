@@ -4,7 +4,7 @@ import { classes } from "src/models/class/classes.model";
 import styles from "./class-selector.module.css";
 
 type Props = {
-  selected: CharacterClass;
+  selected?: CharacterClass;
   onSelect: (cls: CharacterClass) => void;
 };
 
