@@ -1,0 +1,183 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 40rem;
+  min-width: 0;
+}
+
+.page h2,
+.page h3,
+.page p {
+  margin: 0;
+}
+
+.page h2,
+.page h3 {
+  font-family: var(--font-caps);
+}
+
+.page button,
+.page a {
+  color: var(--gold-soft);
+  font: inherit;
+}
+
+.page button {
+  min-height: 44px;
+  border: 1px solid var(--ink-line);
+  border-radius: 6px;
+  background: var(--ink-800);
+  cursor: pointer;
+}
+
+.page button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page :focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.steps {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: var(--text-mid);
+}
+
+.steps [aria-current="step"] {
+  color: var(--gold-soft);
+  border-bottom: 2px solid var(--gold);
+}
+
+.classes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.classes button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.classes [aria-pressed="true"] {
+  border-color: var(--gold);
+  background: var(--ink-700);
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+}
+
+.group {
+  min-width: 0;
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--ink-line);
+  border-radius: 8px;
+}
+
+.group legend {
+  font-weight: bold;
+}
+
+.group output {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--gold-soft);
+}
+
+.options {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid var(--ink-line);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 56px;
+  cursor: pointer;
+}
+
+.check input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--gold);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-bottom: 0.5rem;
+}
+
+.page .preview {
+  text-align: left;
+  border: none;
+  padding: 0;
+  background: none;
+}
+
+.stat,
+.missing {
+  color: var(--text-mid);
+}
+
+.stat {
+  overflow-wrap: anywhere;
+}
+
+.missing ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.name {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem;
+  border: 1px solid var(--ink-line);
+  border-radius: 6px;
+  background: var(--ink-800);
+  color: var(--text-hi);
+  font: inherit;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.actions button,
+.actions a {
+  padding: 0.75rem;
+}
+
+@media (min-width: 600px) {
+  .classes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

@@ -66,5 +66,17 @@ export function CharacterPage({ id }: { id: string }) {
     );
   }
 
-  return <CharacterView character={character} actions={<ShareButton character={character} />} />;
+  return (
+    <CharacterView
+      character={character}
+      actions={
+        <>
+          <Link href={`/character/${character.id}/edit`} className={styles.action}>
+            Edit
+          </Link>
+          <ShareButton character={character} />
+        </>
+      }
+    />
+  );
 }
