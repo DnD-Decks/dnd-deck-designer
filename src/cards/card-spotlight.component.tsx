@@ -17,7 +17,7 @@ const MAX_LIFT = 2.6;
 const RETURN_MS = 180;
 const DEAL_PX = 14;
 
-function liftScale(width: number, height: number) {
+function liftScale({ width, height }: { width: number; height: number }) {
   if (!width || !height) return 1; // unmeasured (jsdom) — hold it at rest size
   const byWidth = (window.innerWidth - EDGE_GAP * 2) / width;
   const byHeight = (window.innerHeight - CONTROL_GAP * 2) / height;
@@ -63,7 +63,12 @@ type Props = {
   children: ReactNode;
 };
 
-/** One card picked up off the mat and held under the lamp, the deck blurred out behind it. */
+/**
+ * Previews a card and returns focus to its trigger on dismissal.
+ * - Fits the card to the viewport.
+ * - Supports stepping when neighbours are supplied.
+ * Throws on no expected input.
+ */
 export function CardSpotlight({ label, liftedFrom, previous, next, onClose, children }: Props) {
   const stage = useRef<HTMLDialogElement>(null);
   const card = useRef<HTMLDivElement>(null);
@@ -97,7 +102,10 @@ export function CardSpotlight({ label, liftedFrom, previous, next, onClose, chil
   // The trigger may be a small preview button, not a card. Fit the card itself,
   // including after stepping to a card with a different size.
   const fit = useCallback(() => {
-    setScale(liftScale(card.current?.offsetWidth ?? 0, card.current?.offsetHeight ?? 0));
+    const width = card.current?.offsetWidth ?? 0;
+    const height = card.current?.offsetHeight ?? 0;
+    const fittedScale = liftScale({ width, height });
+    setScale(fittedScale);
   }, []);
   useLayoutEffect(fit);
 

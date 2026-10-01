@@ -16,7 +16,11 @@ import { Link, useLocation } from "wouter";
 import styles from "./character-builder.module.css";
 
 const ALL_CLASSES = classes.list();
-const STEPS = ["Class", "Choices", "Name"];
+const STEPS = [
+  { label: "Class", index: 0 },
+  { label: "Choices", index: 1 },
+  { label: "Name", index: 2 },
+];
 type Preview = { kind: "weapon" | "spell"; id: string; trigger: HTMLElement };
 
 function issueMessage(issue: ChoiceIssue) {
@@ -30,69 +34,89 @@ function issueMessage(issue: ChoiceIssue) {
   }
 }
 
-function ChoiceGroup({
-  cls,
-  rule,
-  picked,
-  onChange,
-  onPreview,
-}: {
+type ChoiceGroupProps = {
   cls: CharacterClass;
   rule: ChoiceRule;
   picked: readonly string[];
   onChange: (ids: readonly string[]) => void;
   onPreview: (preview: Preview) => void;
-}) {
+};
+
+function choiceDescription(rule: ChoiceRule) {
+  if (rule.optional) return `Optional — choose up to ${rule.pick}.`;
+  return `Choose ${rule.pick}.`;
+}
+
+function choiceDetails({ id, kind }: { id: string; kind: ChoiceRule["from"]["kind"] }) {
+  const weapon = kind === "weapon" ? weapons.find({ id }) : undefined;
+  const spell = kind === "spell" ? spells.get({ id }) : undefined;
+  const name = weapon?.name ?? spell?.name ?? id;
+  const stat = weapon
+    ? `${weapon.damage.dice} · ${weapon.mastery}`
+    : `${spell?.school} · ${spell?.castingTime}`;
+  return { name, stat };
+}
+
+type ChoiceOptionProps = Omit<ChoiceGroupProps, "cls"> & { id: string };
+
+function ChoiceOption({ id, rule, picked, onChange, onPreview }: ChoiceOptionProps) {
+  const { name, stat } = choiceDetails({ id, kind: rule.from.kind });
+  const checked = picked.includes(id);
+  const disabled = !checked && picked.length >= rule.pick;
+
+  const toggle = () => {
+    const updated = checked ? picked.filter((pick) => pick !== id) : [...picked, id];
+    onChange(updated);
+  };
+
+  return (
+    <li className={styles.option}>
+      <label className={styles.check}>
+        <input
+          type="checkbox"
+          aria-label={name}
+          checked={checked}
+          disabled={disabled}
+          onChange={toggle}
+        />
+      </label>
+      <div className={styles.details}>
+        <button
+          type="button"
+          className={styles.preview}
+          aria-label={`Preview ${name}`}
+          onClick={(event) => onPreview({ kind: rule.from.kind, id, trigger: event.currentTarget })}
+        >
+          {name}
+        </button>
+        <span className={styles.stat}>{stat}</span>
+      </div>
+    </li>
+  );
+}
+
+function ChoiceGroup({ cls, rule, picked, onChange, onPreview }: ChoiceGroupProps) {
   const descriptionId = useId();
+  const options = choices.options({ cls, rule });
 
   return (
     <fieldset className={styles.group} aria-describedby={descriptionId}>
       <legend>{rule.label}</legend>
-      <p id={descriptionId}>
-        {rule.optional ? `Optional — choose up to ${rule.pick}.` : `Choose ${rule.pick}.`}
-      </p>
+      <p id={descriptionId}>{choiceDescription(rule)}</p>
       <output aria-live="polite">
         {picked.length} of {rule.pick} chosen
       </output>
       <ul className={styles.options}>
-        {choices.options({ cls, rule }).map((id) => {
-          const weapon = rule.from.kind === "weapon" ? weapons.find({ id }) : undefined;
-          const spell = rule.from.kind === "spell" ? spells.get({ id }) : undefined;
-          const name = weapon?.name ?? spell?.name ?? id;
-          const checked = picked.includes(id);
-          return (
-            <li key={id} className={styles.option}>
-              <label className={styles.check}>
-                <input
-                  type="checkbox"
-                  aria-label={name}
-                  checked={checked}
-                  disabled={!checked && picked.length >= rule.pick}
-                  onChange={() =>
-                    onChange(checked ? picked.filter((pick) => pick !== id) : [...picked, id])
-                  }
-                />
-              </label>
-              <div className={styles.details}>
-                <button
-                  type="button"
-                  className={styles.preview}
-                  aria-label={`Preview ${name}`}
-                  onClick={(event) =>
-                    onPreview({ kind: rule.from.kind, id, trigger: event.currentTarget })
-                  }
-                >
-                  {name}
-                </button>
-                <span className={styles.stat}>
-                  {weapon
-                    ? `${weapon.damage.dice} · ${weapon.mastery}`
-                    : `${spell?.school} · ${spell?.castingTime}`}
-                </span>
-              </div>
-            </li>
-          );
-        })}
+        {options.map((id) => (
+          <ChoiceOption
+            key={id}
+            id={id}
+            rule={rule}
+            picked={picked}
+            onChange={onChange}
+            onPreview={onPreview}
+          />
+        ))}
       </ul>
     </fieldset>
   );
@@ -141,14 +165,14 @@ function Builder({ initial }: { initial?: Character }) {
       >
         <h2>{initial ? "Edit character" : "New character"}</h2>
         <ol className={styles.steps} aria-label="Character builder steps">
-          {STEPS.map((label, index) => (
+          {STEPS.map(({ label, index }) => (
             <li key={label} aria-current={step === index ? "step" : undefined}>
               {index + 1} {label}
             </li>
           ))}
         </ol>
         <h3 key={step} ref={focusStep} tabIndex={-1}>
-          {STEPS[step]}
+          {STEPS[step]?.label}
         </h3>
         {step === 0 && (
           <div className={styles.classes} aria-label="Character class">
@@ -197,7 +221,7 @@ function Builder({ initial }: { initial?: Character }) {
           </>
         )}
         <div id={missingId} className={styles.missing}>
-          {missing.length > 0 ? (
+          {missing.length > 0 && (
             <>
               <p>Before saving:</p>
               <ul>
@@ -206,9 +230,8 @@ function Builder({ initial }: { initial?: Character }) {
                 ))}
               </ul>
             </>
-          ) : (
-            <p>Ready to save.</p>
           )}
+          {missing.length === 0 && <p>Ready to save.</p>}
         </div>
         {failed && (
           <p role="alert">
@@ -223,11 +246,12 @@ function Builder({ initial }: { initial?: Character }) {
               Back
             </button>
           )}
-          {step < 2 ? (
+          {step < 2 && (
             <button type="button" disabled={!cls} onClick={() => setStep((current) => current + 1)}>
               Next
             </button>
-          ) : (
+          )}
+          {step >= 2 && (
             <button
               type="button"
               disabled={missing.length > 0}
@@ -245,13 +269,20 @@ function Builder({ initial }: { initial?: Character }) {
           liftedFrom={preview.trigger}
           onClose={() => setPreview(null)}
         >
-          {weapon ? <WeaponCard weapon={weapon} /> : spell && <SpellCard spell={spell} />}
+          {weapon && <WeaponCard weapon={weapon} />}
+          {!weapon && spell && <SpellCard spell={spell} />}
         </CardSpotlight>
       )}
     </>
   );
 }
 
+/**
+ * Builds or edits a level-one character stored on this device.
+ * - No id starts a new draft; a saved id loads its character.
+ * - An unknown id shows a not-found page.
+ * Throws on no expected input.
+ */
 export function CharacterBuilderPage({ id }: { id?: string }) {
   const initial = id ? characterStorage.get(id) : undefined;
   if (id && !initial) {
