@@ -20,10 +20,15 @@ Configure these as runtime secrets in Sites. Do not commit them or place them in
 | --- | --- |
 | `OPENAI_API_KEY` | Calls the OpenAI Images API for drafts and low quality edits, Responses API for prompt chat, and Audio Transcriptions API for voice input. |
 | `GITHUB_TOKEN` | Reads the issue list and details, commits drafts directly to the default branch, writes the selected draft to a feature branch, and opens its pull request. Use a fine-grained token restricted to `DnD-Decks/dnd-deck-designer` with Issues read, Contents read/write, and Pull requests read/write. The default branch must allow this token to push. |
+| `PIPELINE_OWNER_EMAIL` | Verified email address of the Site owner. Protects the Site-hosted MCP batch tools from other viewers. |
 
 Issue reading uses the token to avoid GitHub's shared anonymous API rate limit. Keep the Site private because it can spend from the configured OpenAI account and create repository pull requests.
 
 Image requests use the OpenAI image generation tool through the Responses API for background jobs. Drafts and edits use the same 720 × 1008 or 1008 × 720 JPEG settings.
+
+## Non-weapon batch
+
+The Site-hosted MCP tools `draft_batch_status` and `draft_batch_step` let the owner process open `ASSET` issues without keeping a browser open. The first step snapshots open issues with no saved drafts, excluding card data with `Kind: weapon`. It requests one image for every visual style in the 37-style catalog per issue. Progress is saved in the Site's R2 bucket at `campaigns/non-weapon-37.json`; generated images and the prompt record are committed to `main` in their normal draft folders. A step advances the current background job or retries missing images and GitHub synchronization. Repeat steps roughly once per minute while requests are being submitted. Check status and investigate an issue shown in `errors` if retries keep failing. The step tool only accepts the verified Site owner email and requires all three Site secrets above. The batch never submits artwork or closes issues; review candidates in the gallery and open a pull request for the chosen image.
 
 ## Local checks
 

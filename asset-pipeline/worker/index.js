@@ -2720,6 +2720,206 @@ async function issueJobs(number, env) {
     }));
 }
 
+const BULK_KEY = "campaigns/non-weapon-37.json";
+
+async function readBulkCampaign(env) {
+  const object = await requireBucket(env).get(BULK_KEY);
+  return object ? object.json() : null;
+}
+
+async function saveBulkCampaign(campaign, env) {
+  campaign.updatedAt = new Date().toISOString();
+  await requireBucket(env).put(BULK_KEY, JSON.stringify(campaign));
+}
+
+async function bulkCampaignStatus(env) {
+  const campaign = await readBulkCampaign(env);
+  if (!campaign) return { status: "not_started" };
+  return {
+    status: campaign.cursor >= campaign.issues.length ? "completed" : "running",
+    total: campaign.issues.length,
+    completed: campaign.cursor,
+    currentIssue: campaign.issues[campaign.cursor] || null,
+    currentJobId: campaign.jobId || null,
+    currentJobStatus: campaign.jobStatus || null,
+    submittedCount: campaign.submittedCount || 0,
+    variantCount: STYLE_CATALOG.length,
+    errors: campaign.errors || {},
+    startedAt: campaign.startedAt,
+    updatedAt: campaign.updatedAt,
+  };
+}
+
+async function initializeBulkCampaign(env) {
+  const issues = [];
+  for (let pageNumber = 1; pageNumber <= 10; pageNumber += 1) {
+    const query = new URLSearchParams({
+      state: "open",
+      labels: "ASSET",
+      per_page: "100",
+      page: String(pageNumber),
+    });
+    const rows = await githubJson(`/repos/${OWNER}/${REPOSITORY}/issues?${query}`, env);
+    if (!Array.isArray(rows))
+      throw makePipelineError("GitHub returned an invalid issue list.", 502);
+    issues.push(
+      ...rows.filter(
+        (row) => !row.pull_request && parseAssetIssue(row).kind.toLowerCase() !== "weapon"
+      )
+    );
+    if (rows.length < 100) break;
+  }
+  const pending = [];
+  for (let offset = 0; offset < issues.length; offset += 12) {
+    const batch = issues.slice(offset, offset + 12);
+    const summaries = await Promise.all(
+      batch.map((issue) => issueArtworkSummary(issue.number, env))
+    );
+    batch.forEach((issue, index) => {
+      if (!summaries[index].hasDrafts) pending.push(issue.number);
+    });
+  }
+  const campaign = {
+    issues: pending.sort((a, b) => a - b),
+    cursor: 0,
+    errors: {},
+    startedAt: new Date().toISOString(),
+  };
+  await saveBulkCampaign(campaign, env);
+  return campaign;
+}
+
+async function advanceBulkCampaign(env) {
+  if (!env.OPENAI_API_KEY || !env.GITHUB_TOKEN)
+    throw makePipelineError("OpenAI and GitHub secrets are required for the batch.", 503);
+  const campaign = (await readBulkCampaign(env)) || (await initializeBulkCampaign(env));
+  if (campaign.cursor >= campaign.issues.length) return bulkCampaignStatus(env);
+  const number = campaign.issues[campaign.cursor];
+  try {
+    const { parsed } = await getIssue(number, env);
+    if (parsed.kind.toLowerCase() === "weapon") {
+      campaign.cursor += 1;
+      campaign.jobId = null;
+      await saveBulkCampaign(campaign, env);
+      return bulkCampaignStatus(env);
+    }
+    if (!parsed.ready) throw makePipelineError(parsed.errors.join(" "), 422);
+    const runs = await getRuns(number, env);
+    const complete = runs.find((run) => run.candidates?.length >= STYLE_CATALOG.length);
+    if (complete) {
+      if (!complete.draftUrl || complete.gitError) await syncDraftRun(number, complete, env);
+      campaign.cursor += 1;
+      campaign.jobId = null;
+      campaign.jobStatus = null;
+      campaign.submittedCount = 0;
+      delete campaign.errors[number];
+      await saveBulkCampaign(campaign, env);
+      return bulkCampaignStatus(env);
+    }
+    let job;
+    if (campaign.jobId) {
+      const object = await requireBucket(env).get(jobKey(number, campaign.jobId));
+      job = object ? await object.json() : null;
+    }
+    if (!job) {
+      const existing = (await issueJobs(number, env)).find(
+        (entry) =>
+          entry.type === "draft" &&
+          entry.variantCount === STYLE_CATALOG.length &&
+          ["starting", "in_progress", "completed"].includes(entry.status)
+      );
+      if (existing) {
+        const object = await requireBucket(env).get(jobKey(number, existing.id));
+        job = object ? await object.json() : null;
+      }
+    }
+    if (!job) {
+      if (!parsed.styleSwappable)
+        throw makePipelineError("Issue prompt cannot use the 37 named visual styles.", 422);
+      const stylePlan = STYLE_CATALOG.map((style) => ({ styleId: style.id, count: 1 }));
+      const { signature } = await assembleDrafts(parsed.prompt, { stylePlan }, parsed.orientation);
+      job = await startDraftJob(
+        number,
+        { prompt: parsed.prompt, stylePlan, promptSignature: signature },
+        env
+      );
+    } else if (job.status === "completed") {
+      const run = await readManifest(requireBucket(env), number, job.runId);
+      if (run.failures?.length) job = await retryDraftJob(number, job.id, env);
+      else if (!run.draftUrl || run.gitError) await syncDraftRun(number, run, env);
+    } else if (job.status === "failed") {
+      throw makePipelineError(job.error || "All drafts failed.", 502);
+    } else {
+      job = await advanceJob(job, env);
+    }
+    campaign.jobId = job.id;
+    campaign.jobStatus = job.status;
+    campaign.submittedCount = job.requests?.filter((request) => request.responseId).length || 0;
+    delete campaign.errors[number];
+  } catch (error) {
+    campaign.errors[number] = String(error.message || error).slice(0, 260);
+  }
+  await saveBulkCampaign(campaign, env);
+  return bulkCampaignStatus(env);
+}
+
+function mcpResponse(id, result) {
+  return jsonResponse({ jsonrpc: "2.0", id, result });
+}
+
+async function handleMcp(request, env) {
+  if (request.method !== "POST") return new Response("Method not allowed", { status: 405 });
+  const message = await request.json().catch(() => ({}));
+  if (message.method === "initialize")
+    return mcpResponse(message.id, {
+      protocolVersion: "2025-03-26",
+      capabilities: { tools: {} },
+      serverInfo: { name: "dnd-asset-pipeline", version: "1.0.0" },
+    });
+  if (message.method === "notifications/initialized") return new Response(null, { status: 202 });
+  if (message.method === "tools/list")
+    return mcpResponse(message.id, {
+      tools: [
+        {
+          name: "draft_batch_status",
+          description: "Read progress of the 37-style non-weapon asset issue batch.",
+          inputSchema: { type: "object", properties: {} },
+        },
+        {
+          name: "draft_batch_step",
+          description:
+            "Start or resume one saved step of the 37-style non-weapon asset issue batch. Call repeatedly, no more than once a minute during submission, until completed. Images and run metadata are committed to GitHub main.",
+          inputSchema: { type: "object", properties: {} },
+        },
+      ],
+    });
+  if (
+    message.method !== "tools/call" ||
+    !["draft_batch_status", "draft_batch_step"].includes(message.params?.name)
+  )
+    return jsonResponse({
+      jsonrpc: "2.0",
+      id: message.id,
+      error: { code: -32601, message: "Method not found" },
+    });
+  const email = request.headers.get("oai-authenticated-user-email")?.toLowerCase();
+  if (!email) return new Response("Sign in to the Asset Pipeline.", { status: 401 });
+  if (!env.PIPELINE_OWNER_EMAIL || email !== env.PIPELINE_OWNER_EMAIL.toLowerCase())
+    return new Response("Only the Site owner can run this batch.", { status: 403 });
+  try {
+    const status =
+      message.params.name === "draft_batch_step"
+        ? await advanceBulkCampaign(env)
+        : await bulkCampaignStatus(env);
+    return mcpResponse(message.id, { content: [{ type: "text", text: JSON.stringify(status) }] });
+  } catch (error) {
+    return mcpResponse(message.id, {
+      isError: true,
+      content: [{ type: "text", text: String(error.message || error).slice(0, 300) }],
+    });
+  }
+}
+
 async function makeDrafts(number, body, env) {
   const bucket = requireBucket(env);
   if (!env.OPENAI_API_KEY)
@@ -3145,6 +3345,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     try {
+      if (url.pathname === "/mcp") return await handleMcp(request, env || {});
       if (url.pathname.startsWith("/api/")) return await handleApi(request, env || {}, url);
       if (url.pathname === "/favicon.ico" || url.pathname === "/favicon.svg") {
         return new Response(
