@@ -102,7 +102,8 @@ describe("<CharacterBuilderPage />", () => {
       });
       click("Put it back");
       await vi.waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
-      expect(document.activeElement).toBe(button("Zoom Greatsword"));
+      // focus returns in a passive cleanup, a tick after the dialog leaves the DOM
+      await vi.waitFor(() => expect(document.activeElement).toBe(button("Zoom Greatsword")));
       expect(checkbox("Greatsword").checked).toBe(false);
       screen.getByText("3 of 3 chosen");
     });
