@@ -3138,6 +3138,22 @@ Closes #${number}`,
 
 async function handleApi(request, env, url) {
   const path = url.pathname;
+  if (path === "/api/bulk/status" || path === "/api/bulk/step") {
+    const email = request.headers.get("oai-authenticated-user-email")?.toLowerCase();
+    const owner =
+      email && env.PIPELINE_OWNER_EMAIL && email === env.PIPELINE_OWNER_EMAIL.toLowerCase();
+    const service =
+      !email &&
+      env.BULK_SERVICE_TOKEN &&
+      request.headers.get("x-batch-token") === env.BULK_SERVICE_TOKEN;
+    if (!owner && !service)
+      throw makePipelineError("Batch access is restricted to the Site owner.", 403);
+    if (path === "/api/bulk/status" && request.method === "GET")
+      return jsonResponse(await bulkCampaignStatus(env));
+    if (path === "/api/bulk/step" && request.method === "POST")
+      return jsonResponse(await advanceBulkCampaign(env));
+    return jsonResponse({ error: "Method not allowed." }, 405);
+  }
   if (path === "/api/health" && request.method === "GET") {
     return jsonResponse({
       openAI: Boolean(env.OPENAI_API_KEY),

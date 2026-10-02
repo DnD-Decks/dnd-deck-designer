@@ -76,6 +76,7 @@ test("owner batch starts 37 styles for draftless non-weapon issues and persists 
     OPENAI_API_KEY: "mock-openai",
     GITHUB_TOKEN: "mock-github",
     PIPELINE_OWNER_EMAIL: "owner@example.com",
+    BULK_SERVICE_TOKEN: "mock-service-token",
   };
   const call = async (name, email = "owner@example.com") =>
     worker.fetch(
@@ -107,6 +108,19 @@ test("owner batch starts 37 styles for draftless non-weapon issues and persists 
       JSON.parse((await read.json()).result.content[0].text).currentJobId,
       status.currentJobId
     );
+    const serviceStatus = await worker.fetch(
+      new Request("https://pipeline.example/api/bulk/status", {
+        headers: { "x-batch-token": "mock-service-token" },
+      }),
+      env
+    );
+    assert.equal(serviceStatus.status, 200);
+    assert.equal((await serviceStatus.json()).currentIssue, 101);
+    const rejected = await worker.fetch(
+      new Request("https://pipeline.example/api/bulk/step", { method: "POST" }),
+      env
+    );
+    assert.equal(rejected.status, 403);
   } finally {
     globalThis.fetch = previousFetch;
   }
