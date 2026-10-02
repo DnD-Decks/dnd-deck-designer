@@ -108,5 +108,7 @@ test("Escape from a card reached with the arrows returns focus to that card", as
   fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
 
   await waitForElementToBeRemoved(() => screen.queryByRole("dialog"), { timeout: 3000 });
-  expect(document.activeElement).toBe(screen.getByRole("button", { name: "Zoom Blade Ward" }));
+  await vi.waitFor(() =>
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Zoom Blade Ward" }))
+  );
 });

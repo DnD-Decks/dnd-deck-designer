@@ -1,183 +1,359 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  width: 100%;
-  max-width: 40rem;
+  gap: 1.5rem;
   min-width: 0;
 }
 
-.page h2,
-.page h3,
-.page p {
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.title {
   margin: 0;
-}
-
-.page h2,
-.page h3 {
   font-family: var(--font-caps);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--parchment);
 }
 
-.page button,
-.page a {
-  color: var(--gold-soft);
-  font: inherit;
+.cancel {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--text-mid);
 }
 
-.page button {
-  min-height: 44px;
-  border: 1px solid var(--ink-line);
-  border-radius: 6px;
-  background: var(--ink-800);
-  cursor: pointer;
-}
-
-.page button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.page :focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
+.cancel:hover {
+  color: var(--text-hi);
 }
 
 .steps {
   display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  list-style: none;
+  gap: 1.25rem;
   margin: 0;
   padding: 0;
-  color: var(--text-mid);
+  list-style: none;
+  font-family: var(--font-caps);
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  color: var(--text-low);
+}
+
+.steps li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.stepNumber {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
 }
 
 .steps [aria-current="step"] {
-  color: var(--gold-soft);
-  border-bottom: 2px solid var(--gold);
+  color: var(--parchment);
 }
 
-.classes {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.5rem;
-}
-
-.classes button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-}
-
-.classes [aria-pressed="true"] {
+.steps [aria-current="step"] .stepNumber {
   border-color: var(--gold);
-  background: var(--ink-700);
+  background: var(--gold);
+  color: var(--ink-900);
 }
 
-.icon {
-  width: 32px;
-  height: 32px;
+/* the step's own heading is for focus and screen readers; the numbered list already shows it */
+.stepTitle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.hint {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-mid);
 }
 
 .group {
   min-width: 0;
   margin: 0;
-  padding: 0.75rem;
-  border: 1px solid var(--ink-line);
-  border-radius: 8px;
+  padding: 0;
+  border: 0;
 }
 
-.group legend {
-  font-weight: bold;
+/* float pulls the legend into the flow so it lines up with the tally beside it */
+.legend {
+  float: left;
+  padding: 0;
+  font-family: var(--font-caps);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--parchment);
 }
 
-.group output {
-  display: block;
-  margin-top: 0.5rem;
+.tally {
+  float: right;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-style: italic;
+  font-variant-numeric: tabular-nums;
+  line-height: 28px;
   color: var(--gold-soft);
 }
 
-.options {
-  list-style: none;
-  padding: 0;
-  margin: 0.5rem 0 0;
+.group .hint {
+  clear: both;
+  font-size: 13px;
 }
 
-.option {
+/* a hand of cards: swipe on a phone, spread out on a table */
+.hand {
   display: flex;
-  align-items: center;
-  border-top: 1px solid var(--ink-line);
+  gap: 1rem;
+  padding: 24px 16px 18px 4px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 4px;
+  scrollbar-color: var(--ink-line) transparent;
+  scrollbar-width: thin;
 }
 
-.check {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 44px;
-  min-height: 56px;
+.slot {
+  position: relative;
+  flex: none;
+  border-radius: 8px;
+  scroll-snap-align: start;
+  transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* the checkbox is the card's whole face: tap the card to choose it */
+.pick {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  margin: 0;
+  appearance: none;
+  border: 0;
+  border-radius: 8px;
+  background: none;
   cursor: pointer;
 }
 
-.check input {
-  width: 22px;
-  height: 22px;
-  accent-color: var(--gold);
+.pick:disabled {
+  cursor: not-allowed;
 }
 
-.details {
+/* a lens in the card's corner lifts it into the spotlight, without choosing it */
+.zoom {
+  position: absolute;
+  top: 46px;
+  right: 8px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border: 1px solid color-mix(in srgb, var(--gold) 60%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ink-900) 82%, transparent)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f0e8' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6'/%3E%3Cpath d='M15 15l5 5'/%3E%3C/svg%3E")
+    center / 18px no-repeat;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  cursor: zoom-in;
+}
+
+.zoom:hover {
+  border-color: var(--gold);
+}
+
+.zoom:focus-visible {
+  outline: 2px solid var(--gold-soft);
+  outline-offset: 2px;
+}
+
+.slot:has(.pick:focus-visible) {
+  outline: 2px solid var(--gold-soft);
+  outline-offset: 4px;
+}
+
+.slot:has(.pick:not(:disabled)):hover {
+  transform: translateY(-3px);
+}
+
+.slot:has(.pick:checked) {
+  transform: translateY(-8px);
+  box-shadow: 0 0 0 2px var(--gold), 0 0 22px color-mix(in srgb, var(--gold) 45%, transparent), 0
+    14px 22px rgba(0, 0, 0, 0.55);
+}
+
+/* the full hand: the cards left out sink into the mat */
+.slot:has(.pick:disabled) {
+  filter: grayscale(0.75) brightness(0.55);
+}
+
+/* a gold seal pressed onto each chosen card */
+.slot:has(.pick:checked)::after {
+  content: "✓";
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ecd77a, var(--gold) 55%, #7a6410);
+  box-shadow: inset 0 0 0 2px rgba(22, 24, 29, 0.35), 0 3px 6px rgba(0, 0, 0, 0.6);
+  font-family: var(--font-caps);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink-900);
+  pointer-events: none;
+  animation: stamp 0.22s ease-out;
+}
+
+@keyframes stamp {
+  from {
+    opacity: 0;
+    transform: scale(1.6) rotate(-12deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.tray {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
   display: flex;
   flex-direction: column;
-  min-width: 0;
-  padding-bottom: 0.5rem;
+  gap: 0.5rem;
+  /* bleeds over the root's side and bottom padding to sit flush with the viewport */
+  margin: 0 -2rem -4rem;
+  padding: 0.9rem 2rem calc(1rem + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--ink-line);
+  background: color-mix(in srgb, var(--ink-900) 92%, transparent);
+  backdrop-filter: blur(6px);
 }
 
-.page .preview {
-  text-align: left;
-  border: none;
-  padding: 0;
-  background: none;
-}
-
-.stat,
-.missing {
+.status {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 15px;
   color: var(--text-mid);
 }
 
-.stat {
-  overflow-wrap: anywhere;
+.status[data-ready] {
+  color: var(--gold-soft);
 }
 
-.missing ul {
-  margin: 0.5rem 0 0;
-  padding-left: 1.25rem;
+.nameLabel {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-mid);
+}
+
+.buildRow {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .name {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   min-height: 44px;
-  padding: 0.5rem;
+  padding: 0.5rem 0.75rem;
   border: 1px solid var(--ink-line);
   border-radius: 6px;
   background: var(--ink-800);
   color: var(--text-hi);
-  font: inherit;
+  font-family: var(--font-serif);
+  font-size: 17px;
 }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
+.build {
+  margin-left: auto;
+  min-height: 44px;
+  padding: 0 1.1rem;
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  background: linear-gradient(#23527e, var(--card-blue));
+  color: #fff;
+  font-family: var(--font-caps);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
 }
 
-.actions button,
-.actions a {
-  padding: 0.75rem;
+.back {
+  min-height: 44px;
+  padding: 0 1rem;
+  border: 1px solid var(--ink-line);
+  border-radius: 6px;
+  background: var(--ink-800);
+  color: var(--text-hi);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  cursor: pointer;
 }
 
-@media (min-width: 600px) {
-  .classes {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+.build:disabled {
+  border-color: var(--ink-line);
+  background: var(--ink-800);
+  color: var(--text-low);
+  cursor: not-allowed;
+}
+
+.name:focus-visible,
+.build:focus-visible,
+.back:focus-visible,
+.cancel:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+@media (min-width: 720px) {
+  .hand {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  .buildRow {
+    max-width: 36rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .tray {
+    margin: 0 -1rem -3rem;
+    padding-inline: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slot {
+    transition: none;
+  }
+
+  .slot:has(.pick:checked)::after {
+    animation: none;
   }
 }

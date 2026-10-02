@@ -1,7 +1,9 @@
-import { useId } from "react";
-import type { BuilderPreviewSelection } from "src/characters/character-builder-preview.component";
+import { useId, useRef, useState } from "react";
+import { CardSpotlight } from "src/cards/card-spotlight.component";
+import { SpellCard } from "src/cards/spell-card.component";
+import { WeaponCard } from "src/cards/weapon-card.component";
 import type { Picks } from "src/characters/character.model";
-import type { ChoiceRule } from "src/characters/choices.model";
+import type { ChoiceRule, ChoiceSource } from "src/characters/choices.model";
 import { choices } from "src/characters/choices.model";
 import type { CharacterClass } from "src/models/class/classes.model";
 import { weapons } from "src/models/gear/weapons.model";
@@ -12,9 +14,9 @@ export type ChoiceSelection = { ruleId: ChoiceRule["id"]; ids: readonly string[]
 
 type BuilderChoicesProps = {
   cls: CharacterClass;
+  kind: ChoiceSource["kind"];
   picks: Picks;
   onChange: (selection: ChoiceSelection) => void;
-  onPreview: (preview: BuilderPreviewSelection) => void;
 };
 
 type ChoiceGroupProps = {
@@ -22,110 +24,124 @@ type ChoiceGroupProps = {
   rule: ChoiceRule;
   picked: readonly string[];
   onChange: (ids: readonly string[]) => void;
-  onPreview: (preview: BuilderPreviewSelection) => void;
 };
 
-function choiceDescription(rule: ChoiceRule) {
-  if (rule.optional) return `Optional — choose up to ${rule.pick}.`;
-  return `Choose ${rule.pick}.`;
-}
+type Held = { index: number; trigger: HTMLButtonElement };
 
-type ChoiceDetailsInput = { id: string; kind: ChoiceRule["from"]["kind"] };
-
-function choiceDetails({ id, kind }: ChoiceDetailsInput) {
+function choiceCard({ id, kind }: { id: string; kind: ChoiceRule["from"]["kind"] }) {
   const weapon = kind === "weapon" ? weapons.find({ id }) : undefined;
-  const spell = kind === "spell" ? spells.get({ id }) : undefined;
-  const name = weapon?.name ?? spell?.name ?? id;
-  const stat = weapon
-    ? `${weapon.damage.dice} · ${weapon.mastery}`
-    : `${spell?.school} · ${spell?.castingTime}`;
-  return { name, stat };
+  if (weapon) return { name: weapon.name, card: <WeaponCard weapon={weapon} /> };
+  const spell = spells.get({ id });
+  return { name: spell.name, card: <SpellCard spell={spell} /> };
 }
 
-type ChoiceOptionProps = Omit<ChoiceGroupProps, "cls"> & { id: string };
+type ChoiceSlotProps = Omit<ChoiceGroupProps, "cls"> & {
+  id: string;
+  zoomTriggers: Map<string, HTMLButtonElement>;
+  onZoom: () => void;
+};
 
-function ChoiceOption({ id, rule, picked, onChange, onPreview }: ChoiceOptionProps) {
-  const { name, stat } = choiceDetails({ id, kind: rule.from.kind });
+function ChoiceSlot({ id, rule, picked, zoomTriggers, onChange, onZoom }: ChoiceSlotProps) {
+  const { name, card } = choiceCard({ id, kind: rule.from.kind });
   const checked = picked.includes(id);
   const disabled = !checked && picked.length >= rule.pick;
 
-  const toggle = () => {
-    const updated = checked ? picked.filter((pick) => pick !== id) : [...picked, id];
-    onChange(updated);
-  };
+  const toggle = () => onChange(checked ? picked.filter((pick) => pick !== id) : [...picked, id]);
 
   return (
-    <li className={styles.option}>
-      <label className={styles.check}>
-        <input
-          type="checkbox"
-          aria-label={name}
-          checked={checked}
-          disabled={disabled}
-          onChange={toggle}
-        />
-      </label>
-      <div className={styles.details}>
-        <button
-          type="button"
-          className={styles.preview}
-          aria-label={`Preview ${name}`}
-          onClick={(event) => onPreview({ kind: rule.from.kind, id, trigger: event.currentTarget })}
-        >
-          {name}
-        </button>
-        <span className={styles.stat}>{stat}</span>
-      </div>
-    </li>
+    <div className={styles.slot}>
+      {card}
+      <input
+        type="checkbox"
+        className={styles.pick}
+        aria-label={name}
+        checked={checked}
+        disabled={disabled}
+        onChange={toggle}
+      />
+      <button
+        type="button"
+        className={styles.zoom}
+        aria-label={`Zoom ${name}`}
+        ref={(element) => {
+          if (element) zoomTriggers.set(id, element);
+          return () => {
+            zoomTriggers.delete(id);
+          };
+        }}
+        onClick={onZoom}
+      />
+    </div>
   );
 }
 
-function ChoiceGroup({ cls, rule, picked, onChange, onPreview }: ChoiceGroupProps) {
-  const descriptionId = useId();
+function ChoiceGroup({ cls, rule, picked, onChange }: ChoiceGroupProps) {
+  const hintId = useId();
   const options = choices.options({ cls, rule });
+  const hint = rule.optional ? `Optional — choose up to ${rule.pick}.` : `Choose ${rule.pick}.`;
+  const zoomTriggers = useRef(new Map<string, HTMLButtonElement>());
+  const [held, setHeld] = useState<Held | null>(null);
+  const heldId = held && options[held.index];
+  const heldCard = heldId && choiceCard({ id: heldId, kind: rule.from.kind });
+
+  const hold = (index: number) => {
+    const id = options[index];
+    const trigger = id && zoomTriggers.current.get(id);
+    if (trigger) setHeld({ index, trigger });
+  };
+
+  const neighbour = (index: number) => {
+    const id = options[index];
+    if (!id) return undefined;
+    return { name: choiceCard({ id, kind: rule.from.kind }).name, hold: () => hold(index) };
+  };
 
   return (
-    <fieldset className={styles.group} aria-describedby={descriptionId}>
-      <legend>{rule.label}</legend>
-      <p id={descriptionId}>{choiceDescription(rule)}</p>
-      <output aria-live="polite">
+    <fieldset className={styles.group} aria-describedby={hintId}>
+      <legend className={styles.legend}>{rule.label}</legend>
+      <output className={styles.tally} aria-live="polite">
         {picked.length} of {rule.pick} chosen
       </output>
-      <ul className={styles.options}>
-        {options.map((id) => (
-          <ChoiceOption
+      <p id={hintId} className={styles.hint}>
+        {hint}
+      </p>
+      <div className={styles.hand}>
+        {options.map((id, index) => (
+          <ChoiceSlot
             key={id}
             id={id}
             rule={rule}
             picked={picked}
+            zoomTriggers={zoomTriggers.current}
             onChange={onChange}
-            onPreview={onPreview}
+            onZoom={() => hold(index)}
           />
         ))}
-      </ul>
+      </div>
+      {held && heldCard && (
+        <CardSpotlight
+          label={heldCard.name}
+          liftedFrom={held.trigger}
+          previous={neighbour(held.index - 1)}
+          next={neighbour(held.index + 1)}
+          onClose={() => setHeld(null)}
+        >
+          {heldCard.card}
+        </CardSpotlight>
+      )}
     </fieldset>
   );
 }
 
-/**
- * Renders the class's level-one choices and independent card previews.
- * - Required and optional groups both enforce their selection limits.
- * Throws on no expected input.
- */
-export function BuilderChoices({ cls, picks, onChange, onPreview }: BuilderChoicesProps) {
-  const rules = choices.for({ cls, level: 1 });
-  return (
-    <>
-      {rules.map((rule) => (
-        <ChoiceGroup
-          key={`${cls}-${rule.id}`}
-          cls={cls}
-          rule={rule}
-          picked={picks[rule.id] ?? []}
-          onChange={(ids) => onChange({ ruleId: rule.id, ids })}
-          onPreview={onPreview}
-        />
-      ))}
-    </>
-  );
+export function BuilderChoices({ cls, kind, picks, onChange }: BuilderChoicesProps) {
+  const rules = choices.for({ cls, level: 1 }).filter((rule) => rule.from.kind === kind);
+  return rules.map((rule) => (
+    <ChoiceGroup
+      key={`${cls}-${rule.id}`}
+      cls={cls}
+      rule={rule}
+      picked={picks[rule.id] ?? []}
+      onChange={(ids) => onChange({ ruleId: rule.id, ids })}
+    />
+  ));
 }
