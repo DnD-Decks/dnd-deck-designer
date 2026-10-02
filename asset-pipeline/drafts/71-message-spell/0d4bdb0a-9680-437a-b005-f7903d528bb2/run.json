@@ -384,6 +384,20 @@
   ],
   "failures": [],
   "finalVersions": {},
-  "tweaks": [],
+  "tweaks": [
+    {
+      "key": "issues/71/runs/0d4bdb0a-9680-437a-b005-f7903d528bb2/tweak-5-f6142677-5535-4736-871a-ee189d691aeb.jpg",
+      "width": 720,
+      "height": 1008,
+      "quality": "low",
+      "model": "gpt-image-2.5-flare",
+      "createdAt": "2026-10-02T21:11:55.303Z",
+      "candidateId": 5,
+      "tuning": "The ribbon lands on the ear of the recipient",
+      "generationPrompt": "Edit the supplied draft with this specific change: The ribbon lands on the ear of the recipient\n\nKeep its composition, visual style, and main subject unless the edit asks otherwise. Preserve the exact 720 × 1008 aspect and create an independent illustration without card borders, text, or UI.",
+      "sourceKey": "issues/71/runs/0d4bdb0a-9680-437a-b005-f7903d528bb2/candidate-5.jpg",
+      "format": "jpeg"
+    }
+  ],
   "submissions": {}
 }
