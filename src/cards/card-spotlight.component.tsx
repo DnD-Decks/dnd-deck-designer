@@ -118,8 +118,7 @@ export function CardSpotlight({ label, liftedFrom, previous, next, onClose, chil
     returnFocusTo.current = liftedFrom;
   }, [liftedFrom]);
 
-  // layout, not passive: a passive cleanup runs after the dialog leaves the DOM, so focus would drop to <body> in between
-  useLayoutEffect(() => {
+  useEffect(() => {
     const matOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     stage.current?.focus();
