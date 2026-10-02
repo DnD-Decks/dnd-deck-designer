@@ -38,6 +38,7 @@ test("card art is a decorative background that disappears when the file is missi
   expect(art.getAttribute("src")).toBe("/art/fire-bolt.png");
 
   fireEvent.error(art);
+  fireEvent.error(screen.getByRole("presentation", { hidden: true }));
   expect(screen.queryByRole("presentation", { hidden: true })).toBeNull();
   // the card itself is unaffected
   screen.getByRole("article", { name: /fire bolt/i });

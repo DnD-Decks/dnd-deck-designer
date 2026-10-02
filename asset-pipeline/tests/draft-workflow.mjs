@@ -60,7 +60,7 @@ const issue = {
   ].join("\n"),
 };
 
-test("custom prompt produces valid previews, commits each run to the issue folder, and guides the final edit", async () => {
+test("drafts and low quality edits are archived and submitted from reviewed images", async () => {
   const previousFetch = globalThis.fetch;
   const objects = new Map();
   const blobs = [];
@@ -73,8 +73,6 @@ test("custom prompt produces valid previews, commits each run to the issue folde
   let mainSha = "main-commit";
   let concurrentUpdate = true;
   let branchCreations = 0;
-  let editPrompt = "";
-  const editPrompts = [];
   const backgroundResponses = new Map();
   let rateLimitOnce = false;
   const bucket = {
@@ -115,11 +113,6 @@ test("custom prompt produces valid previews, commits each run to the issue folde
       imageRequests.push(params);
       return reply({ data: [{ b64_json: Buffer.from(jpeg(720, 1008)).toString("base64") }] });
     }
-    if (path === "/v1/images/edits") {
-      editPrompt = options.body.get("prompt");
-      editPrompts.push(editPrompt);
-      return reply({ data: [{ b64_json: Buffer.from(png(800, 1120)).toString("base64") }] });
-    }
     if (path === "/v1/responses") {
       const body = JSON.parse(options.body);
       if (body.background && body.tools?.[0]?.type === "image_generation") {
@@ -137,15 +130,12 @@ test("custom prompt produces valid previews, commits each run to the issue folde
         backgroundPrompts.push(body.input[0].content[0].text);
         assert.equal(body.store, true);
         assert.equal(body.tool_choice.type, "image_generation");
-        assert.ok(["gpt-image-2.5-flare", "gpt-image-2.5-sunburst"].includes(body.tools[0].model));
-        assert.ok(["low", "medium", "high"].includes(body.tools[0].quality));
+        assert.equal(body.tools[0].model, "gpt-image-2.5-flare");
+        assert.equal(body.tools[0].quality, "low");
+        assert.equal(body.tools[0].output_format, "jpeg");
+        assert.equal(body.tools[0].size, "720x1008");
         const id = `resp_${backgroundResponses.size + 1}`;
-        const image =
-          body.tools[0].output_format === "jpeg"
-            ? jpeg(720, 1008)
-            : body.tools[0].size === "1200x1680"
-              ? png(1200, 1680)
-              : png(800, 1120);
+        const image = jpeg(720, 1008);
         backgroundResponses.set(id, {
           polls: 0,
           status: "completed",
@@ -395,104 +385,37 @@ test("custom prompt produces valid previews, commits each run to the issue folde
     assert.equal(audioResponse.status, 200);
     assert.equal((await audioResponse.json()).text, "A fireball with no caster");
 
-    const finalResponse = await worker.fetch(
-      new Request("https://pipeline.example/api/issues/190/finals", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ runId: first.runId, candidateId: 1 }),
-      }),
-      env
-    );
-    assert.equal(finalResponse.status, 200, await finalResponse.clone().text());
-    const firstFinal = (await finalResponse.json()).final;
-    assert.ok(
-      trees
-        .at(-1)
-        .tree.some(({ path }) =>
-          path.endsWith(`/${first.runId}/${firstFinal.key.split("/").at(-1)}`)
-        )
-    );
-    assert.ok(trees.at(-1).tree.some(({ path }) => path.endsWith(`/${first.runId}/run.json`)));
-    assert.match(editPrompt, /Customized illustration with one raven/);
-    assert.doesNotMatch(editPrompt, /Different illustrated scene/);
-    assert.match(editPrompt, /do not add them back/);
-    const tunedResponse = await worker.fetch(
-      new Request("https://pipeline.example/api/issues/190/finals", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          runId: first.runId,
-          candidateId: 1,
-          tuning: "Make the blade straight.",
-        }),
-      }),
-      env
-    );
-    assert.equal(tunedResponse.status, 200, await tunedResponse.clone().text());
-    assert.equal(editPrompts.length, 2);
-    assert.match(editPrompts[1], /Make the blade straight/);
-    assert.equal((await tunedResponse.json()).run.finalVersions["1"].length, 2);
-    assert.equal(
-      trees.at(-1).tree.filter(({ path }) => path.includes(`/${first.runId}/final-`)).length,
-      2
-    );
-    const storedManifest = JSON.parse(objects.get(first.manifestKey));
-    assert.deepEqual(
-      storedManifest.archivedFinalKeys.sort(),
-      storedManifest.finalVersions["1"].map(({ key }) => key).sort()
-    );
-    storedManifest.archivedFinalKeys = undefined;
-    objects.set(first.manifestKey, JSON.stringify(storedManifest));
-    const archiveResponse = await worker.fetch(
-      new Request(`https://pipeline.example/api/issues/190/runs/${first.runId}/sync`, {
-        method: "POST",
-      }),
-      env
-    );
-    assert.equal(archiveResponse.status, 200);
-    assert.equal((await archiveResponse.json()).run.archivedFinalKeys.length, 2);
-    const runsResponse = await worker.fetch(
-      new Request("https://pipeline.example/api/issues/190/runs"),
-      env
-    );
-    const savedRuns = (await runsResponse.json()).runs;
-    assert.equal(savedRuns.length, 2);
-    assert.equal(savedRuns.find(({ runId }) => runId === first.runId).finalVersions["1"].length, 2);
-    const restoreResponse = await worker.fetch(
-      new Request("https://pipeline.example/api/issues/190/final-selection", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ runId: first.runId, candidateId: 1, key: firstFinal.key }),
-      }),
-      env
-    );
-    assert.equal(restoreResponse.status, 200);
-    assert.equal((await restoreResponse.json()).final.key, firstFinal.key);
-    const prResponse = await worker.fetch(
+    const direct = await worker.fetch(
       new Request("https://pipeline.example/api/issues/190/pull-requests", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ runId: first.runId, candidateId: 1 }),
+        body: JSON.stringify({ runId: first.runId, candidateId: 2, key: first.candidates[1].key }),
       }),
       env
     );
-    assert.equal(prResponse.status, 200, await prResponse.clone().text());
-    assert.equal((await prResponse.json()).final.prNumber, 999);
-    assert.equal(comments.length, 1);
-    assert.ok(comments[0].body.includes(firstFinal.generationPrompt));
-    const retryPr = await worker.fetch(
+    assert.equal(direct.status, 200, await direct.clone().text());
+    assert.equal((await direct.json()).submission.prNumber, 999);
+    assert.ok(trees.at(-1).tree.some(({ path }) => path === "public/art/vex.jpg"));
+    assert.ok(comments[0].body.includes(first.candidates[1].generationPrompt));
+    const directRetry = await worker.fetch(
       new Request("https://pipeline.example/api/issues/190/pull-requests", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ runId: first.runId, candidateId: 1 }),
+        body: JSON.stringify({ runId: first.runId, candidateId: 2, key: first.candidates[1].key }),
       }),
       env
     );
-    assert.equal(retryPr.status, 200);
+    assert.equal(directRetry.status, 200);
     assert.equal(comments.length, 1);
-    assert.ok(trees.at(-1).tree.some(({ path }) => path === "public/art/vex.png"));
-    assert.equal(branchCreations, 1);
-    assert.deepEqual(refs, [`refs/heads/asset/issue-190-vex-${first.runId.slice(0, 8)}-c1`]);
+    const invalidImage = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/pull-requests", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ runId: first.runId, candidateId: 1, key: "unrelated.jpg" }),
+      }),
+      env
+    );
+    assert.equal(invalidImage.status, 400);
 
     const draftJobResponse = await worker.fetch(
       new Request("https://pipeline.example/api/issues/190/jobs", {
@@ -530,88 +453,86 @@ test("custom prompt produces valid previews, commits each run to the issue folde
       JSON.parse(objects.get(`issues/190/jobs/${fourDraftJob.id}.json`)).requests.length,
       4
     );
-    const finalJobResponse = await worker.fetch(
+    const source = JSON.parse(objects.get(`issues/190/runs/${draftJob.runId}/manifest.json`))
+      .candidates[0];
+    const tweakResponse = await worker.fetch(
       new Request("https://pipeline.example/api/issues/190/jobs", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          type: "final",
+          type: "tweak",
           runId: draftJob.runId,
           candidateId: 1,
+          sourceKey: source.key,
           tuning: "Warmer light",
-          mode: "fast",
         }),
       }),
       env
     );
-    assert.equal(finalJobResponse.status, 202, await finalJobResponse.clone().text());
-    const finalJob = (await finalJobResponse.json()).job;
-    const pendingFinal = await worker.fetch(
-      new Request(`https://pipeline.example/api/issues/190/jobs/${finalJob.id}`),
-      env
+    assert.equal(tweakResponse.status, 202, await tweakResponse.clone().text());
+    const tweakJob = (await tweakResponse.json()).job;
+    const submittedTweak = JSON.parse(objects.get(`issues/190/jobs/${tweakJob.id}.json`));
+    assert.equal(submittedTweak.model, "gpt-image-2.5-flare");
+    assert.equal(submittedTweak.quality, "low");
+    assert.match(backgroundPrompts.at(-1), /Warmer light/);
+    assert.equal(
+      (
+        await (
+          await worker.fetch(
+            new Request(`https://pipeline.example/api/issues/190/jobs/${tweakJob.id}`),
+            env
+          )
+        ).json()
+      ).job.status,
+      "in_progress"
     );
-    assert.equal((await pendingFinal.json()).job.status, "in_progress");
-    const completedFinal = await worker.fetch(
-      new Request(`https://pipeline.example/api/issues/190/jobs/${finalJob.id}`),
-      env
+    assert.equal(
+      (
+        await (
+          await worker.fetch(
+            new Request(`https://pipeline.example/api/issues/190/jobs/${tweakJob.id}`),
+            env
+          )
+        ).json()
+      ).job.status,
+      "completed"
     );
-    assert.equal((await completedFinal.json()).job.status, "completed");
-    assert.ok(trees.at(-1).tree.some(({ path }) => path.includes(`/${draftJob.runId}/final-1-`)));
-    const savedFinalManifest = JSON.parse(
+    const editedManifest = JSON.parse(
       objects.get(`issues/190/runs/${draftJob.runId}/manifest.json`)
     );
-    assert.equal(savedFinalManifest.finals["1"].model, "gpt-image-2.5-flare");
+    const edited = editedManifest.tweaks[0];
+    assert.equal(edited.width, 720);
+    assert.equal(edited.height, 1008);
+    assert.match(edited.key, /tweak-1-.*\.jpg$/);
+    assert.ok(trees.at(-1).tree.some(({ path }) => path.endsWith(edited.key.split("/").at(-1))));
     assert.deepEqual(JSON.parse(objects.get("issues/190/summary.json")), {
       hasDrafts: true,
-      hasFinalRender: true,
+      hasEditedDrafts: true,
     });
-    const badOptions = await worker.fetch(
-      new Request("https://pipeline.example/api/issues/190/jobs", {
+    const editPr = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/pull-requests", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          type: "final",
-          runId: draftJob.runId,
-          candidateId: 1,
-          model: "gpt-image-2",
-          quality: "max",
-        }),
+        body: JSON.stringify({ runId: draftJob.runId, candidateId: 1, key: edited.key }),
       }),
       env
     );
-    assert.equal(badOptions.status, 400);
-    const advancedResponse = await worker.fetch(
+    assert.equal(editPr.status, 200, await editPr.clone().text());
+    assert.ok(comments.at(-1).body.includes(edited.generationPrompt));
+    const oldFinalRoute = await worker.fetch(
+      new Request("https://pipeline.example/api/issues/190/finals", { method: "POST" }),
+      env
+    );
+    assert.equal(oldFinalRoute.status, 404);
+    const oldFinalJob = await worker.fetch(
       new Request("https://pipeline.example/api/issues/190/jobs", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          type: "final",
-          runId: draftJob.runId,
-          candidateId: 1,
-          model: "gpt-image-2.5-sunburst",
-          quality: "high",
-          size: "large",
-        }),
+        body: JSON.stringify({ type: "final", runId: draftJob.runId, candidateId: 1 }),
       }),
       env
     );
-    assert.equal(advancedResponse.status, 202, await advancedResponse.clone().text());
-    const advancedJob = (await advancedResponse.json()).job;
-    await worker.fetch(
-      new Request(`https://pipeline.example/api/issues/190/jobs/${advancedJob.id}`),
-      env
-    );
-    const completedAdvanced = await worker.fetch(
-      new Request(`https://pipeline.example/api/issues/190/jobs/${advancedJob.id}`),
-      env
-    );
-    assert.equal((await completedAdvanced.json()).job.status, "completed");
-    const advancedManifest = JSON.parse(
-      objects.get(`issues/190/runs/${draftJob.runId}/manifest.json`)
-    );
-    assert.equal(advancedManifest.finals["1"].model, "gpt-image-2.5-sunburst");
-    assert.equal(advancedManifest.finals["1"].quality, "high");
-    assert.equal(advancedManifest.finals["1"].width, 1200);
+    assert.equal(oldFinalJob.status, 400);
 
     const standardPrompt =
       "# DECK BACKGROUND STYLE v2\n\nCreate a vertical fantasy illustration intended to be used purely as background artwork for a Dungeons & Dragons card deck.\n\n## SCENE\n\nA blade sweeps.\n\n## VISUAL STYLE\n\nPainterly brushwork.\n\n## COMPOSITION\n\nThe artwork is an independent fantasy illustration.\nNo text.\n\n## OUTPUT\n\nPortrait.";
@@ -702,17 +623,6 @@ test("custom prompt produces valid previews, commits each run to the issue folde
       objects.get(`issues/190/runs/${mixedJob.runId}/manifest.json`)
     );
     assert.equal(mixedManifest.candidates[2].styleName, "Whimsical Scene");
-    const mixedFinal = await worker.fetch(
-      new Request("https://pipeline.example/api/issues/190/jobs", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ type: "final", runId: mixedJob.runId, candidateId: 3 }),
-      }),
-      env
-    );
-    assert.equal(mixedFinal.status, 202, await mixedFinal.clone().text());
-    assert.match(backgroundPrompts.at(-1), /whimsical constellation/i);
-    assert.doesNotMatch(backgroundPrompts.at(-1), /old engraved fantasy print/i);
     const savedMixed = JSON.parse(Buffer.from(blobs.at(-1).content, "base64").toString());
     assert.equal(savedMixed.candidates[2].styleName, "Whimsical Scene");
 
@@ -826,15 +736,6 @@ test("custom prompt produces valid previews, commits each run to the issue folde
       JSON.parse(objects.get(`issues/190/runs/${broadJob.runId}/manifest.json`)).candidates.length,
       37
     );
-    const lastFinal = await worker.fetch(
-      new Request("https://pipeline.example/api/issues/190/jobs", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ type: "final", runId: broadJob.runId, candidateId: 37 }),
-      }),
-      env
-    );
-    assert.equal(lastFinal.status, 202, await lastFinal.clone().text());
   } finally {
     globalThis.fetch = previousFetch;
   }

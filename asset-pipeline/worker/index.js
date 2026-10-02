@@ -2,9 +2,7 @@ import { STYLE_CATALOG } from "./visual-styles.js";
 
 const OWNER = "DnD-Decks";
 const REPOSITORY = "dnd-deck-designer";
-const IMAGE_MODEL = "gpt-image-2";
 const DRAFT_MODEL = "gpt-image-2.5-flare";
-const FAST_FINAL_MODEL = "gpt-image-2.5-flare";
 const CHAT_MODEL = "gpt-5.4-mini";
 const TRANSCRIBE_MODEL = "gpt-4o-mini-transcribe";
 const GITHUB_API = "https://api.github.com";
@@ -37,7 +35,7 @@ const buildPage = () => String.raw`<!doctype html>
         <div class="issue-filters" aria-label="Filter cards">
           <label>Pull request<select id="filter-pr"><option value="all">Any PR status</option><option value="open">Open PR</option><option value="closed">Closed PR</option><option value="none">No PR</option></select></label>
           <label>Drafts<select id="filter-drafts"><option value="all">Any</option><option value="yes">Generated</option><option value="no">Not generated</option></select></label>
-          <label>Final render<select id="filter-final"><option value="all">Any</option><option value="yes">Generated</option><option value="no">Not generated</option></select></label>
+          <label>Edited drafts<select id="filter-final"><option value="all">Any</option><option value="yes">Generated</option><option value="no">Not generated</option></select></label>
         </div>
         <div class="issue-list" id="issue-list" aria-live="polite">
           <div class="list-state"><span class="loader"></span><span>Loading issues</span></div>
@@ -57,13 +55,13 @@ const buildPage = () => String.raw`<!doctype html>
           <section class="welcome-panel" id="welcome-panel">
             <div class="welcome-kicker"><span class="sparkle">✦</span> ILLUSTRATION WORKBENCH</div>
             <h1>Choose the image<br><em>that tells the story.</em></h1>
-            <p>Pick an open card issue, compare low-cost compositions, then render the selected image at card resolution and open a pull request.</p>
+            <p>Pick an open card issue, compare low-cost compositions, then submit a draft or make an optional low-cost edit before opening a pull request.</p>
             <div class="workflow-strip" aria-label="Artwork process">
               <div><span>01</span><b>Select an issue</b></div><i></i>
               <div><span>02</span><b>Compare drafts</b></div><i></i>
-              <div><span>03</span><b>Render &amp; submit</b></div>
+              <div><span>03</span><b>Review &amp; submit</b></div>
             </div>
-            <div class="welcome-note"><span class="note-icon">i</span><span>Previews use low quality at 720 × 1008 or 1008 × 720. Final renders use the card's exact 5:7 or 7:5 ratio. The OpenAI API account is billed for each image.</span></div>
+            <div class="welcome-note"><span class="note-icon">i</span><span>Every generated image uses low quality compressed JPEG at 720 × 1008 or 1008 × 720. The OpenAI API account is billed for each image.</span></div>
           </section>
           <section class="issue-workspace hidden" id="issue-workspace" aria-live="polite">
             <div class="issue-header">
@@ -74,7 +72,7 @@ const buildPage = () => String.raw`<!doctype html>
               </div>
               <div class="path-chip"><span>OUTPUT FILE</span><code id="output-path">—</code></div>
             </div>
-            <div class="prompt-toggle"><details><summary><span class="prompt-icon">⌘</span> Image-generation prompt <span class="chevron">⌄</span></summary><div class="prompt-editor"><label for="prompt-text">Edit the issue prompt before generating drafts</label><textarea id="prompt-text" rows="12" maxlength="32000" spellcheck="false"></textarea><div class="prompt-actions"><span>The final render uses the prompt saved with the selected draft run.</span><button class="button button-subtle" id="reset-prompt" type="button">Restore issue prompt</button></div><section class="brainstorm" aria-label="Prompt brainstorming"><h3>Brainstorm the prompt</h3><p>Discuss alternate ideas, then apply a proposed revision to the editor when you are ready.</p><div id="chat-messages" class="chat-messages" role="log" aria-live="polite"></div><label for="chat-input">Your idea or question</label><textarea id="chat-input" rows="3" maxlength="4000" placeholder="Could this show only the spell, without the caster?"></textarea><div class="chat-actions"><button class="button button-subtle" id="record-button" type="button">🎙 Dictate</button><button class="button button-primary" id="chat-send" type="button">Send to assistant</button></div><div id="chat-status" class="chat-status" role="status"></div></section></div></details></div>
+            <div class="prompt-toggle"><details><summary><span class="prompt-icon">⌘</span> Image-generation prompt <span class="chevron">⌄</span></summary><div class="prompt-editor"><label for="prompt-text">Edit the issue prompt before generating drafts</label><textarea id="prompt-text" rows="12" maxlength="32000" spellcheck="false"></textarea><div class="prompt-actions"><span>The prompt and each generated image are saved with the draft run.</span><button class="button button-subtle" id="reset-prompt" type="button">Restore issue prompt</button></div><section class="brainstorm" aria-label="Prompt brainstorming"><h3>Brainstorm the prompt</h3><p>Discuss alternate ideas, then apply a proposed revision to the editor when you are ready.</p><div id="chat-messages" class="chat-messages" role="log" aria-live="polite"></div><label for="chat-input">Your idea or question</label><textarea id="chat-input" rows="3" maxlength="4000" placeholder="Could this show only the spell, without the caster?"></textarea><div class="chat-actions"><button class="button button-subtle" id="record-button" type="button">🎙 Dictate</button><button class="button button-primary" id="chat-send" type="button">Send to assistant</button></div><div id="chat-status" class="chat-status" role="status"></div></section></div></details></div>
             <section class="candidate-section" aria-labelledby="candidate-heading">
               <div class="section-heading">
                 <div><div class="section-kicker">STYLE EXPLORATION</div><h2 id="candidate-heading">Compare visual styles</h2></div>
@@ -107,7 +105,7 @@ const buildPage = () => String.raw`<!doctype html>
       <div class="image-dialog-toolbar">
         <div><strong id="image-dialog-title">Artwork</strong><span id="image-dialog-size"></span></div>
         <div class="image-dialog-actions">
-          <button type="button" class="button button-primary hidden" id="image-dialog-render">Select &amp; render final</button>
+          <button type="button" class="button button-primary hidden" id="image-dialog-render">Select for submission</button>
           <button type="button" class="button button-subtle" id="image-dialog-zoom" aria-pressed="false">View at 100%</button>
           <button type="button" class="button button-subtle" id="image-dialog-close" aria-label="Close image viewer">Close ✕</button>
         </div>
@@ -158,7 +156,7 @@ const styles = String.raw`
 const clientScript = String.raw`
 const $ = (selector, root) => (root || document).querySelector(selector);
 const MAX_DRAFTS = 40;
-const state = { issues: [], styles: [], stylePlan: [{ styleId: "atmospheric-painterly-fantasy", count: 2 }], previewSignature: null, reviewingPrompts: false, active: null, manifest: null, runs: [], selected: null, final: null, search: "", chat: [], finalTuning: "", finalModel: "gpt-image-2.5-flare", finalQuality: "medium", finalSize: "card", finalAdvancedOpen: false, jobs: [], jobTimer: null, prBusy: false, recorder: null };
+const state = { issues: [], styles: [], stylePlan: [{ styleId: "atmospheric-painterly-fantasy", count: 2 }], previewSignature: null, reviewingPrompts: false, active: null, manifest: null, runs: [], selected: null, selectedKey: null, search: "", chat: [], editPrompt: "", jobs: [], jobTimer: null, prBusy: false, recorder: null };
 const ISSUE_PLAN_KEY = "asset-pipeline-style-plan-v1:";
 const PRESETS_KEY = "asset-pipeline-style-presets-v1";
 const listNode = $("#issue-list");
@@ -375,7 +373,7 @@ function renderIssueList() {
     top.append(name, number);
     const meta = document.createElement("span");
     meta.className = "issue-row-meta";
-    [issue.kind || "asset", issue.prStatus === "open" ? "PR open" : issue.prStatus === "closed" ? "PR closed" : "No PR", issue.hasFinalRender === null ? "Artwork unknown" : issue.hasFinalRender ? "Final" : issue.hasDrafts ? "Drafts" : "No drafts"].forEach(function(text) {
+    [issue.kind || "asset", issue.prStatus === "open" ? "PR open" : issue.prStatus === "closed" ? "PR closed" : "No PR", issue.hasFinalRender === null ? "Artwork unknown" : issue.hasFinalRender ? "Edited" : issue.hasDrafts ? "Drafts" : "No drafts"].forEach(function(text) {
       const part = document.createElement("span");
       part.textContent = text;
       meta.append(part);
@@ -404,15 +402,15 @@ function renderIssue(issue) {
   state.runs = [];
   state.jobs = [];
   state.selected = null;
-  state.final = null;
+  state.selectedKey = null;
   try { state.chat = JSON.parse(localStorage.getItem("asset-chat-" + issue.number) || sessionStorage.getItem("asset-chat-" + issue.number) || "[]").slice(-50); }
   catch { state.chat = []; }
-  state.finalTuning = "";
+  state.editPrompt = "";
   setSurface("issue");
   $("#card-title").textContent = issue.name || issue.title;
   $("#issue-number").textContent = "#" + issue.number;
   $("#issue-link").href = issue.htmlUrl;
-  $("#output-path").textContent = issue.targetPath || "Prompt needs a valid output path";
+  $("#output-path").textContent = issue.targetPath?.replace(/\.png$/, ".jpg") || "Prompt needs a valid output path";
   $("#prompt-text").value = issue.prompt || "";
   $("#chat-input").value = "";
   $("#chat-status").textContent = "";
@@ -628,12 +626,12 @@ async function toggleDictation() {
 let viewerItems = [];
 let viewerIndex = 0;
 const viewerPreloads = new Map();
-const finalRequests = new Set();
-const finalRequestKey = (runId, candidateId) => runId + ":" + candidateId;
+const tweakRequests = new Set();
+const tweakRequestKey = (runId, candidateId) => runId + ":" + candidateId;
 
-function finalIsPending(runId, candidateId) {
-  return finalRequests.has(finalRequestKey(runId, candidateId)) || state.jobs.some(function(job) {
-    return job.type === "final" && job.runId === runId && job.candidateId === candidateId && ["starting", "in_progress"].includes(job.status);
+function tweakIsPending(runId, candidateId) {
+  return tweakRequests.has(tweakRequestKey(runId, candidateId)) || state.jobs.some(function(job) {
+    return job.type === "tweak" && job.runId === runId && job.candidateId === candidateId && ["starting", "in_progress"].includes(job.status);
   });
 }
 
@@ -641,8 +639,10 @@ function galleryEntries(run) {
   if (!run) return [];
   return [...(run.candidates || []).map(function(candidate) {
     return { key: candidate.key, title: candidate.styleName && candidate.styleId !== "issue" ? candidate.styleFamily + " · " + candidate.styleName : candidate.title, label: "Draft " + candidate.id, width: candidate.width, height: candidate.height, candidateId: candidate.id, runId: run.runId };
+  }), ...(run.tweaks || []).map(function(tweak, index) {
+    return { key: tweak.key, title: "Edited draft " + (index + 1), label: "Edit " + (index + 1), width: tweak.width, height: tweak.height, candidateId: tweak.candidateId, runId: run.runId };
   }), ...Object.values(run.finalVersions || run.finals || {}).flat().map(function(final, index) {
-    return { key: final.key, title: "Render " + (index + 1), label: "Render " + (index + 1), width: final.width, height: final.height };
+    return { key: final.key, title: "Older render " + (index + 1), label: "Archive " + (index + 1), width: final.width, height: final.height };
   })];
 }
 
@@ -692,9 +692,8 @@ function selectViewerImage(index) {
   const render = $("#image-dialog-render");
   render.classList.toggle("hidden", entry.candidateId == null);
   if (entry.candidateId != null) {
-    const pending = finalIsPending(entry.runId, entry.candidateId);
-    render.disabled = pending;
-    render.textContent = pending ? "Rendering in background…" : "Select & render final";
+    render.disabled = false;
+    render.textContent = "Select for submission";
   }
   preloadViewerNeighbors();
   requestAnimationFrame(centerViewerThumbnail);
@@ -732,16 +731,15 @@ function showImage(key, title, width, height, entries) {
   $("#image-dialog-close").focus();
 }
 
-function queueFinalForCandidate(candidateId, runId) {
-  if (finalIsPending(runId, candidateId)) return;
-  if (state.manifest?.runId !== runId) {
-    const run = state.runs.find(function(item) { return item.runId === runId; });
+function selectGalleryEntry(entry) {
+  if (state.manifest?.runId !== entry.runId) {
+    const run = state.runs.find(function(item) { return item.runId === entry.runId; });
     if (!run) { setMessage("This saved session is unavailable. Reopen the issue and try again.", "error"); return; }
     activateRun(run);
   }
-  if (state.selected !== candidateId) state.finalTuning = "";
-  selectCandidate(candidateId);
-  renderFinal();
+  selectCandidate(entry.candidateId, entry.key);
+  $("#image-dialog").close();
+  $("#final-section").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function viewImageButton(key, title, width, height) {
@@ -789,7 +787,7 @@ function renderGallery(manifest) {
   storage.classList.toggle("error", Boolean(manifest.gitError || unarchived));
   if (manifest.candidates && manifest.candidates.length) {
     const status = document.createElement("span");
-    status.textContent = manifest.gitError ? "Images saved in Site storage. Git save failed: " + manifest.gitError : unarchived ? "Older renders found in Site storage. Save them to Git to preserve them with the drafts." : "Drafts and rendered images committed to the repository's default branch:";
+    status.textContent = manifest.gitError ? "Images saved in Site storage. Git save failed: " + manifest.gitError : unarchived ? "Older archived renders found in Site storage. Save them to Git to preserve them with the drafts." : "Drafts and edits committed to the repository's default branch:";
     storage.append(status);
     if (manifest.draftUrl) {
       const link = document.createElement("a");
@@ -849,19 +847,12 @@ function renderGallery(manifest) {
     const choose = document.createElement("button");
     choose.type = "button";
     choose.className = "select-button";
-    choose.textContent = state.selected === candidate.id ? "Selected for final render" : "Choose this composition";
+    choose.textContent = state.selected === candidate.id ? "Selected for submission" : "Choose this composition";
     choose.setAttribute("aria-pressed", String(state.selected === candidate.id));
     choose.addEventListener("click", function() { selectCandidate(candidate.id); });
-    const render = document.createElement("button");
-    render.type = "button";
-    render.className = "button button-primary render-now-button";
-    const pending = finalIsPending(manifest.runId, candidate.id);
-    render.textContent = pending ? "Rendering in background…" : "Select & render final";
-    render.disabled = pending;
-    render.addEventListener("click", function() { queueFinalForCandidate(candidate.id, manifest.runId); });
     const actions = document.createElement("div");
     actions.className = "candidate-actions";
-    actions.append(choose, render);
+    actions.append(choose);
     info.append(title, description, actions);
     card.append(imageWrap, info);
     grid.append(card);
@@ -905,14 +896,13 @@ async function retryFailedDrafts(id, button) {
 }
 
 function activateRun(manifest) {
-  const renderedCandidate = manifest.candidates.find(function(candidate) { return manifest.finals?.[String(candidate.id)]; });
-  state.selected = renderedCandidate?.id || null;
-  state.final = renderedCandidate ? manifest.finals[String(renderedCandidate.id)] : null;
-  state.finalTuning = "";
+  state.selected = null;
+  state.selectedKey = null;
+  state.editPrompt = "";
   renderGallery(manifest);
   $("#prompt-text").value = manifest.prompt || state.active.prompt || "";
   invalidatePromptPreview();
-  renderFinalPanel();
+  renderSubmissionPanel();
   renderRunLibrary();
 }
 
@@ -922,7 +912,7 @@ function rememberRun(manifest) {
   const issue = state.issues.find(function(item) { return item.number === manifest.issueNumber; });
   if (issue) {
     issue.hasDrafts ||= Boolean(manifest.candidates?.length);
-    issue.hasFinalRender ||= Object.values(manifest.finalVersions || manifest.finals || {}).flat().length > 0;
+    issue.hasFinalRender ||= (manifest.tweaks || []).length > 0;
     renderIssueList();
   }
   renderRunLibrary();
@@ -935,7 +925,7 @@ function renderRunLibrary() {
   const title = document.createElement("h3");
   title.textContent = "Saved artwork for this issue";
   const description = document.createElement("p");
-  description.textContent = "Open any draft session to review its previews and full-resolution renders.";
+  description.textContent = "Open any session to review drafts, edits, and older archived renders.";
   const items = document.createElement("div");
   items.className = "run-library-items";
   state.runs.forEach(function(run) {
@@ -945,8 +935,8 @@ function renderRunLibrary() {
     const header = document.createElement("div");
     header.className = "run-library-header";
     const label = document.createElement("span");
-    const finals = Object.values(run.finalVersions || run.finals || {}).flat().length;
-    label.textContent = new Date(run.createdAt).toLocaleString() + " · " + run.candidates.length + " drafts · " + finals + " renders";
+    const edits = (run.tweaks || []).length;
+    label.textContent = new Date(run.createdAt).toLocaleString() + " · " + run.candidates.length + " drafts · " + edits + " edits";
     const open = document.createElement("button");
     open.type = "button";
     open.className = "button button-subtle";
@@ -973,193 +963,111 @@ function renderRunLibrary() {
   library.append(title, description, items);
 }
 
-function finalDimensions(issue) {
-  return issue.orientation === "landscape" ? "1120 × 800" : "800 × 1120";
-}
-
-function renderFinalPanel() {
+function renderSubmissionPanel() {
   const section = $("#final-section");
   const content = $("#final-content");
-  if (!state.selected || !state.manifest) {
-    section.classList.add("hidden");
-    content.replaceChildren();
-    return;
-  }
+  const selected = state.manifest && [
+    ...(state.manifest.candidates || []), ...(state.manifest.tweaks || []),
+  ].find(function(image) { return image.key === state.selectedKey; });
+  if (!selected) { section.classList.add("hidden"); content.replaceChildren(); return; }
   section.classList.remove("hidden");
   content.replaceChildren();
   const panel = document.createElement("div");
   panel.className = "final-panel";
   const preview = document.createElement("div");
   preview.className = "final-preview";
-  const finalImage = state.final && state.final.key ? document.createElement("img") : null;
-  if (finalImage) {
-    finalImage.src = imageUrl(state.final.key);
-    finalImage.alt = "Final render for " + state.active.name;
-    finalImage.addEventListener("click", function() { showImage(state.final.key, "Final render for " + state.active.name, state.final.width, state.final.height); });
-    preview.append(finalImage, viewImageButton(state.final.key, "Final render for " + state.active.name, state.final.width, state.final.height));
-  } else {
-    preview.innerHTML = '<div class="candidate-placeholder"><span class="empty-art">✦</span><span>Final render not made</span></div>';
-  }
+  const image = document.createElement("img");
+  image.src = imageUrl(selected.key);
+  image.alt = "Selected artwork for " + state.active.name;
+  image.addEventListener("click", function() { showImage(selected.key, image.alt, selected.width, selected.height); });
+  preview.append(image, viewImageButton(selected.key, image.alt, selected.width, selected.height));
   const copy = document.createElement("div");
   copy.className = "final-copy";
   const heading = document.createElement("h3");
   heading.id = "final-heading";
-  heading.textContent = state.final ? "Final image ready for review" : "Render the selected composition";
+  heading.textContent = "Review artwork for submission";
   const para = document.createElement("p");
-  para.textContent = state.final
-    ? "Check the full-size image before opening a pull request. Another render incurs a new image charge; previous versions remain available below."
-    : "The selected draft guides one high-quality image edit. Add a small adjustment if needed; each render is billed separately.";
-  const actions = document.createElement("div");
-  actions.className = "final-actions";
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "button button-primary";
-  if (state.final && state.final.prUrl) {
-    button.textContent = "Render another version";
-    button.addEventListener("click", renderFinal);
-  } else if (state.final) {
-    button.textContent = "Render another version";
-    button.addEventListener("click", renderFinal);
-  } else {
-    button.innerHTML = '<span class="button-icon">✦</span> Render final image';
-    button.addEventListener("click", renderFinal);
-  }
-  actions.append(button);
-  const finalPending = finalIsPending(state.manifest.runId, state.selected);
-  button.disabled = finalPending;
-  if (finalPending) button.textContent = "Rendering in background…";
-  if (state.final && !state.final.prUrl) {
-    const prButton = document.createElement("button");
-    prButton.type = "button";
-    prButton.className = "button button-subtle";
-    prButton.textContent = "Create pull request";
-    prButton.disabled = state.prBusy;
-    if (state.prBusy) prButton.textContent = "Creating pull request…";
-    prButton.addEventListener("click", openPullRequest);
-    actions.append(prButton);
-  }
+  para.textContent = "Open the image at full size. Submit this JPEG draft as it is, or make an optional low quality edit and review that result first.";
   const tuning = document.createElement("div");
   tuning.className = "final-tuning";
-  const advanced = document.createElement("details");
-  advanced.className = "advanced-options";
-  advanced.open = state.finalAdvancedOpen;
-  advanced.addEventListener("toggle", function() { state.finalAdvancedOpen = this.open; });
-  const summary = document.createElement("summary");
-  summary.textContent = "Advanced render options · " + (state.finalModel === "gpt-image-2.5-flare" ? "Flare" : state.finalModel === "gpt-image-2.5-sunburst" ? "Sunburst" : "Image 2") + " / " + state.finalQuality;
-  const controls = document.createElement("div");
-  controls.className = "advanced-grid";
-  const modelLabel = document.createElement("label");
-  modelLabel.textContent = "Image model";
-  const modelSelect = document.createElement("select");
-  modelSelect.id = "final-model";
-  modelSelect.innerHTML = '<option value="gpt-image-2.5-flare">2.5 Flare · faster</option><option value="gpt-image-2.5-sunburst">2.5 Sunburst · precise edits</option><option value="gpt-image-2">Image 2 · previous default</option>';
-  modelSelect.value = state.finalModel;
-  const qualityLabel = document.createElement("label");
-  qualityLabel.textContent = "Quality";
-  const qualitySelect = document.createElement("select");
-  qualitySelect.id = "final-quality";
-  qualitySelect.innerHTML = '<option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="xhigh">Extra high</option><option value="max">Maximum</option>';
-  qualitySelect.value = state.finalQuality;
-  const sizeLabel = document.createElement("label");
-  sizeLabel.textContent = "Output size";
-  const sizeSelect = document.createElement("select");
-  sizeSelect.id = "final-size";
-  sizeSelect.innerHTML = '<option value="card">Card · 800 × 1120</option><option value="large">Large · 1200 × 1680</option>';
-  sizeSelect.options[0].textContent = "Card · " + finalDimensions(state.active) + " px";
-  sizeSelect.options[1].textContent = "Large · " + (state.active.orientation === "landscape" ? "1680 × 1200" : "1200 × 1680") + " px";
-  sizeSelect.value = state.finalSize;
-  function syncAdvanced() {
-    const legacy = state.finalModel === "gpt-image-2";
-    for (const option of qualitySelect.options) option.disabled = legacy && ["xhigh", "max"].includes(option.value);
-    if (qualitySelect.selectedOptions[0]?.disabled) qualitySelect.value = "high";
-    state.finalQuality = qualitySelect.value;
-    summary.textContent = "Advanced render options · " + (state.finalModel === "gpt-image-2.5-flare" ? "Flare" : state.finalModel === "gpt-image-2.5-sunburst" ? "Sunburst" : "Image 2") + " / " + state.finalQuality;
-  }
-  modelSelect.addEventListener("change", function() { state.finalModel = this.value; syncAdvanced(); });
-  qualitySelect.addEventListener("change", function() { state.finalQuality = this.value; syncAdvanced(); });
-  sizeSelect.addEventListener("change", function() { state.finalSize = this.value; });
-  modelLabel.append(modelSelect);
-  qualityLabel.append(qualitySelect);
-  sizeLabel.append(sizeSelect);
-  controls.append(modelLabel, qualityLabel, sizeLabel);
-  const advancedNote = document.createElement("p");
-  advancedNote.textContent = "Larger sizes and higher quality can take longer and cost more. Output stays an opaque PNG at the card’s exact aspect ratio.";
-  advanced.append(summary, controls, advancedNote);
-  syncAdvanced();
-  const tuningLabel = document.createElement("label");
-  tuningLabel.htmlFor = "final-tuning-text";
-  tuningLabel.textContent = "Optional refinements for this render";
-  const tuningInput = document.createElement("textarea");
-  tuningInput.id = "final-tuning-text";
-  tuningInput.maxLength = 1200;
-  tuningInput.rows = 3;
-  tuningInput.placeholder = "Keep this composition, but make the greatsword straight and the light warmer.";
-  tuningInput.value = state.finalTuning;
-  tuningInput.addEventListener("input", function() { state.finalTuning = this.value; });
-  tuning.append(tuningLabel, tuningInput, advanced);
+  const label = document.createElement("label");
+  label.htmlFor = "final-tuning-text";
+  label.textContent = "Optional edit prompt";
+  const input = document.createElement("textarea");
+  input.id = "final-tuning-text";
+  input.maxLength = 1200;
+  input.rows = 3;
+  input.placeholder = "Keep the composition, but make the light warmer.";
+  input.value = state.editPrompt;
+  input.addEventListener("input", function() { state.editPrompt = this.value; });
+  const edit = document.createElement("button");
+  edit.type = "button";
+  edit.className = "button button-subtle";
+  edit.textContent = tweakIsPending(state.manifest.runId, state.selected) ? "Editing in background…" : "Generate edited draft";
+  edit.disabled = tweakIsPending(state.manifest.runId, state.selected);
+  edit.addEventListener("click", generateTweak);
+  tuning.append(label, input, edit);
   const progress = document.createElement("div");
-  progress.className = "final-progress hidden";
-  progress.id = "final-progress";
+  progress.className = "final-progress";
+  progress.id = "pr-progress";
   progress.setAttribute("role", "status");
-  progress.innerHTML = '<span class="loader" aria-hidden="true"></span><span>Rendering in the background… You may close this page.</span>';
-  const prProgress = document.createElement("div");
-  prProgress.className = "final-progress hidden";
-  prProgress.id = "pr-progress";
-  prProgress.setAttribute("role", "status");
-  prProgress.innerHTML = '<span class="loader" aria-hidden="true"></span><span>Saving artwork and creating the pull request…</span>';
+  progress.innerHTML = '<span class="loader" aria-hidden="true"></span><span>Saving artwork and creating the pull request…</span>';
+  progress.classList.toggle("hidden", !state.prBusy);
+  const submission = state.manifest.submissions?.[selected.key];
+  const actions = document.createElement("div");
+  actions.className = "final-actions";
+  if (!submission?.prUrl) {
+    const submit = document.createElement("button");
+    submit.type = "button";
+    submit.className = "button button-primary";
+    submit.textContent = state.prBusy ? "Creating pull request…" : "Submit selected draft · create PR";
+    submit.disabled = state.prBusy;
+    submit.addEventListener("click", openPullRequest);
+    actions.append(submit);
+  }
   const dimensions = document.createElement("div");
   dimensions.className = "final-dimensions";
-  dimensions.textContent = (state.final ? "FINAL SIZE · " + state.final.width + " × " + state.final.height : "TARGET SIZE · " + (state.finalSize === "large" ? state.active.orientation === "landscape" ? "1680 × 1200" : "1200 × 1680" : finalDimensions(state.active))) + " px · exact " + state.active.orientationLabel;
-  copy.append(heading, para, tuning, actions, progress, prProgress, dimensions);
-  progress.classList.toggle("hidden", !finalPending);
-  prProgress.classList.toggle("hidden", !state.prBusy);
-  const versions = state.manifest.finalVersions?.[String(state.selected)] || (state.final ? [state.final] : []);
-  if (versions.length) {
-    const versionList = document.createElement("div");
-    versionList.className = "version-list";
-    const title = document.createElement("strong");
-    title.textContent = "Saved full-resolution renders";
-    versionList.append(title);
-    versions.forEach(function(version, index) {
-      const item = document.createElement("div");
-      item.className = "version-item";
-      const thumbnail = document.createElement("img");
-      thumbnail.src = imageUrl(version.key);
-      thumbnail.alt = "Final version " + (index + 1);
-      thumbnail.loading = "lazy";
-      thumbnail.addEventListener("click", function() { showImage(version.key, thumbnail.alt, version.width, version.height); });
-      const label = document.createElement("span");
-      label.textContent = "Render " + (index + 1) + " · " + (version.createdAt ? new Date(version.createdAt).toLocaleString() : "saved") + (version.tuning ? " · " + version.tuning : "");
-      const view = document.createElement("button");
-      view.type = "button";
-      view.className = "button button-subtle";
-      view.textContent = "View version " + (index + 1);
-      view.addEventListener("click", function() { showImage(version.key, "Final version " + (index + 1), version.width, version.height); });
-      item.append(thumbnail, label, view);
-      if (state.final?.key !== version.key) {
-        const use = document.createElement("button");
-        use.type = "button";
-        use.className = "button button-subtle";
-        use.textContent = "Use version " + (index + 1);
-        use.addEventListener("click", function() { selectFinalVersion(version.key); });
-        item.append(use);
-      }
-      versionList.append(item);
-    });
-    copy.append(versionList);
-  }
-  if (state.final && state.final.prUrl) {
+  dimensions.textContent = selected.width + " × " + selected.height + " px · low quality JPEG · " + state.active.orientationLabel;
+  copy.append(heading, para, tuning, actions, progress, dimensions);
+  if (submission?.prUrl) {
     const link = document.createElement("a");
     link.className = "pr-link";
-    link.href = state.final.prUrl;
+    link.href = submission.prUrl;
     link.target = "_blank";
     link.rel = "noreferrer";
     link.textContent = "View pull request ↗";
     copy.append(link);
-    const closeNote = document.createElement("div");
-    closeNote.className = "final-dimensions";
-    closeNote.textContent = "The issue closes automatically when the pull request is merged.";
-    copy.append(closeNote);
+    const note = document.createElement("div");
+    note.className = "final-dimensions";
+    note.textContent = "The issue closes when the pull request is merged.";
+    copy.append(note);
+  }
+  const edits = (state.manifest.tweaks || []).filter(function(item) { return item.candidateId === state.selected; });
+  if (edits.length) {
+    const versions = document.createElement("div");
+    versions.className = "version-list";
+    const title = document.createElement("strong");
+    title.textContent = "Saved edited drafts";
+    versions.append(title);
+    edits.forEach(function(item, index) {
+      const row = document.createElement("div");
+      row.className = "version-item";
+      const thumb = document.createElement("img");
+      thumb.src = imageUrl(item.key);
+      thumb.alt = "Edited draft " + (index + 1);
+      thumb.addEventListener("click", function() { showImage(item.key, thumb.alt, item.width, item.height); });
+      const description = document.createElement("span");
+      description.textContent = "Edit " + (index + 1) + " · " + item.tuning;
+      const choose = document.createElement("button");
+      choose.type = "button";
+      choose.className = "button button-subtle";
+      choose.textContent = state.selectedKey === item.key ? "Selected" : "Select this edit";
+      choose.disabled = state.selectedKey === item.key;
+      choose.addEventListener("click", function() { selectCandidate(item.candidateId, item.key); });
+      row.append(thumb, description, choose);
+      versions.append(row);
+    });
+    copy.append(versions);
   }
   panel.append(preview, copy);
   content.append(panel);
@@ -1196,12 +1104,15 @@ async function openIssue(number) {
   }
 }
 
-function selectCandidate(id) {
+function selectCandidate(id, key) {
+  const candidate = state.manifest.candidates.find(function(item) { return item.id === id; });
+  if (!candidate) return;
   state.selected = id;
-  state.final = state.manifest.finals && state.manifest.finals[String(id)] ? state.manifest.finals[String(id)] : null;
+  state.selectedKey = key || candidate.key;
+  state.editPrompt = "";
   renderGallery(state.manifest);
-  renderFinalPanel();
-  setMessage("Draft " + String(id).padStart(2, "0") + " selected. Review it below before creating a final image.", "success");
+  renderSubmissionPanel();
+  setMessage("Artwork selected. Review it below before submitting or making an optional edit.", "success");
 }
 
 async function reviewPrompts() {
@@ -1277,46 +1188,37 @@ async function syncDrafts() {
     const data = await request("/api/issues/" + state.active.number + "/runs/" + state.manifest.runId + "/sync", { method: "POST" });
     renderGallery(data.run);
     rememberRun(data.run);
-    setMessage("Drafts and renders saved in the repository.", "success");
+    setMessage("Drafts and edits saved in the repository.", "success");
   } catch (error) {
     setMessage(error.message, "error");
     if (button) button.disabled = false;
   }
 }
 
-async function renderFinal() {
+async function generateTweak() {
   const issueNumber = state.active.number;
   const runId = state.manifest.runId;
   const candidateId = state.selected;
-  if (candidateId == null || finalIsPending(runId, candidateId)) return;
-  const tuning = $("#final-tuning-text").value.trim();
-  if (tuning.length > 1200) { setMessage("Keep refinements under 1,200 characters.", "error"); return; }
-  const model = $("#final-model").value;
-  const quality = $("#final-quality").value;
-  const size = $("#final-size").value;
-  const requestKey = finalRequestKey(runId, candidateId);
-  finalRequests.add(requestKey);
-  renderGallery(state.manifest);
-  renderFinalPanel();
-  setMessage("Queuing final render in the background…", "");
+  const tuning = state.editPrompt.trim();
+  if (!tuning) { setMessage("Enter an edit prompt, or submit the selected draft directly.", "error"); return; }
+  if (tweakIsPending(runId, candidateId)) return;
+  const requestKey = tweakRequestKey(runId, candidateId);
+  tweakRequests.add(requestKey);
+  renderSubmissionPanel();
   try {
     const data = await request("/api/issues/" + issueNumber + "/jobs", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ type: "final", runId, candidateId, tuning, model, quality, size }),
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ type: "tweak", runId, candidateId, sourceKey: state.selectedKey, tuning }),
     });
     if (state.active?.number !== issueNumber) return;
     state.jobs.unshift(data.job);
     renderJobs();
-    setMessage("Render is running in the background. You may close this page and return later.", "success");
+    setMessage("The edit is running in the background. Return later to review it before submitting.", "success");
   } catch (error) {
     if (state.active?.number === issueNumber) setMessage(error.message, "error");
   } finally {
-    finalRequests.delete(requestKey);
-    if (state.active?.number === issueNumber && state.manifest?.runId === runId) {
-      renderGallery(state.manifest);
-      renderFinalPanel();
-    }
+    tweakRequests.delete(requestKey);
+    if (state.active?.number === issueNumber) renderSubmissionPanel();
   }
 }
 
@@ -1359,9 +1261,8 @@ async function refreshJobs() {
       if (generated) activateRun(generated);
       else if (current) {
         state.manifest = current;
-        state.final = state.selected ? current.finals?.[String(state.selected)] || null : null;
         renderGallery(current);
-        renderFinalPanel();
+        renderSubmissionPanel();
       } else if (state.runs.length) activateRun(state.runs[0]);
       renderRunLibrary();
       setMessage(generated ? "Drafts finished. The new session is ready to review." : "Image generation finished. Review the saved artwork below.", "success");
@@ -1382,52 +1283,35 @@ function renderJobs() {
     : failed.length ? "Image job failed: " + (failed[0].error || "Please try again.") : "";
   $("#generation-progress").classList.toggle("hidden", !active.some(function(job) { return job.type === "draft"; }));
   updateStyleSummary();
-  const signature = active.filter(function(job) { return job.type === "final"; }).map(function(job) { return job.id; }).join(",");
-  if (signature !== state.pendingFinalSignature) {
-    state.pendingFinalSignature = signature;
-    if (state.manifest) renderFinalPanel();
+  const signature = active.filter(function(job) { return job.type === "tweak"; }).map(function(job) { return job.id; }).join(",");
+  if (signature !== state.pendingTweakSignature) {
+    state.pendingTweakSignature = signature;
+    if (state.manifest) renderSubmissionPanel();
   }
-}
-
-async function selectFinalVersion(key) {
-  try {
-    const data = await request("/api/issues/" + state.active.number + "/final-selection", {
-      method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ runId: state.manifest.runId, candidateId: state.selected, key }),
-    });
-    state.manifest = data.run;
-    state.final = data.final;
-    rememberRun(data.run);
-    renderFinalPanel();
-    setMessage("Selected an earlier final render for review and the pull request.", "success");
-  } catch (error) { setMessage(error.message, "error"); }
 }
 
 async function openPullRequest() {
-  if (state.prBusy) return;
+  if (state.prBusy || !state.selectedKey) return;
+  const issueNumber = state.active.number;
+  const runId = state.manifest.runId;
+  const candidateId = state.selected;
+  const key = state.selectedKey;
   state.prBusy = true;
-  const button = $("#final-content .final-actions .button-subtle");
-  setBusy(button, "pull-request", true, "Adding the final image to a branch and opening a pull request…");
-  $("#pr-progress").classList.remove("hidden");
-  button.textContent = "Creating pull request…";
+  renderSubmissionPanel();
+  setMessage("Adding the selected draft to a branch and opening a pull request…", "");
   try {
-    const data = await request("/api/issues/" + state.active.number + "/pull-requests", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ runId: state.manifest.runId, candidateId: state.selected }),
+    const data = await request("/api/issues/" + issueNumber + "/pull-requests", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ runId, candidateId, key }),
     });
+    if (state.active?.number !== issueNumber) return;
     state.manifest = data.run;
-    state.final = data.final;
+    rememberRun(data.run);
     state.active.prStatus = "open";
     renderIssueList();
-    renderFinalPanel();
     setMessage("Pull request opened. The issue will close after the PR is merged.", "success");
-  } catch (error) {
-    setMessage(error.message, "error");
-  } finally {
-    state.prBusy = false;
-    renderFinalPanel();
-  }
+  } catch (error) { if (state.active?.number === issueNumber) setMessage(error.message, "error"); }
+  finally { state.prBusy = false; if (state.active?.number === issueNumber) renderSubmissionPanel(); }
 }
 
 async function start() {
@@ -1536,8 +1420,7 @@ $("#image-dialog-next").addEventListener("click", function() { selectViewerImage
 $("#image-dialog-render").addEventListener("click", function() {
   const entry = viewerItems[viewerIndex];
   if (entry?.candidateId == null) return;
-  $("#image-dialog").close();
-  queueFinalForCandidate(entry.candidateId, entry.runId);
+  selectGalleryEntry(entry);
 });
 let swipeStart = null;
 $("#image-dialog-scroll").addEventListener("pointerdown", function(event) {
@@ -1581,9 +1464,6 @@ start();
 
 export const previewDimensions = (orientation) =>
   orientation === "landscape" ? { width: 1008, height: 720 } : { width: 720, height: 1008 };
-export const finalDimensions = (orientation) =>
-  orientation === "landscape" ? { width: 1120, height: 800 } : { width: 800, height: 1120 };
-
 export function parseAssetIssue(issue) {
   const body = String(issue.body || "");
   const assetId = body.match(/^## Asset ID\s*\n+\s*`([^`]+)`/im)?.[1]?.trim() || null;
@@ -1890,15 +1770,17 @@ async function issueArtworkSummary(number, env) {
   const bucket = requireBucket(env);
   const key = `issues/${number}/summary.json`;
   const cached = await bucket.get(key);
-  if (cached) return cached.json();
+  if (cached) {
+    const summary = await cached.json();
+    if (typeof summary.hasEditedDrafts === "boolean")
+      return { hasDrafts: summary.hasDrafts, hasFinalRender: summary.hasEditedDrafts };
+  }
   const runs = await getRuns(number, env);
   const summary = {
     hasDrafts: runs.some((run) => run.candidates?.length > 0),
-    hasFinalRender: runs.some(
-      (run) => Object.values(run.finalVersions || run.finals || {}).flat().length > 0
-    ),
+    hasFinalRender: runs.some((run) => (run.tweaks || []).length > 0),
   };
-  await bucket.put(key, JSON.stringify(summary));
+  await bucket.put(key, JSON.stringify({ ...summary, hasEditedDrafts: summary.hasFinalRender }));
   return summary;
 }
 
@@ -2136,35 +2018,6 @@ async function generateImage(prompt, env, size) {
   return toBytes(image);
 }
 
-async function editImage(prompt, sourceBytes, env, size, sourceFormat) {
-  if (!env.OPENAI_API_KEY)
-    throw makePipelineError(
-      "OpenAI image generation is not configured. Add OPENAI_API_KEY as a Site secret.",
-      503
-    );
-  const form = new FormData();
-  form.set("model", IMAGE_MODEL);
-  form.set("prompt", prompt);
-  form.set("size", size);
-  form.set("quality", "high");
-  form.set("output_format", "png");
-  form.set("background", "opaque");
-  form.append(
-    "image",
-    new Blob([sourceBytes], { type: sourceFormat === "jpeg" ? "image/jpeg" : "image/png" }),
-    sourceFormat === "jpeg" ? "selected-preview.jpg" : "selected-preview.png"
-  );
-  const response = await fetch("https://api.openai.com/v1/images/edits", {
-    method: "POST",
-    headers: { authorization: `Bearer ${env.OPENAI_API_KEY}` },
-    body: form,
-  });
-  const body = await openAIJson(response);
-  const image = body.data?.[0]?.b64_json;
-  if (!image) throw makePipelineError("OpenAI did not return the final image bytes.", 502);
-  return toBytes(image);
-}
-
 function pngDimensions(bytes) {
   if (
     bytes.length < 24 ||
@@ -2311,6 +2164,14 @@ async function syncDraftRun(number, manifest, env) {
     })
   );
   const versions = Object.values(manifest.finalVersions || manifest.finals || {}).flat();
+  for (const tweak of manifest.tweaks || []) {
+    const object = await bucket.get(tweak.key);
+    if (!object) throw makePipelineError("A saved edited draft is missing from storage.", 404);
+    files.push({
+      path: `${folder}/${manifest.runId}/${tweak.key.split("/").at(-1)}`,
+      bytes: new Uint8Array(await object.arrayBuffer()),
+    });
+  }
   for (const final of versions) {
     const object = await bucket.get(final.key);
     if (!object)
@@ -2352,6 +2213,8 @@ async function syncDraftRun(number, manifest, env) {
     ),
     failures: manifest.failures,
     finalVersions: manifest.finalVersions || manifest.finals || {},
+    tweaks: manifest.tweaks || [],
+    submissions: manifest.submissions || {},
   };
   files.push({
     path: `${folder}/${manifest.runId}/run.json`,
@@ -2378,10 +2241,9 @@ async function saveManifest(bucket, manifest) {
   });
   const summaryKey = `issues/${manifest.issueNumber}/summary.json`;
   const previous = await bucket.get(summaryKey);
-  const summary = previous ? await previous.json() : { hasDrafts: false, hasFinalRender: false };
+  const summary = previous ? await previous.json() : { hasDrafts: false, hasEditedDrafts: false };
   summary.hasDrafts ||= Boolean(manifest.candidates?.length);
-  summary.hasFinalRender ||=
-    Object.values(manifest.finalVersions || manifest.finals || {}).flat().length > 0;
+  summary.hasEditedDrafts ||= (manifest.tweaks || []).length > 0;
   await bucket.put(summaryKey, JSON.stringify(summary));
 }
 
@@ -2603,71 +2465,48 @@ async function retryDraftJob(number, id, env) {
   return job;
 }
 
-async function startFinalJob(number, body, env) {
+async function startTweakJob(number, body, env) {
   if (!env.OPENAI_API_KEY)
     throw makePipelineError("OpenAI image generation is not configured.", 503);
   const bucket = requireBucket(env);
   const manifest = await readManifest(bucket, number, body.runId);
   const candidate = validateCandidate(manifest, body.candidateId);
-  const tuning = typeof body.tuning === "string" ? body.tuning.trim() : "";
-  if (tuning.length > 1200)
-    throw makePipelineError("Keep final refinements under 1,200 characters.", 400);
-  const model = body.model || (body.mode === "detailed" ? IMAGE_MODEL : FAST_FINAL_MODEL);
-  const quality = body.quality || (model === IMAGE_MODEL ? "high" : "medium");
-  const size = body.size || "card";
-  if (
-    ![FAST_FINAL_MODEL, "gpt-image-2.5-sunburst", IMAGE_MODEL].includes(model) ||
-    !["low", "medium", "high", ...(model === IMAGE_MODEL ? [] : ["xhigh", "max"])].includes(
-      quality
-    ) ||
-    !["card", "large"].includes(size)
-  )
-    throw makePipelineError("Unsupported final render model, quality, or size.", 400);
-  const { parsed } = await getIssue(number, env);
-  if (!parsed.ready) throw makePipelineError(parsed.errors.join(" "), 422);
-  const preview = await bucket.get(candidate.key);
-  if (!preview) throw makePipelineError("The selected preview is no longer available.", 404);
-  const dimensions =
-    size === "large"
-      ? parsed.orientation === "landscape"
-        ? { width: 1680, height: 1200 }
-        : { width: 1200, height: 1680 }
-      : finalDimensions(parsed.orientation);
-  const referenceBrief =
-    "## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, silhouette, and selected visual style. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected image for print without introducing new story elements.";
-  const tuningBrief = tuning
-    ? `\n\n## USER REFINEMENT\n\nApply this small, specific adjustment to the selected preview while retaining its concept and composition: ${tuning}`
-    : "";
-  const savedPrompt = applyVisualStyle(manifest.prompt || parsed.prompt, candidate.stylePrompt);
-  const prompt = promptForDimensions(
-    /^## OUTPUT\s*$/im.test(savedPrompt)
-      ? savedPrompt.replace(/^## OUTPUT\s*$/im, `${referenceBrief}${tuningBrief}\n\n## OUTPUT`)
-      : `${savedPrompt}\n\n${referenceBrief}${tuningBrief}`,
-    dimensions.width,
-    dimensions.height,
-    ""
+  const source = [candidate, ...(manifest.tweaks || [])].find(
+    (item) => item.key === body.sourceKey
   );
+  if (!source || (source.candidateId && source.candidateId !== candidate.id))
+    throw makePipelineError("Choose an image from this draft's edit history.", 400);
+  const tuning = typeof body.tuning === "string" ? body.tuning.trim() : "";
+  if (!tuning || tuning.length > 1200)
+    throw makePipelineError("Enter an edit prompt under 1,200 characters.", 400);
+  const object = await bucket.get(source.key);
+  if (!object) throw makePipelineError("The selected draft is no longer available.", 404);
+  const dimensions = previewDimensions(manifest.orientation);
+  const prompt = `Edit the supplied draft with this specific change: ${tuning}
+
+Keep its composition, visual style, and main subject unless the edit asks otherwise. Preserve the exact ${dimensions.width} × ${dimensions.height} aspect and create an independent illustration without card borders, text, or UI.`;
   const responseId = await submitImageJob(prompt, env, {
-    model,
-    quality,
+    model: DRAFT_MODEL,
+    quality: "low",
     size: `${dimensions.width}x${dimensions.height}`,
-    format: "png",
-    source: new Uint8Array(await preview.arrayBuffer()),
-    sourceFormat: candidate.format === "jpeg" ? "jpeg" : "png",
+    format: "jpeg",
+    source: new Uint8Array(await object.arrayBuffer()),
+    sourceFormat: "jpeg",
   });
   const job = {
     id: crypto.randomUUID(),
     issueNumber: number,
-    type: "final",
+    type: "tweak",
     status: "in_progress",
     createdAt: new Date().toISOString(),
     runId: manifest.runId,
     candidateId: candidate.id,
+    sourceKey: source.key,
     dimensions,
     tuning,
     prompt,
-    model,
-    quality,
+    model: DRAFT_MODEL,
+    quality: "low",
     responseId,
   };
   await saveJob(bucket, job);
@@ -2787,7 +2626,9 @@ async function advanceJob(job, env) {
     }
   } else {
     const result = results[0];
-    const actual = result.bytes && pngDimensions(result.bytes);
+    const actual =
+      result.bytes &&
+      (job.type === "tweak" ? jpegDimensions(result.bytes) : pngDimensions(result.bytes));
     if (
       result.error ||
       !actual ||
@@ -2795,35 +2636,57 @@ async function advanceJob(job, env) {
       actual.height !== job.dimensions.height
     ) {
       job.status = "failed";
-      job.error = result.error || "Final image had unexpected dimensions.";
+      job.error = result.error || "Edited image had unexpected dimensions.";
     } else {
       const manifest = await readManifest(bucket, job.issueNumber, job.runId);
-      const key = `${runPrefix(job.issueNumber, job.runId)}final-${job.candidateId}-${job.id}.png`;
-      if (manifest.finalVersions?.[String(job.candidateId)]?.some((final) => final.key === key)) {
+      const key = `${runPrefix(job.issueNumber, job.runId)}${job.type === "tweak" ? "tweak" : "final"}-${job.candidateId}-${job.id}.${job.type === "tweak" ? "jpg" : "png"}`;
+      if (
+        [...(manifest.tweaks || []), ...Object.values(manifest.finalVersions || {}).flat()].some(
+          (item) => item.key === key
+        )
+      ) {
         job.status = "completed";
         await saveJob(bucket, job);
         return job;
       }
-      await bucket.put(key, result.bytes, { httpMetadata: { contentType: "image/png" } });
-      const final = {
+      await bucket.put(key, result.bytes, {
+        httpMetadata: { contentType: job.type === "tweak" ? "image/jpeg" : "image/png" },
+      });
+      const savedImage = {
         key,
         width: actual.width,
         height: actual.height,
-        quality: job.quality || "high",
-        model: job.model || IMAGE_MODEL,
+        quality: job.quality || "low",
+        model: job.model || DRAFT_MODEL,
         createdAt: new Date().toISOString(),
         candidateId: job.candidateId,
         tuning: job.tuning,
         generationPrompt: job.prompt,
       };
+      if (job.type === "tweak") {
+        manifest.tweaks = [
+          ...(manifest.tweaks || []),
+          { ...savedImage, sourceKey: job.sourceKey, format: "jpeg" },
+        ];
+        await saveManifest(bucket, manifest);
+        try {
+          await syncDraftRun(job.issueNumber, manifest, env);
+        } catch (error) {
+          manifest.gitError = String(error.message).slice(0, 260);
+          await saveManifest(bucket, manifest);
+        }
+        job.status = "completed";
+        await saveJob(bucket, job);
+        return job;
+      }
       const name = String(job.candidateId);
       const previous = manifest.finals?.[name];
       manifest.finalVersions = { ...(manifest.finalVersions || {}) };
       manifest.finalVersions[name] = [
         ...(manifest.finalVersions[name] || (previous ? [previous] : [])),
-        final,
+        savedImage,
       ];
-      manifest.finals = { ...(manifest.finals || {}), [name]: final };
+      manifest.finals = { ...(manifest.finals || {}), [name]: savedImage };
       await saveManifest(bucket, manifest);
       try {
         await syncDraftRun(job.issueNumber, manifest, env);
@@ -2968,195 +2831,109 @@ function validateCandidate(manifest, candidateId) {
   return candidate;
 }
 
-async function renderFinalImage(number, body, env) {
-  const bucket = requireBucket(env);
-  const manifest = await readManifest(bucket, number, body.runId);
-  const candidate = validateCandidate(manifest, body.candidateId);
-  const keyName = String(candidate.id);
-  const tuning = typeof body.tuning === "string" ? body.tuning.trim() : "";
-  if (tuning.length > 1200)
-    throw makePipelineError("Keep final refinements under 1,200 characters.", 400);
-  const { parsed } = await getIssue(number, env);
-  if (!parsed.ready) throw makePipelineError(parsed.errors.join(" "), 422);
-  const previewObject = await bucket.get(candidate.key);
-  if (!previewObject) throw makePipelineError("The selected preview is no longer available.", 404);
-  const sourceBytes = new Uint8Array(await previewObject.arrayBuffer());
-  const dimensions = finalDimensions(parsed.orientation);
-  const referenceBrief =
-    "## SELECTED PREVIEW\n\nThe supplied reference image is the concept selected by the user. Preserve its main action, included or omitted characters, subject placement, camera view, dominant color mood, silhouette, and selected visual style. The original SCENE may describe people, props, or a setting deliberately omitted from this concept; do not add them back. Refine the selected image at higher quality for print without introducing new story elements.";
-  const tuningBrief = tuning
-    ? `\n\n## USER REFINEMENT\n\nApply this small, specific adjustment to the selected preview while retaining its concept and composition: ${tuning}`
-    : "";
-  const outputHeader = /^## OUTPUT\s*$/im;
-  const savedPrompt = applyVisualStyle(manifest.prompt || parsed.prompt, candidate.stylePrompt);
-  const finalPromptSource = outputHeader.test(savedPrompt)
-    ? savedPrompt.replace(outputHeader, `${referenceBrief}${tuningBrief}\n\n## OUTPUT`)
-    : `${savedPrompt}\n\n${referenceBrief}${tuningBrief}`;
-  const prompt = promptForDimensions(finalPromptSource, dimensions.width, dimensions.height, "");
-  const finalBytes = await editImage(
-    prompt,
-    sourceBytes,
-    env,
-    `${dimensions.width}x${dimensions.height}`,
-    candidate.format
-  );
-  const actual = pngDimensions(finalBytes);
-  if (!actual || actual.width !== dimensions.width || actual.height !== dimensions.height) {
-    throw makePipelineError(
-      `Final render dimensions were ${actual ? `${actual.width} × ${actual.height}` : "unreadable"}; expected ${dimensions.width} × ${dimensions.height}. No PR was opened.`,
-      502
-    );
-  }
-  const key = `${runPrefix(number, manifest.runId)}final-${candidate.id}-${crypto.randomUUID()}.png`;
-  await bucket.put(key, finalBytes, {
-    httpMetadata: { contentType: "image/png", cacheControl: "private, max-age=3600" },
-    customMetadata: {
-      issue: String(number),
-      run: manifest.runId,
-      candidate: String(candidate.id),
-      stage: "final",
-    },
-  });
-  const final = {
-    key,
-    width: actual.width,
-    height: actual.height,
-    quality: "high",
-    model: IMAGE_MODEL,
-    createdAt: new Date().toISOString(),
-    candidateId: candidate.id,
-    tuning,
-    generationPrompt: prompt,
-  };
-  manifest.finalVersions = { ...(manifest.finalVersions || {}) };
-  const previous = manifest.finals?.[keyName];
-  manifest.finalVersions[keyName] = [
-    ...(manifest.finalVersions[keyName] || (previous ? [previous] : [])),
-    final,
-  ];
-  manifest.finals = { ...(manifest.finals || {}), [keyName]: final };
-  await saveManifest(bucket, manifest);
-  try {
-    await syncDraftRun(number, manifest, env);
-  } catch (error) {
-    manifest.gitError = String(error.message || "Git save failed").slice(0, 260);
-    await saveManifest(bucket, manifest);
-  }
-  return { manifest, final };
-}
-
-async function selectFinalImage(number, body, env) {
-  const bucket = requireBucket(env);
-  const manifest = await readManifest(bucket, number, body.runId);
-  const candidate = validateCandidate(manifest, body.candidateId);
-  const keyName = String(candidate.id);
-  const versions =
-    manifest.finalVersions?.[keyName] ||
-    (manifest.finals?.[keyName] ? [manifest.finals[keyName]] : []);
-  const version = versions.find((item) => item.key === body.key);
-  if (!version) throw makePipelineError("This final render is not in the selected draft run.", 404);
-  const final = Object.fromEntries(
-    Object.entries(version).filter(([key]) => !["prUrl", "prNumber", "branch"].includes(key))
-  );
-  manifest.finals = { ...(manifest.finals || {}), [keyName]: final };
-  await saveManifest(bucket, manifest);
-  return { manifest, final };
-}
-
 function refPath(branch) {
   return branch.split("/").map(encodeURIComponent).join("/");
 }
 
-async function ensureFinalPromptComment(manifest, final, env) {
-  if (final.promptCommentId) return;
-  const prompt = final.generationPrompt;
-  if (!prompt)
-    throw makePipelineError("The exact final render prompt is unavailable for this image.", 409);
-  const marker = `<!-- asset-pipeline-final-prompt:${final.key} -->`;
-  const commentsPath = `/repos/${OWNER}/${REPOSITORY}/issues/${final.prNumber}/comments`;
-  const existing = await githubJson(`${commentsPath}?per_page=100`, env);
+async function ensureSubmissionPromptComment(manifest, submission, env) {
+  if (submission.promptCommentId) return;
+  const prompt = submission.generationPrompt;
+  if (!prompt) throw makePipelineError("The exact image prompt is unavailable.", 409);
+  const marker = `<!-- asset-pipeline-submission-prompt:${submission.key} -->`;
+  const path = `/repos/${OWNER}/${REPOSITORY}/issues/${submission.prNumber}/comments`;
+  const existing = await githubJson(`${path}?per_page=100`, env);
   const found = existing.find((comment) => String(comment.body || "").includes(marker));
-  if (found) final.promptCommentId = found.id;
+  if (found) submission.promptCommentId = found.id;
   else {
     const longestTicks = Math.max(2, ...(prompt.match(/`+/g) || []).map((part) => part.length));
     const fence = "`".repeat(longestTicks + 1);
-    const comment = await githubJson(commentsPath, env, {
+    const comment = await githubJson(path, env, {
       method: "POST",
       body: JSON.stringify({
-        body: `${marker}\n## Final image generation prompt\n\n${fence}text\n${prompt}\n${fence}`,
+        body: `${marker}
+## Submitted image generation prompt
+
+${fence}text
+${prompt}
+${fence}`,
       }),
     });
-    final.promptCommentId = comment.id;
+    submission.promptCommentId = comment.id;
   }
-  manifest.finals[String(final.candidateId)] = final;
+  manifest.submissions[submission.key] = submission;
   await saveManifest(requireBucket(env), manifest);
 }
 
 async function openPullRequest(number, body, env) {
   if (!env.GITHUB_TOKEN)
-    throw makePipelineError(
-      "Pull-request creation is not configured. Add a repository-scoped GITHUB_TOKEN as a Site secret.",
-      503
-    );
+    throw makePipelineError("Add GITHUB_TOKEN as a Site secret to create pull requests.", 503);
   const bucket = requireBucket(env);
   const manifest = await readManifest(bucket, number, body.runId);
   const candidate = validateCandidate(manifest, body.candidateId);
-  const final = manifest.finals?.[String(candidate.id)];
-  if (!final)
-    throw makePipelineError(
-      "Render and review the final image before creating a pull request.",
-      409
-    );
-  if (final.prUrl) {
-    await ensureFinalPromptComment(manifest, final, env);
-    return { manifest, final };
+  const selected = [candidate, ...(manifest.tweaks || [])].find((item) => item.key === body.key);
+  if (!selected || (selected.candidateId && selected.candidateId !== candidate.id))
+    throw makePipelineError("Select a saved draft or edit for review before submitting.", 400);
+  manifest.submissions = { ...(manifest.submissions || {}) };
+  const submission = manifest.submissions[selected.key] || {
+    key: selected.key,
+    candidateId: candidate.id,
+    generationPrompt: selected.generationPrompt,
+  };
+  if (submission.prUrl) {
+    await ensureSubmissionPromptComment(manifest, submission, env);
+    return { manifest, submission };
   }
   if (!manifest.draftUrl || manifest.gitError) await syncDraftRun(number, manifest, env);
-  const { raw, parsed } = await getIssue(number, env);
+  const { parsed } = await getIssue(number, env);
   if (!parsed.ready) throw makePipelineError(parsed.errors.join(" "), 422);
-  const finalObject = await bucket.get(final.key);
-  if (!finalObject)
-    throw makePipelineError("The rendered final image is no longer available.", 404);
-  const finalBytes = await finalObject.arrayBuffer();
-  const actual = pngDimensions(new Uint8Array(finalBytes));
-  if (!actual || actual.width !== final.width || actual.height !== final.height)
-    throw makePipelineError("Final image dimensions failed validation.", 422);
-
-  const branch = `${issueBranch(number, parsed.assetId)}-${manifest.runId.slice(0, 8)}-c${candidate.id}`;
+  const object = await bucket.get(selected.key);
+  if (!object) throw makePipelineError("The selected image is unavailable.", 404);
+  const bytes = new Uint8Array(await object.arrayBuffer());
+  const dimensions = jpegDimensions(bytes);
+  const expected = previewDimensions(parsed.orientation);
+  if (!dimensions || dimensions.width !== expected.width || dimensions.height !== expected.height)
+    throw makePipelineError("Selected draft dimensions or format failed validation.", 422);
+  const targetPath = `public/art/${parsed.assetId}.jpg`;
+  const suffix = selected.key
+    .split("/")
+    .at(-1)
+    .replace(/[^a-z0-9-]/gi, "-")
+    .slice(0, 48);
+  const branch = `${issueBranch(number, parsed.assetId)}-${manifest.runId.slice(0, 8)}-${suffix}`;
   const { base } = await writeFilesToBranch(
     branch,
-    [{ path: parsed.targetPath, bytes: new Uint8Array(finalBytes) }],
-    `Add ${parsed.name} card artwork`,
+    [{ path: targetPath, bytes }],
+    `Add ${parsed.name} card artwork from selected draft`,
     env
   );
   const pullsQuery = new URLSearchParams({ state: "open", head: `${OWNER}:${branch}` });
-  const existingPulls = await githubJson(`/repos/${OWNER}/${REPOSITORY}/pulls?${pullsQuery}`, env);
-  if (existingPulls.length) {
-    final.prUrl = existingPulls[0].html_url;
-    final.prNumber = existingPulls[0].number;
-    manifest.finals[String(candidate.id)] = final;
-    await saveManifest(bucket, manifest);
-    await ensureFinalPromptComment(manifest, final, env);
-    return { manifest, final };
-  }
+  const existing = await githubJson(`/repos/${OWNER}/${REPOSITORY}/pulls?${pullsQuery}`, env);
+  let pull = existing[0];
+  if (!pull)
+    pull = await githubJson(`/repos/${OWNER}/${REPOSITORY}/pulls`, env, {
+      method: "POST",
+      body: JSON.stringify({
+        title: `[asset] ${parsed.name} artwork`,
+        head: branch,
+        base,
+        body: `## Generated card artwork
 
-  const dimensions = `${final.width} × ${final.height}`;
-  const pull = await githubJson(`/repos/${OWNER}/${REPOSITORY}/pulls`, env, {
-    method: "POST",
-    body: JSON.stringify({
-      title: `[asset] ${parsed.name} artwork`,
-      head: branch,
-      base,
-      body: `## Generated card artwork\n\n- Asset: \`${parsed.assetId}\`\n- Image: \`${parsed.targetPath}\`\n- Drafts and edited prompt: \`${manifest.draftPath}/\`\n- Dimensions: ${dimensions} px (${parsed.orientationLabel})\n- Generated with \`${final.model || IMAGE_MODEL}\` from the prompt saved with this draft run.\n\nCloses #${number}`,
-    }),
-  });
-  final.prUrl = pull.html_url;
-  final.prNumber = pull.number;
-  final.branch = branch;
-  manifest.finals[String(candidate.id)] = final;
+- Asset: \`${parsed.assetId}\`
+- Image: \`${targetPath}\` (compressed draft JPEG)
+- Draft session and prompt: \`${manifest.draftPath}/\`
+- Dimensions: ${dimensions.width} × ${dimensions.height} px (${parsed.orientationLabel})
+- Model: \`${manifest.previewModel || DRAFT_MODEL}\`, low quality
+
+The issue template names a PNG at a larger minimum size; this JPEG uses the approved draft output and the card renderer supports JPEG.
+
+Closes #${number}`,
+      }),
+    });
+  Object.assign(submission, { prUrl: pull.html_url, prNumber: pull.number, branch });
+  manifest.submissions[selected.key] = submission;
   await saveManifest(bucket, manifest);
-  await ensureFinalPromptComment(manifest, final, env);
-  return { manifest, final };
+  await ensureSubmissionPromptComment(manifest, submission, env);
+  return { manifest, submission };
 }
 
 async function handleApi(request, env, url) {
@@ -3188,7 +2965,7 @@ async function handleApi(request, env, url) {
   if (path === "/api/image" && request.method === "GET") {
     const key = url.searchParams.get("key") || "";
     if (
-      !/^issues\/\d+\/runs\/[0-9a-f-]{20,40}\/(?:candidate-(?:[1-9]|[1-3]\d|40)\.(?:jpg|png)|final-(?:[1-9]|[1-3]\d|40)(?:-[0-9a-f-]{20,40})?\.png)$/i.test(
+      !/^issues\/\d+\/runs\/[0-9a-f-]{20,40}\/(?:candidate-(?:[1-9]|[1-3]\d|40)\.(?:jpg|png)|(?:final|tweak)-(?:[1-9]|[1-3]\d|40)(?:-[0-9a-f-]{20,40})?\.(?:png|jpg))$/i.test(
         key
       )
     )
@@ -3284,8 +3061,8 @@ async function handleApi(request, env, url) {
       const job =
         body.type === "draft"
           ? await startDraftJob(number, body, env)
-          : body.type === "final"
-            ? await startFinalJob(number, body, env)
+          : body.type === "tweak"
+            ? await startTweakJob(number, body, env)
             : null;
       if (!job) throw makePipelineError("Unknown job type.", 400);
       return jsonResponse(
@@ -3307,7 +3084,7 @@ async function handleApi(request, env, url) {
     return jsonResponse({ error: "Method not allowed." }, 405);
   }
   const match = path.match(
-    /^\/api\/issues\/(\d+)(?:\/(runs|generations|finals|final-selection|pull-requests|brainstorm|chat))?$/
+    /^\/api\/issues\/(\d+)(?:\/(runs|generations|pull-requests|brainstorm|chat))?$/
   );
   if (!match) return jsonResponse({ error: "Not found." }, 404);
   const number = Number(match[1]);
@@ -3324,9 +3101,7 @@ async function handleApi(request, env, url) {
     return jsonResponse({ messages: await getChatMessages(number, env) });
   if (
     request.method !== "POST" ||
-    !["generations", "finals", "final-selection", "pull-requests", "brainstorm", "chat"].includes(
-      action
-    )
+    !["generations", "pull-requests", "brainstorm", "chat"].includes(action)
   )
     return jsonResponse({ error: "Method not allowed." }, 405);
   assertSameOrigin(request);
@@ -3362,16 +3137,8 @@ async function handleApi(request, env, url) {
     Number(body.candidateId) > 40
   )
     throw makePipelineError("A valid draft run and candidate are required.", 400);
-  if (action === "finals") {
-    const result = await renderFinalImage(number, body, env);
-    return jsonResponse({ run: result.manifest, final: result.final });
-  }
-  if (action === "final-selection") {
-    const result = await selectFinalImage(number, body, env);
-    return jsonResponse({ run: result.manifest, final: result.final });
-  }
   const result = await openPullRequest(number, body, env);
-  return jsonResponse({ run: result.manifest, final: result.final });
+  return jsonResponse({ run: result.manifest, submission: result.submission });
 }
 
 export default {

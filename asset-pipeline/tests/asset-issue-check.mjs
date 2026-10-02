@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import worker, {
-  finalDimensions,
   applyVisualStyle,
   canSwapVisualStyle,
   parseAssetIssue,
@@ -79,19 +78,14 @@ test("supports landscape feat cards and exact 7:5 dimensions", () => {
   );
   assert.equal(parsed.orientation, "landscape");
   assert.deepEqual(previewDimensions(parsed.orientation), { width: 1008, height: 720 });
-  assert.deepEqual(finalDimensions(parsed.orientation), { width: 1120, height: 800 });
   assert.equal(1008 / 720, 7 / 5);
   assert.ok(1008 * 720 >= 655360);
-  assert.ok(1120 >= 1050 && 800 >= 750);
 });
 
-test("portrait image sizes match exact 5:7 and satisfy the issue minimum", () => {
+test("draft output preserves the exact card aspect ratio", () => {
   assert.deepEqual(previewDimensions("portrait"), { width: 720, height: 1008 });
-  assert.deepEqual(finalDimensions("portrait"), { width: 800, height: 1120 });
   assert.equal(720 / 1008, 5 / 7);
   assert.ok(720 * 1008 >= 655360);
-  assert.equal(800 / 1120, 5 / 7);
-  assert.ok(800 >= 750 && 1120 >= 1050);
 });
 
 test("rejects unsafe or inconsistent output paths and a mismatched close reference", () => {
@@ -127,20 +121,17 @@ test("home page returns a complete, syntactically valid inline client script", a
   assert.match(html, /Edit the issue prompt before generating drafts/);
   assert.match(html, /<dialog class="image-dialog"/);
   assert.match(html, /View at 100%/);
-  assert.match(html, /Rendering in the background…/);
+  assert.match(html, /Editing in background…/);
   assert.match(html, /Creating pull request…/);
-  assert.match(html, /Advanced render options/);
-  assert.match(html, /gpt-image-2.5-sunburst/);
+  assert.doesNotMatch(html, /Advanced render options/);
+  assert.doesNotMatch(html, /Render final image/);
   assert.doesNotMatch(html, /class="prompt-toggle"><details open>/);
   assert.match(html, /id="mobile-open"/);
   assert.match(html, /id="filter-pr"/);
-  assert.match(
-    html,
-    /copy\.append\(heading, para, tuning, actions, progress, prProgress, dimensions\)/
-  );
+  assert.match(html, /copy\.append\(heading, para, tuning, actions, progress, dimensions\)/);
   assert.match(html, /Brainstorm the prompt/);
   assert.match(html, /Dictate/);
-  assert.match(html, /Optional refinements for this render/);
+  assert.match(html, /Optional edit prompt/);
   assert.ok(client);
   assert.doesNotThrow(() => new Function(client));
 });

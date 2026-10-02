@@ -12,18 +12,20 @@ type Props = {
  * wash shows through — no broken-image glyph, no layout shift.
  */
 export function CardArt({ assetId }: Props) {
-  const [missing, setMissing] = useState(false);
-  if (missing) return null;
+  const [fallback, setFallback] = useState({ assetId, format: "png", missing: false });
+  const current =
+    fallback.assetId === assetId ? fallback : { assetId, format: "png", missing: false };
+  if (current.missing) return null;
 
   return (
     <img
-      src={`/art/${assetId}.png`}
+      src={`/art/${assetId}.${current.format}`}
       alt=""
       aria-hidden="true"
       loading="lazy"
       decoding="async"
       className={styles.art}
-      onError={() => setMissing(true)}
+      onError={() => setFallback({ assetId, format: "jpg", missing: current.format === "jpg" })}
     />
   );
 }

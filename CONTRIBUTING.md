@@ -29,12 +29,12 @@ Decks are data-driven — there is no per-class UI code.
 
 ## Delivering a card asset
 
-Card art is generated outside the repo — a PR delivering an asset carries the PNG and nothing else.
+The asset pipeline can submit a selected draft JPEG directly. A PR delivering an asset carries the image and nothing else.
 
 1. **Pick an open issue** labelled `ASSET` — titled ``[asset]: `<name>` <kind>``.
 2. **Copy the prompt** from the issue body (written for ChatGPT; any image tool works).
 3. **Generate the image.**
-4. **Save it as `public/art/<asset-id>.png`.** The id, orientation and minimum size are in the issue body.
+4. **Save a pipeline draft as `public/art/<asset-id>.jpg`.** Drafts are 720 × 1008 px portrait or 1008 × 720 px landscape. Existing PNG artwork remains supported. Older issue bodies may still specify a larger PNG; the draft pipeline's JPEG path and dimensions supersede those image requirements.
 5. **Open a PR** with `Closes #<issue>` in the body. One asset per PR.
 6. **Run `pnpm blue-ball`** — the build must stay green.
 
