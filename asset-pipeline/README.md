@@ -33,6 +33,8 @@ The Site-hosted MCP tools `draft_batch_status` and `draft_batch_step` let the ow
 
 An unattended task can call `GET /api/bulk/status` and `POST /api/bulk/step` with the Site's service credential in `OAI-Sites-Authorization: Bearer ...` and the matching value in `X-Batch-Token`. The Site checks the private token, so ordinary visitors cannot start or advance the batch. Obtain the service credential from Sites at execution time and keep it out of logs and task instructions. If the platform rotates it, update `BULK_SERVICE_TOKEN` as a Site secret and deploy the current version again. The task can resume safely from saved progress after an interruption.
 
+The owner-only **Campaign status** panel reads this saved state. It shows completed and remaining issues, the current issue, submitted and collected drafts, archive state, issue errors, and the last saved step. **Refresh status** only reads data and does not trigger generation. A stale last-step time means that no call has advanced the Site recently; the Site cannot read whether the separate ChatGPT automation is enabled.
+
 ## Local checks
 
 From this folder, run:

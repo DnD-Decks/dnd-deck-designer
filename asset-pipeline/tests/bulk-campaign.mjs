@@ -93,6 +93,10 @@ test("owner batch starts 37 styles for draftless non-weapon issues and persists 
       env
     );
   try {
+    const home = await worker.fetch(new Request("https://pipeline.example/"), env);
+    const html = await home.text();
+    assert.match(html, /Campaign status/);
+    assert.match(html, /Refresh status/);
     assert.equal((await call("draft_batch_step", "viewer@example.com")).status, 403);
     const response = await call("draft_batch_step");
     assert.equal(response.status, 200);
@@ -115,7 +119,16 @@ test("owner batch starts 37 styles for draftless non-weapon issues and persists 
       env
     );
     assert.equal(serviceStatus.status, 200);
-    assert.equal((await serviceStatus.json()).currentIssue, 101);
+    const visible = await serviceStatus.json();
+    assert.equal(visible.currentIssue, 101);
+    assert.equal(visible.submittedCount, 4);
+    assert.equal(visible.collectedCount, 0);
+    assert.equal(visible.currentRunArchived, false);
+    const unauthorizedStatus = await worker.fetch(
+      new Request("https://pipeline.example/api/bulk/status"),
+      env
+    );
+    assert.equal(unauthorizedStatus.status, 403);
     const rejected = await worker.fetch(
       new Request("https://pipeline.example/api/bulk/step", { method: "POST" }),
       env

@@ -47,11 +47,18 @@ const buildPage = () => String.raw`<!doctype html>
         <header class="topbar">
           <button class="mobile-open" id="mobile-open" type="button" aria-controls="issue-sidebar" aria-expanded="false">☰ <span>Browse cards</span></button>
           <div class="crumbs"><span>DnD Decks</span><i>/</i><strong>Asset Pipeline</strong></div>
+          <button class="button button-subtle campaign-nav hidden" id="campaign-open" type="button">Campaign status</button>
           <div class="service-status" id="service-status" aria-live="polite">
             <span class="status-pill pending"><i></i> Checking services</span>
           </div>
         </header>
         <div class="workspace" id="workspace">
+          <section class="campaign-panel hidden" id="campaign-panel" aria-labelledby="campaign-heading">
+            <div class="campaign-header"><div><div class="section-kicker">ADVANCED · BATCH CAMPAIGN</div><h1 id="campaign-heading">Draft campaign</h1><p>Progress for the saved 37-style, non-weapon issue queue.</p></div><button class="button button-subtle" id="campaign-back" type="button">Back to cards</button></div>
+            <div class="campaign-actions"><button class="button button-primary" id="campaign-refresh" type="button">Refresh status</button><span id="campaign-request-state" role="status" aria-live="polite"></span></div>
+            <div id="campaign-content" aria-live="polite"><p>Loading campaign status…</p></div>
+            <p class="campaign-footnote">Refresh only reads saved progress. The Site cannot determine whether the external schedule is enabled.</p>
+          </section>
           <section class="welcome-panel" id="welcome-panel">
             <div class="welcome-kicker"><span class="sparkle">✦</span> ILLUSTRATION WORKBENCH</div>
             <h1>Choose the image<br><em>that tells the story.</em></h1>
@@ -151,6 +158,7 @@ const styles = String.raw`
 @media(max-width:720px){.mobile-open,.mobile-close{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;border:1px solid #425056;border-radius:7px;background:#1e272d;color:var(--text);padding:0 12px;font:13px var(--sans)}.mobile-open{flex:none}.mobile-close{align-self:flex-end;margin-bottom:6px}.app-shell .sidebar{position:fixed;z-index:31;inset:0 auto 0 0;width:min(360px,calc(100vw - 35px));height:100dvh;max-height:100dvh;padding:16px;background:#141a1f;box-shadow:12px 0 40px #0008;transform:translateX(-110%);transition:transform .2s ease;display:flex;flex-direction:column;overflow:hidden}.nav-open .sidebar{transform:translateX(0)}.mobile-backdrop{position:fixed;z-index:30;inset:0;width:100%;height:100%;border:0;background:#000b}.nav-open .mobile-backdrop{display:block}.nav-open{overflow:hidden}.sidebar .issue-list{display:block;overflow-y:auto;overflow-x:hidden;flex:1;max-height:none;min-height:0}.sidebar .issue-row{display:block;width:100%;min-height:52px;padding:10px}.sidebar .search-box{margin-bottom:10px}.sidebar .issue-filters{margin-bottom:12px}.topbar{gap:8px}.topbar .crumbs{display:none}.advanced-grid{grid-template-columns:1fr}.prompt-editor textarea,.brainstorm textarea,.final-tuning textarea,.final-tuning select,.issue-filters select,.search-box input{font-size:16px}}
 .brainstorm{border-top:1px solid #29343a;margin-top:18px;padding-top:17px}.brainstorm h3{font-size:17px;margin:0 0 3px}.brainstorm p{font-size:13px;color:#aab5ad;margin:0 0 12px}.brainstorm label,.final-tuning label{display:block;font-size:13px;color:#ccd5cd;margin:8px 0}.chat-messages{display:grid;gap:10px;max-height:360px;overflow:auto;margin:0 0 10px}.chat-message{border-radius:8px;padding:11px 13px;font-size:14px;white-space:pre-wrap;line-height:1.55;max-width:94%}.chat-message.user{background:#30372f;justify-self:end}.chat-message.assistant{background:#20292d;justify-self:start}.chat-message button{display:block;margin-top:11px}.brainstorm textarea,.final-tuning textarea{width:100%;background:#11171c;border:1px solid #3d494d;border-radius:6px;color:#d5ddd6;padding:10px;font:14px/1.5 var(--sans);resize:vertical}.chat-actions{display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap;margin-top:9px}.chat-status{font-size:13px;color:var(--gold-2);min-height:20px;margin-top:6px}.final-tuning{margin:14px 0}.final-tuning textarea{min-height:82px}.final-actions{flex-wrap:wrap}
 .chat-message.prompt{justify-self:stretch;max-width:100%;background:#30291d;border:1px solid #8c703e;color:#f0cf84}.chat-message.prompt strong{display:block;font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}.chat-message.prompt span{display:block}
+.campaign-nav{margin-left:auto;white-space:nowrap}.campaign-panel{max-width:1050px;margin:0 auto}.campaign-header{display:flex;justify-content:space-between;align-items:start;gap:20px;border-bottom:1px solid var(--line);padding-bottom:22px}.campaign-header h1{font-size:clamp(29px,4vw,42px);font-weight:500;margin:9px 0}.campaign-header p{font-size:15px;color:var(--soft);margin:0}.campaign-actions{display:flex;align-items:center;gap:14px;margin:23px 0}.campaign-actions span{color:var(--muted);font-size:13px}.campaign-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.campaign-stat{min-width:0;border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:17px}.campaign-stat span{display:block;color:var(--muted);font-size:13px}.campaign-stat strong{display:block;margin-top:9px;font:600 clamp(20px,2.8vw,32px) var(--sans);color:var(--text)}.campaign-panel progress{display:block;width:100%;height:12px;margin:19px 0 22px;accent-color:var(--gold)}.campaign-details{border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:13px 20px}.campaign-details p{font-size:14px;color:var(--soft);margin:8px 0;overflow-wrap:anywhere}.campaign-details strong{color:var(--text)}.campaign-details a{color:var(--gold-2)}.campaign-details .campaign-error{color:var(--red);border-top:1px solid var(--line);padding-top:11px}.campaign-footnote{color:var(--muted);font-size:13px;line-height:1.55;margin:17px 0}@media(max-width:900px){.campaign-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.campaign-stats{gap:8px}.campaign-stat{padding:12px}.campaign-stat span{font-size:12px}.campaign-stat strong{font-size:21px}.campaign-header{display:block}.campaign-header .button{margin-top:18px}.campaign-nav{padding:6px 9px;font-size:12px}.campaign-actions{flex-wrap:wrap}.campaign-details{padding:12px}}
 `;
 
 const clientScript = String.raw`
@@ -185,7 +193,7 @@ function openIssueNav() {
 async function request(path, options) {
   const response = await fetch(path, options || {});
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error || "Request failed (" + response.status + ")");
+  if (!response.ok) { const error = new Error(data.error || "Request failed (" + response.status + ")"); error.status = response.status; throw error; }
   return data;
 }
 
@@ -385,6 +393,7 @@ function renderIssueList() {
 }
 
 function setSurface(surface) {
+  $("#campaign-panel").classList.toggle("hidden", surface !== "campaign");
   $("#welcome-panel").classList.toggle("hidden", surface !== "welcome");
   $("#issue-workspace").classList.toggle("hidden", surface !== "issue");
   $("#not-found").classList.toggle("hidden", surface !== "not-found");
@@ -1324,6 +1333,7 @@ async function start() {
     const data = await request("/api/issues");
     state.issues = data.issues || [];
     renderIssueList();
+    try { await loadCampaign(false); } catch (error) { if (error.status !== 403) $("#campaign-open").classList.remove("hidden"); }
     const requested = new URL(window.location.href).searchParams.get("issue");
     if (requested && state.issues.some(function(issue) { return String(issue.number) === requested; })) await openIssue(requested);
   } catch (error) {
@@ -1331,6 +1341,98 @@ async function start() {
     $("#issue-count").textContent = "!";
   }
 }
+
+let campaignPreviousSurface = "welcome";
+function campaignTime(value) {
+  if (!value || Number.isNaN(Date.parse(value))) return "Unknown";
+  return new Date(value).toLocaleString();
+}
+function campaignCell(label, value) {
+  const cell = document.createElement("div");
+  cell.className = "campaign-stat";
+  const caption = document.createElement("span");
+  caption.textContent = label;
+  const number = document.createElement("strong");
+  number.textContent = value;
+  cell.append(caption, number);
+  return cell;
+}
+function renderCampaign(data) {
+  const content = $("#campaign-content");
+  content.replaceChildren();
+  if (data.status === "not_started") {
+    const note = document.createElement("p");
+    note.textContent = "No campaign has started.";
+    content.append(note);
+    return;
+  }
+  const total = Number(data.total) || 0;
+  const completed = Number(data.completed) || 0;
+  const remaining = Math.max(0, total - completed);
+  const stats = document.createElement("div");
+  stats.className = "campaign-stats";
+  stats.append(campaignCell("Issues archived", completed + " / " + total), campaignCell("Issues left", String(remaining)), campaignCell("Current drafts submitted", (data.submittedCount || 0) + " / " + data.variantCount), campaignCell("Images collected", (data.collectedCount || 0) + " / " + data.variantCount));
+  content.append(stats);
+  const progress = document.createElement("progress");
+  progress.max = total || 1;
+  progress.value = completed;
+  progress.setAttribute("aria-label", "Completed issues");
+  content.append(progress);
+  const details = document.createElement("div");
+  details.className = "campaign-details";
+  const current = document.createElement("p");
+  current.append("Current issue: ");
+  if (data.currentIssue) {
+    const link = document.createElement("a");
+    link.href = "https://github.com/DnD-Decks/dnd-deck-designer/issues/" + data.currentIssue;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "#" + data.currentIssue + (data.currentIssueTitle ? " · " + data.currentIssueTitle : "");
+    current.append(link);
+  } else current.append(data.status === "completed" ? "None · campaign complete" : "Not started");
+  details.append(current);
+  const age = Date.now() - Date.parse(data.updatedAt);
+  const signal = data.status === "completed" ? "Complete" : Object.keys(data.errors || {}).length ? "Needs attention · issue error" : age > 10 * 60 * 1000 ? "No recent step · check the driver" : "Recently advanced · schedule status unknown";
+  for (const [label, value] of [["Site activity", signal], ["Current job", data.currentJobStatus || "No active job"], ["GitHub archive", data.currentRunArchived ? "Saved on main" : data.collectedCount ? "Awaiting save or more images" : "No completed run yet"], ["Last saved step", campaignTime(data.updatedAt)], ["Campaign started", campaignTime(data.startedAt)], ["Open asset issues at page load", state.issues.length ? String(state.issues.length) + " (may differ from saved queue)" : "Unavailable"]]) {
+    const row = document.createElement("p");
+    const strong = document.createElement("strong");
+    strong.textContent = label + ": ";
+    row.append(strong, String(value));
+    details.append(row);
+  }
+  if (data.failedCount) {
+    const failures = document.createElement("p");
+    failures.textContent = data.failedCount + " image request(s) need retry.";
+    details.append(failures);
+  }
+  for (const [issue, error] of Object.entries(data.errors || {})) {
+    const item = document.createElement("p");
+    item.className = "campaign-error";
+    item.textContent = "Issue #" + issue + ": " + error;
+    details.append(item);
+  }
+  content.append(details);
+}
+async function loadCampaign(showBusy = true) {
+  if (showBusy) $("#campaign-request-state").textContent = "Refreshing…";
+  try {
+    const data = await request("/api/bulk/status");
+    $("#campaign-open").classList.remove("hidden");
+    renderCampaign(data);
+    $("#campaign-request-state").textContent = showBusy ? "Updated " + new Date().toLocaleTimeString() : "";
+  } catch (error) {
+    if (error.status === 403) $("#campaign-open").classList.add("hidden");
+    $("#campaign-request-state").textContent = "Could not refresh: " + error.message;
+    throw error;
+  }
+}
+$("#campaign-open").addEventListener("click", function() {
+  campaignPreviousSurface = state.active ? "issue" : "welcome";
+  setSurface("campaign");
+  loadCampaign().catch(function() {});
+});
+$("#campaign-back").addEventListener("click", function() { setSurface(campaignPreviousSurface); });
+$("#campaign-refresh").addEventListener("click", function() { loadCampaign().catch(function() {}); });
 
 function escapeText(value) {
   return String(value).replace(/[&<>"']/g, function(character) {
@@ -2735,14 +2837,29 @@ async function saveBulkCampaign(campaign, env) {
 async function bulkCampaignStatus(env) {
   const campaign = await readBulkCampaign(env);
   if (!campaign) return { status: "not_started" };
+  const number = campaign.issues[campaign.cursor] || null;
+  let job = null;
+  let manifest = null;
+  if (number && campaign.jobId) {
+    const object = await requireBucket(env).get(jobKey(number, campaign.jobId));
+    job = object ? await object.json() : null;
+    if (job?.runId) {
+      const run = await requireBucket(env).get(`${runPrefix(number, job.runId)}manifest.json`);
+      manifest = run ? await run.json() : null;
+    }
+  }
   return {
     status: campaign.cursor >= campaign.issues.length ? "completed" : "running",
     total: campaign.issues.length,
     completed: campaign.cursor,
-    currentIssue: campaign.issues[campaign.cursor] || null,
+    currentIssue: number,
+    currentIssueTitle: job?.issueTitle || null,
     currentJobId: campaign.jobId || null,
-    currentJobStatus: campaign.jobStatus || null,
-    submittedCount: campaign.submittedCount || 0,
+    currentJobStatus: job?.status || campaign.jobStatus || null,
+    submittedCount: job?.requests?.filter((request) => request.responseId).length ?? campaign.submittedCount ?? 0,
+    collectedCount: manifest?.candidates?.length || 0,
+    failedCount: manifest?.failures?.length || job?.requests?.filter((request) => request.error).length || 0,
+    currentRunArchived: Boolean(manifest?.draftUrl && !manifest?.gitError),
     variantCount: STYLE_CATALOG.length,
     errors: campaign.errors || {},
     startedAt: campaign.startedAt,
