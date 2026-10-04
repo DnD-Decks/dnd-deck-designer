@@ -1,8 +1,8 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T17:23:22.057Z. Status: **running**.
+Updated: 2026-10-04T17:24:31.740Z. Status: **running**.
 
-**64/93 issues complete; 2387/3441 styles archived.**
+**64/93 issues complete; 2392/3441 styles archived.**
 
 Current issue: #142. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
@@ -74,7 +74,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#139](https://github.com/DnD-Decks/dnd-deck-designer/issues/139) Grease | 37/37 | complete | 0 | 0 |
 | [#140](https://github.com/DnD-Decks/dnd-deck-designer/issues/140) Mage Armor | 37/37 | complete | 0 | 0 |
 | [#141](https://github.com/DnD-Decks/dnd-deck-designer/issues/141) Magic Missile | 37/37 | complete | 0 | 0 |
-| [#142](https://github.com/DnD-Decks/dnd-deck-designer/issues/142) Ray of Sickness | 19/37 | partial | 5 | 1 |
+| [#142](https://github.com/DnD-Decks/dnd-deck-designer/issues/142) Ray of Sickness | 24/37 | partial | 5 | 0 |
 | [#143](https://github.com/DnD-Decks/dnd-deck-designer/issues/143) Shield | 0/37 | queued | 0 | 0 |
 | [#144](https://github.com/DnD-Decks/dnd-deck-designer/issues/144) Witch Bolt | 0/37 | queued | 0 | 0 |
 | [#145](https://github.com/DnD-Decks/dnd-deck-designer/issues/145) Eldritch Blast | 0/37 | queued | 0 | 0 |
@@ -103,7 +103,3 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#181](https://github.com/DnD-Decks/dnd-deck-designer/issues/181) Mana | 0/37 | queued | 0 | 0 |
 | [#185](https://github.com/DnD-Decks/dnd-deck-designer/issues/185) Mana | 0/37 | queued | 0 | 0 |
 | [#187](https://github.com/DnD-Decks/dnd-deck-designer/issues/187) Mana | 0/37 | queued | 0 | 0 |
-
-## Request errors
-
-- #142, film-noir-photography-01 (attempt 1): OpenAI completed without an image.
