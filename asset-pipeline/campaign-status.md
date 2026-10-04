@@ -1,8 +1,8 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T19:57:03.971Z. Status: **running**.
+Updated: 2026-10-04T19:58:12.728Z. Status: **running**.
 
-**80/93 issues complete; 2995/3441 styles archived.**
+**81/93 issues complete; 2997/3441 styles archived.**
 
 Current issue: #158. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
@@ -90,7 +90,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#155](https://github.com/DnD-Decks/dnd-deck-designer/issues/155) Spellcasting | 37/37 | complete | 0 | 0 |
 | [#156](https://github.com/DnD-Decks/dnd-deck-designer/issues/156) Divine Order | 37/37 | complete | 0 | 0 |
 | [#157](https://github.com/DnD-Decks/dnd-deck-designer/issues/157) Spellcasting | 37/37 | complete | 0 | 0 |
-| [#158](https://github.com/DnD-Decks/dnd-deck-designer/issues/158) Druidic | 35/37 | partial | 2 | 0 |
+| [#158](https://github.com/DnD-Decks/dnd-deck-designer/issues/158) Druidic | 37/37 | complete | 0 | 0 |
 | [#159](https://github.com/DnD-Decks/dnd-deck-designer/issues/159) Primal Order | 0/37 | queued | 0 | 0 |
 | [#161](https://github.com/DnD-Decks/dnd-deck-designer/issues/161) Weapon Mastery | 0/37 | queued | 0 | 0 |
 | [#162](https://github.com/DnD-Decks/dnd-deck-designer/issues/162) Martial Arts | 0/37 | queued | 0 | 0 |
