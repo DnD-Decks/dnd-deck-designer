@@ -2,8 +2,18 @@ name: blue-ball
 
 on:
   pull_request:
+    paths-ignore:
+      - "asset-pipeline/drafts/**"
+      - "asset-pipeline/campaign-status.md"
   push:
     branches: [main]
+    paths-ignore:
+      - "asset-pipeline/drafts/**"
+      - "asset-pipeline/campaign-status.md"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
