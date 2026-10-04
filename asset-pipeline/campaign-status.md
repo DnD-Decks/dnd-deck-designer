@@ -1,8 +1,8 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T15:46:31.799Z. Status: **running**.
+Updated: 2026-10-04T15:47:41.620Z. Status: **running**.
 
-**54/93 issues complete; 2013/3441 styles archived.**
+**54/93 issues complete; 2018/3441 styles archived.**
 
 Current issue: #131. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
@@ -64,7 +64,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#128](https://github.com/DnD-Decks/dnd-deck-designer/issues/128) Hunter's Mark | 37/37 | complete | 0 | 0 |
 | [#129](https://github.com/DnD-Decks/dnd-deck-designer/issues/129) Acid Splash | 37/37 | complete | 0 | 0 |
 | [#130](https://github.com/DnD-Decks/dnd-deck-designer/issues/130) Chill Touch | 37/37 | complete | 0 | 0 |
-| [#131](https://github.com/DnD-Decks/dnd-deck-designer/issues/131) Mind Sliver | 15/37 | partial | 5 | 0 |
+| [#131](https://github.com/DnD-Decks/dnd-deck-designer/issues/131) Mind Sliver | 20/37 | partial | 5 | 0 |
 | [#132](https://github.com/DnD-Decks/dnd-deck-designer/issues/132) Ray of Frost | 0/37 | queued | 0 | 0 |
 | [#133](https://github.com/DnD-Decks/dnd-deck-designer/issues/133) Shocking Grasp | 0/37 | queued | 0 | 0 |
 | [#134](https://github.com/DnD-Decks/dnd-deck-designer/issues/134) Sorcerous Burst | 0/37 | queued | 0 | 0 |
