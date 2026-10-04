@@ -1,12 +1,14 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T20:41:15.239Z. Status: **running**.
+Updated: 2026-10-04T20:42:25.096Z. Status: **credits-exhausted**.
 
-**85/93 issues complete; 3165/3441 styles archived.**
+**85/93 issues complete; 3166/3441 styles archived.**
 
 Current issue: #164. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
 GitHub issues remain open for artwork review. The Site's independent queue counters are not updated by this local runner.
+
+Stopped: You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
 
 | Issue | Styles archived | Status | Pending API jobs | Failed requests |
 | --- | ---: | --- | ---: | ---: |
@@ -95,7 +97,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#161](https://github.com/DnD-Decks/dnd-deck-designer/issues/161) Weapon Mastery | 37/37 | complete | 0 | 0 |
 | [#162](https://github.com/DnD-Decks/dnd-deck-designer/issues/162) Martial Arts | 37/37 | complete | 0 | 0 |
 | [#163](https://github.com/DnD-Decks/dnd-deck-designer/issues/163) Unarmored Defense | 37/37 | complete | 0 | 0 |
-| [#164](https://github.com/DnD-Decks/dnd-deck-designer/issues/164) Spellcasting | 20/37 | partial | 5 | 0 |
+| [#164](https://github.com/DnD-Decks/dnd-deck-designer/issues/164) Spellcasting | 21/37 | partial | 5 | 4 |
 | [#165](https://github.com/DnD-Decks/dnd-deck-designer/issues/165) Weapon Mastery | 0/37 | queued | 0 | 0 |
 | [#166](https://github.com/DnD-Decks/dnd-deck-designer/issues/166) Spellcasting | 0/37 | queued | 0 | 0 |
 | [#168](https://github.com/DnD-Decks/dnd-deck-designer/issues/168) Expertise | 0/37 | queued | 0 | 0 |
@@ -103,3 +105,10 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#181](https://github.com/DnD-Decks/dnd-deck-designer/issues/181) Mana | 0/37 | queued | 0 | 0 |
 | [#185](https://github.com/DnD-Decks/dnd-deck-designer/issues/185) Mana | 0/37 | queued | 0 | 0 |
 | [#187](https://github.com/DnD-Decks/dnd-deck-designer/issues/187) Mana | 0/37 | queued | 0 | 0 |
+
+## Request errors
+
+- #164, geometric-screen-print-02 (attempt 1): You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
+- #164, miniature-diorama-01 (attempt 1): You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
+- #164, miniature-diorama-02 (attempt 1): You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
+- #164, miniature-diorama-03 (attempt 1): You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
