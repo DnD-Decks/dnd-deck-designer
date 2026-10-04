@@ -27,6 +27,7 @@ const trackerPath = "asset-pipeline/campaign-status.md";
 const styleIds = new Set(STYLE_CATALOG.map((style) => style.id));
 const maxMinutes = optionNumber("--max-minutes", Number.POSITIVE_INFINITY);
 const intervalSeconds = optionNumber("--interval-seconds", 65);
+const batchSize = optionNumber("--batch-size", 4);
 const dryRun = process.argv.includes("--dry-run");
 const executionStartedAt = Date.now();
 const deadline = Date.now() + maxMinutes * 60_000;
@@ -612,7 +613,7 @@ async function runIssue(issue, state, key) {
       .filter(
         (request) => request.status === "queued" && request.attempts < (request.maxAttempts || 3)
       )
-      .slice(0, 4);
+      .slice(0, batchSize);
     if (batch.length) {
       await Promise.all(batch.map((request) => submit(request, dimensions, key)));
       await saveState(state);

@@ -45,7 +45,7 @@ node asset-pipeline/bulk-campaign.runner.mjs
 
 There is no default time limit. Each batch preserves existing images and prompts, updates [campaign-status.md](campaign-status.md), and pushes the draft archive and tracker to GitHub `main`. Exhausted API credits halt new submissions and preserve resumable requests. The worker also reports invalid credentials or persistent generation errors. It never submits artwork, opens pull requests, or closes issues. The Site's own campaign state is independent of this local tracker.
 
-Use `--dry-run` to list missing styles without generating images. `--max-minutes N` is available only when an explicit bounded run is wanted; `--interval-seconds N` controls the polling cadence (65 seconds by default). State and response IDs remain in ignored `asset-pipeline/.cache/`; the API key is never written to those files.
+Use `--dry-run` to list missing styles without generating images. `--max-minutes N` is available only when an explicit bounded run is wanted; `--interval-seconds N` controls the polling cadence (65 seconds by default), and `--batch-size N` controls submissions per cycle (four by default). For an account limited to five image starts per minute, use `--batch-size 5 --interval-seconds 65`. State and response IDs remain in ignored `asset-pipeline/.cache/`; the API key is never written to those files.
 
 ## Local checks
 
