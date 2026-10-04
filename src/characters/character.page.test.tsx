@@ -39,6 +39,48 @@ describe("<CharacterPage />", () => {
     within(screen.getByRole("main")).getByRole("heading", { name: "Brünhilde", level: 2 });
   });
 
+  test("one row per section, in table order", () => {
+    renderAt("/character/f1");
+    const headings = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
+    expect(headings).toEqual(["Brünhilde", "Resources", "Weapons", "Features"]);
+  });
+
+  test("copies of a resource collapse into one stack that counts what is left", () => {
+    renderAt("/character/f1");
+    const resources = within(screen.getByRole("region", { name: "Resources" }));
+    expect(resources.getAllByRole("article", { name: "Second Wind" })).toHaveLength(1);
+    resources.getByText("2 of 2 left");
+  });
+
+  test("tapping a card lifts it into the spotlight", () => {
+    renderAt("/character/f1");
+    fireEvent.click(screen.getByRole("button", { name: "Zoom Shortbow" }));
+    screen.getByRole("dialog", { name: "Shortbow" });
+  });
+
+  test("the play view replaces the workbench nav with its own menu", () => {
+    const memory = renderAt("/character/f1");
+    screen.getByRole("heading", { name: "D&D Deck Designer", level: 1 });
+    expect(screen.queryByRole("navigation", { name: "Main" })).toBeNull();
+
+    const menu = within(screen.getByRole("navigation", { name: "Character menu" }));
+    menu.getByRole("link", { name: "Edit" });
+    menu.getByRole("button", { name: "Share" });
+    menu.getByRole("link", { name: "Your characters" });
+    fireEvent.click(menu.getByRole("link", { name: "Card catalog" }));
+    expect(memory.history.slice(-1)).toEqual(["/catalog/wizard"]);
+  });
+
+  test("rests wait until something is spent", () => {
+    renderAt("/character/f1");
+    [
+      { name: "Short rest", disabled: true },
+      { name: "Long rest", disabled: true },
+    ].forEach(({ name, disabled }) => {
+      expect((screen.getByRole("button", { name }) as HTMLButtonElement).disabled).toBe(disabled);
+    });
+  });
+
   test("Share copies an import link that decodes back to the build", async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     stubClipboard(writeText);

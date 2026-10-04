@@ -3,12 +3,14 @@ import { type CatalogPage, createCatalogPage } from "../catalog.page";
 import { type HomePage, createHomePage } from "../home.page";
 import { type ImportPage, createImportPage } from "../import.page";
 import { type NetworkGuard, createNetworkGuard } from "../network.guard";
+import { type PlayPage, createPlayPage } from "../play.page";
 
 type Fixtures = {
   network: NetworkGuard;
   catalogPage: CatalogPage;
   homePage: HomePage;
   importPage: ImportPage;
+  playPage: PlayPage;
 };
 
 export const test = base.extend<Fixtures>({
@@ -31,6 +33,9 @@ export const test = base.extend<Fixtures>({
   },
   importPage: async ({ page }, use) => {
     await use(createImportPage(page));
+  },
+  playPage: async ({ page }, use) => {
+    await use(createPlayPage(page));
   },
 });
 

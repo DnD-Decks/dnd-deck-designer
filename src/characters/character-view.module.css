@@ -1,0 +1,187 @@
+/* The table at night: ink all round, the cards are the only light */
+.play {
+  --layer-offset: 5px;
+
+  container: play / inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 64rem;
+  margin-inline: auto;
+}
+
+/* pinned while the rows scroll; the shadow paints it edge to edge past the root's gutter */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--ink-line);
+  background: var(--ink-900);
+  box-shadow: 0 0 0 100vmax var(--ink-900);
+  clip-path: inset(0 -100vmax);
+}
+
+.title {
+  min-width: 0;
+}
+
+.name {
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--font-caps);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--parchment);
+}
+
+.subtitle {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.sectionLabel {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 0;
+  font-family: var(--font-caps);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--parchment);
+}
+
+.sectionLabel::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  align-self: center;
+  background: linear-gradient(90deg, var(--gold), transparent 70%);
+  opacity: 0.45;
+}
+
+/* one hand per section: swipe through it, each card snaps to the start */
+.row {
+  display: flex;
+  gap: 1rem;
+  padding: 8px 0 12px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-color: var(--ink-line) transparent;
+  scrollbar-width: thin;
+}
+
+.slot {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  scroll-snap-align: start;
+}
+
+/* cards keep their mm size and are zoomed as a whole, so print never sees the scaling */
+.stack {
+  --card-zoom: 1;
+
+  position: relative;
+  zoom: var(--card-zoom);
+  margin: 0 calc(var(--depth, 0) * var(--layer-offset)) calc(var(--depth, 0) * var(--layer-offset))
+    0;
+}
+
+/* the copies under the top card, fanned down and to the right */
+.under {
+  position: absolute;
+  inset: 0;
+  border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--ink-line));
+  border-radius: 8px;
+  background: var(--ink-700);
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.35);
+  translate: calc(var(--layer) * var(--layer-offset)) calc(var(--layer) * var(--layer-offset));
+}
+
+/* transparent control over the card face: tap the card to lift it */
+.zoom {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: none;
+  border-radius: 8px;
+  cursor: zoom-in;
+}
+
+.zoom:focus-visible {
+  outline: 2px solid var(--gold-soft);
+  outline-offset: 3px;
+}
+
+.left {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-style: italic;
+  font-variant-numeric: tabular-nums;
+  color: var(--gold-soft);
+}
+
+/* a phone: smaller cards, and the next one peeks in from the edge */
+@container play (max-width: 30rem) {
+  .stack {
+    --card-zoom: 0.9;
+  }
+}
+
+@container play (max-width: 20rem) {
+  .stack {
+    --card-zoom: 0.8;
+  }
+}
+
+@media print {
+  .header,
+  .sectionLabel,
+  .under,
+  .zoom,
+  .left {
+    display: none;
+  }
+
+  .row {
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+
+  .stack {
+    zoom: 1;
+    margin: 0;
+  }
+}

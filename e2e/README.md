@@ -13,7 +13,8 @@ e2e/
 │   ├── global.setup.ts         # called at module level by every spec
 │   ├── network.guard.ts        # catch-all route: same-origin through, cross-origin aborted
 │   ├── catalog.page.ts         # page objects: locators + intent helpers, no assertions
-│   ├── home.page.ts            #   (one per route: home = your characters, catalog = every class's cards)
+│   ├── home.page.ts            #   (one per route: home = your characters, catalog = every class's cards,
+│   ├── play.page.ts            #    play = one character at the table)
 │   └── fixtures/test.extend.ts # `test`/`expect` every spec imports
 ├── playwright.config.ts
 ├── Dockerfile
@@ -75,8 +76,9 @@ Two traps worth naming, both hit while writing this suite:
 
 - The deck empty state (`No cards vendored for …`) is unreachable in the browser: all 12 classes
   ship level-1 cards. It stays a vitest test with a mocked model.
-- One desktop project; `builder.card-picking` overrides the viewport to 360px to cover the
-  mobile character builder without duplicating the catalog's print-card baselines.
+- Two projects, split by file name: `builder.*` and `play.*` specs run only on `phone`
+  (Chromium at 390×844, touch), everything else only on `chromium` (desktop). Nothing runs
+  twice, so the catalog's print-card baselines are not duplicated.
 
 ## Keeping Docker in step
 

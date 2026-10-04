@@ -43,6 +43,21 @@ export function cardKey(card: DeckCard) {
   }
 }
 
+export function cardName(card: DeckCard) {
+  switch (card.kind) {
+    case "resource":
+      return card.resource.name;
+    case "feat":
+      return card.feat.name;
+    case "spell":
+      return card.spell.name;
+    case "weapon":
+      return card.weapon.name;
+    default:
+      return assertNever(card);
+  }
+}
+
 const copies = (card: DeckCard) =>
   card.kind === "resource" && card.resource.stack ? card.resource.uses : 1;
 

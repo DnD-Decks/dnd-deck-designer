@@ -69,21 +69,7 @@ button.action {
   color: var(--text-mid);
 }
 
-.sheetHeader {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-}
 
-.actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.4rem;
-  max-width: 24rem;
-}
 
 .status {
   display: block;
@@ -136,4 +122,88 @@ button.action {
   font-family: var(--font-serif);
   font-size: 17px;
   color: var(--text-hi);
+}
+
+.rests {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.rest,
+.menuButton {
+  min-height: 40px;
+  padding: 0 0.8rem;
+  border: 1px solid var(--ink-line);
+  border-radius: 6px;
+  background: var(--ink-800);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text-hi);
+  cursor: pointer;
+}
+
+.rest:disabled {
+  color: var(--text-low);
+  cursor: not-allowed;
+}
+
+.menuButton {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.rest:focus-visible,
+.menuButton:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* a popover in the top layer, dropped from the header's right edge */
+.menu {
+  position: fixed;
+  inset: 3.75rem 1rem auto auto;
+  width: min(18rem, calc(100vw - 2rem));
+  margin: 0;
+  padding: 0.4rem;
+  border: 1px solid var(--ink-line);
+  border-radius: 8px;
+  background: var(--ink-800);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+  color: var(--text-hi);
+}
+
+.menu:popover-open {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu .status:not(:empty),
+.menu .linkField {
+  margin: 0.25rem 0.6rem 0.5rem;
+  width: auto;
+}
+
+.menuItem {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 0.6rem;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  text-align: left;
+  color: var(--text-hi);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.menuItem:hover {
+  background: var(--ink-700);
+}
+
+.menuItem:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: -2px;
 }

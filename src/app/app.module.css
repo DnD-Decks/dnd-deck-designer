@@ -70,6 +70,20 @@
   outline-offset: 3px;
 }
 
+.root[data-mode="play"] {
+  padding-top: 0;
+  background-image: none;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 @media (max-width: 600px) {
   .root {
     gap: 1.25rem;
