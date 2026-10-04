@@ -1,10 +1,10 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T19:01:58.588Z. Status: **running**.
+Updated: 2026-10-04T19:03:09.333Z. Status: **running**.
 
-**75/93 issues complete; 2775/3441 styles archived.**
+**75/93 issues complete; 2780/3441 styles archived.**
 
-Current issue: #152. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
+Current issue: #153. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
 GitHub issues remain open for artwork review. The Site's independent queue counters are not updated by this local runner.
 
@@ -85,7 +85,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#150](https://github.com/DnD-Decks/dnd-deck-designer/issues/150) Hex | 37/37 | complete | 0 | 0 |
 | [#151](https://github.com/DnD-Decks/dnd-deck-designer/issues/151) Find Familiar | 37/37 | complete | 0 | 0 |
 | [#152](https://github.com/DnD-Decks/dnd-deck-designer/issues/152) Unarmored Defense | 37/37 | complete | 0 | 0 |
-| [#153](https://github.com/DnD-Decks/dnd-deck-designer/issues/153) Weapon Mastery | 0/37 | queued | 0 | 0 |
+| [#153](https://github.com/DnD-Decks/dnd-deck-designer/issues/153) Weapon Mastery | 5/37 | partial | 5 | 0 |
 | [#154](https://github.com/DnD-Decks/dnd-deck-designer/issues/154) Spellcasting | 0/37 | queued | 0 | 0 |
 | [#155](https://github.com/DnD-Decks/dnd-deck-designer/issues/155) Spellcasting | 0/37 | queued | 0 | 0 |
 | [#156](https://github.com/DnD-Decks/dnd-deck-designer/issues/156) Divine Order | 0/37 | queued | 0 | 0 |
