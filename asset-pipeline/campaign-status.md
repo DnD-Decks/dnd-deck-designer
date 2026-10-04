@@ -1,8 +1,8 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T14:32:03.890Z. Status: **running**.
+Updated: 2026-10-04T14:33:13.428Z. Status: **running**.
 
-**47/93 issues complete; 1747/3441 styles archived.**
+**47/93 issues complete; 1751/3441 styles archived.**
 
 Current issue: #124. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
@@ -57,7 +57,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#120](https://github.com/DnD-Decks/dnd-deck-designer/issues/120) Shillelagh | 37/37 | complete | 0 | 0 |
 | [#121](https://github.com/DnD-Decks/dnd-deck-designer/issues/121) Thorn Whip | 37/37 | complete | 0 | 0 |
 | [#122](https://github.com/DnD-Decks/dnd-deck-designer/issues/122) Entangle | 37/37 | complete | 0 | 0 |
-| [#124](https://github.com/DnD-Decks/dnd-deck-designer/issues/124) Goodberry | 8/37 | partial | 4 | 0 |
+| [#124](https://github.com/DnD-Decks/dnd-deck-designer/issues/124) Goodberry | 12/37 | partial | 4 | 0 |
 | [#125](https://github.com/DnD-Decks/dnd-deck-designer/issues/125) Ice Knife | 0/37 | queued | 0 | 0 |
 | [#126](https://github.com/DnD-Decks/dnd-deck-designer/issues/126) Jump | 0/37 | queued | 0 | 0 |
 | [#127](https://github.com/DnD-Decks/dnd-deck-designer/issues/127) Alarm | 0/37 | queued | 0 | 0 |
