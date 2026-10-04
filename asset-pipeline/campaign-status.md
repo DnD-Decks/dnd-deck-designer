@@ -1,8 +1,8 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T16:34:15.952Z. Status: **running**.
+Updated: 2026-10-04T16:35:25.587Z. Status: **running**.
 
-**59/93 issues complete; 2193/3441 styles archived.**
+**59/93 issues complete; 2198/3441 styles archived.**
 
 Current issue: #137. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
@@ -69,7 +69,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#133](https://github.com/DnD-Decks/dnd-deck-designer/issues/133) Shocking Grasp | 37/37 | complete | 0 | 0 |
 | [#134](https://github.com/DnD-Decks/dnd-deck-designer/issues/134) Sorcerous Burst | 37/37 | complete | 0 | 0 |
 | [#135](https://github.com/DnD-Decks/dnd-deck-designer/issues/135) Burning Hands | 37/37 | complete | 0 | 0 |
-| [#137](https://github.com/DnD-Decks/dnd-deck-designer/issues/137) Expeditious Retreat | 10/37 | partial | 5 | 0 |
+| [#137](https://github.com/DnD-Decks/dnd-deck-designer/issues/137) Expeditious Retreat | 15/37 | partial | 5 | 0 |
 | [#138](https://github.com/DnD-Decks/dnd-deck-designer/issues/138) False Life | 0/37 | queued | 0 | 0 |
 | [#139](https://github.com/DnD-Decks/dnd-deck-designer/issues/139) Grease | 0/37 | queued | 0 | 0 |
 | [#140](https://github.com/DnD-Decks/dnd-deck-designer/issues/140) Mage Armor | 0/37 | queued | 0 | 0 |
