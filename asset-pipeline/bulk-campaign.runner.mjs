@@ -28,6 +28,7 @@ const styleIds = new Set(STYLE_CATALOG.map((style) => style.id));
 const maxMinutes = optionNumber("--max-minutes", Number.POSITIVE_INFINITY);
 const intervalSeconds = optionNumber("--interval-seconds", 65);
 const dryRun = process.argv.includes("--dry-run");
+const executionStartedAt = Date.now();
 const deadline = Date.now() + maxMinutes * 60_000;
 let campaignIssues = [];
 let haltReason = null;
@@ -107,6 +108,13 @@ export function accountStopReason(message) {
 
 function recordAccountError(message) {
   haltReason ||= accountStopReason(message);
+}
+
+export function submittedDuringRun(request, response, startedAt) {
+  const submittedAt = request.submittedAt
+    ? Date.parse(request.submittedAt)
+    : Number(response.created_at) * 1000;
+  return Number.isFinite(submittedAt) && submittedAt >= startedAt;
 }
 
 async function githubIssues() {
@@ -361,6 +369,7 @@ async function openAI(prompt, key, rateLimitRetries = 0) {
 
 async function submit(request, dimensions, key) {
   request.attempts += 1;
+  request.submittedAt = new Date().toISOString();
   try {
     const data = await openAI(
       {
@@ -408,7 +417,7 @@ async function poll(request, key) {
       data.error?.message || data.incomplete_details?.reason || data.status,
       key
     );
-    recordAccountError(request.error);
+    if (submittedDuringRun(request, data, executionStartedAt)) recordAccountError(request.error);
     request.responseId = null;
     return;
   }
@@ -452,7 +461,8 @@ function jpegDimensions(bytes) {
 }
 
 function candidateFrom(request) {
-  const { image, attempts, maxAttempts, responseId, status, error, ...candidate } = request;
+  const { image, attempts, maxAttempts, submittedAt, responseId, status, error, ...candidate } =
+    request;
   return candidate;
 }
 

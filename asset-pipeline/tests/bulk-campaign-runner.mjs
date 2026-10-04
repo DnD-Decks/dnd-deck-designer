@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { accountStopReason, mergeArchivedCandidates } from "../bulk-campaign.runner.mjs";
+import {
+  accountStopReason,
+  mergeArchivedCandidates,
+  submittedDuringRun,
+} from "../bulk-campaign.runner.mjs";
 
 test("resuming a partial archive preserves all old candidates and adds missing styles", () => {
   const previous = Array.from({ length: 29 }, (_, index) => ({
@@ -37,4 +41,15 @@ test("billing exhaustion halts generation while ordinary image failures remain r
   assert.equal(accountStopReason("HTTP 401: Incorrect API key").status, "credential-error");
   assert.equal(accountStopReason("OpenAI completed without an image."), null);
   assert.equal(accountStopReason("Image rate limit persisted after five backoffs."), null);
+});
+
+test("old background billing failures do not halt a funded restart", () => {
+  const startedAt = Date.parse("2026-10-04T16:00:00Z");
+  assert.equal(
+    submittedDuringRun({}, { created_at: Date.parse("2026-10-04T05:00:00Z") / 1000 }, startedAt),
+    false
+  );
+  assert.equal(submittedDuringRun({ submittedAt: "2026-10-04T16:00:01Z" }, {}, startedAt), true);
+  assert.equal(submittedDuringRun({}, { created_at: (startedAt + 1000) / 1000 }, startedAt), true);
+  assert.equal(submittedDuringRun({}, {}, startedAt), false);
 });
