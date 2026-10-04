@@ -1,10 +1,10 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T17:37:28.585Z. Status: **running**.
+Updated: 2026-10-04T17:38:39.232Z. Status: **running**.
 
-**66/93 issues complete; 2442/3441 styles archived.**
+**66/93 issues complete; 2447/3441 styles archived.**
 
-Current issue: #143. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
+Current issue: #144. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
 GitHub issues remain open for artwork review. The Site's independent queue counters are not updated by this local runner.
 
@@ -76,7 +76,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#141](https://github.com/DnD-Decks/dnd-deck-designer/issues/141) Magic Missile | 37/37 | complete | 0 | 0 |
 | [#142](https://github.com/DnD-Decks/dnd-deck-designer/issues/142) Ray of Sickness | 37/37 | complete | 0 | 0 |
 | [#143](https://github.com/DnD-Decks/dnd-deck-designer/issues/143) Shield | 37/37 | complete | 0 | 0 |
-| [#144](https://github.com/DnD-Decks/dnd-deck-designer/issues/144) Witch Bolt | 0/37 | queued | 0 | 0 |
+| [#144](https://github.com/DnD-Decks/dnd-deck-designer/issues/144) Witch Bolt | 5/37 | partial | 5 | 0 |
 | [#145](https://github.com/DnD-Decks/dnd-deck-designer/issues/145) Eldritch Blast | 0/37 | queued | 0 | 0 |
 | [#146](https://github.com/DnD-Decks/dnd-deck-designer/issues/146) Toll the Dead | 0/37 | queued | 0 | 0 |
 | [#147](https://github.com/DnD-Decks/dnd-deck-designer/issues/147) Armor of Agathys | 0/37 | queued | 0 | 0 |
