@@ -1,10 +1,10 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T15:09:42.609Z. Status: **running**.
+Updated: 2026-10-04T15:11:20.052Z. Status: **running**.
 
 **50/93 issues complete; 1874/3441 styles archived.**
 
-Current issue: #127. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
+Current issue: none. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
 GitHub issues remain open for artwork review. The Site's independent queue counters are not updated by this local runner.
 
