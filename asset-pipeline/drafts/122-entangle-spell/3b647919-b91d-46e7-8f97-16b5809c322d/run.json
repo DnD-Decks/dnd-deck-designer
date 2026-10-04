@@ -302,7 +302,11 @@
       "generationPrompt": "# DECK BACKGROUND\n\nCreate a vertical background image for a Dungeons & Dragons card deck.\n\n## SCENE\n\nThis is the subject of the image. Every element in the picture must serve it; nothing generic.\n\n**Entangle** — Conjuration level 1 spell.\n\nThick grasping vines and roots surge up from the ground and wrap around the legs and arms of three shadowed soldiers, pulling them down. A forest clearing at dusk. Low golden light through the trees, the vines dark against it.\n\n## VISUAL STYLE\n\nDepict the scene as a stained-glass window. Build recognizable figures and objects from broad pieces of translucent colored glass divided by dark lead lines. Let light through the glass define the decisive action. Use a limited jewel-tone palette, simple silhouettes, and a clear focal panel. No inscriptions, ornamental frame, or text.\n\n## COMPOSITION\n\nThe image is independent background artwork.\nIt must NEVER contain or imply any part of a card design.\n\nNo text.\nNo typography.\nNo icons.\nNo symbols representing game mechanics.\nNo borders.\nNo frames.\nNo UI.\nNo decorative card elements.\nNo reserved text boxes or artificially empty areas designed for card information.\n\n## OUTPUT\n\nExact image dimensions: 720 × 1008 pixels. Preserve the requested aspect ratio and keep the important action within the image bounds. Do not add text, frames, or card UI."
     }
   ],
-  "failures": [],
+  "failures": [
+    "Draft 029: You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "Draft 033: You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "Draft 034: You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/."
+  ],
   "finalVersions": {},
   "tweaks": [],
   "submissions": {}

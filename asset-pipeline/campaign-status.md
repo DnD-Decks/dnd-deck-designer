@@ -1,12 +1,14 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T14:24:08.907Z. Status: **running**.
+Updated: 2026-10-04T14:24:13.880Z. Status: **credits-exhausted**.
 
 **46/93 issues complete; 1731/3441 styles archived.**
 
-Current issue: none. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
+Current issue: #122. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
 GitHub issues remain open for artwork review. The Site's independent queue counters are not updated by this local runner.
+
+Stopped: You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
 
 | Issue | Styles archived | Status | Pending API jobs | Failed requests |
 | --- | ---: | --- | ---: | ---: |
@@ -56,7 +58,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#119](https://github.com/DnD-Decks/dnd-deck-designer/issues/119) Produce Flame | 37/37 | complete | 0 | 0 |
 | [#120](https://github.com/DnD-Decks/dnd-deck-designer/issues/120) Shillelagh | 37/37 | complete | 0 | 0 |
 | [#121](https://github.com/DnD-Decks/dnd-deck-designer/issues/121) Thorn Whip | 37/37 | complete | 0 | 0 |
-| [#122](https://github.com/DnD-Decks/dnd-deck-designer/issues/122) Entangle | 29/37 | partial | 3 | 3 |
+| [#122](https://github.com/DnD-Decks/dnd-deck-designer/issues/122) Entangle | 29/37 | partial | 4 | 3 |
 | [#124](https://github.com/DnD-Decks/dnd-deck-designer/issues/124) Goodberry | 0/37 | queued | 0 | 0 |
 | [#125](https://github.com/DnD-Decks/dnd-deck-designer/issues/125) Ice Knife | 0/37 | queued | 0 | 0 |
 | [#126](https://github.com/DnD-Decks/dnd-deck-designer/issues/126) Jump | 0/37 | queued | 0 | 0 |
@@ -106,6 +108,6 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 
 ## Request errors
 
-- #122, miniature-diorama-03 (attempt 2): You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
-- #122, paper-shadow-theater-02 (attempt 2): You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
-- #122, thermal-imaging-01 (attempt 1): You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
+- #122, pixel-art-01 (attempt 2): You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
+- #122, stained-glass-02 (attempt 1): You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
+- #122, stained-glass-03 (attempt 1): You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
