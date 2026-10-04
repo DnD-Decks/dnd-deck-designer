@@ -1,8 +1,8 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T18:07:54.953Z. Status: **running**.
+Updated: 2026-10-04T18:09:05.265Z. Status: **running**.
 
-**69/93 issues complete; 2563/3441 styles archived.**
+**69/93 issues complete; 2568/3441 styles archived.**
 
 Current issue: #147. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
@@ -79,7 +79,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#144](https://github.com/DnD-Decks/dnd-deck-designer/issues/144) Witch Bolt | 37/37 | complete | 0 | 0 |
 | [#145](https://github.com/DnD-Decks/dnd-deck-designer/issues/145) Eldritch Blast | 37/37 | complete | 0 | 0 |
 | [#146](https://github.com/DnD-Decks/dnd-deck-designer/issues/146) Toll the Dead | 37/37 | complete | 0 | 0 |
-| [#147](https://github.com/DnD-Decks/dnd-deck-designer/issues/147) Armor of Agathys | 10/37 | partial | 5 | 0 |
+| [#147](https://github.com/DnD-Decks/dnd-deck-designer/issues/147) Armor of Agathys | 15/37 | partial | 5 | 0 |
 | [#148](https://github.com/DnD-Decks/dnd-deck-designer/issues/148) Arms of Hadar | 0/37 | queued | 0 | 0 |
 | [#149](https://github.com/DnD-Decks/dnd-deck-designer/issues/149) Hellish Rebuke | 0/37 | queued | 0 | 0 |
 | [#150](https://github.com/DnD-Decks/dnd-deck-designer/issues/150) Hex | 0/37 | queued | 0 | 0 |
