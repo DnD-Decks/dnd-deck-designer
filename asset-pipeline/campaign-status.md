@@ -1,10 +1,10 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T18:43:06.375Z. Status: **running**.
+Updated: 2026-10-04T18:44:16.788Z. Status: **running**.
 
-**73/93 issues complete; 2701/3441 styles archived.**
+**73/93 issues complete; 2706/3441 styles archived.**
 
-Current issue: #150. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
+Current issue: #151. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
 GitHub issues remain open for artwork review. The Site's independent queue counters are not updated by this local runner.
 
@@ -83,7 +83,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#148](https://github.com/DnD-Decks/dnd-deck-designer/issues/148) Arms of Hadar | 37/37 | complete | 0 | 0 |
 | [#149](https://github.com/DnD-Decks/dnd-deck-designer/issues/149) Hellish Rebuke | 37/37 | complete | 0 | 0 |
 | [#150](https://github.com/DnD-Decks/dnd-deck-designer/issues/150) Hex | 37/37 | complete | 0 | 0 |
-| [#151](https://github.com/DnD-Decks/dnd-deck-designer/issues/151) Find Familiar | 0/37 | queued | 0 | 0 |
+| [#151](https://github.com/DnD-Decks/dnd-deck-designer/issues/151) Find Familiar | 5/37 | partial | 5 | 0 |
 | [#152](https://github.com/DnD-Decks/dnd-deck-designer/issues/152) Unarmored Defense | 0/37 | queued | 0 | 0 |
 | [#153](https://github.com/DnD-Decks/dnd-deck-designer/issues/153) Weapon Mastery | 0/37 | queued | 0 | 0 |
 | [#154](https://github.com/DnD-Decks/dnd-deck-designer/issues/154) Spellcasting | 0/37 | queued | 0 | 0 |
