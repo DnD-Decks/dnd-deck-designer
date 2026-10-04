@@ -1,103 +1,111 @@
 # Draft campaign progress
 
-Verified GitHub main: 4013410. Status: **ready to resume**.
+Updated: 2026-10-04T14:24:08.907Z. Status: **running**.
 
 **46/93 issues complete; 1731/3441 styles archived.**
 
-Original 93-issue non-weapon queue. #122 has 29/37 styles; 46 further issues have no drafts yet. The continuous local runner updates this tracker and pushes it with each archived batch. GitHub issues stay open for artwork review. The Site queue has independent counters.
+Current issue: none. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
-| Issue | Styles archived | Status |
-| --- | ---: | --- |
-| [#71](https://github.com/DnD-Decks/dnd-deck-designer/issues/71) [asset]: `Message` spell | 37/37 | complete |
-| [#74](https://github.com/DnD-Decks/dnd-deck-designer/issues/74) [asset]: `Starry Wisp` spell | 37/37 | complete |
-| [#75](https://github.com/DnD-Decks/dnd-deck-designer/issues/75) [asset]: `Thunderclap` spell | 37/37 | complete |
-| [#77](https://github.com/DnD-Decks/dnd-deck-designer/issues/77) [asset]: `Vicious Mockery` spell | 37/37 | complete |
-| [#78](https://github.com/DnD-Decks/dnd-deck-designer/issues/78) [asset]: `Animal Friendship` spell | 37/37 | complete |
-| [#79](https://github.com/DnD-Decks/dnd-deck-designer/issues/79) [asset]: `Bane` spell | 37/37 | complete |
-| [#80](https://github.com/DnD-Decks/dnd-deck-designer/issues/80) [asset]: `Charm Person` spell | 37/37 | complete |
-| [#81](https://github.com/DnD-Decks/dnd-deck-designer/issues/81) [asset]: `Color Spray` spell | 37/37 | complete |
-| [#82](https://github.com/DnD-Decks/dnd-deck-designer/issues/82) [asset]: `Command` spell | 37/37 | complete |
-| [#83](https://github.com/DnD-Decks/dnd-deck-designer/issues/83) [asset]: `Comprehend Languages` spell | 37/37 | complete |
-| [#84](https://github.com/DnD-Decks/dnd-deck-designer/issues/84) [asset]: `Cure Wounds` spell | 37/37 | complete |
-| [#85](https://github.com/DnD-Decks/dnd-deck-designer/issues/85) [asset]: `Detect Magic` spell | 37/37 | complete |
-| [#86](https://github.com/DnD-Decks/dnd-deck-designer/issues/86) [asset]: `Disguise Self` spell | 37/37 | complete |
-| [#87](https://github.com/DnD-Decks/dnd-deck-designer/issues/87) [asset]: `Dissonant Whispers` spell | 37/37 | complete |
-| [#88](https://github.com/DnD-Decks/dnd-deck-designer/issues/88) [asset]: `Faerie Fire` spell | 37/37 | complete |
-| [#89](https://github.com/DnD-Decks/dnd-deck-designer/issues/89) [asset]: `Feather Fall` spell | 37/37 | complete |
-| [#91](https://github.com/DnD-Decks/dnd-deck-designer/issues/91) [asset]: `Heroism` spell | 37/37 | complete |
-| [#92](https://github.com/DnD-Decks/dnd-deck-designer/issues/92) [asset]: `Identify` spell | 37/37 | complete |
-| [#93](https://github.com/DnD-Decks/dnd-deck-designer/issues/93) [asset]: `Illusory Script` spell | 37/37 | complete |
-| [#95](https://github.com/DnD-Decks/dnd-deck-designer/issues/95) [asset]: `Silent Image` spell | 37/37 | complete |
-| [#96](https://github.com/DnD-Decks/dnd-deck-designer/issues/96) [asset]: `Sleep` spell | 37/37 | complete |
-| [#97](https://github.com/DnD-Decks/dnd-deck-designer/issues/97) [asset]: `Speak with Animals` spell | 37/37 | complete |
-| [#98](https://github.com/DnD-Decks/dnd-deck-designer/issues/98) [asset]: `Tasha's Hideous Laughter` spell | 37/37 | complete |
-| [#99](https://github.com/DnD-Decks/dnd-deck-designer/issues/99) [asset]: `Thunderwave` spell | 37/37 | complete |
-| [#100](https://github.com/DnD-Decks/dnd-deck-designer/issues/100) [asset]: `Unseen Servant` spell | 37/37 | complete |
-| [#101](https://github.com/DnD-Decks/dnd-deck-designer/issues/101) [asset]: `Guidance` spell | 37/37 | complete |
-| [#102](https://github.com/DnD-Decks/dnd-deck-designer/issues/102) [asset]: `Resistance` spell | 37/37 | complete |
-| [#103](https://github.com/DnD-Decks/dnd-deck-designer/issues/103) [asset]: `Sacred Flame` spell | 37/37 | complete |
-| [#104](https://github.com/DnD-Decks/dnd-deck-designer/issues/104) [asset]: `Spare the Dying` spell | 37/37 | complete |
-| [#105](https://github.com/DnD-Decks/dnd-deck-designer/issues/105) [asset]: `Thaumaturgy` spell | 37/37 | complete |
-| [#106](https://github.com/DnD-Decks/dnd-deck-designer/issues/106) [asset]: `Bless` spell | 37/37 | complete |
-| [#107](https://github.com/DnD-Decks/dnd-deck-designer/issues/107) [asset]: `Create or Destroy Water` spell | 37/37 | complete |
-| [#108](https://github.com/DnD-Decks/dnd-deck-designer/issues/108) [asset]: `Detect Evil and Good` spell | 37/37 | complete |
-| [#109](https://github.com/DnD-Decks/dnd-deck-designer/issues/109) [asset]: `Detect Poison and Disease` spell | 37/37 | complete |
-| [#110](https://github.com/DnD-Decks/dnd-deck-designer/issues/110) [asset]: `Guiding Bolt` spell | 37/37 | complete |
-| [#111](https://github.com/DnD-Decks/dnd-deck-designer/issues/111) [asset]: `Inflict Wounds` spell | 37/37 | complete |
-| [#112](https://github.com/DnD-Decks/dnd-deck-designer/issues/112) [asset]: `Protection from Evil and Good` spell | 37/37 | complete |
-| [#113](https://github.com/DnD-Decks/dnd-deck-designer/issues/113) [asset]: `Purify Food and Drink` spell | 37/37 | complete |
-| [#114](https://github.com/DnD-Decks/dnd-deck-designer/issues/114) [asset]: `Sanctuary` spell | 37/37 | complete |
-| [#115](https://github.com/DnD-Decks/dnd-deck-designer/issues/115) [asset]: `Shield of Faith` spell | 37/37 | complete |
-| [#116](https://github.com/DnD-Decks/dnd-deck-designer/issues/116) [asset]: `Druidcraft` spell | 37/37 | complete |
-| [#117](https://github.com/DnD-Decks/dnd-deck-designer/issues/117) [asset]: `Elementalism` spell | 37/37 | complete |
-| [#118](https://github.com/DnD-Decks/dnd-deck-designer/issues/118) [asset]: `Poison Spray` spell | 37/37 | complete |
-| [#119](https://github.com/DnD-Decks/dnd-deck-designer/issues/119) [asset]: `Produce Flame` spell | 37/37 | complete |
-| [#120](https://github.com/DnD-Decks/dnd-deck-designer/issues/120) [asset]: `Shillelagh` spell | 37/37 | complete |
-| [#121](https://github.com/DnD-Decks/dnd-deck-designer/issues/121) [asset]: `Thorn Whip` spell | 37/37 | complete |
-| [#122](https://github.com/DnD-Decks/dnd-deck-designer/issues/122) [asset]: `Entangle` spell | 29/37 | partial |
-| [#124](https://github.com/DnD-Decks/dnd-deck-designer/issues/124) [asset]: `Goodberry` spell | 0/37 | queued |
-| [#125](https://github.com/DnD-Decks/dnd-deck-designer/issues/125) [asset]: `Ice Knife` spell | 0/37 | queued |
-| [#126](https://github.com/DnD-Decks/dnd-deck-designer/issues/126) [asset]: `Jump` spell | 0/37 | queued |
-| [#127](https://github.com/DnD-Decks/dnd-deck-designer/issues/127) [asset]: `Alarm` spell | 0/37 | queued |
-| [#128](https://github.com/DnD-Decks/dnd-deck-designer/issues/128) [asset]: `Hunter's Mark` spell | 0/37 | queued |
-| [#129](https://github.com/DnD-Decks/dnd-deck-designer/issues/129) [asset]: `Acid Splash` spell | 0/37 | queued |
-| [#130](https://github.com/DnD-Decks/dnd-deck-designer/issues/130) [asset]: `Chill Touch` spell | 0/37 | queued |
-| [#131](https://github.com/DnD-Decks/dnd-deck-designer/issues/131) [asset]: `Mind Sliver` spell | 0/37 | queued |
-| [#132](https://github.com/DnD-Decks/dnd-deck-designer/issues/132) [asset]: `Ray of Frost` spell | 0/37 | queued |
-| [#133](https://github.com/DnD-Decks/dnd-deck-designer/issues/133) [asset]: `Shocking Grasp` spell | 0/37 | queued |
-| [#134](https://github.com/DnD-Decks/dnd-deck-designer/issues/134) [asset]: `Sorcerous Burst` spell | 0/37 | queued |
-| [#135](https://github.com/DnD-Decks/dnd-deck-designer/issues/135) [asset]: `Burning Hands` spell | 0/37 | queued |
-| [#137](https://github.com/DnD-Decks/dnd-deck-designer/issues/137) [asset]: `Expeditious Retreat` spell | 0/37 | queued |
-| [#138](https://github.com/DnD-Decks/dnd-deck-designer/issues/138) [asset]: `False Life` spell | 0/37 | queued |
-| [#139](https://github.com/DnD-Decks/dnd-deck-designer/issues/139) [asset]: `Grease` spell | 0/37 | queued |
-| [#140](https://github.com/DnD-Decks/dnd-deck-designer/issues/140) [asset]: `Mage Armor` spell | 0/37 | queued |
-| [#141](https://github.com/DnD-Decks/dnd-deck-designer/issues/141) [asset]: `Magic Missile` spell | 0/37 | queued |
-| [#142](https://github.com/DnD-Decks/dnd-deck-designer/issues/142) [asset]: `Ray of Sickness` spell | 0/37 | queued |
-| [#143](https://github.com/DnD-Decks/dnd-deck-designer/issues/143) [asset]: `Shield` spell | 0/37 | queued |
-| [#144](https://github.com/DnD-Decks/dnd-deck-designer/issues/144) [asset]: `Witch Bolt` spell | 0/37 | queued |
-| [#145](https://github.com/DnD-Decks/dnd-deck-designer/issues/145) [asset]: `Eldritch Blast` spell | 0/37 | queued |
-| [#146](https://github.com/DnD-Decks/dnd-deck-designer/issues/146) [asset]: `Toll the Dead` spell | 0/37 | queued |
-| [#147](https://github.com/DnD-Decks/dnd-deck-designer/issues/147) [asset]: `Armor of Agathys` spell | 0/37 | queued |
-| [#148](https://github.com/DnD-Decks/dnd-deck-designer/issues/148) [asset]: `Arms of Hadar` spell | 0/37 | queued |
-| [#149](https://github.com/DnD-Decks/dnd-deck-designer/issues/149) [asset]: `Hellish Rebuke` spell | 0/37 | queued |
-| [#150](https://github.com/DnD-Decks/dnd-deck-designer/issues/150) [asset]: `Hex` spell | 0/37 | queued |
-| [#151](https://github.com/DnD-Decks/dnd-deck-designer/issues/151) [asset]: `Find Familiar` spell | 0/37 | queued |
-| [#152](https://github.com/DnD-Decks/dnd-deck-designer/issues/152) [asset]: `Unarmored Defense` barbarian feat | 0/37 | queued |
-| [#153](https://github.com/DnD-Decks/dnd-deck-designer/issues/153) [asset]: `Weapon Mastery` barbarian feat | 0/37 | queued |
-| [#154](https://github.com/DnD-Decks/dnd-deck-designer/issues/154) [asset]: `Spellcasting` bard feat | 0/37 | queued |
-| [#155](https://github.com/DnD-Decks/dnd-deck-designer/issues/155) [asset]: `Spellcasting` cleric feat | 0/37 | queued |
-| [#156](https://github.com/DnD-Decks/dnd-deck-designer/issues/156) [asset]: `Divine Order` cleric feat | 0/37 | queued |
-| [#157](https://github.com/DnD-Decks/dnd-deck-designer/issues/157) [asset]: `Spellcasting` druid feat | 0/37 | queued |
-| [#158](https://github.com/DnD-Decks/dnd-deck-designer/issues/158) [asset]: `Druidic` druid feat | 0/37 | queued |
-| [#159](https://github.com/DnD-Decks/dnd-deck-designer/issues/159) [asset]: `Primal Order` druid feat | 0/37 | queued |
-| [#161](https://github.com/DnD-Decks/dnd-deck-designer/issues/161) [asset]: `Weapon Mastery` fighter feat | 0/37 | queued |
-| [#162](https://github.com/DnD-Decks/dnd-deck-designer/issues/162) [asset]: `Martial Arts` monk feat | 0/37 | queued |
-| [#163](https://github.com/DnD-Decks/dnd-deck-designer/issues/163) [asset]: `Unarmored Defense` monk feat | 0/37 | queued |
-| [#164](https://github.com/DnD-Decks/dnd-deck-designer/issues/164) [asset]: `Spellcasting` paladin feat | 0/37 | queued |
-| [#165](https://github.com/DnD-Decks/dnd-deck-designer/issues/165) [asset]: `Weapon Mastery` paladin feat | 0/37 | queued |
-| [#166](https://github.com/DnD-Decks/dnd-deck-designer/issues/166) [asset]: `Spellcasting` ranger feat | 0/37 | queued |
-| [#168](https://github.com/DnD-Decks/dnd-deck-designer/issues/168) [asset]: `Expertise` rogue feat | 0/37 | queued |
-| [#171](https://github.com/DnD-Decks/dnd-deck-designer/issues/171) [asset]: `Spellcasting` sorcerer feat | 0/37 | queued |
-| [#181](https://github.com/DnD-Decks/dnd-deck-designer/issues/181) [asset]: `Mana` druid resource | 0/37 | queued |
-| [#185](https://github.com/DnD-Decks/dnd-deck-designer/issues/185) [asset]: `Mana` ranger resource | 0/37 | queued |
-| [#187](https://github.com/DnD-Decks/dnd-deck-designer/issues/187) [asset]: `Mana` sorcerer resource | 0/37 | queued |
+GitHub issues remain open for artwork review. The Site's independent queue counters are not updated by this local runner.
+
+| Issue | Styles archived | Status | Pending API jobs | Failed requests |
+| --- | ---: | --- | ---: | ---: |
+| [#71](https://github.com/DnD-Decks/dnd-deck-designer/issues/71) Message | 37/37 | complete | 0 | 0 |
+| [#74](https://github.com/DnD-Decks/dnd-deck-designer/issues/74) Starry Wisp | 37/37 | complete | 0 | 0 |
+| [#75](https://github.com/DnD-Decks/dnd-deck-designer/issues/75) Thunderclap | 37/37 | complete | 0 | 0 |
+| [#77](https://github.com/DnD-Decks/dnd-deck-designer/issues/77) Vicious Mockery | 37/37 | complete | 0 | 0 |
+| [#78](https://github.com/DnD-Decks/dnd-deck-designer/issues/78) Animal Friendship | 37/37 | complete | 0 | 0 |
+| [#79](https://github.com/DnD-Decks/dnd-deck-designer/issues/79) Bane | 37/37 | complete | 0 | 0 |
+| [#80](https://github.com/DnD-Decks/dnd-deck-designer/issues/80) Charm Person | 37/37 | complete | 0 | 0 |
+| [#81](https://github.com/DnD-Decks/dnd-deck-designer/issues/81) Color Spray | 37/37 | complete | 0 | 0 |
+| [#82](https://github.com/DnD-Decks/dnd-deck-designer/issues/82) Command | 37/37 | complete | 0 | 0 |
+| [#83](https://github.com/DnD-Decks/dnd-deck-designer/issues/83) Comprehend Languages | 37/37 | complete | 0 | 0 |
+| [#84](https://github.com/DnD-Decks/dnd-deck-designer/issues/84) Cure Wounds | 37/37 | complete | 0 | 0 |
+| [#85](https://github.com/DnD-Decks/dnd-deck-designer/issues/85) Detect Magic | 37/37 | complete | 0 | 0 |
+| [#86](https://github.com/DnD-Decks/dnd-deck-designer/issues/86) Disguise Self | 37/37 | complete | 0 | 0 |
+| [#87](https://github.com/DnD-Decks/dnd-deck-designer/issues/87) Dissonant Whispers | 37/37 | complete | 0 | 0 |
+| [#88](https://github.com/DnD-Decks/dnd-deck-designer/issues/88) Faerie Fire | 37/37 | complete | 0 | 0 |
+| [#89](https://github.com/DnD-Decks/dnd-deck-designer/issues/89) Feather Fall | 37/37 | complete | 0 | 0 |
+| [#91](https://github.com/DnD-Decks/dnd-deck-designer/issues/91) Heroism | 37/37 | complete | 0 | 0 |
+| [#92](https://github.com/DnD-Decks/dnd-deck-designer/issues/92) Identify | 37/37 | complete | 0 | 0 |
+| [#93](https://github.com/DnD-Decks/dnd-deck-designer/issues/93) Illusory Script | 37/37 | complete | 0 | 0 |
+| [#95](https://github.com/DnD-Decks/dnd-deck-designer/issues/95) Silent Image | 37/37 | complete | 0 | 0 |
+| [#96](https://github.com/DnD-Decks/dnd-deck-designer/issues/96) Sleep | 37/37 | complete | 0 | 0 |
+| [#97](https://github.com/DnD-Decks/dnd-deck-designer/issues/97) Speak with Animals | 37/37 | complete | 0 | 0 |
+| [#98](https://github.com/DnD-Decks/dnd-deck-designer/issues/98) Tasha's Hideous Laughter | 37/37 | complete | 0 | 0 |
+| [#99](https://github.com/DnD-Decks/dnd-deck-designer/issues/99) Thunderwave | 37/37 | complete | 0 | 0 |
+| [#100](https://github.com/DnD-Decks/dnd-deck-designer/issues/100) Unseen Servant | 37/37 | complete | 0 | 0 |
+| [#101](https://github.com/DnD-Decks/dnd-deck-designer/issues/101) Guidance | 37/37 | complete | 0 | 0 |
+| [#102](https://github.com/DnD-Decks/dnd-deck-designer/issues/102) Resistance | 37/37 | complete | 0 | 0 |
+| [#103](https://github.com/DnD-Decks/dnd-deck-designer/issues/103) Sacred Flame | 37/37 | complete | 0 | 0 |
+| [#104](https://github.com/DnD-Decks/dnd-deck-designer/issues/104) Spare the Dying | 37/37 | complete | 0 | 0 |
+| [#105](https://github.com/DnD-Decks/dnd-deck-designer/issues/105) Thaumaturgy | 37/37 | complete | 0 | 0 |
+| [#106](https://github.com/DnD-Decks/dnd-deck-designer/issues/106) Bless | 37/37 | complete | 0 | 0 |
+| [#107](https://github.com/DnD-Decks/dnd-deck-designer/issues/107) Create or Destroy Water | 37/37 | complete | 0 | 0 |
+| [#108](https://github.com/DnD-Decks/dnd-deck-designer/issues/108) Detect Evil and Good | 37/37 | complete | 0 | 0 |
+| [#109](https://github.com/DnD-Decks/dnd-deck-designer/issues/109) Detect Poison and Disease | 37/37 | complete | 0 | 0 |
+| [#110](https://github.com/DnD-Decks/dnd-deck-designer/issues/110) Guiding Bolt | 37/37 | complete | 0 | 0 |
+| [#111](https://github.com/DnD-Decks/dnd-deck-designer/issues/111) Inflict Wounds | 37/37 | complete | 0 | 0 |
+| [#112](https://github.com/DnD-Decks/dnd-deck-designer/issues/112) Protection from Evil and Good | 37/37 | complete | 0 | 0 |
+| [#113](https://github.com/DnD-Decks/dnd-deck-designer/issues/113) Purify Food and Drink | 37/37 | complete | 0 | 0 |
+| [#114](https://github.com/DnD-Decks/dnd-deck-designer/issues/114) Sanctuary | 37/37 | complete | 0 | 0 |
+| [#115](https://github.com/DnD-Decks/dnd-deck-designer/issues/115) Shield of Faith | 37/37 | complete | 0 | 0 |
+| [#116](https://github.com/DnD-Decks/dnd-deck-designer/issues/116) Druidcraft | 37/37 | complete | 0 | 0 |
+| [#117](https://github.com/DnD-Decks/dnd-deck-designer/issues/117) Elementalism | 37/37 | complete | 0 | 0 |
+| [#118](https://github.com/DnD-Decks/dnd-deck-designer/issues/118) Poison Spray | 37/37 | complete | 0 | 0 |
+| [#119](https://github.com/DnD-Decks/dnd-deck-designer/issues/119) Produce Flame | 37/37 | complete | 0 | 0 |
+| [#120](https://github.com/DnD-Decks/dnd-deck-designer/issues/120) Shillelagh | 37/37 | complete | 0 | 0 |
+| [#121](https://github.com/DnD-Decks/dnd-deck-designer/issues/121) Thorn Whip | 37/37 | complete | 0 | 0 |
+| [#122](https://github.com/DnD-Decks/dnd-deck-designer/issues/122) Entangle | 29/37 | partial | 3 | 3 |
+| [#124](https://github.com/DnD-Decks/dnd-deck-designer/issues/124) Goodberry | 0/37 | queued | 0 | 0 |
+| [#125](https://github.com/DnD-Decks/dnd-deck-designer/issues/125) Ice Knife | 0/37 | queued | 0 | 0 |
+| [#126](https://github.com/DnD-Decks/dnd-deck-designer/issues/126) Jump | 0/37 | queued | 0 | 0 |
+| [#127](https://github.com/DnD-Decks/dnd-deck-designer/issues/127) Alarm | 0/37 | queued | 0 | 0 |
+| [#128](https://github.com/DnD-Decks/dnd-deck-designer/issues/128) Hunter's Mark | 0/37 | queued | 0 | 0 |
+| [#129](https://github.com/DnD-Decks/dnd-deck-designer/issues/129) Acid Splash | 0/37 | queued | 0 | 0 |
+| [#130](https://github.com/DnD-Decks/dnd-deck-designer/issues/130) Chill Touch | 0/37 | queued | 0 | 0 |
+| [#131](https://github.com/DnD-Decks/dnd-deck-designer/issues/131) Mind Sliver | 0/37 | queued | 0 | 0 |
+| [#132](https://github.com/DnD-Decks/dnd-deck-designer/issues/132) Ray of Frost | 0/37 | queued | 0 | 0 |
+| [#133](https://github.com/DnD-Decks/dnd-deck-designer/issues/133) Shocking Grasp | 0/37 | queued | 0 | 0 |
+| [#134](https://github.com/DnD-Decks/dnd-deck-designer/issues/134) Sorcerous Burst | 0/37 | queued | 0 | 0 |
+| [#135](https://github.com/DnD-Decks/dnd-deck-designer/issues/135) Burning Hands | 0/37 | queued | 0 | 0 |
+| [#137](https://github.com/DnD-Decks/dnd-deck-designer/issues/137) Expeditious Retreat | 0/37 | queued | 0 | 0 |
+| [#138](https://github.com/DnD-Decks/dnd-deck-designer/issues/138) False Life | 0/37 | queued | 0 | 0 |
+| [#139](https://github.com/DnD-Decks/dnd-deck-designer/issues/139) Grease | 0/37 | queued | 0 | 0 |
+| [#140](https://github.com/DnD-Decks/dnd-deck-designer/issues/140) Mage Armor | 0/37 | queued | 0 | 0 |
+| [#141](https://github.com/DnD-Decks/dnd-deck-designer/issues/141) Magic Missile | 0/37 | queued | 0 | 0 |
+| [#142](https://github.com/DnD-Decks/dnd-deck-designer/issues/142) Ray of Sickness | 0/37 | queued | 0 | 0 |
+| [#143](https://github.com/DnD-Decks/dnd-deck-designer/issues/143) Shield | 0/37 | queued | 0 | 0 |
+| [#144](https://github.com/DnD-Decks/dnd-deck-designer/issues/144) Witch Bolt | 0/37 | queued | 0 | 0 |
+| [#145](https://github.com/DnD-Decks/dnd-deck-designer/issues/145) Eldritch Blast | 0/37 | queued | 0 | 0 |
+| [#146](https://github.com/DnD-Decks/dnd-deck-designer/issues/146) Toll the Dead | 0/37 | queued | 0 | 0 |
+| [#147](https://github.com/DnD-Decks/dnd-deck-designer/issues/147) Armor of Agathys | 0/37 | queued | 0 | 0 |
+| [#148](https://github.com/DnD-Decks/dnd-deck-designer/issues/148) Arms of Hadar | 0/37 | queued | 0 | 0 |
+| [#149](https://github.com/DnD-Decks/dnd-deck-designer/issues/149) Hellish Rebuke | 0/37 | queued | 0 | 0 |
+| [#150](https://github.com/DnD-Decks/dnd-deck-designer/issues/150) Hex | 0/37 | queued | 0 | 0 |
+| [#151](https://github.com/DnD-Decks/dnd-deck-designer/issues/151) Find Familiar | 0/37 | queued | 0 | 0 |
+| [#152](https://github.com/DnD-Decks/dnd-deck-designer/issues/152) Unarmored Defense | 0/37 | queued | 0 | 0 |
+| [#153](https://github.com/DnD-Decks/dnd-deck-designer/issues/153) Weapon Mastery | 0/37 | queued | 0 | 0 |
+| [#154](https://github.com/DnD-Decks/dnd-deck-designer/issues/154) Spellcasting | 0/37 | queued | 0 | 0 |
+| [#155](https://github.com/DnD-Decks/dnd-deck-designer/issues/155) Spellcasting | 0/37 | queued | 0 | 0 |
+| [#156](https://github.com/DnD-Decks/dnd-deck-designer/issues/156) Divine Order | 0/37 | queued | 0 | 0 |
+| [#157](https://github.com/DnD-Decks/dnd-deck-designer/issues/157) Spellcasting | 0/37 | queued | 0 | 0 |
+| [#158](https://github.com/DnD-Decks/dnd-deck-designer/issues/158) Druidic | 0/37 | queued | 0 | 0 |
+| [#159](https://github.com/DnD-Decks/dnd-deck-designer/issues/159) Primal Order | 0/37 | queued | 0 | 0 |
+| [#161](https://github.com/DnD-Decks/dnd-deck-designer/issues/161) Weapon Mastery | 0/37 | queued | 0 | 0 |
+| [#162](https://github.com/DnD-Decks/dnd-deck-designer/issues/162) Martial Arts | 0/37 | queued | 0 | 0 |
+| [#163](https://github.com/DnD-Decks/dnd-deck-designer/issues/163) Unarmored Defense | 0/37 | queued | 0 | 0 |
+| [#164](https://github.com/DnD-Decks/dnd-deck-designer/issues/164) Spellcasting | 0/37 | queued | 0 | 0 |
+| [#165](https://github.com/DnD-Decks/dnd-deck-designer/issues/165) Weapon Mastery | 0/37 | queued | 0 | 0 |
+| [#166](https://github.com/DnD-Decks/dnd-deck-designer/issues/166) Spellcasting | 0/37 | queued | 0 | 0 |
+| [#168](https://github.com/DnD-Decks/dnd-deck-designer/issues/168) Expertise | 0/37 | queued | 0 | 0 |
+| [#171](https://github.com/DnD-Decks/dnd-deck-designer/issues/171) Spellcasting | 0/37 | queued | 0 | 0 |
+| [#181](https://github.com/DnD-Decks/dnd-deck-designer/issues/181) Mana | 0/37 | queued | 0 | 0 |
+| [#185](https://github.com/DnD-Decks/dnd-deck-designer/issues/185) Mana | 0/37 | queued | 0 | 0 |
+| [#187](https://github.com/DnD-Decks/dnd-deck-designer/issues/187) Mana | 0/37 | queued | 0 | 0 |
+
+## Request errors
+
+- #122, miniature-diorama-03 (attempt 2): You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
+- #122, paper-shadow-theater-02 (attempt 2): You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
+- #122, thermal-imaging-01 (attempt 1): You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
