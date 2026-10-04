@@ -1,8 +1,8 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T15:19:35.272Z. Status: **running**.
+Updated: 2026-10-04T15:20:44.928Z. Status: **running**.
 
-**51/93 issues complete; 1907/3441 styles archived.**
+**51/93 issues complete; 1912/3441 styles archived.**
 
 Current issue: #128. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
@@ -61,7 +61,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#125](https://github.com/DnD-Decks/dnd-deck-designer/issues/125) Ice Knife | 37/37 | complete | 0 | 0 |
 | [#126](https://github.com/DnD-Decks/dnd-deck-designer/issues/126) Jump | 37/37 | complete | 0 | 0 |
 | [#127](https://github.com/DnD-Decks/dnd-deck-designer/issues/127) Alarm | 37/37 | complete | 0 | 0 |
-| [#128](https://github.com/DnD-Decks/dnd-deck-designer/issues/128) Hunter's Mark | 20/37 | partial | 5 | 0 |
+| [#128](https://github.com/DnD-Decks/dnd-deck-designer/issues/128) Hunter's Mark | 25/37 | partial | 5 | 0 |
 | [#129](https://github.com/DnD-Decks/dnd-deck-designer/issues/129) Acid Splash | 0/37 | queued | 0 | 0 |
 | [#130](https://github.com/DnD-Decks/dnd-deck-designer/issues/130) Chill Touch | 0/37 | queued | 0 | 0 |
 | [#131](https://github.com/DnD-Decks/dnd-deck-designer/issues/131) Mind Sliver | 0/37 | queued | 0 | 0 |
