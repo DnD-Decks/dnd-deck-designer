@@ -1,8 +1,8 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T17:51:31.867Z. Status: **running**.
+Updated: 2026-10-04T17:52:41.672Z. Status: **running**.
 
-**67/93 issues complete; 2499/3441 styles archived.**
+**67/93 issues complete; 2504/3441 styles archived.**
 
 Current issue: #145. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
@@ -77,7 +77,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#142](https://github.com/DnD-Decks/dnd-deck-designer/issues/142) Ray of Sickness | 37/37 | complete | 0 | 0 |
 | [#143](https://github.com/DnD-Decks/dnd-deck-designer/issues/143) Shield | 37/37 | complete | 0 | 0 |
 | [#144](https://github.com/DnD-Decks/dnd-deck-designer/issues/144) Witch Bolt | 37/37 | complete | 0 | 0 |
-| [#145](https://github.com/DnD-Decks/dnd-deck-designer/issues/145) Eldritch Blast | 20/37 | partial | 5 | 0 |
+| [#145](https://github.com/DnD-Decks/dnd-deck-designer/issues/145) Eldritch Blast | 25/37 | partial | 5 | 0 |
 | [#146](https://github.com/DnD-Decks/dnd-deck-designer/issues/146) Toll the Dead | 0/37 | queued | 0 | 0 |
 | [#147](https://github.com/DnD-Decks/dnd-deck-designer/issues/147) Armor of Agathys | 0/37 | queued | 0 | 0 |
 | [#148](https://github.com/DnD-Decks/dnd-deck-designer/issues/148) Arms of Hadar | 0/37 | queued | 0 | 0 |
