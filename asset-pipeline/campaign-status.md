@@ -1,10 +1,10 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T19:39:30.501Z. Status: **running**.
+Updated: 2026-10-04T19:40:41.370Z. Status: **running**.
 
-**79/93 issues complete; 2923/3441 styles archived.**
+**79/93 issues complete; 2928/3441 styles archived.**
 
-Current issue: #156. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
+Current issue: #157. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
 GitHub issues remain open for artwork review. The Site's independent queue counters are not updated by this local runner.
 
@@ -89,7 +89,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#154](https://github.com/DnD-Decks/dnd-deck-designer/issues/154) Spellcasting | 37/37 | complete | 0 | 0 |
 | [#155](https://github.com/DnD-Decks/dnd-deck-designer/issues/155) Spellcasting | 37/37 | complete | 0 | 0 |
 | [#156](https://github.com/DnD-Decks/dnd-deck-designer/issues/156) Divine Order | 37/37 | complete | 0 | 0 |
-| [#157](https://github.com/DnD-Decks/dnd-deck-designer/issues/157) Spellcasting | 0/37 | queued | 0 | 0 |
+| [#157](https://github.com/DnD-Decks/dnd-deck-designer/issues/157) Spellcasting | 5/37 | partial | 5 | 0 |
 | [#158](https://github.com/DnD-Decks/dnd-deck-designer/issues/158) Druidic | 0/37 | queued | 0 | 0 |
 | [#159](https://github.com/DnD-Decks/dnd-deck-designer/issues/159) Primal Order | 0/37 | queued | 0 | 0 |
 | [#161](https://github.com/DnD-Decks/dnd-deck-designer/issues/161) Weapon Mastery | 0/37 | queued | 0 | 0 |
