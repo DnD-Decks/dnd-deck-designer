@@ -1,8 +1,8 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T15:41:49.970Z. Status: **running**.
+Updated: 2026-10-04T15:42:58.938Z. Status: **running**.
 
-**53/93 issues complete; 1996/3441 styles archived.**
+**54/93 issues complete; 1998/3441 styles archived.**
 
 Current issue: #130. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
@@ -63,7 +63,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#127](https://github.com/DnD-Decks/dnd-deck-designer/issues/127) Alarm | 37/37 | complete | 0 | 0 |
 | [#128](https://github.com/DnD-Decks/dnd-deck-designer/issues/128) Hunter's Mark | 37/37 | complete | 0 | 0 |
 | [#129](https://github.com/DnD-Decks/dnd-deck-designer/issues/129) Acid Splash | 37/37 | complete | 0 | 0 |
-| [#130](https://github.com/DnD-Decks/dnd-deck-designer/issues/130) Chill Touch | 35/37 | partial | 2 | 0 |
+| [#130](https://github.com/DnD-Decks/dnd-deck-designer/issues/130) Chill Touch | 37/37 | complete | 0 | 0 |
 | [#131](https://github.com/DnD-Decks/dnd-deck-designer/issues/131) Mind Sliver | 0/37 | queued | 0 | 0 |
 | [#132](https://github.com/DnD-Decks/dnd-deck-designer/issues/132) Ray of Frost | 0/37 | queued | 0 | 0 |
 | [#133](https://github.com/DnD-Decks/dnd-deck-designer/issues/133) Shocking Grasp | 0/37 | queued | 0 | 0 |
