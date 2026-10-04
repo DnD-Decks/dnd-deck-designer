@@ -35,6 +35,18 @@ An unattended task can call `GET /api/bulk/status` and `POST /api/bulk/step` wit
 
 The owner-only **Campaign status** panel reads this saved state. It shows completed and remaining issues, the current issue, submitted and collected drafts, archive state, issue errors, and the last saved step. **Refresh status** only reads data and does not trigger generation. A stale last-step time means that no call has advanced the Site recently; the Site cannot read whether the separate ChatGPT automation is enabled.
 
+## Continuous local campaign
+
+The local worker resumes the original 93-issue non-weapon campaign from its existing archive and ignored state file. With `OPENAI_API_KEY` supplied to the process environment, run from the repository root:
+
+```sh
+node asset-pipeline/bulk-campaign.runner.mjs
+```
+
+There is no default time limit. Each batch preserves existing images and prompts, updates [campaign-status.md](campaign-status.md), and pushes the draft archive and tracker to GitHub `main`. Exhausted API credits halt new submissions and preserve resumable requests. The worker also reports invalid credentials or persistent generation errors. It never submits artwork, opens pull requests, or closes issues. The Site's own campaign state is independent of this local tracker.
+
+Use `--dry-run` to list missing styles without generating images. `--max-minutes N` is available only when an explicit bounded run is wanted; `--interval-seconds N` controls the polling cadence (65 seconds by default). State and response IDs remain in ignored `asset-pipeline/.cache/`; the API key is never written to those files.
+
 ## Local checks
 
 From this folder, run:

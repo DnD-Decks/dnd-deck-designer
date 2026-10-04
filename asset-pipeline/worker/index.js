@@ -2856,9 +2856,11 @@ async function bulkCampaignStatus(env) {
     currentIssueTitle: job?.issueTitle || null,
     currentJobId: campaign.jobId || null,
     currentJobStatus: job?.status || campaign.jobStatus || null,
-    submittedCount: job?.requests?.filter((request) => request.responseId).length ?? campaign.submittedCount ?? 0,
+    submittedCount:
+      job?.requests?.filter((request) => request.responseId).length ?? campaign.submittedCount ?? 0,
     collectedCount: manifest?.candidates?.length || 0,
-    failedCount: manifest?.failures?.length || job?.requests?.filter((request) => request.error).length || 0,
+    failedCount:
+      manifest?.failures?.length || job?.requests?.filter((request) => request.error).length || 0,
     currentRunArchived: Boolean(manifest?.draftUrl && !manifest?.gitError),
     variantCount: STYLE_CATALOG.length,
     errors: campaign.errors || {},
