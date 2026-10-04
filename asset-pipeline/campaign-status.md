@@ -1,14 +1,12 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T14:24:18.766Z. Status: **credits-exhausted**.
+Updated: 2026-10-04T14:28:27.525Z. Status: **running**.
 
 **46/93 issues complete; 1731/3441 styles archived.**
 
 Current issue: none. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
 GitHub issues remain open for artwork review. The Site's independent queue counters are not updated by this local runner.
-
-Stopped: You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
 
 | Issue | Styles archived | Status | Pending API jobs | Failed requests |
 | --- | ---: | --- | ---: | ---: |
