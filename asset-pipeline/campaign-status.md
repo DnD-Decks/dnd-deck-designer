@@ -1,10 +1,10 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T15:52:22.351Z. Status: **running**.
+Updated: 2026-10-04T15:53:32.881Z. Status: **running**.
 
-**55/93 issues complete; 2035/3441 styles archived.**
+**55/93 issues complete; 2040/3441 styles archived.**
 
-Current issue: #131. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
+Current issue: #132. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
 GitHub issues remain open for artwork review. The Site's independent queue counters are not updated by this local runner.
 
@@ -65,7 +65,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#129](https://github.com/DnD-Decks/dnd-deck-designer/issues/129) Acid Splash | 37/37 | complete | 0 | 0 |
 | [#130](https://github.com/DnD-Decks/dnd-deck-designer/issues/130) Chill Touch | 37/37 | complete | 0 | 0 |
 | [#131](https://github.com/DnD-Decks/dnd-deck-designer/issues/131) Mind Sliver | 37/37 | complete | 0 | 0 |
-| [#132](https://github.com/DnD-Decks/dnd-deck-designer/issues/132) Ray of Frost | 0/37 | queued | 0 | 0 |
+| [#132](https://github.com/DnD-Decks/dnd-deck-designer/issues/132) Ray of Frost | 5/37 | partial | 5 | 0 |
 | [#133](https://github.com/DnD-Decks/dnd-deck-designer/issues/133) Shocking Grasp | 0/37 | queued | 0 | 0 |
 | [#134](https://github.com/DnD-Decks/dnd-deck-designer/issues/134) Sorcerous Burst | 0/37 | queued | 0 | 0 |
 | [#135](https://github.com/DnD-Decks/dnd-deck-designer/issues/135) Burning Hands | 0/37 | queued | 0 | 0 |
