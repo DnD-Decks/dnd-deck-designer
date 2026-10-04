@@ -1,10 +1,10 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T16:01:43.642Z. Status: **running**.
+Updated: 2026-10-04T16:02:53.979Z. Status: **running**.
 
-**56/93 issues complete; 2072/3441 styles archived.**
+**56/93 issues complete; 2077/3441 styles archived.**
 
-Current issue: #132. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
+Current issue: #133. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
 GitHub issues remain open for artwork review. The Site's independent queue counters are not updated by this local runner.
 
@@ -66,7 +66,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#130](https://github.com/DnD-Decks/dnd-deck-designer/issues/130) Chill Touch | 37/37 | complete | 0 | 0 |
 | [#131](https://github.com/DnD-Decks/dnd-deck-designer/issues/131) Mind Sliver | 37/37 | complete | 0 | 0 |
 | [#132](https://github.com/DnD-Decks/dnd-deck-designer/issues/132) Ray of Frost | 37/37 | complete | 0 | 0 |
-| [#133](https://github.com/DnD-Decks/dnd-deck-designer/issues/133) Shocking Grasp | 0/37 | queued | 0 | 0 |
+| [#133](https://github.com/DnD-Decks/dnd-deck-designer/issues/133) Shocking Grasp | 5/37 | partial | 5 | 0 |
 | [#134](https://github.com/DnD-Decks/dnd-deck-designer/issues/134) Sorcerous Burst | 0/37 | queued | 0 | 0 |
 | [#135](https://github.com/DnD-Decks/dnd-deck-designer/issues/135) Burning Hands | 0/37 | queued | 0 | 0 |
 | [#137](https://github.com/DnD-Decks/dnd-deck-designer/issues/137) Expeditious Retreat | 0/37 | queued | 0 | 0 |
