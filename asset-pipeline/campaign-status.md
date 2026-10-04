@@ -1,10 +1,10 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T14:53:03.682Z. Status: **running**.
+Updated: 2026-10-04T14:54:14.188Z. Status: **running**.
 
-**49/93 issues complete; 1813/3441 styles archived.**
+**49/93 issues complete; 1817/3441 styles archived.**
 
-Current issue: #125. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
+Current issue: #126. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
 GitHub issues remain open for artwork review. The Site's independent queue counters are not updated by this local runner.
 
@@ -59,7 +59,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#122](https://github.com/DnD-Decks/dnd-deck-designer/issues/122) Entangle | 37/37 | complete | 0 | 0 |
 | [#124](https://github.com/DnD-Decks/dnd-deck-designer/issues/124) Goodberry | 37/37 | complete | 0 | 0 |
 | [#125](https://github.com/DnD-Decks/dnd-deck-designer/issues/125) Ice Knife | 37/37 | complete | 0 | 0 |
-| [#126](https://github.com/DnD-Decks/dnd-deck-designer/issues/126) Jump | 0/37 | queued | 0 | 0 |
+| [#126](https://github.com/DnD-Decks/dnd-deck-designer/issues/126) Jump | 4/37 | partial | 4 | 0 |
 | [#127](https://github.com/DnD-Decks/dnd-deck-designer/issues/127) Alarm | 0/37 | queued | 0 | 0 |
 | [#128](https://github.com/DnD-Decks/dnd-deck-designer/issues/128) Hunter's Mark | 0/37 | queued | 0 | 0 |
 | [#129](https://github.com/DnD-Decks/dnd-deck-designer/issues/129) Acid Splash | 0/37 | queued | 0 | 0 |
