@@ -539,7 +539,14 @@ function commitArchive(folder, issue, runId) {
       ? `Save issue #${issue.number} artwork archive (${runId.slice(0, 8)})`
       : "Update local draft campaign tracker",
   ]);
-  git(["push", "origin", "main"]);
+  try {
+    git(["push", "origin", "main"]);
+  } catch (error) {
+    if (!/fetch first|non-fast-forward/.test(error.message)) throw error;
+    git(["fetch", "origin", "main"]);
+    git(["rebase", "origin/main"]);
+    git(["push", "origin", "main"]);
+  }
   console.log(JSON.stringify({ event: "pushed", commit: git(["rev-parse", "--short", "HEAD"]) }));
 }
 
