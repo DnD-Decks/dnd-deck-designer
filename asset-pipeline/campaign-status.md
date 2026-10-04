@@ -1,8 +1,8 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T16:26:03.839Z. Status: **running**.
+Updated: 2026-10-04T16:27:13.611Z. Status: **running**.
 
-**58/93 issues complete; 2161/3441 styles archived.**
+**58/93 issues complete; 2166/3441 styles archived.**
 
 Current issue: #135. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
@@ -68,7 +68,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#132](https://github.com/DnD-Decks/dnd-deck-designer/issues/132) Ray of Frost | 37/37 | complete | 0 | 0 |
 | [#133](https://github.com/DnD-Decks/dnd-deck-designer/issues/133) Shocking Grasp | 37/37 | complete | 0 | 0 |
 | [#134](https://github.com/DnD-Decks/dnd-deck-designer/issues/134) Sorcerous Burst | 37/37 | complete | 0 | 0 |
-| [#135](https://github.com/DnD-Decks/dnd-deck-designer/issues/135) Burning Hands | 15/37 | partial | 5 | 0 |
+| [#135](https://github.com/DnD-Decks/dnd-deck-designer/issues/135) Burning Hands | 20/37 | partial | 5 | 0 |
 | [#137](https://github.com/DnD-Decks/dnd-deck-designer/issues/137) Expeditious Retreat | 0/37 | queued | 0 | 0 |
 | [#138](https://github.com/DnD-Decks/dnd-deck-designer/issues/138) False Life | 0/37 | queued | 0 | 0 |
 | [#139](https://github.com/DnD-Decks/dnd-deck-designer/issues/139) Grease | 0/37 | queued | 0 | 0 |
