@@ -1,10 +1,10 @@
 # Draft campaign progress
 
-Updated: 2026-10-04T16:41:17.342Z. Status: **running**.
+Updated: 2026-10-04T16:42:27.580Z. Status: **running**.
 
-**60/93 issues complete; 2220/3441 styles archived.**
+**60/93 issues complete; 2225/3441 styles archived.**
 
-Current issue: #137. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
+Current issue: #138. This is the original 93-issue non-weapon queue. Each issue requires all 37 catalog styles. Counts require an image file and its manifest. Drafts and this tracker are pushed together to GitHub main.
 
 GitHub issues remain open for artwork review. The Site's independent queue counters are not updated by this local runner.
 
@@ -70,7 +70,7 @@ GitHub issues remain open for artwork review. The Site's independent queue count
 | [#134](https://github.com/DnD-Decks/dnd-deck-designer/issues/134) Sorcerous Burst | 37/37 | complete | 0 | 0 |
 | [#135](https://github.com/DnD-Decks/dnd-deck-designer/issues/135) Burning Hands | 37/37 | complete | 0 | 0 |
 | [#137](https://github.com/DnD-Decks/dnd-deck-designer/issues/137) Expeditious Retreat | 37/37 | complete | 0 | 0 |
-| [#138](https://github.com/DnD-Decks/dnd-deck-designer/issues/138) False Life | 0/37 | queued | 0 | 0 |
+| [#138](https://github.com/DnD-Decks/dnd-deck-designer/issues/138) False Life | 5/37 | partial | 5 | 0 |
 | [#139](https://github.com/DnD-Decks/dnd-deck-designer/issues/139) Grease | 0/37 | queued | 0 | 0 |
 | [#140](https://github.com/DnD-Decks/dnd-deck-designer/issues/140) Mage Armor | 0/37 | queued | 0 | 0 |
 | [#141](https://github.com/DnD-Decks/dnd-deck-designer/issues/141) Magic Missile | 0/37 | queued | 0 | 0 |
