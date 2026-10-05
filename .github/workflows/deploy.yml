@@ -19,7 +19,12 @@ env:
   VERCEL_PROJECT_ID: prj_htJcvkNhD8g3ClAyNGArzzJrH0hu
 
 jobs:
+  blue-ball:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/blue-ball.yml
+
   deploy:
+    needs: blue-ball
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

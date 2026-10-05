@@ -5,11 +5,7 @@ on:
     paths-ignore:
       - "asset-pipeline/drafts/**"
       - "asset-pipeline/campaign-status.md"
-  push:
-    branches: [main]
-    paths-ignore:
-      - "asset-pipeline/drafts/**"
-      - "asset-pipeline/campaign-status.md"
+  workflow_call:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
