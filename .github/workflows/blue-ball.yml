@@ -23,7 +23,7 @@ jobs:
       - name: Install git
         run: apk add --no-cache git
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Enable pnpm via corepack
         run: corepack enable
