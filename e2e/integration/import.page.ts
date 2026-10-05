@@ -11,7 +11,7 @@ export function createImportPage(page: Page) {
       return page.getByRole("main").getByRole("article", { name, exact: true });
     },
     save: page.getByRole("button", { name: "Save to this device" }),
-    share: page.getByRole("button", { name: "Share" }),
+    menu: page.getByRole("button", { name: "Menu" }),
     backHome: page.getByRole("link", { name: "Back to your characters" }),
 
     // encoded independently of the app, so the share format is pinned by the test

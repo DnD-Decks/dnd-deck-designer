@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { type BaseLocationHook, Link, Router, useLocation } from "wouter";
+import { type BaseLocationHook, Link, Router, useLocation, useRoute } from "wouter";
 import { useHashLocation } from "wouter/use-hash-location";
 import styles from "./app.module.css";
 import { AppRoutes } from "./app.routes";
@@ -19,10 +19,15 @@ function NavLink({ to, match, children }: { to: string; match: RegExp; children:
   );
 }
 
-export function App({ hook = useHashLocation }: Props) {
+function AppShell() {
+  // at the table the character's own header takes over: no workbench chrome, no mat
+  const [playing] = useRoute("/character/:id");
+
   return (
-    <Router hook={hook}>
-      <div className={styles.root}>
+    <div className={styles.root} data-mode={playing ? "play" : undefined}>
+      {playing ? (
+        <h1 className={styles.visuallyHidden}>D&amp;D Deck Designer</h1>
+      ) : (
         <header className={styles.header}>
           <h1 className={styles.title}>
             D<span className={styles.amp}>&amp;</span>D Deck Designer
@@ -36,8 +41,16 @@ export function App({ hook = useHashLocation }: Props) {
             </NavLink>
           </nav>
         </header>
-        <AppRoutes />
-      </div>
+      )}
+      <AppRoutes />
+    </div>
+  );
+}
+
+export function App({ hook = useHashLocation }: Props) {
+  return (
+    <Router hook={hook}>
+      <AppShell />
     </Router>
   );
 }

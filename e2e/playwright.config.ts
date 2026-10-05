@@ -2,6 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 const CI = !!process.env.CI;
 const baseURL = process.env.BASE_URL ?? "http://localhost:5173";
+const PHONE_SPECS = /\/(builder|play)\.[\w-]+\.spec\.ts$/;
 
 export default defineConfig({
   testDir: "./app",
@@ -21,8 +22,20 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
-  // the app is a print workbench sized in mm, not a responsive site
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  // the catalog is a print workbench sized in mm; the builder and the play view live on a phone
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] }, testIgnore: PHONE_SPECS },
+    {
+      name: "phone",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 390, height: 844 },
+        isMobile: true,
+        hasTouch: true,
+      },
+      testMatch: PHONE_SPECS,
+    },
+  ],
   webServer: {
     command: "pnpm dev --host",
     url: baseURL,
