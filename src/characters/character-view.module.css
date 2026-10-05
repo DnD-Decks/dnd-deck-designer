@@ -29,6 +29,7 @@
 }
 
 .title {
+  flex: 1;
   min-width: 0;
 }
 
@@ -153,10 +154,15 @@
   color: var(--gold-soft);
 }
 
-/* a phone: smaller cards, and the next one peeks in from the edge */
+/* a phone: smaller cards, and the next one peeks in from the edge; the actions drop to their own row under the name */
 @container play (max-width: 30rem) {
   .stack {
     --card-zoom: 0.9;
+  }
+
+  .actions {
+    order: 1;
+    flex-basis: 100%;
   }
 }
 

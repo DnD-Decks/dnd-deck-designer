@@ -7,7 +7,7 @@ import { cardKey, cardName, decks } from "src/decks/deck.model";
 import { assertNever } from "src/lib/assert-never";
 import styles from "./character-view.module.css";
 
-type Props = { character: Character; actions: ReactNode };
+type Props = { character: Character; actions: ReactNode; menu?: ReactNode };
 
 type Stack = { card: DeckCard; copies: number };
 
@@ -84,7 +84,7 @@ function StackSlot({ stack: { card, copies }, trigger, onZoom }: StackSlotProps)
 }
 
 /** The character at the table: name and actions pinned on top, one swipeable row per section. */
-export function CharacterView({ character, actions }: Props) {
+export function CharacterView({ character, actions, menu }: Props) {
   const { cls, entries } = decks.forCharacter(character);
   const grouped = sections(entries);
   // arrow order is the order you see
@@ -107,6 +107,7 @@ export function CharacterView({ character, actions }: Props) {
             </p>
           </hgroup>
           <div className={styles.actions}>{actions}</div>
+          {menu}
         </header>
 
         {grouped.map(({ label, stacks }) => (

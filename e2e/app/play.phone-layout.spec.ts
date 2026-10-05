@@ -72,6 +72,19 @@ test.describe("play: phone layout", () => {
     await expect.soft(page).toHaveURL(/#\/character\/[\w-]+\/edit$/);
   });
 
+  [390, 360, 320].forEach((width) => {
+    test(`at ${width}px the menu drops below its button`, async ({ page, playPage }) => {
+      await page.setViewportSize({ width, height: 800 });
+      await playPage.menuButton.click();
+      await expect(playPage.menu).toBeVisible();
+
+      const button = await playPage.menuButton.boundingBox();
+      const menu = await playPage.menu.boundingBox();
+      expect(menu?.y).toBeGreaterThanOrEqual((button?.y ?? 0) + (button?.height ?? 0));
+      await expect.soft(playPage.menu).toBeInViewport();
+    });
+  });
+
   test("print ignores the phone zoom and the play chrome", async ({ page, playPage }) => {
     await page.emulateMedia({ media: "print" });
 

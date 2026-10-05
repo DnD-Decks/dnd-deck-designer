@@ -107,12 +107,8 @@ export function CharacterPage({ id }: { id: string }) {
   return (
     <CharacterView
       character={character}
-      actions={
-        <>
-          <Rests />
-          <CharacterMenu character={character} />
-        </>
-      }
+      actions={<Rests />}
+      menu={<CharacterMenu character={character} />}
     />
   );
 }

@@ -124,7 +124,12 @@ button.action {
 
 .rests {
   display: flex;
+  flex: 1;
   gap: 0.4rem;
+}
+
+.rest {
+  flex: 1;
 }
 
 .rest,
@@ -168,6 +173,19 @@ button.action {
   background: var(--ink-800);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
   color: var(--text-hi);
+}
+
+/* hung from the Menu button wherever the header puts it */
+@supports (anchor-name: --menu) {
+  .menuButton {
+    anchor-name: --character-menu;
+  }
+
+  .menu {
+    /* biome-ignore lint/correctness/noUnknownProperty: biome 1.9 knows anchor-name but not position-anchor */
+    position-anchor: --character-menu;
+    inset: calc(anchor(bottom) + 0.4rem) anchor(right) auto auto;
+  }
 }
 
 .menu:popover-open {
