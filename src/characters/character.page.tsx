@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { CharacterView } from "src/characters/character-view.component";
 import type { Character } from "src/characters/character.model";
 import { characters } from "src/characters/character.model";
@@ -89,6 +89,7 @@ function CharacterMenu({ character }: { character: Character }) {
 
 export function CharacterPage({ id }: { id: string }) {
   const character = characterStorage.get(id);
+  useEffect(() => characterStorage.setLastPlayed(id), [id]);
 
   if (!character) {
     return (

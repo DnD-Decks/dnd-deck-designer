@@ -42,6 +42,6 @@ test.describe("import: share link", () => {
     await importPage.backHome.click();
 
     await expect.soft(page).toHaveURL(/#\/$/);
-    await expect.soft(homePage.heading).toBeVisible();
+    await expect.soft(homePage.emptyHeading).toBeVisible();
   });
 });

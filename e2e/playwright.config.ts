@@ -2,7 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 const CI = !!process.env.CI;
 const baseURL = process.env.BASE_URL ?? "http://localhost:5173";
-const PHONE_SPECS = /\/(builder|play)\.[\w-]+\.spec\.ts$/;
+const PHONE_SPECS = /\/(builder|home|play)\.[\w-]+\.spec\.ts$/;
 
 export default defineConfig({
   testDir: "./app",
@@ -22,7 +22,7 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
-  // the catalog is a print workbench sized in mm; the builder and the play view live on a phone
+  // the catalog is a print workbench sized in mm; home, the builder and the play view live on a phone
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] }, testIgnore: PHONE_SPECS },
     {

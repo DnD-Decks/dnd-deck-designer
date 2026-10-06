@@ -3,6 +3,7 @@ import { characters } from "src/characters/character.model";
 
 const CHARACTERS_KEY = "dnd-deck-designer:characters";
 const PLAY_KEY = "dnd-deck-designer:play";
+const LAST_PLAYED_KEY = "dnd-deck-designer:last-played";
 
 type PlayState = { spent: string[] };
 type PlayStates = Record<string, PlayState>;
@@ -57,6 +58,7 @@ export const characterStorage = {
 
   remove(id: string) {
     write({ key: PLAY_KEY, value: withoutPlay(id) });
+    if (read(LAST_PLAYED_KEY) === id) write({ key: LAST_PLAYED_KEY, value: null });
     const kept = characterStorage.list().filter((character) => character.id !== id);
     return write({ key: CHARACTERS_KEY, value: kept });
   },
@@ -68,5 +70,14 @@ export const characterStorage = {
 
   setSpent({ id, spent }: { id: string; spent: readonly string[] }) {
     return write({ key: PLAY_KEY, value: { ...readPlay(), [id]: { spent } } });
+  },
+
+  lastPlayed() {
+    const id = read(LAST_PLAYED_KEY);
+    return typeof id === "string" ? characterStorage.get(id) : undefined;
+  },
+
+  setLastPlayed(id: string) {
+    if (characterStorage.get(id)) write({ key: LAST_PLAYED_KEY, value: id });
   },
 };

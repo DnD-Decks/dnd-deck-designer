@@ -10,7 +10,8 @@ test.describe("home: empty state", () => {
     catalogPage,
   }) => {
     await homePage.goto();
-    await expect(homePage.heading).toBeVisible();
+    await expect(homePage.emptyHeading).toBeVisible();
+    await expect.soft(homePage.newCharacter).toBeVisible();
     await expect.soft(homePage.navLink("Your characters")).toHaveAttribute("aria-current", "page");
 
     await homePage.openCatalog.click();
