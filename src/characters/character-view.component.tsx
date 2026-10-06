@@ -80,13 +80,14 @@ export function CharacterView({ character, spent = [], onToggleSpent, actions, m
   const grouped = sections(entries);
   // arrow order is the order you see
   const ordered = grouped.flatMap((section) => section.entries);
+  const spentKeys = new Set(spent);
   const { holding, hold, trigger, spotlight } = useCardSpotlight({
     entries: ordered,
     actions: ({ entry, putBack }) =>
       onToggleSpent &&
       play.spendable(entry) && (
         <SpotlightAction onClick={() => putBack(() => onToggleSpent(entry.key))}>
-          {spent.includes(entry.key) ? "Recover" : "Spend"}
+          {spentKeys.has(entry.key) ? "Recover" : "Spend"}
         </SpotlightAction>
       ),
   });
@@ -127,7 +128,7 @@ export function CharacterView({ character, spent = [], onToggleSpent, actions, m
                 <CardSlot
                   key={key}
                   card={card}
-                  spent={spent.includes(key)}
+                  spent={spentKeys.has(key)}
                   trigger={trigger(key)}
                   onZoom={() => hold(key)}
                 />

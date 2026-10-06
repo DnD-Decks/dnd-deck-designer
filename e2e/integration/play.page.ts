@@ -1,10 +1,12 @@
 import type { Page } from "@playwright/test";
+import type { Build } from "./import.page";
 import { createImportPage } from "./import.page";
-
-type Build = Parameters<ReturnType<typeof createImportPage>["goto"]>[0];
 
 export function createPlayPage(page: Page) {
   const table = page.getByRole("main");
+  const spotlight = page.getByRole("dialog");
+  const spend = spotlight.getByRole("button", { name: "Spend" });
+  const zoom = (name: string) => table.getByRole("button", { name: `Zoom ${name}`, exact: true });
 
   return {
     name(name: string) {
@@ -12,10 +14,10 @@ export function createPlayPage(page: Page) {
     },
     menuButton: page.getByRole("button", { name: "Menu" }),
     menu: page.getByRole("navigation", { name: "Character menu" }),
-    spotlight: page.getByRole("dialog"),
+    spotlight,
     putBack: page.getByRole("button", { name: "Put it back" }),
-    spend: page.getByRole("dialog").getByRole("button", { name: "Spend" }),
-    recover: page.getByRole("dialog").getByRole("button", { name: "Recover" }),
+    spend,
+    recover: spotlight.getByRole("button", { name: "Recover" }),
     shortRest: page.getByRole("button", { name: "Short rest" }),
     longRest: page.getByRole("button", { name: "Long rest" }),
     restStatus: table.getByRole("status").filter({ hasText: /rest:/ }),
@@ -34,21 +36,16 @@ export function createPlayPage(page: Page) {
       return table.getByRole("article", { name, exact: true });
     },
 
-    zoom(name: string) {
-      return table.getByRole("button", { name: `Zoom ${name}`, exact: true });
-    },
+    zoom,
 
     spent(name: string) {
       return table.getByRole("button", { name: `Zoom ${name}, spent`, exact: true });
     },
 
     async spendOne(name: string) {
-      await table
-        .getByRole("button", { name: `Zoom ${name}`, exact: true })
-        .first()
-        .click();
-      await page.getByRole("dialog").getByRole("button", { name: "Spend" }).click();
-      await page.getByRole("dialog").waitFor({ state: "detached" });
+      await zoom(name).first().click();
+      await spend.click();
+      await spotlight.waitFor({ state: "detached" });
     },
 
     // through the share link, the way a character reaches a phone

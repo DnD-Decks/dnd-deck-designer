@@ -17,6 +17,9 @@ function restoredUses({ resource, rest }: { resource: Resource; rest: RestType }
   return rest === "long-rest" ? resource.uses : shortRestUses(resource);
 }
 
+const resourcesOf = (entries: readonly DeckEntry[]) =>
+  entries.flatMap((entry) => resourceOf(entry) ?? []);
+
 const namesOf = (resources: readonly Resource[]) => [
   ...new Set(resources.map((resource) => resource.name)),
 ];
@@ -29,10 +32,11 @@ export const play = {
 
   /** the spent entries a rest brings back, in deck order */
   recovered({ entries, spent, rest }: Rest) {
+    const spentKeys = new Set(spent);
     const budgets = new Map<string, number>();
     return entries.filter((entry) => {
       const resource = resourceOf(entry);
-      if (!resource || !spent.includes(entry.key)) return false;
+      if (!resource || !spentKeys.has(entry.key)) return false;
       const budget = budgets.get(resource.id) ?? restoredUses({ resource, rest });
       budgets.set(resource.id, budget - 1);
       return budget > 0;
@@ -41,11 +45,10 @@ export const play = {
 
   /** names of every resource a rest can bring back, spent or not */
   restores({ entries, rest }: Omit<Rest, "spent">) {
-    const resources = entries.flatMap((entry) => resourceOf(entry) ?? []);
-    return namesOf(resources.filter((resource) => restoredUses({ resource, rest }) > 0));
+    return namesOf(resourcesOf(entries).filter((resource) => restoredUses({ resource, rest }) > 0));
   },
 
   names(entries: readonly DeckEntry[]) {
-    return namesOf(entries.flatMap((entry) => resourceOf(entry) ?? []));
+    return namesOf(resourcesOf(entries));
   },
 };
