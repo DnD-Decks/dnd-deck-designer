@@ -16,9 +16,9 @@ beforeEach(() => {
 });
 
 describe("<AppRoutes />", () => {
-  test("home shows your characters, and the empty state points to the catalog", () => {
+  test("home is the characters page, and the empty state points to the catalog", () => {
     renderAt("/");
-    screen.getByRole("heading", { name: "Your characters", level: 2 });
+    screen.getByRole("heading", { name: "Build a character to bring to the table", level: 2 });
     screen.getByRole("link", { name: "Open the card catalog" });
     expect(screen.getByRole("link", { name: "Your characters" }).getAttribute("aria-current")).toBe(
       "page"

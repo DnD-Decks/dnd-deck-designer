@@ -36,6 +36,202 @@
   color: var(--text-hi);
 }
 
+.emptyHeading,
+.othersHeading {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--parchment);
+}
+
+.emptyActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  margin-top: 0.4rem;
+}
+
+.primary {
+  padding: 0.6rem 1.1rem;
+  border-radius: 6px;
+  background: var(--gold);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink-900);
+  text-decoration: none;
+}
+
+.primary:hover {
+  background: var(--gold-soft);
+}
+
+.quiet {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--text-mid);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.quiet:hover {
+  color: var(--text-hi);
+}
+
+.action:focus-visible,
+.primary:focus-visible,
+.quiet:focus-visible,
+.hero:focus-visible,
+.item:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.hero {
+  --fan-zoom: 0.42;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem 2rem;
+  padding: 1.5rem 1.25rem 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--gold) 55%, var(--ink-line));
+  border-radius: 12px;
+  background: radial-gradient(
+      120% 90% at 50% 0%,
+      color-mix(in srgb, var(--gold) 10%, transparent),
+      transparent 70%
+    ), var(--ink-800);
+  text-decoration: none;
+}
+
+.hero:hover {
+  border-color: var(--gold);
+}
+
+.fan {
+  position: relative;
+  flex: none;
+  width: min(15rem, 100%);
+  height: calc(var(--card-height) * var(--fan-zoom) + 2rem);
+}
+
+/* cards keep their mm size and are zoomed as a whole, the way the play view does */
+.fanCard {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  zoom: var(--fan-zoom);
+  translate: calc(-50% + var(--slot) * 48%) calc(var(--lift) * 6%);
+  rotate: calc(var(--slot) * 10deg);
+  transform-origin: 50% 100%;
+}
+
+.hero:hover .fanCard {
+  rotate: calc(var(--slot) * 13deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fanCard {
+    transition: rotate 180ms ease-out;
+  }
+}
+
+.heroText {
+  display: flex;
+  flex: 1 1 12rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.heroName {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  color: var(--parchment);
+}
+
+.spent {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-style: italic;
+  color: var(--gold-soft);
+}
+
+.continue {
+  margin-top: 0.6rem;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.continue::after {
+  content: " →";
+}
+
+.others {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.othersHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.othersHeader .action {
+  margin-top: 0;
+  margin-left: auto;
+}
+
+.othersHeading {
+  font-size: 18px;
+  color: var(--text-hi);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.1rem 1rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--ink-line);
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.item:hover {
+  border-color: var(--gold);
+}
+
+.itemName {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  color: var(--text-hi);
+}
+
 .action {
   margin-top: 0.4rem;
   padding: 0.5rem 0.9rem;
@@ -49,11 +245,6 @@
 
 .action:hover {
   background: color-mix(in srgb, var(--gold) 12%, transparent);
-}
-
-.action:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
 }
 
 button.action {
@@ -85,40 +276,6 @@ button.action {
   background: transparent;
   font-family: var(--font-sans);
   font-size: 13px;
-  color: var(--text-hi);
-}
-
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--ink-line);
-  border-radius: 8px;
-  text-decoration: none;
-}
-
-.item:hover {
-  border-color: var(--gold);
-}
-
-.item:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
-}
-
-.itemName {
-  font-family: var(--font-serif);
-  font-size: 17px;
   color: var(--text-hi);
 }
 

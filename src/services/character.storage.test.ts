@@ -55,6 +55,44 @@ describe("characterStorage{}", () => {
     });
   });
 
+  test("remembers the last played character", () => {
+    characterStorage.save(brunhilde());
+    characterStorage.save(elminster());
+    characterStorage.setLastPlayed("f1");
+    characterStorage.setLastPlayed("w1");
+    expect(characterStorage.lastPlayed()).toEqual(elminster());
+  });
+
+  [
+    { label: "nothing was played", setup: () => {} },
+    { label: "the id is unknown", setup: () => characterStorage.setLastPlayed("nobody") },
+    {
+      label: "the last played character was removed",
+      setup: () => {
+        characterStorage.setLastPlayed("f1");
+        characterStorage.remove("f1");
+      },
+    },
+    {
+      label: "the stored id is stale",
+      setup: () => localStorage.setItem("dnd-deck-designer:last-played", JSON.stringify("gone")),
+    },
+  ].forEach(({ label, setup }) => {
+    test(`has no last played character when ${label}`, () => {
+      characterStorage.save(brunhilde());
+      setup();
+      expect(characterStorage.lastPlayed()).toBeUndefined();
+    });
+  });
+
+  test("removing another character keeps the last played one", () => {
+    characterStorage.save(brunhilde());
+    characterStorage.save(elminster());
+    characterStorage.setLastPlayed("f1");
+    characterStorage.remove("w1");
+    expect(characterStorage.lastPlayed()).toEqual(brunhilde());
+  });
+
   test("skips a stored entry that is not a valid character", () => {
     const corrupt = { id: "x", cls: "illithid" };
     localStorage.setItem("dnd-deck-designer:characters", JSON.stringify([brunhilde(), corrupt]));
@@ -76,6 +114,7 @@ describe("characterStorage{}", () => {
       list: characterStorage.list(),
       saved: characterStorage.save(brunhilde()),
       spentSaved: characterStorage.setSpent({ id: "f1", spent: [] }),
-    }).toEqual({ list: [], saved: false, spentSaved: false });
+      lastPlayed: characterStorage.lastPlayed(),
+    }).toEqual({ list: [], saved: false, spentSaved: false, lastPlayed: undefined });
   });
 });
