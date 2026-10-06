@@ -1,7 +1,5 @@
 /* The table at night: ink all round, the cards are the only light */
 .play {
-  --layer-offset: 5px;
-
   container: play / inline-size;
   display: flex;
   flex-direction: column;
@@ -99,34 +97,14 @@
   scrollbar-width: thin;
 }
 
-.slot {
-  display: flex;
-  flex: none;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  scroll-snap-align: start;
-}
-
 /* cards keep their mm size and are zoomed as a whole, so print never sees the scaling */
-.stack {
+.slot {
   --card-zoom: 1;
 
   position: relative;
+  flex: none;
   zoom: var(--card-zoom);
-  margin: 0 calc(var(--depth, 0) * var(--layer-offset)) calc(var(--depth, 0) * var(--layer-offset))
-    0;
-}
-
-/* the copies under the top card, fanned down and to the right */
-.under {
-  position: absolute;
-  inset: 0;
-  border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--ink-line));
-  border-radius: 8px;
-  background: var(--ink-700);
-  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.35);
-  translate: calc(var(--layer) * var(--layer-offset)) calc(var(--layer) * var(--layer-offset));
+  scroll-snap-align: start;
 }
 
 /* transparent control over the card face: tap the card to lift it */
@@ -145,18 +123,9 @@
   outline-offset: 3px;
 }
 
-.left {
-  margin: 0;
-  font-family: var(--font-serif);
-  font-size: 14px;
-  font-style: italic;
-  font-variant-numeric: tabular-nums;
-  color: var(--gold-soft);
-}
-
 /* a phone: smaller cards, and the next one peeks in from the edge; the actions drop to their own row under the name */
 @container play (max-width: 30rem) {
-  .stack {
+  .slot {
     --card-zoom: 0.9;
   }
 
@@ -167,7 +136,7 @@
 }
 
 @container play (max-width: 20rem) {
-  .stack {
+  .slot {
     --card-zoom: 0.8;
   }
 }
@@ -175,9 +144,7 @@
 @media print {
   .header,
   .sectionLabel,
-  .under,
-  .zoom,
-  .left {
+  .zoom {
     display: none;
   }
 
@@ -186,8 +153,7 @@
     overflow: visible;
   }
 
-  .stack {
+  .slot {
     zoom: 1;
-    margin: 0;
   }
 }

@@ -33,3 +33,17 @@ test("resource without icon renders no resource image", () => {
   render(<ResourceCard resource={{ ...rage, icon: undefined, action: undefined }} />);
   expect(screen.queryByRole("img")).toBeNull();
 });
+
+[
+  {
+    label: "a pool reads as the rule that sizes it",
+    pool: "5 × Paladin level",
+    expected: "Pool: 5 × Paladin level",
+  },
+  { label: "a resource without a pool shows no pool", pool: undefined, expected: null },
+].forEach(({ label, pool, expected }) => {
+  test(label, () => {
+    render(<ResourceCard resource={{ ...rage, pool }} />);
+    expect(screen.queryByText(/^Pool:/)?.textContent ?? null).toBe(expected);
+  });
+});
