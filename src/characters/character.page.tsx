@@ -2,6 +2,10 @@ import { useEffect, useId, useState } from "react";
 import { CharacterView } from "src/characters/character-view.component";
 import type { Character } from "src/characters/character.model";
 import { characters } from "src/characters/character.model";
+import { play } from "src/characters/play.model";
+import type { DeckEntry } from "src/decks/deck.model";
+import { decks } from "src/decks/deck.model";
+import type { RestType } from "src/models/rest/rest-actions.model";
 import { characterStorage } from "src/services/character.storage";
 import { Link } from "wouter";
 import styles from "./characters.module.css";
@@ -49,17 +53,112 @@ function ShareButton({ character }: { character: Character }) {
   );
 }
 
-// recovering spent cards arrives with spending (#262); until then there is nothing to rest for
-function Rests() {
+const REST_LABELS: Record<RestType, string> = {
+  "short-rest": "Short rest",
+  "long-rest": "Long rest",
+};
+
+// joinWithAnd(["Second Wind", "Mana", "Rage"]) is "Second Wind, Mana and Rage".
+function joinWithAnd(names: readonly string[]) {
+  const last = names[names.length - 1];
+  return names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${last}` : (last ?? "");
+}
+
+function restHint({ entries, rest }: { entries: readonly DeckEntry[]; rest: RestType }) {
+  if (rest === "long-rest") return "Everything";
+  return joinWithAnd(play.restores({ entries, rest })) || "Nothing";
+}
+
+type RestProps = {
+  rest: RestType;
+  hint: string;
+  disabled: boolean;
+  onRest: (rest: RestType) => void;
+};
+
+function RestButton({ rest, hint, disabled, onRest }: RestProps) {
+  const hintId = useId();
+
   return (
-    <div className={styles.rests}>
-      <button type="button" className={styles.rest} disabled title="Nothing spent yet">
-        Short rest
-      </button>
-      <button type="button" className={styles.rest} disabled title="Nothing spent yet">
-        Long rest
-      </button>
-    </div>
+    <button
+      type="button"
+      className={styles.rest}
+      disabled={disabled}
+      aria-describedby={hintId}
+      onClick={() => onRest(rest)}
+    >
+      {REST_LABELS[rest]}
+      <span id={hintId} className={styles.restHint} aria-hidden="true">
+        {hint}
+      </span>
+    </button>
+  );
+}
+
+type RestsProps = {
+  entries: readonly DeckEntry[];
+  spent: readonly string[];
+  status: string;
+  onRest: (rest: RestType) => void;
+};
+
+function Rests({ entries, spent, status, onRest }: RestsProps) {
+  return (
+    <>
+      <div className={styles.rests}>
+        {(["short-rest", "long-rest"] as const).map((rest) => (
+          <RestButton
+            key={rest}
+            rest={rest}
+            hint={restHint({ entries, rest })}
+            disabled={play.recovered({ entries, spent, rest }).length === 0}
+            onRest={onRest}
+          />
+        ))}
+      </div>
+      <output className={styles.restStatus}>{status}</output>
+    </>
+  );
+}
+
+function usePlayState(character: Character) {
+  const { entries } = decks.forCharacter(character);
+  const [spent, setSpent] = useState(() => characterStorage.spent(character.id));
+  const [status, setStatus] = useState("");
+
+  const save = (next: readonly string[]) => {
+    setSpent([...next]);
+    characterStorage.setSpent({ id: character.id, spent: next });
+  };
+
+  return {
+    entries,
+    spent,
+    status,
+    toggleSpent(key: string) {
+      save(spent.includes(key) ? spent.filter((k) => k !== key) : [...spent, key]);
+      setStatus("");
+    },
+    rest(rest: RestType) {
+      const recovered = play.recovered({ entries, spent, rest });
+      const back = new Set(recovered.map((entry) => entry.key));
+      save(spent.filter((key) => !back.has(key)));
+      setStatus(`${REST_LABELS[rest]}: ${joinWithAnd(play.names(recovered))} recovered`);
+    },
+  };
+}
+
+function PlayTable({ character }: { character: Character }) {
+  const { entries, spent, status, toggleSpent, rest } = usePlayState(character);
+
+  return (
+    <CharacterView
+      character={character}
+      spent={spent}
+      onToggleSpent={toggleSpent}
+      actions={<Rests entries={entries} spent={spent} status={status} onRest={rest} />}
+      menu={<CharacterMenu character={character} />}
+    />
   );
 }
 
@@ -107,11 +206,5 @@ export function CharacterPage({ id }: { id: string }) {
     );
   }
 
-  return (
-    <CharacterView
-      character={character}
-      actions={<Rests />}
-      menu={<CharacterMenu character={character} />}
-    />
-  );
+  return <PlayTable character={character} />;
 }

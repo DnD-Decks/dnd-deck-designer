@@ -33,6 +33,9 @@ function onTheMat(origin: DOMRect) {
 
 type Neighbour = { name: string; hold: () => void };
 
+/** puts the card back, then runs `then` once it has landed */
+export type PutBack = (then?: () => void) => void;
+
 type StepProps = {
   direction: "previous" | "next";
   name: string;
@@ -59,6 +62,7 @@ type Props = {
   liftedFrom: HTMLElement;
   previous?: Neighbour;
   next?: Neighbour;
+  actions?: (putBack: PutBack) => ReactNode;
   onClose: () => void;
   children: ReactNode;
 };
@@ -69,7 +73,15 @@ type Props = {
  * - Supports stepping when neighbours are supplied.
  * Throws on no expected input.
  */
-export function CardSpotlight({ label, liftedFrom, previous, next, onClose, children }: Props) {
+export function CardSpotlight({
+  label,
+  liftedFrom,
+  previous,
+  next,
+  actions,
+  onClose,
+  children,
+}: Props) {
   const stage = useRef<HTMLDialogElement>(null);
   const card = useRef<HTMLDivElement>(null);
   const returning = useRef(false);
@@ -79,12 +91,18 @@ export function CardSpotlight({ label, liftedFrom, previous, next, onClose, chil
   const [phase, setPhase] = useState<"entering" | "held" | "returning">("entering");
   const [dealt, setDealt] = useState(0);
 
-  const close = useCallback(() => {
-    if (returning.current) return;
-    returning.current = true;
-    setPhase("returning");
-    window.setTimeout(onClose, RETURN_MS);
-  }, [onClose]);
+  const close = useCallback<PutBack>(
+    (then) => {
+      if (returning.current) return;
+      returning.current = true;
+      setPhase("returning");
+      window.setTimeout(() => {
+        onClose();
+        then?.();
+      }, RETURN_MS);
+    },
+    [onClose]
+  );
 
   const deal = (direction: -1 | 1) => {
     const neighbour = direction === -1 ? previous : next;
@@ -172,11 +190,25 @@ export function CardSpotlight({ label, liftedFrom, previous, next, onClose, chil
 
       <div className={styles.caption}>
         {previous && <Step direction="previous" name={previous.name} onStep={() => deal(-1)} />}
-        <button type="button" className={styles.dismiss} onClick={close}>
-          Put it back
-        </button>
+        <div className={styles.hands}>
+          {actions?.(close)}
+          <button type="button" className={styles.dismiss} onClick={() => close()}>
+            Put it back
+          </button>
+        </div>
         {next && <Step direction="next" name={next.name} onStep={() => deal(1)} />}
       </div>
     </dialog>
+  );
+}
+
+type ActionProps = { onClick: () => void; children: ReactNode };
+
+/** A button for the `actions` slot, styled to sit beside "Put it back". */
+export function SpotlightAction({ onClick, children }: ActionProps) {
+  return (
+    <button type="button" className={styles.action} onClick={onClick}>
+      {children}
+    </button>
   );
 }

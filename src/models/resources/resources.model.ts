@@ -32,6 +32,8 @@ export type Resource = {
   /** what a pool holds, shown on the face: `5 × Paladin level` */
   pool?: string;
   recharge: RestType;
+  /** uses a short rest brings back; omitted, all of them for `short-rest`, none for `long-rest` */
+  shortRest?: number;
   action?: ActionTiming;
   description: string;
   icon?: string;
