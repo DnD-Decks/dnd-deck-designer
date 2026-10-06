@@ -36,7 +36,8 @@
   color: var(--text-hi);
 }
 
-.emptyHeading {
+.emptyHeading,
+.othersHeading {
   margin: 0;
   font-family: var(--font-serif);
   font-size: 22px;
@@ -80,6 +81,7 @@
   color: var(--text-hi);
 }
 
+.action:focus-visible,
 .primary:focus-visible,
 .quiet:focus-visible,
 .hero:focus-visible,
@@ -196,10 +198,7 @@
 }
 
 .othersHeading {
-  margin: 0;
-  font-family: var(--font-serif);
   font-size: 18px;
-  font-weight: 700;
   color: var(--text-hi);
 }
 
@@ -247,11 +246,6 @@
 
 .action:hover {
   background: color-mix(in srgb, var(--gold) 12%, transparent);
-}
-
-.action:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
 }
 
 button.action {
