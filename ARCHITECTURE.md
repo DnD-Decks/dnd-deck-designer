@@ -42,7 +42,7 @@ Hash routing with [wouter](https://github.com/molefrog/wouter) (`wouter/use-hash
 
 **Storage and sharing.** Characters and their play state (`spent` card keys) live in localStorage via `src/services/character.storage.ts`; every access is wrapped so the app still runs when storage is blocked, and stored entries are re-validated with `characters.parse`. A share code is the build `{ cls, level, name, picks }` as base64url JSON (`characters.toShareCode` / `fromShareCode`); the id stays out, so an import is a new copy.
 
-**Play state.** Resources can be spent during play (tap the top card of a stack). Spent cards turn a quarter-turn and dim; short rest recovers `short-rest` resources, long rest recovers everything. The `spent` array stores card keys; rests clear them selectively based on resource metadata.
+**Play state.** Each copy of a resource is its own card. Tap a card to zoom it, then Spend / Recover beside "Put it back". Spent cards turn a quarter-turn and dim. A long rest recovers everything; a short rest recovers `short-rest` resources, or `shortRest` uses when a resource sets it (Second Wind, Rage: one). The `spent` array stores deck-entry keys; `src/characters/play.model.ts` decides what each rest brings back.
 
 ---
 

@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { CharacterView } from "src/characters/character-view.component";
 import type { Character } from "src/characters/character.model";
 import { characters } from "src/characters/character.model";
@@ -164,13 +165,14 @@ function PlayTable({ character }: { character: Character }) {
 
 type ConfirmProps = { name: string; onCancel: () => void; onDelete: () => void };
 
-// open, not showModal(): jsdom 26 has no showModal
+// open, not showModal(): jsdom 26 has no showModal. Portalled out of the header,
+// whose backdrop-filter would otherwise pin the fixed scrim to the header box.
 function ConfirmDelete({ name, onCancel, onDelete }: ConfirmProps) {
   const titleId = useId();
   const cancel = useRef<HTMLButtonElement>(null);
   useEffect(() => cancel.current?.focus(), []);
 
-  return (
+  return createPortal(
     <div className={styles.scrim}>
       <dialog
         open
@@ -196,7 +198,8 @@ function ConfirmDelete({ name, onCancel, onDelete }: ConfirmProps) {
           </button>
         </div>
       </dialog>
-    </div>
+    </div>,
+    document.body
   );
 }
 
