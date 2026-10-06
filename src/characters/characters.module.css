@@ -287,11 +287,40 @@ button.action {
 
 .rest {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+}
+
+.restHint {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--text-mid);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rest:disabled .restHint {
+  color: var(--text-low);
+}
+
+.restStatus {
+  flex-basis: 100%;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--gold-soft);
+}
+
+.restStatus:empty {
+  display: none;
 }
 
 .rest,
 .menuButton {
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 0.8rem;
   border: 1px solid var(--ink-line);
   border-radius: 6px;
@@ -379,4 +408,77 @@ button.action {
 .menuItem:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: -2px;
+}
+
+.menuRule {
+  margin: 0.3rem 0.6rem;
+  border: 0;
+  border-top: 1px solid var(--ink-line);
+}
+
+.menuItem[data-danger] {
+  color: var(--danger);
+}
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(10, 11, 14, 0.72);
+}
+
+.confirm {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: min(22rem, 100%);
+  margin: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--ink-line);
+  border-radius: 10px;
+  background: var(--ink-800);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  color: var(--text-hi);
+}
+
+.confirmTitle {
+  margin: 0;
+  font-family: var(--font-caps);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--parchment);
+}
+
+.confirmActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.danger {
+  min-height: 40px;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--danger);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--danger) 18%, transparent);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--parchment);
+  cursor: pointer;
+}
+
+.danger:hover {
+  background: color-mix(in srgb, var(--danger) 32%, transparent);
+}
+
+.danger:focus-visible,
+.confirm .action:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }

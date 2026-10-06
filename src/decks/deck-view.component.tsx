@@ -75,7 +75,7 @@ export function DeckView({ cls }: Props) {
   const ordered = grouped.flatMap(([, cards]) =>
     cards.map((card) => ({ key: cardKey(card), card }))
   );
-  const { holding, hold, trigger, release, spotlight } = useCardSpotlight(ordered);
+  const { holding, hold, trigger, release, spotlight } = useCardSpotlight({ entries: ordered });
 
   // the deck can change under a held card (browser back through the class hash)
   const [heldClass, setHeldClass] = useState(cls);

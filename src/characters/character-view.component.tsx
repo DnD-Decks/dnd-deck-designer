@@ -1,13 +1,23 @@
 import type { ReactNode } from "react";
+import { SpotlightAction } from "src/cards/card-spotlight.component";
 import { useCardSpotlight } from "src/cards/card-spotlight.hook";
 import { DeckCardFace } from "src/cards/deck-card.component";
 import type { Character } from "src/characters/character.model";
+import { play } from "src/characters/play.model";
 import type { DeckCard, DeckEntry } from "src/decks/deck.model";
 import { cardName, decks } from "src/decks/deck.model";
 import { assertNever } from "src/lib/assert-never";
+import { Link } from "wouter";
 import styles from "./character-view.module.css";
 
-type Props = { character: Character; actions: ReactNode; menu?: ReactNode };
+type Props = {
+  character: Character;
+  spent?: readonly string[];
+  /** without it the cards are only for looking at, as in the import preview */
+  onToggleSpent?: (key: string) => void;
+  actions: ReactNode;
+  menu?: ReactNode;
+};
 
 const SECTIONS = ["Resources", "Weapons", "Features", "Cantrips", "Spells"] as const;
 
@@ -37,18 +47,26 @@ function sections(entries: readonly DeckEntry[]) {
 
 type SlotProps = {
   card: DeckCard;
+  spent: boolean;
   trigger: (element: HTMLElement | null) => () => void;
   onZoom: () => void;
 };
 
-function CardSlot({ card, trigger, onZoom }: SlotProps) {
+function CardSlot({ card, spent, trigger, onZoom }: SlotProps) {
   return (
-    <div className={styles.slot}>
-      <DeckCardFace card={card} />
+    <div className={styles.slot} data-spent={spent || undefined}>
+      <div className={styles.face}>
+        <DeckCardFace card={card} />
+      </div>
+      {spent && (
+        <span className={styles.spentLabel} aria-hidden="true">
+          Spent
+        </span>
+      )}
       <button
         type="button"
         className={styles.zoom}
-        aria-label={`Zoom ${cardName(card)}`}
+        aria-label={`Zoom ${cardName(card)}${spent ? ", spent" : ""}`}
         ref={trigger}
         onClick={onZoom}
       />
@@ -57,12 +75,22 @@ function CardSlot({ card, trigger, onZoom }: SlotProps) {
 }
 
 /** The character at the table: name and actions pinned on top, one swipeable row per section. */
-export function CharacterView({ character, actions, menu }: Props) {
+export function CharacterView({ character, spent = [], onToggleSpent, actions, menu }: Props) {
   const { cls, entries } = decks.forCharacter(character);
   const grouped = sections(entries);
   // arrow order is the order you see
   const ordered = grouped.flatMap((section) => section.entries);
-  const { holding, hold, trigger, spotlight } = useCardSpotlight(ordered);
+  const spentKeys = new Set(spent);
+  const { holding, hold, trigger, spotlight } = useCardSpotlight({
+    entries: ordered,
+    actions: ({ entry, putBack }) =>
+      onToggleSpent &&
+      play.spendable(entry) && (
+        <SpotlightAction onClick={() => putBack(() => onToggleSpent(entry.key))}>
+          {spentKeys.has(entry.key) ? "Recover" : "Spend"}
+        </SpotlightAction>
+      ),
+  });
 
   return (
     <>
@@ -73,6 +101,9 @@ export function CharacterView({ character, actions, menu }: Props) {
         aria-hidden={holding || undefined}
       >
         <header className={styles.header}>
+          <Link href="/" className={styles.back} aria-label="Back to your characters">
+            ‹
+          </Link>
           <hgroup className={styles.title}>
             <h2 className={styles.name}>{character.name}</h2>
             <p className={styles.subtitle}>
@@ -83,12 +114,24 @@ export function CharacterView({ character, actions, menu }: Props) {
           {menu}
         </header>
 
+        {entries.length === 0 && (
+          <p className={styles.empty}>
+            No cards in this deck yet. Edit the character to pick some.
+          </p>
+        )}
+
         {grouped.map(({ label, entries }) => (
           <section key={label} className={styles.section} aria-label={label}>
             <h2 className={styles.sectionLabel}>{label}</h2>
             <div className={styles.row}>
               {entries.map(({ key, card }) => (
-                <CardSlot key={key} card={card} trigger={trigger(key)} onZoom={() => hold(key)} />
+                <CardSlot
+                  key={key}
+                  card={card}
+                  spent={spentKeys.has(key)}
+                  trigger={trigger(key)}
+                  onZoom={() => hold(key)}
+                />
               ))}
             </div>
           </section>

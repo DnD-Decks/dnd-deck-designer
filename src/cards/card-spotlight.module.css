@@ -118,8 +118,37 @@
   outline-offset: 6px;
 }
 
-.dismiss {
+.hands {
   grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.action {
+  min-height: 36px;
+  padding: 0 1rem;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--gold) 14%, transparent);
+  color: var(--parchment);
+  font-family: var(--font-caps);
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.action:hover {
+  background: color-mix(in srgb, var(--gold) 28%, transparent);
+}
+
+.action:focus-visible {
+  outline: 2px solid var(--gold-soft);
+  outline-offset: 4px;
+}
+
+.dismiss {
   border: 0;
   border-bottom: 1px solid transparent;
   padding: 4px 2px;
@@ -159,6 +188,7 @@
   .lift,
   .caption,
   .step,
+  .action,
   .dismiss {
     transition: none;
   }

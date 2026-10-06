@@ -1,4 +1,5 @@
 import {
+  cleanup,
   fireEvent,
   render,
   screen,
@@ -8,6 +9,7 @@ import {
 import { App } from "src/app/app.component";
 import { brunhilde } from "src/characters/character.fixture";
 import { characters } from "src/characters/character.model";
+import { decks } from "src/decks/deck.model";
 import { characterStorage } from "src/services/character.storage";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { memoryLocation } from "wouter/memory-location";
@@ -22,6 +24,46 @@ const stubClipboard = (writeText: (text: string) => Promise<void>) =>
   Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
 
 const sharedCode = (link: unknown) => String(link).split("#/import/")[1] ?? "";
+
+const inDocumentOrder = (a: Node, b: Node) =>
+  a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+
+// menuItems(menu) is ["Edit", "Share", "—", …]: links, buttons and separators as they read
+const menuItems = (menu: HTMLElement) => {
+  const items = within(menu);
+  const separators = items.getAllByRole("separator");
+  return [...items.getAllByRole("link"), ...items.getAllByRole("button"), ...separators]
+    .sort(inDocumentOrder)
+    .map((item) => (separators.includes(item) ? "—" : item.textContent));
+};
+
+const zoomNames = (card: string) =>
+  screen
+    .getAllByRole("button", { name: new RegExp(`^Zoom ${card}`) })
+    .map((button) => button.getAttribute("aria-label"));
+
+// each rest button names what it brings back as its description; the query fails if it doesn't
+const restsDisabled = () => ({
+  short: (
+    screen.getByRole("button", {
+      name: "Short rest",
+      description: "Second Wind",
+    }) as HTMLButtonElement
+  ).disabled,
+  long: (
+    screen.getByRole("button", {
+      name: "Long rest",
+      description: "Everything",
+    }) as HTMLButtonElement
+  ).disabled,
+});
+
+// zooms the first unspent copy and spends it
+async function spend(card: string) {
+  fireEvent.click(screen.getAllByRole("button", { name: `Zoom ${card}` })[0]);
+  fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Spend" }));
+  await waitForElementToBeRemoved(() => screen.queryByRole("dialog"), { timeout: 3000 });
+}
 
 beforeEach(() => {
   localStorage.clear();
@@ -89,22 +131,138 @@ describe("<CharacterPage />", () => {
     screen.getByRole("heading", { name: "D&D Deck Designer", level: 1 });
     expect(screen.queryByRole("navigation", { name: "Main" })).toBeNull();
 
-    const menu = within(screen.getByRole("navigation", { name: "Character menu" }));
-    menu.getByRole("link", { name: "Edit" });
-    menu.getByRole("button", { name: "Share" });
-    menu.getByRole("link", { name: "Your characters" });
-    fireEvent.click(menu.getByRole("link", { name: "Card catalog" }));
+    const menu = screen.getByRole("navigation", { name: "Character menu" });
+    expect(menuItems(menu)).toEqual([
+      "Edit",
+      "Share",
+      "—",
+      "Your characters",
+      "Card catalog",
+      "—",
+      "Delete character",
+    ]);
+    fireEvent.click(within(menu).getByRole("link", { name: "Card catalog" }));
     expect(memory.history.slice(-1)).toEqual(["/catalog/wizard"]);
   });
 
-  test("rests wait until something is spent", () => {
+  test("the back arrow goes home, not back through history", () => {
+    const memory = renderAt("/character/f1");
+    fireEvent.click(screen.getByRole("link", { name: "Back to your characters" }));
+    expect(memory.history.slice(-1)).toEqual(["/"]);
+  });
+
+  test("deleting asks first, and Cancel keeps the character", () => {
     renderAt("/character/f1");
-    [
-      { name: "Short rest", disabled: true },
-      { name: "Long rest", disabled: true },
-    ].forEach(({ name, disabled }) => {
-      expect((screen.getByRole("button", { name }) as HTMLButtonElement).disabled).toBe(disabled);
+    fireEvent.click(screen.getByRole("button", { name: "Delete character" }));
+    const confirm = within(screen.getByRole("dialog", { name: "Delete Brünhilde?" }));
+    fireEvent.click(confirm.getByRole("button", { name: "Cancel" }));
+
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(characterStorage.get("f1")?.name).toBe("Brünhilde");
+  });
+
+  test("Escape cancels the delete and focus goes back to the menu", () => {
+    renderAt("/character/f1");
+    fireEvent.click(screen.getByRole("button", { name: "Delete character" }));
+    fireEvent.keyDown(document, { key: "Escape" });
+
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Menu" }));
+  });
+
+  test("while the delete is asked, the table behind can't be reached", () => {
+    renderAt("/character/f1");
+    fireEvent.click(screen.getByRole("button", { name: "Delete character" }));
+
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Cancel" }));
+    expect(screen.getByRole("main").closest("[inert]")).not.toBeNull();
+  });
+
+  test("confirming the delete removes the character and its play state, then goes home", async () => {
+    const memory = renderAt("/character/f1");
+    await spend("Second Wind");
+
+    fireEvent.click(screen.getByRole("button", { name: "Delete character" }));
+    fireEvent.click(screen.getByRole("button", { name: "Delete Brünhilde" }));
+
+    expect(memory.history.slice(-1)).toEqual(["/"]);
+    expect({ saved: characterStorage.get("f1"), spent: characterStorage.spent("f1") }).toEqual({
+      saved: undefined,
+      spent: [],
     });
+  });
+
+  test("a deck with no cards says so", () => {
+    vi.spyOn(decks, "forCharacter").mockReturnValue({
+      cls: decks.get({ cls: "fighter" }).cls,
+      entries: [],
+    });
+    renderAt("/character/f1");
+    screen.getByText(/No cards in this deck yet/);
+  });
+
+  test("rests wait until something is spent, and say what they bring back", () => {
+    renderAt("/character/f1");
+    expect(restsDisabled()).toEqual({ short: true, long: true });
+  });
+
+  test("Spend in the spotlight puts the card back spent; Recover undoes it", async () => {
+    renderAt("/character/f1");
+    await spend("Second Wind");
+    expect(zoomNames("Second Wind")).toEqual(["Zoom Second Wind, spent", "Zoom Second Wind"]);
+
+    fireEvent.click(screen.getByRole("button", { name: "Zoom Second Wind, spent" }));
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Recover" }));
+    await waitForElementToBeRemoved(() => screen.queryByRole("dialog"), { timeout: 3000 });
+    expect(zoomNames("Second Wind")).toEqual(["Zoom Second Wind", "Zoom Second Wind"]);
+  });
+
+  test("only resources can be spent", () => {
+    renderAt("/character/f1");
+    fireEvent.click(screen.getByRole("button", { name: "Zoom Shortbow" }));
+    const spotlight = within(screen.getByRole("dialog", { name: "Shortbow" }));
+    expect(spotlight.queryByRole("button", { name: "Spend" })).toBeNull();
+  });
+
+  test("a short rest brings back one Second Wind and says so", async () => {
+    renderAt("/character/f1");
+    await spend("Second Wind");
+    await spend("Second Wind");
+
+    fireEvent.click(screen.getByRole("button", { name: "Short rest" }));
+
+    expect(zoomNames("Second Wind")).toEqual(["Zoom Second Wind", "Zoom Second Wind, spent"]);
+    const status = screen.getByText("Short rest: Second Wind recovered");
+    expect(screen.getAllByRole("status")).toContain(status);
+  });
+
+  test("a long rest brings everything back", async () => {
+    renderAt("/character/f1");
+    await spend("Second Wind");
+    await spend("Second Wind");
+
+    fireEvent.click(screen.getByRole("button", { name: "Long rest" }));
+
+    expect(zoomNames("Second Wind")).toEqual(["Zoom Second Wind", "Zoom Second Wind"]);
+    expect(restsDisabled()).toEqual({ short: true, long: true });
+  });
+
+  test("a spent card no longer in the deck is forgotten", () => {
+    characterStorage.setSpent({
+      id: "f1",
+      spent: ["weapon-greataxe-0", "resource-fighter-second-wind-0"],
+    });
+    renderAt("/character/f1");
+    expect(characterStorage.spent("f1")).toEqual(["resource-fighter-second-wind-0"]);
+  });
+
+  test("spent cards are still spent after a reload", async () => {
+    renderAt("/character/f1");
+    await spend("Second Wind");
+    cleanup();
+
+    renderAt("/character/f1");
+    expect(zoomNames("Second Wind")).toEqual(["Zoom Second Wind, spent", "Zoom Second Wind"]);
   });
 
   test("Share copies an import link that decodes back to the build", async () => {
@@ -115,7 +273,8 @@ describe("<CharacterPage />", () => {
     fireEvent.click(screen.getByRole("button", { name: "Share" }));
 
     const status = await screen.findByText(/link copied/i);
-    expect(screen.getByRole("status")).toBe(status);
+    const menu = within(screen.getByRole("navigation", { name: "Character menu" }));
+    expect(menu.getByRole("status")).toBe(status);
     const imported = characters.fromShareCode(sharedCode(writeText.mock.calls[0]?.[0]));
     expect({ ...imported, id: "new" }).toEqual({ ...brunhilde(), id: "new" });
   });

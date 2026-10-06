@@ -1,14 +1,8 @@
+import { fighter } from "../integration/fixtures/builds.fixture";
 import { expect, test } from "../integration/fixtures/test.extend";
 import { globalSetup } from "../integration/global.setup";
 
 globalSetup();
-
-const fighter = {
-  cls: "fighter",
-  level: 1,
-  name: "Brünhilde",
-  picks: { weapons: ["longsword", "shortbow", "dagger"] },
-};
 
 // 63.5 × 88.9 mm at 96 dpi
 const CARD = { width: 240, landscape: 336 };
@@ -59,6 +53,13 @@ test.describe("play: phone layout", () => {
     await playPage.putBack.click();
     await expect(playPage.spotlight).toHaveCount(0);
     await expect.soft(playPage.zoom("Longsword")).toBeFocused();
+  });
+
+  test("the back arrow leads home", async ({ page, homePage, playPage }) => {
+    await playPage.back.click();
+
+    await expect(page).toHaveURL(/#\/$/);
+    await expect.soft(homePage.continueAs("Brünhilde")).toBeVisible();
   });
 
   test("the menu drops open over the table and leads to the editor", async ({ page, playPage }) => {

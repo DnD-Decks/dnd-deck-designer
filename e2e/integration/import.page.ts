@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test";
 
-type Build = { cls: string; level: number; name: string; picks: Record<string, string[]> };
+export type Build = { cls: string; level: number; name: string; picks: Record<string, string[]> };
 
 export function createImportPage(page: Page) {
   return {

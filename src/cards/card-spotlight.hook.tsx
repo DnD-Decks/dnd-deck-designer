@@ -1,4 +1,6 @@
+import type { ReactNode } from "react";
 import { useCallback, useRef, useState } from "react";
+import type { PutBack } from "src/cards/card-spotlight.component";
 import { CardSpotlight } from "src/cards/card-spotlight.component";
 import { DeckCardFace } from "src/cards/deck-card.component";
 import type { DeckEntry } from "src/decks/deck.model";
@@ -6,8 +8,14 @@ import { cardName } from "src/decks/deck.model";
 
 type Held = { index: number; trigger: HTMLElement };
 
+type Options = {
+  entries: readonly DeckEntry[];
+  /** buttons beside "Put it back" for the held card */
+  actions?: (held: { entry: DeckEntry; putBack: PutBack }) => ReactNode;
+};
+
 /** Lifts one of `entries` into the spotlight; ← / → step through them in the order given. */
-export function useCardSpotlight(entries: readonly DeckEntry[]) {
+export function useCardSpotlight({ entries, actions }: Options) {
   const triggers = useRef(new Map<string, HTMLElement>());
   const [held, setHeld] = useState<Held | null>(null);
   const release = useCallback(() => setHeld(null), []);
@@ -37,6 +45,7 @@ export function useCardSpotlight(entries: readonly DeckEntry[]) {
       liftedFrom={held.trigger}
       previous={neighbour(held.index - 1)}
       next={neighbour(held.index + 1)}
+      actions={actions && ((putBack) => actions({ entry: heldEntry, putBack }))}
       onClose={release}
     >
       <DeckCardFace card={heldEntry.card} />
