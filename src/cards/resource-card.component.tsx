@@ -9,8 +9,6 @@ import styles from "./resource-card.module.css";
 
 type Props = { resource: Resource };
 
-const usesLabel = (uses: number) => `×${uses}`;
-
 const REST_LABELS: Record<RestType, string> = {
   "short-rest": "Short Rest",
   "long-rest": "Long Rest",
@@ -35,7 +33,6 @@ export function ResourceCard({ resource }: Props) {
         <h3 id={headingId} className={styles.name}>
           {resource.name}
         </h3>
-        <span className={styles.usesBadge}>{usesLabel(resource.uses)}</span>
       </header>
 
       <div className={styles.metaLine}>
@@ -49,6 +46,7 @@ export function ResourceCard({ resource }: Props) {
             {TIMING_LABELS[resource.action]}
           </span>
         ) : null}
+        {resource.pool && <span className={styles.metaItem}>Pool: {resource.pool}</span>}
         <span className={styles.metaItem}>Recharges: {REST_LABELS[resource.recharge]}</span>
       </div>
 

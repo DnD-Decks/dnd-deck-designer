@@ -45,11 +45,11 @@ describe("<CharacterPage />", () => {
     expect(headings).toEqual(["Brünhilde", "Resources", "Weapons", "Features"]);
   });
 
-  test("copies of a resource collapse into one stack that counts what is left", () => {
+  test("each use of a resource is its own card", () => {
     renderAt("/character/f1");
     const resources = within(screen.getByRole("region", { name: "Resources" }));
-    expect(resources.getAllByRole("article", { name: "Second Wind" })).toHaveLength(1);
-    resources.getByText("2 of 2 left");
+    expect(resources.getAllByRole("article", { name: "Second Wind" })).toHaveLength(2);
+    expect(resources.getAllByRole("button", { name: "Zoom Second Wind" })).toHaveLength(2);
   });
 
   test("tapping a card lifts it into the spotlight", () => {

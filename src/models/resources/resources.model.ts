@@ -29,6 +29,8 @@ export type Resource = {
   uses: number;
   /** one card per use in a character deck; pools like Lay on Hands stay a single card */
   stack?: boolean;
+  /** what a pool holds, shown on the face: `5 × Paladin level` */
+  pool?: string;
   recharge: RestType;
   action?: ActionTiming;
   description: string;

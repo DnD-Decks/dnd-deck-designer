@@ -13,6 +13,7 @@
     "name": "Lay on Hands",
     "icon": "/icons/resource-lay-on-hands.png",
     "uses": 5,
+    "pool": "5 × Paladin level",
     "recharge": "long-rest",
     "action": "bonus-action",
     "description": "You have a pool of healing power with 5 Hit Points per Paladin level (each use box is 1 HP of the pool). As a Bonus Action, touch a creature to restore any number of Hit Points remaining in the pool. You can instead expend 5 HP from the pool to remove the Poisoned condition from the creature. The pool refills after a Long Rest."

@@ -72,7 +72,9 @@ export function DeckView({ cls }: Props) {
   const deck = decks.get({ cls });
   const grouped = sections(deck.cards);
   // flattened from the rendered groups, so arrow order is the order you see
-  const ordered = grouped.flatMap(([, cards]) => cards);
+  const ordered = grouped.flatMap(([, cards]) =>
+    cards.map((card) => ({ key: cardKey(card), card }))
+  );
   const { holding, hold, trigger, release, spotlight } = useCardSpotlight(ordered);
 
   // the deck can change under a held card (browser back through the class hash)
@@ -106,8 +108,8 @@ export function DeckView({ cls }: Props) {
                 <CardSlot
                   key={cardKey(card)}
                   card={card}
-                  trigger={trigger(card)}
-                  onZoom={() => hold(card)}
+                  trigger={trigger(cardKey(card))}
+                  onZoom={() => hold(cardKey(card))}
                 />
               ))}
             </div>
