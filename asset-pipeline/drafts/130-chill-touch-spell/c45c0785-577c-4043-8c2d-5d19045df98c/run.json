@@ -410,6 +410,19 @@
       "generationPrompt": "Edit the supplied draft with this specific change: The ice should be brighter\nThe soldier is in pain\n\nKeep its composition, visual style, and main subject unless the edit asks otherwise. Preserve the exact 720 × 1008 aspect and create an independent illustration without card borders, text, or UI.",
       "sourceKey": "issues/130/runs/c45c0785-577c-4043-8c2d-5d19045df98c/candidate-22.jpg",
       "format": "jpeg"
+    },
+    {
+      "key": "issues/130/runs/c45c0785-577c-4043-8c2d-5d19045df98c/tweak-22-23ff4a9e-4250-4334-9d19-e1b6d3782cc6.jpg",
+      "width": 720,
+      "height": 1008,
+      "quality": "low",
+      "model": "gpt-image-2.5-flare",
+      "createdAt": "2026-10-06T14:45:44.347Z",
+      "candidateId": 22,
+      "tuning": "The soldier twists the head in pain",
+      "generationPrompt": "Edit the supplied draft with this specific change: The soldier twists the head in pain\n\nKeep its composition, visual style, and main subject unless the edit asks otherwise. Preserve the exact 720 × 1008 aspect and create an independent illustration without card borders, text, or UI.",
+      "sourceKey": "issues/130/runs/c45c0785-577c-4043-8c2d-5d19045df98c/tweak-22-56fbddaf-05db-4fd0-8b78-bbf11421b544.jpg",
+      "format": "jpeg"
     }
   ],
   "submissions": {}
