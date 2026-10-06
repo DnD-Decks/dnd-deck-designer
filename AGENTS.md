@@ -3,6 +3,14 @@
 - Make the plan extremely concise. Sacrifice grammar for the sake of concision.
 - At the end of each plan, give me a list of unresolved questions to answer, if any.
 
+## Product scope
+
+**Main use case:** Play at the table with a saved character on mobile. Spend resources, rest to recover, track play state locally.
+
+**Character creation:** Simple builder handles class-granted picks only (cantrips, prepared spells, weapon mastery). For complex characters (background, species, origin feats), users add cards manually from the catalog. Full character creation is deferred.
+
+**Catalog:** Reference for all class cards + selection mode to add custom cards to characters. No validation — the player decides what they can use.
+
 ## Standards
 
 - **Filenames**: always `kebab-case`. Never PascalCase or camelCase file names.

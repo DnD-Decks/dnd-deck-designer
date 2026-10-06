@@ -1,5 +1,11 @@
 # Architecture
 
+## Product vision
+
+A mobile-first web tool for D&D 2024 players. The main use case is playing at the table: open your character on your phone, tap cards to spend resources, rest to recover them. Build characters on desktop, share them via link, and add custom cards from the catalog for complex builds.
+
+**Character creation scope:** The builder handles class-granted picks only (cantrips, prepared spells, weapon mastery). Full character creation (background, species, origin feats) is deferred — users can add cards manually from the catalog. This keeps the app focused on the play experience.
+
 ## Deck scope
 
 12 PHB classes: Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, Wizard.
@@ -14,7 +20,7 @@
 | Weapon | `weapon` | vertical (spell layout) | ✓ all 12 classes — every weapon the class is proficient with; the card carries its mastery property | "Longsword", "Shortbow" |
 | Companion stats | `companion` | — | deferred | Ranger's beast companion |
 
-Spells shared between classes are intentionally duplicated — visual class identity is in card style, not shared components. Decks show cantrips + level-1 only (`SPELL_LEVELS = [0, 1]` in `deck.model.ts`). Section order: Resources → Class Features → Spells → Weapons.
+Spells shared between classes are intentionally duplicated — visual class identity is in card style, not shared components. Decks show cantrips + level-1 only (`SPELL_LEVELS = [0, 1]` in `deck.model.ts`). Section order: Resources → Weapons → Features → Cantrips → Spells.
 
 **Template vs character.** `decks.get({ cls })` is the class template (the catalog). `decks.forCharacter(character)` narrows it to the character's picks (`src/characters/choices.model.ts`, rules in `src/data/choices/class-choices.json`) and expands resources marked `stack: true` into one card per use (Mana ×2 → 2 cards); pools such as Lay on Hands stay one card.
 
@@ -27,14 +33,36 @@ Hash routing with [wouter](https://github.com/molefrog/wouter) (`wouter/use-hash
 | Path | Page |
 |---|---|
 | `#/` | Your characters (`src/characters/characters.page.tsx`): the ones saved on this device |
+| `#/new` | Character builder (`src/characters/character-builder.page.tsx`) |
 | `#/character/<id>` | A saved character's deck, with Share (`src/characters/character.page.tsx`) |
+| `#/character/<id>/edit` | Edit an existing character in the builder |
 | `#/import/<code>` | Preview of a shared build with "Save to this device" (`src/characters/character-import.page.tsx`) |
 | `#/catalog/<cls>` | Card catalog: every card a class can have (`src/decks/catalog.page.tsx`); `#/catalog` and unknown classes go to the wizard |
 | `#<cls>` | pre-routing link, redirected to `#/catalog/<cls>` |
 
 **Storage and sharing.** Characters and their play state (`spent` card keys) live in localStorage via `src/services/character.storage.ts`; every access is wrapped so the app still runs when storage is blocked, and stored entries are re-validated with `characters.parse`. A share code is the build `{ cls, level, name, picks }` as base64url JSON (`characters.toShareCode` / `fromShareCode`); the id stays out, so an import is a new copy.
 
-Tests render `<App hook={memoryLocation(...).hook} />`, so no test touches `window.location`.
+**Play state.** Resources can be spent during play (tap the top card of a stack). Spent cards turn a quarter-turn and dim; short rest recovers `short-rest` resources, long rest recovers everything. The `spent` array stores card keys; rests clear them selectively based on resource metadata.
+
+---
+
+## Character model
+
+**Character shape.** A character is `{ id, name, cls, level, picks }` where `picks` is a map from choice rule ID to selected card IDs. The builder handles class-granted choices only (defined in `src/data/choices/class-choices.json`). Custom cards added from the catalog are stored under a `custom` rule with unlimited picks.
+
+**Choice rules.** Each rule has `{ id, label, pick, from: { kind, ... } }` where `pick` is the number to choose and `from` specifies the source (spells by level, weapons by proficiency). The validation helper `choices.validate()` reports missing or invalid picks.
+
+**Levels.** Currently level 1 only. The data structure supports level-keyed rules for future expansion (cumulative decks per level).
+
+---
+
+## Catalog and custom cards
+
+**Catalog purpose.** The catalog (`#/catalog/<cls>`) shows every card a class can have — the full template deck. It serves as a reference and as a way to add custom cards to characters.
+
+**Adding cards to characters.** From a character's play view, users can open the catalog in selection mode. Selected cards are added to the character's `picks` under a `custom` rule (unlimited capacity). This allows players to add background feats, species traits, or any other cards the simple builder doesn't cover.
+
+**Validation.** The catalog add flow does not validate whether a character can use a card (e.g., a wizard adding cleric spells). The player decides; the app trusts them.
 
 ---
 

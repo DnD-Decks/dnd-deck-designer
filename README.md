@@ -1,12 +1,20 @@
 # dnd-deck-designer
 
-A static web tool for laying out custom **D&D 2024 (5.5e, SRD 5.2.1)** card decks per PHB class — screen preview and professional printing.
+A mobile-first web tool for building and playing with **D&D 2024 (5.5e, SRD 5.2.1)** character card decks. Build a character on desktop, then open it on your phone at the table to track resources and spells during play.
 
 ## Docs
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) — vision, folder layout, data shapes, decisions log
 - [CONTRIBUTING.md](CONTRIBUTING.md) — prerequisites, scripts, workflow
 - [e2e/README.md](e2e/README.md) — end-to-end suite: layout, running it, snapshots
+
+## Use cases
+
+**Play at the table (main):** Open your saved character on your phone. Tap cards to spend resources (Mana, Second Wind, etc.), rest to recover them. The app keeps your play state locally and syncs via share codes.
+
+**Build a character:** Pick a class, choose your starting spells and weapons, name your character. The builder handles class-granted picks only; for complex characters (background feats, species traits), add cards manually from the catalog.
+
+**Browse the catalog:** See every card a class can have — a reference for all 12 PHB classes. Cards can be selected and added to existing characters for custom builds.
 
 ## Tech
 
