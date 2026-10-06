@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitForElementToBeRemoved,
+  within,
+} from "@testing-library/react";
 import { App } from "src/app/app.component";
 import { brunhilde } from "src/characters/character.fixture";
 import { characters } from "src/characters/character.model";
@@ -50,6 +56,26 @@ describe("<CharacterPage />", () => {
     const resources = within(screen.getByRole("region", { name: "Resources" }));
     expect(resources.getAllByRole("article", { name: "Second Wind" })).toHaveLength(2);
     expect(resources.getAllByRole("button", { name: "Zoom Second Wind" })).toHaveLength(2);
+  });
+
+  test("the arrows step from one copy to the next", () => {
+    renderAt("/character/f1");
+    fireEvent.click(screen.getAllByRole("button", { name: "Zoom Second Wind" })[0]);
+    screen.getByRole("button", { name: "Next card: Second Wind" });
+
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "ArrowRight" });
+    screen.getByRole("dialog", { name: "Second Wind" });
+    screen.getByRole("button", { name: "Previous card: Second Wind" });
+  });
+
+  test("putting a copy back returns focus to that copy", async () => {
+    renderAt("/character/f1");
+    const first = screen.getAllByRole("button", { name: "Zoom Second Wind" })[0];
+    fireEvent.click(first);
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+
+    await waitForElementToBeRemoved(() => screen.queryByRole("dialog"), { timeout: 3000 });
+    await vi.waitFor(() => expect(document.activeElement).toBe(first));
   });
 
   test("tapping a card lifts it into the spotlight", () => {

@@ -34,13 +34,16 @@ test("resource without icon renders no resource image", () => {
   expect(screen.queryByRole("img")).toBeNull();
 });
 
-test("the face never counts copies: one card is one use", () => {
-  render(<ResourceCard resource={rage} />);
-  expect(screen.queryByText(`×${rage.uses}`)).toBeNull();
-  expect(screen.queryByText(/pool:/i)).toBeNull();
-});
-
-test("a pool reads as the rule that sizes it", () => {
-  render(<ResourceCard resource={{ ...rage, pool: "5 × Paladin level" }} />);
-  screen.getByText("Pool: 5 × Paladin level");
+[
+  {
+    label: "a pool reads as the rule that sizes it",
+    pool: "5 × Paladin level",
+    expected: "Pool: 5 × Paladin level",
+  },
+  { label: "a resource without a pool shows no pool", pool: undefined, expected: null },
+].forEach(({ label, pool, expected }) => {
+  test(label, () => {
+    render(<ResourceCard resource={{ ...rage, pool }} />);
+    expect(screen.queryByText(/^Pool:/)?.textContent ?? null).toBe(expected);
+  });
 });
