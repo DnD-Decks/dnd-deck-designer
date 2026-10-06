@@ -70,10 +70,16 @@ function ContinueCard({ character }: { character: Character }) {
 }
 
 function CharacterList({ title, list }: { title?: string; list: readonly Character[] }) {
+  const headingId = useId();
+
   return (
-    <section className={styles.others} aria-label={title}>
+    <section className={styles.others} aria-labelledby={title && headingId}>
       <div className={styles.othersHeader}>
-        {title && <h2 className={styles.othersHeading}>{title}</h2>}
+        {title && (
+          <h2 id={headingId} className={styles.othersHeading}>
+            {title}
+          </h2>
+        )}
         <Link href="/new" className={styles.action}>
           New character
         </Link>

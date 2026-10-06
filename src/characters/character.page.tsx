@@ -89,7 +89,9 @@ function CharacterMenu({ character }: { character: Character }) {
 
 export function CharacterPage({ id }: { id: string }) {
   const character = characterStorage.get(id);
-  useEffect(() => characterStorage.setLastPlayed(id), [id]);
+  useEffect(() => {
+    characterStorage.setLastPlayed(id);
+  }, [id]);
 
   if (!character) {
     return (
