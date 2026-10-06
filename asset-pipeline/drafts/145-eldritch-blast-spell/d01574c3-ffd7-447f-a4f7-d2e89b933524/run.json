@@ -44,6 +44,20 @@
   ],
   "failures": [],
   "finalVersions": {},
-  "tweaks": [],
+  "tweaks": [
+    {
+      "key": "issues/145/runs/d01574c3-ffd7-447f-a4f7-d2e89b933524/tweak-2-976ddb49-6910-40aa-89a8-9068298ad98e.jpg",
+      "width": 720,
+      "height": 1008,
+      "quality": "low",
+      "model": "gpt-image-2.5-flare",
+      "createdAt": "2026-10-06T14:39:52.208Z",
+      "candidateId": 2,
+      "tuning": "Increase the distance between both figures",
+      "generationPrompt": "Edit the supplied draft with this specific change: Increase the distance between both figures\n\nKeep its composition, visual style, and main subject unless the edit asks otherwise. Preserve the exact 720 × 1008 aspect and create an independent illustration without card borders, text, or UI.",
+      "sourceKey": "issues/145/runs/d01574c3-ffd7-447f-a4f7-d2e89b933524/candidate-2.jpg",
+      "format": "jpeg"
+    }
+  ],
   "submissions": {}
 }
