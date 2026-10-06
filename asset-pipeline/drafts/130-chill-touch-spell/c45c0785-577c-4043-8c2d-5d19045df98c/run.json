@@ -397,6 +397,19 @@
       "generationPrompt": "Edit the supplied draft with this specific change: The skeletal fingers should just touch the shoulder, not trespass it\n\nKeep its composition, visual style, and main subject unless the edit asks otherwise. Preserve the exact 720 × 1008 aspect and create an independent illustration without card borders, text, or UI.",
       "sourceKey": "issues/130/runs/c45c0785-577c-4043-8c2d-5d19045df98c/candidate-20.jpg",
       "format": "jpeg"
+    },
+    {
+      "key": "issues/130/runs/c45c0785-577c-4043-8c2d-5d19045df98c/tweak-22-56fbddaf-05db-4fd0-8b78-bbf11421b544.jpg",
+      "width": 720,
+      "height": 1008,
+      "quality": "low",
+      "model": "gpt-image-2.5-flare",
+      "createdAt": "2026-10-06T14:44:27.392Z",
+      "candidateId": 22,
+      "tuning": "The ice should be brighter\nThe soldier is in pain",
+      "generationPrompt": "Edit the supplied draft with this specific change: The ice should be brighter\nThe soldier is in pain\n\nKeep its composition, visual style, and main subject unless the edit asks otherwise. Preserve the exact 720 × 1008 aspect and create an independent illustration without card borders, text, or UI.",
+      "sourceKey": "issues/130/runs/c45c0785-577c-4043-8c2d-5d19045df98c/candidate-22.jpg",
+      "format": "jpeg"
     }
   ],
   "submissions": {}
