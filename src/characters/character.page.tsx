@@ -1,4 +1,5 @@
-import { useEffect, useId, useRef, useState } from "react";
+import type { RefObject } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { CharacterView } from "src/characters/character-view.component";
 import type { Character } from "src/characters/character.model";
@@ -122,28 +123,34 @@ function Rests({ entries, spent, status, onRest }: RestsProps) {
   );
 }
 
+// a card removed in Edit and added back later must not come back spent
+function savedSpent({ id, entries }: { id: string; entries: readonly DeckEntry[] }) {
+  const inDeck = new Set(entries.map((entry) => entry.key));
+  return characterStorage.spent(id).filter((key) => inDeck.has(key));
+}
+
 function usePlayState(character: Character) {
+  const { id } = character;
   const { entries } = decks.forCharacter(character);
-  const [spent, setSpent] = useState(() => characterStorage.spent(character.id));
+  const [spent, setSpent] = useState(() => savedSpent({ id, entries }));
   const [status, setStatus] = useState("");
 
-  const save = (next: readonly string[]) => {
-    setSpent([...next]);
-    characterStorage.setSpent({ id: character.id, spent: next });
-  };
+  useEffect(() => {
+    characterStorage.setSpent({ id, spent });
+  }, [id, spent]);
 
   return {
     entries,
     spent,
     status,
     toggleSpent(key: string) {
-      save(spent.includes(key) ? spent.filter((k) => k !== key) : [...spent, key]);
+      setSpent((now) => (now.includes(key) ? now.filter((k) => k !== key) : [...now, key]));
       setStatus("");
     },
     rest(rest: RestType) {
       const recovered = play.recovered({ entries, spent, rest });
       const back = new Set(recovered.map((entry) => entry.key));
-      save(spent.filter((key) => !back.has(key)));
+      setSpent((now) => now.filter((key) => !back.has(key)));
       setStatus(`${REST_LABELS[rest]}: ${joinWithAnd(play.names(recovered))} recovered`);
     },
   };
@@ -163,26 +170,49 @@ function PlayTable({ character }: { character: Character }) {
   );
 }
 
-type ConfirmProps = { name: string; onCancel: () => void; onDelete: () => void };
+type ConfirmProps = {
+  name: string;
+  returnFocusTo: RefObject<HTMLElement | null>;
+  onCancel: () => void;
+  onDelete: () => void;
+};
+
+// what showModal() would do: everything but the dialog goes inert, Escape cancels from anywhere
+function useModal({
+  scrim,
+  onCancel,
+}: { scrim: RefObject<HTMLElement | null>; onCancel: () => void }) {
+  useEffect(() => {
+    const behind = [...document.body.children].filter((element) => element !== scrim.current);
+    for (const element of behind) element.setAttribute("inert", "");
+    const cancelOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onCancel();
+    };
+    document.addEventListener("keydown", cancelOnEscape);
+
+    return () => {
+      document.removeEventListener("keydown", cancelOnEscape);
+      for (const element of behind) element.removeAttribute("inert");
+    };
+  }, [scrim, onCancel]);
+}
 
 // open, not showModal(): jsdom 26 has no showModal. Portalled out of the header,
 // whose backdrop-filter would otherwise pin the fixed scrim to the header box.
-function ConfirmDelete({ name, onCancel, onDelete }: ConfirmProps) {
+function ConfirmDelete({ name, returnFocusTo, onCancel, onDelete }: ConfirmProps) {
   const titleId = useId();
+  const scrim = useRef<HTMLDivElement>(null);
   const cancel = useRef<HTMLButtonElement>(null);
-  useEffect(() => cancel.current?.focus(), []);
+  useModal({ scrim, onCancel });
+
+  useEffect(() => {
+    cancel.current?.focus();
+    return () => returnFocusTo.current?.focus();
+  }, [returnFocusTo]);
 
   return createPortal(
-    <div className={styles.scrim}>
-      <dialog
-        open
-        aria-modal="true"
-        aria-labelledby={titleId}
-        className={styles.confirm}
-        onKeyDown={(event) => {
-          if (event.key === "Escape") onCancel();
-        }}
-      >
+    <div ref={scrim} className={styles.scrim}>
+      <dialog open aria-modal="true" aria-labelledby={titleId} className={styles.confirm}>
         <h2 id={titleId} className={styles.confirmTitle}>
           Delete {name}?
         </h2>
@@ -205,7 +235,9 @@ function ConfirmDelete({ name, onCancel, onDelete }: ConfirmProps) {
 
 function CharacterMenu({ character }: { character: Character }) {
   const menuId = useId();
+  const menuButton = useRef<HTMLButtonElement>(null);
   const [confirming, setConfirming] = useState(false);
+  const cancel = useCallback(() => setConfirming(false), []);
   const [, navigate] = useLocation();
 
   const remove = () => {
@@ -215,7 +247,7 @@ function CharacterMenu({ character }: { character: Character }) {
 
   return (
     <>
-      <button type="button" className={styles.menuButton} popoverTarget={menuId}>
+      <button ref={menuButton} type="button" className={styles.menuButton} popoverTarget={menuId}>
         Menu
       </button>
       <nav id={menuId} popover="auto" className={styles.menu} aria-label="Character menu">
@@ -245,7 +277,8 @@ function CharacterMenu({ character }: { character: Character }) {
       {confirming && (
         <ConfirmDelete
           name={character.name}
-          onCancel={() => setConfirming(false)}
+          returnFocusTo={menuButton}
+          onCancel={cancel}
           onDelete={remove}
         />
       )}

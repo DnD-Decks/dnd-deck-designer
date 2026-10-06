@@ -1,14 +1,8 @@
+import { fighter } from "../integration/fixtures/builds.fixture";
 import { expect, test } from "../integration/fixtures/test.extend";
 import { globalSetup } from "../integration/global.setup";
 
 globalSetup();
-
-const fighter = {
-  cls: "fighter",
-  level: 1,
-  name: "Brünhilde",
-  picks: { weapons: ["longsword", "shortbow", "dagger"] },
-};
 
 test.describe("play: delete character", () => {
   test.beforeEach(async ({ playPage }) => {

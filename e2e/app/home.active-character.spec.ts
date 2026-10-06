@@ -1,16 +1,8 @@
+import { fighter, wizard } from "../integration/fixtures/builds.fixture";
 import { expect, test } from "../integration/fixtures/test.extend";
 import { globalSetup } from "../integration/global.setup";
 
 globalSetup();
-
-const fighter = {
-  cls: "fighter",
-  level: 1,
-  name: "Brünhilde",
-  picks: { weapons: ["longsword", "shortbow", "dagger"] },
-};
-
-const wizard = { cls: "wizard", level: 1, name: "Elminster", picks: {} };
 
 test.describe("home: active character", () => {
   test("the character you played last waits on top, the rest below", async ({

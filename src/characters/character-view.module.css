@@ -229,6 +229,7 @@
 @media print {
   .header,
   .sectionLabel,
+  .spentLabel,
   .zoom {
     display: none;
   }
