@@ -7,6 +7,7 @@ import { play } from "src/characters/play.model";
 import type { DeckCard, DeckEntry } from "src/decks/deck.model";
 import { cardName, decks } from "src/decks/deck.model";
 import { assertNever } from "src/lib/assert-never";
+import { Link } from "wouter";
 import styles from "./character-view.module.css";
 
 type Props = {
@@ -99,6 +100,9 @@ export function CharacterView({ character, spent = [], onToggleSpent, actions, m
         aria-hidden={holding || undefined}
       >
         <header className={styles.header}>
+          <Link href="/" className={styles.back} aria-label="Back to your characters">
+            ‹
+          </Link>
           <hgroup className={styles.title}>
             <h2 className={styles.name}>{character.name}</h2>
             <p className={styles.subtitle}>
@@ -108,6 +112,12 @@ export function CharacterView({ character, spent = [], onToggleSpent, actions, m
           <div className={styles.actions}>{actions}</div>
           {menu}
         </header>
+
+        {entries.length === 0 && (
+          <p className={styles.empty}>
+            No cards in this deck yet. Edit the character to pick some.
+          </p>
+        )}
 
         {grouped.map(({ label, entries }) => (
           <section key={label} className={styles.section} aria-label={label}>

@@ -9,6 +9,7 @@ import {
 import { App } from "src/app/app.component";
 import { brunhilde } from "src/characters/character.fixture";
 import { characters } from "src/characters/character.model";
+import { decks } from "src/decks/deck.model";
 import { characterStorage } from "src/services/character.storage";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { memoryLocation } from "wouter/memory-location";
@@ -23,6 +24,21 @@ const stubClipboard = (writeText: (text: string) => Promise<void>) =>
   Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
 
 const sharedCode = (link: unknown) => String(link).split("#/import/")[1] ?? "";
+
+const inDocumentOrder = (a: Node, b: Node) =>
+  a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+
+// menuItems(menu) is ["Edit", "Share", "—", …]: links, buttons and separators as they read
+const menuItems = (menu: HTMLElement) => {
+  const items = within(menu);
+  return [
+    ...items.getAllByRole("link"),
+    ...items.getAllByRole("button"),
+    ...items.getAllByRole("separator"),
+  ]
+    .sort(inDocumentOrder)
+    .map((item) => (item.tagName === "HR" ? "—" : item.textContent));
+};
 
 const zoomNames = (card: string) =>
   screen
@@ -111,12 +127,57 @@ describe("<CharacterPage />", () => {
     screen.getByRole("heading", { name: "D&D Deck Designer", level: 1 });
     expect(screen.queryByRole("navigation", { name: "Main" })).toBeNull();
 
-    const menu = within(screen.getByRole("navigation", { name: "Character menu" }));
-    menu.getByRole("link", { name: "Edit" });
-    menu.getByRole("button", { name: "Share" });
-    menu.getByRole("link", { name: "Your characters" });
-    fireEvent.click(menu.getByRole("link", { name: "Card catalog" }));
+    const menu = screen.getByRole("navigation", { name: "Character menu" });
+    expect(menuItems(menu)).toEqual([
+      "Edit",
+      "Share",
+      "—",
+      "Your characters",
+      "Card catalog",
+      "—",
+      "Delete character",
+    ]);
+    fireEvent.click(within(menu).getByRole("link", { name: "Card catalog" }));
     expect(memory.history.slice(-1)).toEqual(["/catalog/wizard"]);
+  });
+
+  test("the back arrow goes home, not back through history", () => {
+    const memory = renderAt("/character/f1");
+    fireEvent.click(screen.getByRole("link", { name: "Back to your characters" }));
+    expect(memory.history.slice(-1)).toEqual(["/"]);
+  });
+
+  test("deleting asks first, and Cancel keeps the character", () => {
+    renderAt("/character/f1");
+    fireEvent.click(screen.getByRole("button", { name: "Delete character" }));
+    const confirm = within(screen.getByRole("dialog", { name: "Delete Brünhilde?" }));
+    fireEvent.click(confirm.getByRole("button", { name: "Cancel" }));
+
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(characterStorage.get("f1")?.name).toBe("Brünhilde");
+  });
+
+  test("confirming the delete removes the character and its play state, then goes home", async () => {
+    const memory = renderAt("/character/f1");
+    await spend("Second Wind");
+
+    fireEvent.click(screen.getByRole("button", { name: "Delete character" }));
+    fireEvent.click(screen.getByRole("button", { name: "Delete Brünhilde" }));
+
+    expect(memory.history.slice(-1)).toEqual(["/"]);
+    expect({ saved: characterStorage.get("f1"), spent: characterStorage.spent("f1") }).toEqual({
+      saved: undefined,
+      spent: [],
+    });
+  });
+
+  test("a deck with no cards says so", () => {
+    vi.spyOn(decks, "forCharacter").mockReturnValue({
+      cls: decks.get({ cls: "fighter" }).cls,
+      entries: [],
+    });
+    renderAt("/character/f1");
+    screen.getByText(/No cards in this deck yet/);
   });
 
   test("rests wait until something is spent, and say what they bring back", () => {

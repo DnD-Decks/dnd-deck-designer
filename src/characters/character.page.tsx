@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { CharacterView } from "src/characters/character-view.component";
 import type { Character } from "src/characters/character.model";
 import { characters } from "src/characters/character.model";
@@ -7,7 +7,7 @@ import type { DeckEntry } from "src/decks/deck.model";
 import { decks } from "src/decks/deck.model";
 import type { RestType } from "src/models/rest/rest-actions.model";
 import { characterStorage } from "src/services/character.storage";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import styles from "./characters.module.css";
 
 type Shared = { copied: true } | { copied: false; link: string };
@@ -162,8 +162,53 @@ function PlayTable({ character }: { character: Character }) {
   );
 }
 
+type ConfirmProps = { name: string; onCancel: () => void; onDelete: () => void };
+
+// open, not showModal(): jsdom 26 has no showModal
+function ConfirmDelete({ name, onCancel, onDelete }: ConfirmProps) {
+  const titleId = useId();
+  const cancel = useRef<HTMLButtonElement>(null);
+  useEffect(() => cancel.current?.focus(), []);
+
+  return (
+    <div className={styles.scrim}>
+      <dialog
+        open
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className={styles.confirm}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") onCancel();
+        }}
+      >
+        <h2 id={titleId} className={styles.confirmTitle}>
+          Delete {name}?
+        </h2>
+        <p className={styles.status}>
+          Their deck and play state leave this device. A share link can still bring them back.
+        </p>
+        <div className={styles.confirmActions}>
+          <button ref={cancel} type="button" className={styles.action} onClick={onCancel}>
+            Cancel
+          </button>
+          <button type="button" className={styles.danger} onClick={onDelete}>
+            Delete {name}
+          </button>
+        </div>
+      </dialog>
+    </div>
+  );
+}
+
 function CharacterMenu({ character }: { character: Character }) {
   const menuId = useId();
+  const [confirming, setConfirming] = useState(false);
+  const [, navigate] = useLocation();
+
+  const remove = () => {
+    characterStorage.remove(character.id);
+    navigate("/");
+  };
 
   return (
     <>
@@ -175,13 +220,32 @@ function CharacterMenu({ character }: { character: Character }) {
           Edit
         </Link>
         <ShareButton character={character} />
+        <hr className={styles.menuRule} />
         <Link href="/" className={styles.menuItem}>
           Your characters
         </Link>
         <Link href="/catalog" className={styles.menuItem}>
           Card catalog
         </Link>
+        <hr className={styles.menuRule} />
+        <button
+          type="button"
+          className={styles.menuItem}
+          data-danger
+          popoverTarget={menuId}
+          popoverTargetAction="hide"
+          onClick={() => setConfirming(true)}
+        >
+          Delete character
+        </button>
       </nav>
+      {confirming && (
+        <ConfirmDelete
+          name={character.name}
+          onCancel={() => setConfirming(false)}
+          onDelete={remove}
+        />
+      )}
     </>
   );
 }
