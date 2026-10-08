@@ -14,6 +14,18 @@
 4. **Small PRs.** One concern per PR. A PR that touches card layout, data loading, *and* a new deck composition is three PRs.
 5. **Plan mode first** — see `AGENTS.md` for triggers.
 
+## Agent-ready issues
+
+Issues opened with the **Agent task** form can be handed to an AI coding agent. A human applies the `agent-ready` label once the issue meets the definition of ready:
+
+- No open questions or undecided design.
+- Every acceptance criterion is testable.
+- Touchpoints (`src/...` paths) are listed.
+- Out of scope is stated.
+- No overlap with another in-flight `agent-ready` issue on the same files.
+
+Workflow: one issue → one branch `<type>/<issue#>-<slug>` (e.g. `feat/42-short-rest`) → one PR whose body references the issue (`Part of #N` or `Closes #N`). `pnpm blue-ball` and `pnpm e2e` must pass before the PR is opened. Visual baselines are refreshed by a human only. A human reviews every PR.
+
 ## Adding a new card kind
 
 Follow the step-by-step in `ARCHITECTURE.md` § *Adding a new card kind* (data → model → `DeckCard` union → deck assembly → `deck-view` switches → component). In short: cards live flat as `src/cards/<kind>-card.component.tsx` + CSS module + co-located test — there are no per-category folders and no barrel file.

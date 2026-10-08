@@ -63,3 +63,13 @@
 - Never import `@playwright/test` in a spec — import `test`/`expect` from `e2e/integration/fixtures/test.extend.ts`.
 - `toHaveScreenshot` on card locators only; baselines are Docker-made (`pnpm e2e:docker --update-snapshots`). Host runs skip visual assertions.
 - Full conventions: [e2e/README.md](e2e/README.md).
+
+## Agent workflow
+
+Full rules: [CONTRIBUTING.md § Agent-ready issues](CONTRIBUTING.md#agent-ready-issues).
+
+- Only pick up issues labelled `agent-ready`.
+- One issue per branch (`<type>/<issue#>-<slug>`) and per PR; the PR body references the issue (`Part of #N` / `Closes #N`).
+- Run `pnpm blue-ball` and `pnpm e2e` before opening the PR; both must pass.
+- Never update the Docker visual baselines (`pnpm e2e:docker --update-snapshots`) — a human does that.
+- If the acceptance criteria are ambiguous, stop and comment on the issue instead of guessing.

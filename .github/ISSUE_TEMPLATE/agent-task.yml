@@ -1,0 +1,84 @@
+name: Agent task
+description: A scoped task an AI coding agent can pick up — one issue, one branch, one PR. See CONTRIBUTING.md § Agent-ready issues.
+title: "[agent]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Write this so an agent can finish it **without asking questions**. A human applies the
+        `agent-ready` label once the issue meets the definition of ready in
+        [CONTRIBUTING.md](https://github.com/DnD-Decks/dnd-deck-designer/blob/main/CONTRIBUTING.md#agent-ready-issues).
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: One or two sentences on why this matters for the main use case — playing at the table with a saved character on a phone.
+    validations:
+      required: true
+
+  - type: textarea
+    id: behaviour
+    attributes:
+      label: User-visible behaviour
+      description: What the player sees and does once this ships. Describe the screen, not the code.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Markdown checkboxes. Each one must be testable — a test or a manual step can prove it true or false.
+      value: |
+        - [ ] ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: touchpoints
+    attributes:
+      label: Touchpoints
+      description: Files or modules expected to change (`src/...` paths). New files follow `<module>.<role>.ts(x)` in kebab-case.
+      placeholder: |
+        - src/characters/character.page.tsx
+        - src/characters/play.model.ts
+
+  - type: textarea
+    id: tests
+    attributes:
+      label: Tests
+      description: |
+        Unit/component tests to add, co-located as `<module>.<role>.test.tsx` (pure logic: `*.model.test.ts`).
+        E2E spec to add or extend, named `e2e/app/${page}.${feature}.spec.ts` — only for what jsdom cannot prove (see e2e/README.md).
+      placeholder: |
+        - Model: src/characters/play.model.test.ts — ...
+        - Component: src/characters/character.page.test.tsx — ...
+        - E2E: extend e2e/app/play.spend-and-rest.spec.ts — ...
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: Checks that must pass before the PR is opened.
+      value: |
+        - [ ] `pnpm blue-ball` (lint + test + build)
+        - [ ] `pnpm e2e` (UI changes)
+
+        Visual baselines are updated by a human only, via `pnpm e2e:docker --update-snapshots`. Agents never regenerate them.
+
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope
+      description: What this issue deliberately does not cover, so the agent does not wander into it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Parent / related issues
+      description: Epic or parent issue, and any related or blocking issues.
+      placeholder: |
+        Part of #
