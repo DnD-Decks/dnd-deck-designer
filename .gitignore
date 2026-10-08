@@ -144,6 +144,7 @@ vite.config.ts.timestamp-*
 
 # transient git worktrees created by agent sessions
 .claude/worktrees/
+.delta/
 
 # Playwright
 e2e/test-results/
