@@ -66,8 +66,10 @@ const CarouselSlide = memo(function CarouselSlide({
       aria-label={`${index + 1} of ${total}: ${cardName(entry.card)}`}
       className={styles.slide}
     >
-      <div className={styles.slot} data-dimmed={entry.dimmed || undefined}>
-        <DeckCardFace card={entry.card} />
+      <div className={styles.slot}>
+        <div className={styles.face} data-dimmed={entry.dimmed || undefined}>
+          <DeckCardFace card={entry.card} />
+        </div>
         {entry.badge}
         {action ? (
           <button

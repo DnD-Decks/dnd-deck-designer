@@ -83,7 +83,8 @@
   position: relative;
 }
 
-.slot[data-dimmed] {
+/* the face dims alone: the badge and the tap target's focus ring stay bright */
+.face[data-dimmed] {
   filter: brightness(0.55) saturate(0.6);
 }
 
