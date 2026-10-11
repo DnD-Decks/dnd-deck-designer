@@ -86,10 +86,15 @@ const CarouselThumb = memo(function CarouselThumb({ entry, index, current, onSel
       aria-current={current}
       onClick={() => onSelect(index)}
     >
-      {/* the face is decorative here: the button's label already names the card */}
+      {/* the face and badge are decorative here: the button's label already names the card */}
       <span aria-hidden="true" className={styles.thumbFace}>
         <DeckCardFace card={entry.card} />
       </span>
+      {entry.badge !== undefined && (
+        <span aria-hidden="true" className={styles.thumbBadge}>
+          {entry.badge}
+        </span>
+      )}
     </button>
   );
 });

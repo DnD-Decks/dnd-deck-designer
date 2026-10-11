@@ -4,9 +4,8 @@
   gap: 1rem;
 }
 
-/* the picked card gets a gold seal — drawn off the tap button's pressed state */
-.page [aria-roledescription="slide"] [aria-pressed="true"]::after {
-  content: "✓";
+/* a picked card gets a gold seal on the slide and its thumbnail */
+.seal {
   position: absolute;
   top: 6%;
   right: 8%;

@@ -31,7 +31,10 @@ test.describe("play: carousel", () => {
     // Second Wind leads the deck — its actions sit right under the centred card
     await playPage.cardActions("Second Wind").getByRole("button", { name: "Spend" }).click();
     await expect(playPage.carouselCard("Second Wind, spent")).toBeVisible();
-    await expect.soft(playPage.carousel("Brünhilde's cards").getByText("Spent")).toBeVisible();
+    // the slide and its thumbnail both carry the Spent mark; the slide's comes first
+    await expect
+      .soft(playPage.carousel("Brünhilde's cards").getByText("Spent").first())
+      .toBeVisible();
 
     await page.reload();
     await expect(playPage.carouselCard("Second Wind, spent")).toBeVisible();

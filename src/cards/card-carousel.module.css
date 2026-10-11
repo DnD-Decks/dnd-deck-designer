@@ -121,6 +121,7 @@
 /* ~¼ of the real 63.5 × 88.9 mm card */
 .thumb {
   flex: 0 0 auto;
+  position: relative;
   width: 60px;
   height: 84px;
   overflow: hidden;
@@ -147,6 +148,14 @@
   display: block;
   transform: scale(0.25);
   transform-origin: top left;
+  pointer-events: none;
+}
+
+/* entry badges anchor to the thumbnail itself, not the quarter-scaled face */
+.thumbBadge {
+  position: absolute;
+  inset: 0;
+  zoom: 0.5;
   pointer-events: none;
 }
 

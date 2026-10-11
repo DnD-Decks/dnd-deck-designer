@@ -332,7 +332,8 @@ describe("<CharacterPage />", () => {
     const actions = () => screen.getByRole("group", { name: "Second Wind actions" });
     fireEvent.click(within(actions()).getByRole("button", { name: "Spend" }));
     screen.getByRole("button", { name: "Second Wind, spent" });
-    screen.getByText("Spent");
+    // the slide and its thumbnail both carry the Spent mark
+    screen.getAllByText("Spent");
 
     fireEvent.click(within(actions()).getByRole("button", { name: "Recover" }));
     screen.getByRole("button", { name: "Second Wind" });

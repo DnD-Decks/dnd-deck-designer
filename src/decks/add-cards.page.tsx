@@ -35,11 +35,19 @@ export function AddCardsPage({ id, cls }: Props) {
   const found = classes.find({ id: cls });
   if (!found) return <Redirect to={`/character/${id}/add/${character.cls}`} replace />;
 
-  const entries = decks.get({ cls: found.id }).cards.map((card) => ({
-    key: cardKey(card),
-    card,
-    section: cardSection(card),
-  }));
+  const entries = decks.get({ cls: found.id }).cards.map((card) => {
+    const key = cardKey(card);
+    return {
+      key,
+      card,
+      section: cardSection(card),
+      badge: selected.has(key) ? (
+        <span className={styles.seal} aria-hidden="true">
+          ✓
+        </span>
+      ) : undefined,
+    };
+  });
 
   const toggle = (key: string) =>
     setSelected((now) => {
