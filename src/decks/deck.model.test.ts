@@ -71,6 +71,21 @@ test("barbarian deck has resource, feat, and weapon cards", () => {
   assert.ok(deck.cards.some((card) => card.kind === "weapon"));
 });
 
+// --- card index ---
+
+describe("decks.findCard()", () => {
+  test("resolves a card key of every kind across all classes", () => {
+    assert.equal(decks.findCard({ key: "spell-cure-wounds" })?.kind, "spell");
+    assert.equal(decks.findCard({ key: "feat-rogue-sneak-attack" })?.kind, "feat");
+    assert.equal(decks.findCard({ key: "resource-fighter-second-wind" })?.kind, "resource");
+    assert.equal(decks.findCard({ key: "weapon-longsword" })?.kind, "weapon");
+  });
+
+  test("returns nothing for an unknown key", () => {
+    assert.equal(decks.findCard({ key: "spell-not-a-spell" }), undefined);
+  });
+});
+
 // --- character decks ---
 const wizard: Character = {
   id: "w",
@@ -143,5 +158,70 @@ describe("decks.forCharacter()", () => {
     const { entries } = decks.forCharacter(fighter);
     assert.ok(entries.every(({ card }) => card.kind !== "spell"));
     assert.equal(entries.filter(({ card }) => card.kind === "resource").length, 2);
+  });
+
+  test("keeps the character's own class cards next to the custom ones", () => {
+    const hero: Character = {
+      ...wizard,
+      picks: { ...wizard.picks, custom: ["spell-cure-wounds"] },
+    };
+    const keys = new Set(decks.forCharacter(hero).entries.map(({ key }) => key));
+    assert.ok(keys.has("spell-fire-bolt-0"));
+    assert.ok(keys.has("resource-wizard-mana-0"));
+    assert.ok(keys.has("weapon-dagger-0"));
+    assert.ok(keys.has("spell-cure-wounds-0"));
+  });
+
+  test("adds cross-class spell, feat, resource and weapon cards", () => {
+    const hero: Character = {
+      ...wizard,
+      picks: {
+        ...wizard.picks,
+        custom: [
+          "spell-cure-wounds",
+          "feat-rogue-sneak-attack",
+          "resource-paladin-lay-on-hands",
+          "weapon-longsword",
+        ],
+      },
+    };
+    const keys = new Set(decks.forCharacter(hero).entries.map(({ key }) => key));
+    assert.ok(keys.has("spell-cure-wounds-0"));
+    assert.ok(keys.has("feat-rogue-sneak-attack-0"));
+    assert.ok(keys.has("resource-paladin-lay-on-hands-0"));
+    assert.ok(keys.has("weapon-longsword-0"));
+  });
+
+  test("expands a custom stacked resource into one card per use", () => {
+    const hero: Character = {
+      ...wizard,
+      picks: { ...wizard.picks, custom: ["resource-fighter-second-wind"] },
+    };
+    const keys = decks.forCharacter(hero).entries.map(({ key }) => key);
+    assert.deepEqual(
+      keys.filter((key) => key.startsWith("resource-fighter-second-wind")),
+      ["resource-fighter-second-wind-0", "resource-fighter-second-wind-1"]
+    );
+  });
+
+  test("ignores unknown custom keys", () => {
+    const hero: Character = {
+      ...wizard,
+      picks: { ...wizard.picks, custom: ["spell-not-a-spell", "nonsense"] },
+    };
+    assert.deepEqual(decks.forCharacter(hero).entries, decks.forCharacter(wizard).entries);
+  });
+
+  test("does not duplicate a card the class deck already has", () => {
+    const hero: Character = {
+      ...wizard,
+      picks: {
+        ...wizard.picks,
+        custom: ["spell-fire-bolt", "spell-cure-wounds", "spell-cure-wounds"],
+      },
+    };
+    const keys = decks.forCharacter(hero).entries.map(({ key }) => key);
+    assert.equal(keys.filter((key) => key.startsWith("spell-fire-bolt")).length, 1);
+    assert.equal(keys.filter((key) => key.startsWith("spell-cure-wounds")).length, 1);
   });
 });

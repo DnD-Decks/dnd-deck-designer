@@ -66,6 +66,19 @@ const SPELL_LEVELS: SpellLevel[] = [0, 1];
 // Decks are pure over static JSON, so each class is assembled at most once.
 const CACHE = new Map<CharacterClass, Deck>();
 
+// Same for the key index across every class's deck: built once, on first lookup.
+let CARD_INDEX: Map<string, DeckCard> | undefined;
+
+const cardIndex = () => {
+  if (!CARD_INDEX) {
+    CARD_INDEX = new Map();
+    for (const { id } of classes.list()) {
+      for (const card of decks.get({ cls: id }).cards) CARD_INDEX.set(cardKey(card), card);
+    }
+  }
+  return CARD_INDEX;
+};
+
 export const decks = {
   get({ cls }: { cls: CharacterClass }): Deck {
     const cached = CACHE.get(cls);
@@ -95,31 +108,47 @@ export const decks = {
     return deck;
   },
 
+  /** a card by its `cardKey`, across every class's deck */
+  findCard({ key }: { key: string }): DeckCard | undefined {
+    return cardIndex().get(key);
+  },
+
   /** the class template narrowed to a character's picks, stacked resources expanded per use */
   forCharacter(character: Character): CharacterDeck {
     const { cls, cards } = decks.get({ cls: character.cls });
     const picked = choices.picked(character);
 
-    const entries = cards
-      .filter((card) => {
-        switch (card.kind) {
-          case "spell":
-            return picked.spell.has(card.spell.id);
-          case "weapon":
-            return picked.weapon.has(card.weapon.id);
-          case "resource":
-          case "feat":
-            return true;
-          default:
-            return assertNever(card);
-        }
-      })
-      .flatMap((card) =>
-        Array.from({ length: copies(card) }, (_, n) => ({
-          key: `${cardKey(card)}-${n}`,
-          card,
-        }))
-      );
+    const kept = cards.filter((card) => {
+      switch (card.kind) {
+        case "spell":
+          return picked.spell.has(card.spell.id);
+        case "weapon":
+          return picked.weapon.has(card.weapon.id);
+        case "resource":
+        case "feat":
+          return true;
+        default:
+          return assertNever(card);
+      }
+    });
+
+    // Custom picks carry card keys; unknown keys and cards the class deck
+    // already has are skipped.
+    const seen = new Set(cards.map(cardKey));
+    for (const key of character.picks.custom ?? []) {
+      const card = decks.findCard({ key });
+      if (card && !seen.has(key)) {
+        seen.add(key);
+        kept.push(card);
+      }
+    }
+
+    const entries = kept.flatMap((card) =>
+      Array.from({ length: copies(card) }, (_, n) => ({
+        key: `${cardKey(card)}-${n}`,
+        card,
+      }))
+    );
 
     return { cls, entries };
   },

@@ -6,8 +6,8 @@ import type { CharacterClass } from "src/models/class/classes.model";
 
 export type CharacterLevel = 1;
 
-/** picked ids per choice rule */
-export type Picks = Readonly<Partial<Record<ChoiceRuleId, readonly string[]>>>;
+/** picked ids per choice rule; `custom` holds card keys added by hand (not a ChoiceRule) */
+export type Picks = Readonly<Partial<Record<ChoiceRuleId | "custom", readonly string[]>>>;
 
 export type Character = {
   id: string;
@@ -38,7 +38,8 @@ function parseBuild(value: unknown) {
   if (!found) return undefined;
 
   const ruleIds = new Set<string>(choices.for({ cls: found.id, level }).map((rule) => rule.id));
-  const badRule = ([rule, ids]: [string, unknown]) => !ruleIds.has(rule) || !isStringList(ids);
+  const badRule = ([rule, ids]: [string, unknown]) =>
+    (rule !== "custom" && !ruleIds.has(rule)) || !isStringList(ids);
   if (Object.entries(picks).some(badRule)) return undefined;
 
   const build: Build = { name, cls: found.id, level, picks: picks as Picks };
