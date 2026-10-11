@@ -8,25 +8,20 @@ import styles from "./card-carousel.module.css";
 
 export type CarouselEntry = DeckEntry & {
   section: string;
-  /** dims the card face, e.g. a spent card in play */
   dimmed?: boolean;
-  /** centred over the card face, e.g. the "Spent" pill in play */
   badge?: ReactNode;
 };
 
 type CardAction = { name: string; pressed?: boolean; onTap: () => void };
 
 type Props = {
-  /** accessible name of the region, e.g. "Wizard cards" */
   label: string;
   entries: readonly CarouselEntry[];
-  /** makes the centred card a button (selection in #329, nudge in the play view); undefined = not tappable */
+  /** undefined = the centred card is not tappable */
   card?: (entry: CarouselEntry) => CardAction | undefined;
-  /** UI rendered under the centred card, outside the card face (play actions) */
   below?: (entry: CarouselEntry) => ReactNode;
 };
 
-/** the transparent control over the centred card, the grid's zoom trick */
 function CardTap({ action }: { action: CardAction }) {
   return (
     <button
@@ -45,9 +40,7 @@ type SlideProps = {
   total: number;
   /** not rendered — part of the memo key so the slides that flip to or from centred re-render */
   current: boolean;
-  /** present on the centred slide only */
   action?: CardAction;
-  /** rendered node for the centred slide only */
   below?: ReactNode;
 };
 
@@ -104,7 +97,6 @@ const CarouselThumb = memo(function CarouselThumb({ entry, index, current, onSel
 type ControlsProps = {
   index: number;
   total: number;
-  /** the centred slide's section, empty while the deck is empty */
   section?: string;
   onGo: (index: number) => void;
 };
@@ -173,7 +165,6 @@ type ThumbsProps = {
 function CarouselThumbs({ entries, index, onSelect }: ThumbsProps) {
   const thumbsRef = useRef<HTMLDivElement>(null);
 
-  // keep the current thumbnail on the strip
   useEffect(() => {
     centre(thumbsRef.current, thumbsRef.current?.children[index]);
   }, [index]);

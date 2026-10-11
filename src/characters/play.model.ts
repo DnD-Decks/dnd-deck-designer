@@ -28,7 +28,6 @@ const namesOf = (resources: readonly Resource[]) => [
   ...new Set(resources.map((resource) => resource.name)),
 ];
 
-// the fixed sections of the play table
 const SECTIONS = ["Resources", "Weapons", "Features", "Cantrips", "Spells"] as const;
 
 function sectionOf(card: DeckCard) {
@@ -50,7 +49,6 @@ function sectionOf(card: DeckCard) {
 export const play = {
   sectionOf,
 
-  /** the deck grouped into the table's fixed sections, empty ones dropped */
   sections(entries: readonly DeckEntry[]) {
     return SECTIONS.map((label) => ({
       label,

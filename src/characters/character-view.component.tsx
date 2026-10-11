@@ -40,7 +40,6 @@ const toSlides = (entries: readonly DeckEntry[], spentKeys: ReadonlySet<string>)
     badge: spentKeys.has(entry.key) ? <SpentMark className={styles.spentPill} /> : undefined,
   }));
 
-/** the aria-hidden "Spent" mark — a label over a grid card, a pill over a slide */
 function SpentMark({ className }: { className: string }) {
   return (
     <span className={className} aria-hidden="true">

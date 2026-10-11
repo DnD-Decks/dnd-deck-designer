@@ -16,7 +16,6 @@ export const centre = (container: HTMLElement | null, child: Element | undefined
   });
 };
 
-/** where the carousel sits: the centred slide, plus the handlers that move it */
 export function useCarouselPosition({ length }: { length: number }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const indexRef = useRef(0);

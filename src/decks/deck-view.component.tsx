@@ -82,7 +82,6 @@ export function DeckView({ cls }: Props) {
 
   if (deck.cards.length === 0) return <EmptyDeck cls={cls} label={deck.cls.label} />;
 
-  // whatever the chosen view, the printer always gets the grid
   const grid = printing || mode === "grid";
 
   return (

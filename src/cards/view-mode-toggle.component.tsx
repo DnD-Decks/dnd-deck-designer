@@ -6,7 +6,6 @@ type Props = {
   choose: (mode: ViewMode) => void;
 };
 
-/** Grid / Carousel binder tabs — the deck view preference shared by catalog and play. */
 export function ViewModeToggle({ mode, choose }: Props) {
   return (
     <div className={styles.viewToggle}>

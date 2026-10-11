@@ -51,7 +51,6 @@
   color: var(--parchment);
 }
 
-/* one card centred, the neighbours peeking in at the edges */
 .track {
   display: flex;
   overflow-x: auto;
@@ -72,7 +71,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  /* a fieldset, for the slide's group role — UA chrome off */
+  /* fieldset reset */
   margin: 0;
   padding: 0;
   border: 0;
@@ -88,7 +87,6 @@
   filter: brightness(0.55) saturate(0.6);
 }
 
-/* transparent control over the centred card, the grid's zoom trick */
 .cardTap {
   position: absolute;
   inset: 0;
@@ -131,7 +129,6 @@
   padding: 0;
   background: var(--ink-800);
   cursor: pointer;
-  /* skip layout/paint of thumbs far off the strip */
   content-visibility: auto;
   contain-intrinsic-size: 60px 84px;
 }
