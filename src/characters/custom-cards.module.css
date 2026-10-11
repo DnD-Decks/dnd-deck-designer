@@ -1,0 +1,36 @@
+/* one card per slot, its Remove button tucked underneath */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.remove {
+  padding: 6px 14px;
+  border: 1px solid var(--ink-line);
+  border-radius: 6px;
+  background: linear-gradient(var(--ink-700), var(--ink-800));
+  color: var(--text-mid);
+  font-family: var(--font-caps);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.remove:hover {
+  color: var(--parchment);
+  border-color: var(--danger);
+}
+
+.remove:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
