@@ -51,7 +51,6 @@
   color: var(--parchment);
 }
 
-/* one card centred, the neighbours peeking in at the edges */
 .track {
   display: flex;
   overflow-x: auto;
@@ -72,7 +71,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  /* a fieldset, for the slide's group role — UA chrome off */
+  /* fieldset reset */
   margin: 0;
   padding: 0;
   border: 0;
@@ -83,7 +82,11 @@
   position: relative;
 }
 
-/* transparent control over the centred card, the grid's zoom trick */
+/* the face dims alone: the badge and the tap target's focus ring stay bright */
+.face[data-dimmed] {
+  filter: brightness(0.55) saturate(0.6);
+}
+
 .cardTap {
   position: absolute;
   inset: 0;
@@ -126,7 +129,6 @@
   padding: 0;
   background: var(--ink-800);
   cursor: pointer;
-  /* skip layout/paint of thumbs far off the strip */
   content-visibility: auto;
   contain-intrinsic-size: 60px 84px;
 }
@@ -158,7 +160,8 @@
   /* whatever the view, the printer gets every card in rows — the toggle and
      strip are screen chrome and stay behind */
   .controls,
-  .thumbs {
+  .thumbs,
+  .below {
     display: none;
   }
 

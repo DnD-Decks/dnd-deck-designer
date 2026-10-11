@@ -4,42 +4,6 @@
   gap: 2rem;
 }
 
-/* Grid / Carousel switch — binder tabs like the class selector's */
-.viewToggle {
-  display: flex;
-  gap: 6px;
-}
-
-.viewButton {
-  padding: 6px 14px;
-  border: 1px solid var(--ink-line);
-  border-radius: 6px 6px 3px 3px;
-  background: linear-gradient(var(--ink-700), var(--ink-800));
-  color: var(--text-mid);
-  font-family: var(--font-caps);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-
-.viewButton:hover {
-  color: var(--parchment);
-  border-color: var(--text-low);
-}
-
-.viewButton:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
-}
-
-.viewButton[aria-pressed="true"] {
-  background: linear-gradient(#23527e, var(--card-blue));
-  border-color: var(--gold);
-  color: #fff;
-}
-
 .section {
   display: flex;
   flex-direction: column;
@@ -179,7 +143,6 @@
 
 @media print {
   /* keep screen chrome out of print output; cards keep their physical size */
-  .viewToggle,
   .sectionTitle,
   .emptySlot,
   .zoom {

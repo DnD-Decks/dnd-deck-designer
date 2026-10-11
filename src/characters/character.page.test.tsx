@@ -67,8 +67,14 @@ async function spend(card: string) {
 
 beforeEach(() => {
   localStorage.clear();
+  // the play view opens on the carousel; the mat tests below exercise the grid
+  localStorage.setItem("dnd-deck-designer:view-mode", "grid");
   characterStorage.save(brunhilde());
 });
+
+const showCarousel = () => {
+  localStorage.setItem("dnd-deck-designer:view-mode", "carousel");
+};
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -294,5 +300,78 @@ describe("<CharacterPage />", () => {
     renderAt("/character/nobody");
     screen.getByRole("heading", { name: "Character not found", level: 2 });
     screen.getByRole("link", { name: "Back to your characters" });
+  });
+
+  // --- carousel ---
+
+  test("the play view opens on the carousel", () => {
+    // no stored preference — the carousel is the default, not a choice
+    localStorage.removeItem("dnd-deck-designer:view-mode");
+    renderAt("/character/f1");
+    screen.getByRole("region", { name: "Brünhilde's cards" });
+    expect(screen.queryByRole("region", { name: "Resources" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Carousel" }).getAttribute("aria-pressed")).toBe(
+      "true"
+    );
+  });
+
+  test("Spend under a resource card marks it spent; Recover undoes it", () => {
+    showCarousel();
+    renderAt("/character/f1");
+
+    const actions = () => screen.getByRole("group", { name: "Second Wind actions" });
+    fireEvent.click(within(actions()).getByRole("button", { name: "Spend" }));
+    screen.getByRole("button", { name: "Second Wind, spent" });
+    screen.getByText("Spent");
+
+    fireEvent.click(within(actions()).getByRole("button", { name: "Recover" }));
+    screen.getByRole("button", { name: "Second Wind" });
+    expect(screen.queryByText("Spent")).toBeNull();
+  });
+
+  test("tapping a spendable card pulses the actions under it", () => {
+    showCarousel();
+    renderAt("/character/f1");
+
+    const actions = () => screen.getByRole("group", { name: "Second Wind actions" });
+    expect(actions().getAttribute("data-nudge")).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "Second Wind" }));
+    expect(actions().getAttribute("data-nudge")).not.toBeNull();
+  });
+
+  test("the nudge clears when its animation ends", () => {
+    showCarousel();
+    renderAt("/character/f1");
+
+    const actions = () => screen.getByRole("group", { name: "Second Wind actions" });
+    fireEvent.click(screen.getByRole("button", { name: "Second Wind" }));
+    expect(actions().getAttribute("data-nudge")).not.toBeNull();
+
+    fireEvent.animationEnd(actions());
+    expect(actions().getAttribute("data-nudge")).toBeNull();
+  });
+
+  test("a card with no actions is not a button and shows no actions", () => {
+    showCarousel();
+    renderAt("/character/f1");
+
+    fireEvent.click(screen.getByRole("button", { name: "Go to Longsword" }));
+    screen.getByText(/Weapons · \d+ \/ \d+/);
+    expect(screen.queryByRole("button", { name: "Longsword" })).toBeNull();
+    expect(screen.queryByRole("group", { name: "Longsword actions" })).toBeNull();
+  });
+
+  test("the toggle switches between the carousel and the grid", () => {
+    showCarousel();
+    renderAt("/character/f1");
+
+    fireEvent.click(screen.getByRole("button", { name: "Grid" }));
+    screen.getByRole("region", { name: "Resources" });
+    expect(screen.queryByRole("region", { name: "Brünhilde's cards" })).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "Carousel" }));
+    screen.getByRole("region", { name: "Brünhilde's cards" });
+    expect(screen.queryByRole("region", { name: "Resources" })).toBeNull();
   });
 });

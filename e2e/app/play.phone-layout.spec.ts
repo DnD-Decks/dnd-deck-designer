@@ -10,6 +10,8 @@ const CARD = { width: 240, landscape: 336 };
 test.describe("play: phone layout", () => {
   test.beforeEach(async ({ playPage }) => {
     await playPage.open(fighter);
+    // these cases exercise the mat — the play view opens on the carousel
+    await playPage.showGrid();
   });
 
   test("the header stays pinned while the table scrolls", async ({ page, playPage }) => {

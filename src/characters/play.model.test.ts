@@ -24,6 +24,40 @@ type RecoveredCase = {
 };
 type RestoresCase = { cls: CharacterClass; rest: RestType; expected: string[] };
 
+describe("play.sections()", () => {
+  test("groups the deck in table order: Resources, Weapons, Features, Cantrips, Spells", () => {
+    const pick = (key: string) => {
+      const card = decks.findCard({ key });
+      assert.ok(card, `unknown card ${key}`);
+      return { key, card };
+    };
+    const entries = [
+      pick("spell-magic-missile"),
+      pick("spell-fire-bolt"),
+      pick("feat-fighter-fighting-style"),
+      pick("weapon-longsword"),
+      pick("resource-fighter-second-wind"),
+    ];
+
+    const labels = play.sections(entries).map(({ label }) => label);
+    assert.deepEqual(labels, ["Resources", "Weapons", "Features", "Cantrips", "Spells"]);
+  });
+
+  test("a level-0 spell sits in Cantrips, a levelled one in Spells", () => {
+    const cantrip = decks.findCard({ key: "spell-fire-bolt" });
+    const level1 = decks.findCard({ key: "spell-magic-missile" });
+    assert.ok(cantrip && level1);
+    assert.equal(play.sectionOf(cantrip), "Cantrips");
+    assert.equal(play.sectionOf(level1), "Spells");
+  });
+
+  test("empty sections are dropped", () => {
+    // a fresh fighter has only resources and features
+    const labels = play.sections(entriesOf("fighter")).map(({ label }) => label);
+    assert.deepEqual(labels, ["Resources", "Features"]);
+  });
+});
+
 describe("play.spendable()", () => {
   (
     [
