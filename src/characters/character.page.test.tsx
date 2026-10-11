@@ -305,7 +305,8 @@ describe("<CharacterPage />", () => {
   // --- carousel ---
 
   test("the play view opens on the carousel", () => {
-    showCarousel();
+    // no stored preference — the carousel is the default, not a choice
+    localStorage.removeItem("dnd-deck-designer:view-mode");
     renderAt("/character/f1");
     screen.getByRole("region", { name: "Brünhilde's cards" });
     expect(screen.queryByRole("region", { name: "Resources" })).toBeNull();
