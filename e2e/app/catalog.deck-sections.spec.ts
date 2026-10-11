@@ -8,6 +8,7 @@ test.describe("catalog: deck sections", () => {
     catalogPage,
   }) => {
     await catalogPage.goto("wizard");
+    await catalogPage.showGrid();
 
     expect(await catalogPage.sectionTitles.allTextContents()).toEqual([
       "Resources",
@@ -20,6 +21,7 @@ test.describe("catalog: deck sections", () => {
 
   test("renders a card for every kind the deck holds", async ({ catalogPage }) => {
     await catalogPage.goto("ranger"); // the one class whose deck has all four card kinds
+    await catalogPage.showGrid();
 
     for (const label of ["Resources", "Class Features", "Level 1", "Weapons"]) {
       await expect.soft(catalogPage.section(label).getByRole("article").first()).toBeVisible();

@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
 
-import { decks } from "./deck.model.ts";
+import { cardSection, decks } from "./deck.model.ts";
 
 import type { Character } from "src/characters/character.model";
+import type { DeckCard } from "./deck.model.ts";
 
 // --- wizard level-1 deck ---
 
@@ -83,6 +84,34 @@ describe("decks.findCard()", () => {
 
   test("returns nothing for an unknown key", () => {
     assert.equal(decks.findCard({ key: "spell-not-a-spell" }), undefined);
+  });
+});
+
+// --- sections ---
+
+describe("cardSection()", () => {
+  // ranger is the one class whose deck has all four card kinds
+  const deck = decks.get({ cls: "ranger" });
+  const first = (kind: DeckCard["kind"]) => {
+    const card = deck.cards.find((c) => c.kind === kind);
+    assert.ok(card, `no ${kind} card in the ranger deck`);
+    return card;
+  };
+
+  test("labels each card kind", () => {
+    assert.equal(cardSection(first("resource")), "Resources");
+    assert.equal(cardSection(first("feat")), "Class Features");
+    assert.equal(cardSection(first("weapon")), "Weapons");
+  });
+
+  test("labels cantrips and level-1 spells separately", () => {
+    // rangers know no cantrips; the wizard deck has both spell levels
+    const spells = decks.get({ cls: "wizard" }).cards;
+    const cantrip = spells.find((c) => c.kind === "spell" && c.spell.level === 0);
+    const level1 = spells.find((c) => c.kind === "spell" && c.spell.level === 1);
+    assert.ok(cantrip && level1);
+    assert.equal(cardSection(cantrip), "Cantrips");
+    assert.equal(cardSection(level1), "Level 1");
   });
 });
 

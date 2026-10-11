@@ -6,6 +6,7 @@ globalSetup();
 test.describe("catalog: card spotlight", () => {
   test("clicking a card holds it above the blurred mat", async ({ catalogPage, page }) => {
     await catalogPage.goto("wizard");
+    await catalogPage.showGrid();
     const onTheMat = await catalogPage.card("Fire Bolt").boundingBox();
     await catalogPage.zoom("Fire Bolt").click();
 
@@ -29,6 +30,7 @@ test.describe("catalog: card spotlight", () => {
     page,
   }) => {
     await catalogPage.goto("wizard");
+    await catalogPage.showGrid();
     await catalogPage.zoom("Acid Splash").click();
     await expect(catalogPage.spotlight).toBeVisible();
 
@@ -55,6 +57,7 @@ test.describe("catalog: card spotlight", () => {
 
   test("Escape puts the card back and returns focus to it", async ({ catalogPage, page }) => {
     await catalogPage.goto("wizard");
+    await catalogPage.showGrid();
     await catalogPage.zoom("Magic Missile").click();
     await expect(catalogPage.spotlight).toBeVisible();
 

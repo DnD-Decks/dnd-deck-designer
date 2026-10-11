@@ -72,7 +72,7 @@ Hash routing with [wouter](https://github.com/molefrog/wouter) (`wouter/use-hash
 2. Create model `src/models/<domain>/<domain>.model.ts` exporting a single object with `findAll({cls})`.
 3. Add a new union arm to `DeckCard` in `src/decks/deck.model.ts`.
 4. Assemble cards in `decks.get()` in the desired section order.
-5. Add arms to the `switch(card.kind)` functions in `src/decks/deck-view.component.tsx` (`sectionLabel`, `cardName`, `renderCard`) and to `cardKey` in `src/decks/deck.model.ts`. The `assertNever` default guards make missing arms compile errors.
+5. Add arms to the `switch(card.kind)` functions: `cardKey`, `cardName` and `cardSection` in `src/decks/deck.model.ts`, and the face switch in `src/cards/deck-card.component.tsx`. The `assertNever` default guards make missing arms compile errors.
 6. Create `src/cards/<kind>-card.component.tsx` + CSS module.
 
 ---

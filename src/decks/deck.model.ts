@@ -58,6 +58,22 @@ export function cardName(card: DeckCard) {
   }
 }
 
+/** the section a card belongs to in the catalog ("Class Features", "Level 1", …) */
+export function cardSection(card: DeckCard) {
+  switch (card.kind) {
+    case "resource":
+      return "Resources";
+    case "feat":
+      return "Class Features";
+    case "spell":
+      return card.spell.level === 0 ? "Cantrips" : `Level ${card.spell.level}`;
+    case "weapon":
+      return "Weapons";
+    default:
+      return assertNever(card);
+  }
+}
+
 const copies = (card: DeckCard) =>
   card.kind === "resource" && card.resource.stack ? card.resource.uses : 1;
 
