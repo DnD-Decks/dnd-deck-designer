@@ -35,13 +35,18 @@ export function AddCardsPage({ id, cls }: Props) {
   const found = classes.find({ id: cls });
   if (!found) return <Redirect to={`/character/${id}/add/${character.cls}`} replace />;
 
+  const owned = new Set(decks.forCharacter(character).entries.map((e) => cardKey(e.card)));
+
   const entries = decks.get({ cls: found.id }).cards.map((card) => {
     const key = cardKey(card);
     return {
       key,
       card,
       section: cardSection(card),
-      badge: selected.has(key) ? (
+      dimmed: owned.has(key),
+      badge: owned.has(key) ? (
+        <span className={styles.inDeck}>In deck</span>
+      ) : selected.has(key) ? (
         <span className={styles.seal} aria-hidden="true">
           ✓
         </span>
@@ -75,11 +80,15 @@ export function AddCardsPage({ id, cls }: Props) {
         key={found.id}
         label={`${found.label} cards`}
         entries={entries}
-        card={(entry) => ({
-          name: cardName(entry.card),
-          pressed: selected.has(entry.key),
-          onTap: () => toggle(entry.key),
-        })}
+        card={(entry) =>
+          owned.has(entry.key)
+            ? undefined
+            : {
+                name: cardName(entry.card),
+                pressed: selected.has(entry.key),
+                onTap: () => toggle(entry.key),
+              }
+        }
       />
       <div className={styles.bar}>
         <Link href={`/character/${id}`} className={styles.cancel}>
