@@ -21,12 +21,17 @@ type Props = {
 
 const clamp = (index: number, length: number) => Math.max(0, Math.min(index, length - 1));
 
-const center = (element: Element | undefined) => {
-  // jsdom has no layout and no scrollIntoView; instant, or a second jump during
-  // a smooth scroll makes mandatory snap pull the track back to the old slide
-  if (typeof element?.scrollIntoView === "function") {
-    element.scrollIntoView({ block: "nearest", inline: "center", behavior: "instant" });
-  }
+// scroll the container, never scrollIntoView: that one drags the page with it.
+// instant, or a second jump during a smooth scroll makes mandatory snap pull
+// the track back to the old slide; jsdom has no layout at all
+const centre = (container: HTMLElement | null, child: Element | undefined) => {
+  if (!container || !child || typeof container.scrollTo !== "function") return;
+  const box = container.getBoundingClientRect();
+  const item = child.getBoundingClientRect();
+  container.scrollTo({
+    left: container.scrollLeft + item.left - box.left - (box.width - item.width) / 2,
+    behavior: "instant",
+  });
 };
 
 export function CardCarousel({ label, entries, card, below }: Props) {
@@ -43,7 +48,7 @@ export function CardCarousel({ label, entries, card, below }: Props) {
     const next = clamp(i, entries.length);
     indexRef.current = next;
     setPosition(next);
-    center(trackRef.current?.children[next]);
+    centre(trackRef.current, trackRef.current?.children[next]);
   };
 
   // the index follows the swipe: read the scroll position, keep it in the ref,
@@ -63,7 +68,7 @@ export function CardCarousel({ label, entries, card, below }: Props) {
 
   // keep the current thumbnail on the strip
   useEffect(() => {
-    center(thumbsRef.current?.children[index]);
+    centre(thumbsRef.current, thumbsRef.current?.children[index]);
   }, [index]);
 
   const step = (event: KeyboardEvent) => {

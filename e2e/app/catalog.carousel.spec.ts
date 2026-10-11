@@ -41,6 +41,23 @@ test.describe("catalog: card carousel", () => {
     await expect(catalogPage.position).toHaveText(/· 2 \/ \d+$/);
   });
 
+  test("navigating the carousel never scrolls the page", async ({ page, catalogPage }) => {
+    await catalogPage.goto("wizard");
+    const scrollY = () => page.evaluate(() => window.scrollY);
+    expect(await scrollY()).toBe(0);
+
+    await catalogPage.nextCard.click();
+    await catalogPage.nextCard.click();
+    await catalogPage.nextCard.click();
+    await expect(catalogPage.position).toHaveText(/· 4 \/ \d+$/);
+    expect(await scrollY()).toBe(0);
+
+    // evaluate-click skips Playwright's own scroll-into-view, which would muddy the reading
+    await catalogPage.thumb("Witch Bolt").evaluate((el: HTMLElement) => el.click());
+    await expect(catalogPage.position).toHaveText(/^Level 1 · \d+ \/ \d+$/);
+    expect(await scrollY()).toBe(0);
+  });
+
   test("a thumbnail jumps to its card", async ({ catalogPage }) => {
     await catalogPage.goto("wizard");
 
