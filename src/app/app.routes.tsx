@@ -2,6 +2,7 @@ import { CharacterBuilderPage } from "src/characters/character-builder.page";
 import { CharacterImportPage } from "src/characters/character-import.page";
 import { CharacterPage } from "src/characters/character.page";
 import { CharactersPage } from "src/characters/characters.page";
+import { AddCardsPage } from "src/decks/add-cards.page";
 import { CatalogPage, DEFAULT_CATALOG_CLASS } from "src/decks/catalog.page";
 import { classes } from "src/models/class/classes.model";
 import { Redirect, Route, Switch } from "wouter";
@@ -19,6 +20,10 @@ export function AppRoutes() {
         <CharacterBuilderPage />
       </Route>
       <Route path="/character/:id/edit">{({ id }) => <CharacterBuilderPage id={id} />}</Route>
+      <Route path="/character/:id/add/:cls">
+        {({ id, cls }) => <AddCardsPage id={id} cls={cls} />}
+      </Route>
+      <Route path="/character/:id/add">{({ id }) => <AddCardsPage id={id} />}</Route>
       <Route path="/character/:id">{({ id }) => <CharacterPage id={id} />}</Route>
       <Route path="/import/:code">{({ code }) => <CharacterImportPage code={code} />}</Route>
       <Route path="/catalog">

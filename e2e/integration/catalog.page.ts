@@ -60,6 +60,22 @@ export function createCatalogPage(page: Page) {
       await page.goto(`/#/catalog${cls ? `/${cls}` : ""}`);
     },
 
+    // the add-cards flow: the catalog carousel in selection mode for a character
+    async gotoAdd(id: string, cls?: string) {
+      await page.goto(`/#/character/${id}/add${cls ? `/${cls}` : ""}`);
+    },
+
+    // the centred card's tap button in selection mode, named after the card
+    carouselCard(name: string) {
+      return deck.getByRole("button", { name, exact: true });
+    },
+
+    confirmAdd(name: string) {
+      return page.getByRole("button", { name: `Add to ${name}`, exact: true });
+    },
+
+    cancelAdd: page.getByRole("link", { name: "Cancel" }),
+
     async selectClass(label: string) {
       await classSelector.getByRole("button", { name: label }).click();
     },

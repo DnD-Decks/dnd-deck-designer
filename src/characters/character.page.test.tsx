@@ -144,11 +144,21 @@ describe("<CharacterPage />", () => {
       "—",
       "Your characters",
       "Card catalog",
+      "Add cards",
       "—",
       "Delete character",
     ]);
     fireEvent.click(within(menu).getByRole("link", { name: "Card catalog" }));
     expect(memory.history.slice(-1)).toEqual(["/catalog/wizard"]);
+  });
+
+  test("Add cards in the menu opens the catalog in selection mode on the character's class", () => {
+    const memory = renderAt("/character/f1");
+    const menu = screen.getByRole("navigation", { name: "Character menu" });
+    fireEvent.click(within(menu).getByRole("link", { name: "Add cards" }));
+
+    expect(memory.history.slice(-1)).toEqual(["/character/f1/add/fighter"]);
+    screen.getByRole("region", { name: "Fighter cards" });
   });
 
   test("the back arrow goes home, not back through history", () => {
