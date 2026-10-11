@@ -185,6 +185,14 @@
   }
 }
 
+/* reduced motion: no pulse, but still an animation so animationend clears the nudge */
+@keyframes nudge-outline {
+  from,
+  to {
+    box-shadow: 0 0 0 2px var(--gold-soft);
+  }
+}
+
 /* a spent card in the carousel: no quarter turn, just a pill over the dimmed face */
 .spentPill {
   position: absolute;
@@ -238,8 +246,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .cardActions[data-nudge] {
-    animation: none;
-    box-shadow: 0 0 0 2px var(--gold-soft);
+    animation: nudge-outline 0.6s linear;
   }
 
   .slot[data-spent] {

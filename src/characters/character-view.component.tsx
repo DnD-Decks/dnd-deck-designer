@@ -174,6 +174,7 @@ export function CharacterView({ character, spent = [], onToggleSpent, actions, m
                   className={styles.cardActions}
                   aria-label={`${name} actions`}
                   data-nudge={nudged || undefined}
+                  onAnimationEnd={() => setNudge(undefined)}
                 >
                   <SpotlightAction onClick={() => onToggleSpent(entry.key)}>
                     {spentKeys.has(entry.key) ? "Recover" : "Spend"}

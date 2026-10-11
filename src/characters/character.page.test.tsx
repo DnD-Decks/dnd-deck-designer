@@ -339,6 +339,18 @@ describe("<CharacterPage />", () => {
     expect(actions().getAttribute("data-nudge")).not.toBeNull();
   });
 
+  test("the nudge clears when its animation ends", () => {
+    showCarousel();
+    renderAt("/character/f1");
+
+    const actions = () => screen.getByRole("group", { name: "Second Wind actions" });
+    fireEvent.click(screen.getByRole("button", { name: "Second Wind" }));
+    expect(actions().getAttribute("data-nudge")).not.toBeNull();
+
+    fireEvent.animationEnd(actions());
+    expect(actions().getAttribute("data-nudge")).toBeNull();
+  });
+
   test("a card with no actions is not a button and shows no actions", () => {
     showCarousel();
     renderAt("/character/f1");
