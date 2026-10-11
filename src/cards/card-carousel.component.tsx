@@ -1,5 +1,5 @@
 import type { KeyboardEvent, ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { DeckCardFace } from "src/cards/deck-card.component";
 import type { DeckEntry } from "src/decks/deck.model";
 import { cardName } from "src/decks/deck.model";
@@ -7,14 +7,14 @@ import styles from "./card-carousel.module.css";
 
 export type CarouselEntry = DeckEntry & { section: string };
 
+type CardAction = { name: string; pressed?: boolean; onTap: () => void };
+
 type Props = {
   /** accessible name of the region, e.g. "Wizard cards" */
   label: string;
   entries: readonly CarouselEntry[];
   /** makes the centred card a button (selection in #329, nudge in the play view); undefined = not tappable */
-  card?: (
-    entry: CarouselEntry
-  ) => { name: string; pressed?: boolean; onTap: () => void } | undefined;
+  card?: (entry: CarouselEntry) => CardAction | undefined;
   /** UI rendered under the centred card, outside the card face (play actions) */
   below?: (entry: CarouselEntry) => ReactNode;
 };
@@ -34,6 +34,73 @@ const centre = (container: HTMLElement | null, child: Element | undefined) => {
   });
 };
 
+type SlideProps = {
+  entry: CarouselEntry;
+  index: number;
+  total: number;
+  /** not rendered — part of the memo key so the slides that flip to or from centred re-render */
+  current: boolean;
+  /** present on the centred slide only */
+  action?: CardAction;
+  /** rendered node for the centred slide only */
+  below?: ReactNode;
+};
+
+// a slide is role="group" (APG carousel): <fieldset> is the element for it
+const CarouselSlide = memo(function CarouselSlide({
+  entry,
+  index,
+  total,
+  action,
+  below,
+}: SlideProps) {
+  return (
+    <fieldset
+      aria-roledescription="slide"
+      aria-label={`${index + 1} of ${total}: ${cardName(entry.card)}`}
+      className={styles.slide}
+    >
+      <div className={styles.slot}>
+        <DeckCardFace card={entry.card} />
+        {action ? (
+          <button
+            type="button"
+            className={styles.cardTap}
+            aria-label={action.name}
+            aria-pressed={action.pressed}
+            onClick={action.onTap}
+          />
+        ) : null}
+      </div>
+      {below ? <div className={styles.below}>{below}</div> : null}
+    </fieldset>
+  );
+});
+
+type ThumbProps = {
+  entry: CarouselEntry;
+  index: number;
+  current: boolean;
+  onSelect: (index: number) => void;
+};
+
+const CarouselThumb = memo(function CarouselThumb({ entry, index, current, onSelect }: ThumbProps) {
+  return (
+    <button
+      type="button"
+      className={styles.thumb}
+      aria-label={`Go to ${cardName(entry.card)}`}
+      aria-current={current}
+      onClick={() => onSelect(index)}
+    >
+      {/* the face is decorative here: the button's label already names the card */}
+      <span aria-hidden="true" className={styles.thumbFace}>
+        <DeckCardFace card={entry.card} />
+      </span>
+    </button>
+  );
+});
+
 export function CardCarousel({ label, entries, card, below }: Props) {
   const trackRef = useRef<HTMLDivElement>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
@@ -44,12 +111,16 @@ export function CardCarousel({ label, entries, card, below }: Props) {
   // deck from pointing past its last card in the meantime
   const index = clamp(position, entries.length);
 
-  const goTo = (i: number) => {
-    const next = clamp(i, entries.length);
-    indexRef.current = next;
-    setPosition(next);
-    centre(trackRef.current, trackRef.current?.children[next]);
-  };
+  // stable so memoised thumbnails keep their onSelect across internal re-renders
+  const goTo = useCallback(
+    (i: number) => {
+      const next = clamp(i, entries.length);
+      indexRef.current = next;
+      setPosition(next);
+      centre(trackRef.current, trackRef.current?.children[next]);
+    },
+    [entries.length]
+  );
 
   // the index follows the swipe: read the scroll position, keep it in the ref,
   // and only re-render when the centred slide actually changes
@@ -74,10 +145,10 @@ export function CardCarousel({ label, entries, card, below }: Props) {
   const step = (event: KeyboardEvent) => {
     if (event.key === "ArrowLeft") {
       event.preventDefault();
-      goTo(index - 1);
+      goTo(indexRef.current - 1);
     } else if (event.key === "ArrowRight") {
       event.preventDefault();
-      goTo(index + 1);
+      goTo(indexRef.current + 1);
     }
   };
 
@@ -117,49 +188,28 @@ export function CardCarousel({ label, entries, card, below }: Props) {
       </div>
 
       <div ref={trackRef} className={styles.track} onScroll={followScroll}>
-        {entries.map((entry, i) => {
-          const action = i === index ? card?.(entry) : undefined;
-          // a slide is role="group" (APG carousel): <fieldset> is the element for it
-          return (
-            <fieldset
-              key={entry.key}
-              aria-roledescription="slide"
-              aria-label={`${i + 1} of ${entries.length}: ${cardName(entry.card)}`}
-              className={styles.slide}
-            >
-              <div className={styles.slot}>
-                <DeckCardFace card={entry.card} />
-                {action ? (
-                  <button
-                    type="button"
-                    className={styles.cardTap}
-                    aria-label={action.name}
-                    aria-pressed={action.pressed}
-                    onClick={action.onTap}
-                  />
-                ) : null}
-              </div>
-              {below && i === index ? <div className={styles.below}>{below(entry)}</div> : null}
-            </fieldset>
-          );
-        })}
+        {entries.map((entry, i) => (
+          <CarouselSlide
+            key={entry.key}
+            entry={entry}
+            index={i}
+            total={entries.length}
+            current={i === index}
+            action={i === index ? card?.(entry) : undefined}
+            below={i === index ? below?.(entry) : undefined}
+          />
+        ))}
       </div>
 
       <div ref={thumbsRef} className={styles.thumbs}>
         {entries.map((entry, i) => (
-          <button
+          <CarouselThumb
             key={entry.key}
-            type="button"
-            className={styles.thumb}
-            aria-label={`Go to ${cardName(entry.card)}`}
-            aria-current={i === index}
-            onClick={() => goTo(i)}
-          >
-            {/* the face is decorative here: the button's label already names the card */}
-            <span aria-hidden="true" className={styles.thumbFace}>
-              <DeckCardFace card={entry.card} />
-            </span>
-          </button>
+            entry={entry}
+            index={i}
+            current={i === index}
+            onSelect={goTo}
+          />
         ))}
       </div>
     </section>
