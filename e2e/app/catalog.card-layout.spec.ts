@@ -6,6 +6,7 @@ globalSetup();
 test.describe("catalog: card layout", () => {
   test("a spell card keeps its printed layout", async ({ catalogPage }) => {
     await catalogPage.goto("wizard");
+    await catalogPage.showGrid();
     const magicMissile = catalogPage.card("Magic Missile");
     await expect(magicMissile).toBeVisible();
 
