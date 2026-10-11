@@ -3,6 +3,7 @@ import { CardCarousel } from "src/cards/card-carousel.component";
 import { useCardSpotlight } from "src/cards/card-spotlight.hook";
 import { DeckCardFace } from "src/cards/deck-card.component";
 import { usePrinting } from "src/cards/print.hook";
+import { ViewModeToggle } from "src/cards/view-mode-toggle.component";
 import { useViewMode } from "src/cards/view-mode.hook";
 import type { DeckCard } from "src/decks/deck.model";
 import { cardKey, cardName, cardSection, decks } from "src/decks/deck.model";
@@ -86,24 +87,7 @@ export function DeckView({ cls }: Props) {
 
   return (
     <>
-      <div className={styles.viewToggle}>
-        <button
-          type="button"
-          className={styles.viewButton}
-          aria-pressed={mode === "grid"}
-          onClick={() => choose("grid")}
-        >
-          Grid
-        </button>
-        <button
-          type="button"
-          className={styles.viewButton}
-          aria-pressed={mode === "carousel"}
-          onClick={() => choose("carousel")}
-        >
-          Carousel
-        </button>
-      </div>
+      <ViewModeToggle mode={mode} choose={choose} />
 
       <main
         className={styles.deck}

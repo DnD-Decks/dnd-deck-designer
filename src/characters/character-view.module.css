@@ -161,6 +161,47 @@
   display: none;
 }
 
+/* the Spend / Recover group under a centred card — a fieldset for the group role */
+.cardActions {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 8px;
+  border: 0;
+  min-inline-size: 0;
+  border-radius: 10px;
+}
+
+.cardActions[data-nudge] {
+  animation: nudge-pulse 0.65s ease-out;
+}
+
+@keyframes nudge-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--gold-soft);
+  }
+  100% {
+    box-shadow: 0 0 0 14px transparent;
+  }
+}
+
+/* a spent card in the carousel: no quarter turn, just a pill over the dimmed face */
+.spentPill {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 0.2rem 0.7rem;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  background: var(--ink-900);
+  color: var(--parchment);
+  font-family: var(--font-caps);
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
 /* transparent control over the card face: tap the card to lift it */
 .zoom {
   position: absolute;
@@ -196,6 +237,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .cardActions[data-nudge] {
+    animation: none;
+    box-shadow: 0 0 0 2px var(--gold-soft);
+  }
+
   .slot[data-spent] {
     display: block;
     width: auto;
@@ -230,6 +276,7 @@
   .header,
   .sectionLabel,
   .spentLabel,
+  .spentPill,
   .zoom {
     display: none;
   }

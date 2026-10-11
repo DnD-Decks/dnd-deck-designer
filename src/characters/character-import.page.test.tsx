@@ -49,6 +49,14 @@ describe("<CharacterImportPage />", () => {
     screen.getByRole("heading", { name: "Brünhilde", level: 2 });
   });
 
+  test("the preview stays on the grid — no view toggle", () => {
+    localStorage.setItem("dnd-deck-designer:view-mode", "carousel");
+    renderAt(importLink());
+    screen.getByRole("region", { name: "Resources" });
+    expect(screen.queryByRole("button", { name: "Grid" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Carousel" })).toBeNull();
+  });
+
   test("a broken code explains the problem and links home", () => {
     const memory = renderAt("/import/not-a-real-code");
     screen.getByRole("heading", { name: "This share link doesn't work", level: 2 });

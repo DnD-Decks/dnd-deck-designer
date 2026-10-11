@@ -7,6 +7,8 @@ globalSetup();
 test.describe("play: spend and rest", () => {
   test.beforeEach(async ({ playPage }) => {
     await playPage.open(fighter);
+    // these cases exercise the mat — the play view opens on the carousel
+    await playPage.showGrid();
   });
 
   test("Spend sits beside Put it back, outside the card, for resources only", async ({

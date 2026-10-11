@@ -5,7 +5,13 @@ import type { DeckEntry } from "src/decks/deck.model";
 import { cardName } from "src/decks/deck.model";
 import styles from "./card-carousel.module.css";
 
-export type CarouselEntry = DeckEntry & { section: string };
+export type CarouselEntry = DeckEntry & {
+  section: string;
+  /** dims the card face, e.g. a spent card in play */
+  dimmed?: boolean;
+  /** centred over the card face, e.g. the "Spent" pill in play */
+  badge?: ReactNode;
+};
 
 type CardAction = { name: string; pressed?: boolean; onTap: () => void };
 
@@ -60,8 +66,9 @@ const CarouselSlide = memo(function CarouselSlide({
       aria-label={`${index + 1} of ${total}: ${cardName(entry.card)}`}
       className={styles.slide}
     >
-      <div className={styles.slot}>
+      <div className={styles.slot} data-dimmed={entry.dimmed || undefined}>
         <DeckCardFace card={entry.card} />
+        {entry.badge}
         {action ? (
           <button
             type="button"

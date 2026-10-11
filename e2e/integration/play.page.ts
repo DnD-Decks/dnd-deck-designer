@@ -7,11 +7,14 @@ export function createPlayPage(page: Page) {
   const spotlight = page.getByRole("dialog");
   const spend = spotlight.getByRole("button", { name: "Spend" });
   const zoom = (name: string) => table.getByRole("button", { name: `Zoom ${name}`, exact: true });
+  const grid = page.getByRole("button", { name: "Grid" });
 
   return {
     name(name: string) {
       return table.getByRole("heading", { name, level: 2 });
     },
+    gridButton: grid,
+    carouselButton: page.getByRole("button", { name: "Carousel" }),
     menuButton: page.getByRole("button", { name: "Menu" }),
     menu: page.getByRole("navigation", { name: "Character menu" }),
     spotlight,
@@ -37,6 +40,35 @@ export function createPlayPage(page: Page) {
     },
 
     zoom,
+
+    carousel(name: string) {
+      return table.getByRole("region", { name });
+    },
+
+    // the scrollable strip inside a carousel — the parent of its first slide
+    carouselTrack(name: string) {
+      return table
+        .getByRole("region", { name })
+        .getByRole("group", { name: "1 of" })
+        .locator("xpath=..");
+    },
+
+    position: page.getByText(/· \d+ \/ \d+/),
+
+    // the Spend / Recover group under the centred card
+    cardActions(name: string) {
+      return table.getByRole("group", { name: `${name} actions` });
+    },
+
+    // the centred card's tap button, named after the card ("Second Wind, spent")
+    carouselCard(name: string) {
+      return table.getByRole("button", { name, exact: true });
+    },
+
+    // the play view opens on the carousel; specs that exercise the mat pick Grid first
+    async showGrid() {
+      await grid.click();
+    },
 
     spent(name: string) {
       return table.getByRole("button", { name: `Zoom ${name}, spent`, exact: true });
