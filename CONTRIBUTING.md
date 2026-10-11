@@ -26,6 +26,8 @@ Issues opened with the **Agent task** form can be handed to an AI coding agent. 
 
 Workflow: one issue → one branch `<type>/<issue#>-<slug>` (e.g. `feat/42-short-rest`) → one PR whose body references the issue (`Part of #N` or `Closes #N`). `pnpm blue-ball` and `pnpm e2e` must pass before the PR is opened. Visual baselines are refreshed by a human only. A human reviews every PR.
 
+Sliced issues: a feature too big for one PR stays one issue with numbered **slices** (each with its own acceptance criteria, touchpoints and tests) instead of being split into sub-issues. Each slice is one branch `<type>/<issue#>-slice-<n>-<slug>` and one PR (`Part of #N (slice n)`), shipped in order; the last slice's PR says `Closes #N`. A slice may run in parallel with other issues only when the issue says so.
+
 ## Adding a new card kind
 
 Follow the step-by-step in `ARCHITECTURE.md` § *Adding a new card kind* (data → model → `DeckCard` union → deck assembly → `deck-view` switches → component). In short: cards live flat as `src/cards/<kind>-card.component.tsx` + CSS module + co-located test — there are no per-category folders and no barrel file.
