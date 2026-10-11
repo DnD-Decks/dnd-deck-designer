@@ -20,6 +20,13 @@ afterEach(() => vi.restoreAllMocks());
 const last = (memory: ReturnType<typeof renderAt>) => memory.history.slice(-1);
 
 describe("<AddCardsPage />", () => {
+  test("the page is named after the character", () => {
+    renderAt("/character/f1/add");
+
+    screen.getByRole("heading", { name: "Add cards to Brünhilde" });
+    screen.getByRole("main", { name: "Add cards to Brünhilde" });
+  });
+
   test("the bare add route redirects to the character's class", () => {
     renderAt("/character/f1/add");
     screen.getByRole("region", { name: "Fighter cards" });

@@ -37,6 +37,10 @@ test.describe("catalog: add cards", () => {
     await catalogPage.confirmAdd("Brünhilde (2)").click();
     await expect(page).toHaveURL(new RegExp(`#/character/${id}$`));
 
+    // Back must not reopen the picker — confirm replaced its history entry
+    await page.goBack();
+    await expect(page).toHaveURL(new RegExp(`#/character/${id}$`));
+
     // both landed in the deck, the spent card is still spent
     const carousel = playPage.carousel("Brünhilde's cards");
     await expect(carousel.getByRole("button", { name: "Go to Greataxe" })).toBeVisible();

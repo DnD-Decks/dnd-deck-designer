@@ -71,14 +71,17 @@ export function AddCardsPage({ id, cls }: Props) {
       setFailed(true);
       return;
     }
-    navigate(`/character/${id}`);
+    navigate(`/character/${id}`, { replace: true });
   };
 
   return (
-    <main className={styles.page} data-class={found.id}>
+    <main className={styles.page} data-class={found.id} aria-labelledby="add-cards-heading">
+      <h2 id="add-cards-heading" className={styles.title}>
+        Add cards to {character.name}
+      </h2>
       <ClassSelector
         selected={found.id}
-        onSelect={(next) => navigate(`/character/${id}/add/${next}`)}
+        onSelect={(next) => navigate(`/character/${id}/add/${next}`, { replace: true })}
       />
       <CardCarousel
         key={found.id}
@@ -100,7 +103,7 @@ export function AddCardsPage({ id, cls }: Props) {
             Couldn't save. Check your browser storage and try again.
           </p>
         )}
-        <Link href={`/character/${id}`} className={styles.cancel}>
+        <Link href={`/character/${id}`} replace className={styles.cancel}>
           Cancel
         </Link>
         {selected.size > 0 && (

@@ -4,6 +4,13 @@
   gap: 1rem;
 }
 
+.title {
+  margin: 0;
+  font-family: var(--font-caps);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+}
+
 /* a card the character already owns sits dimmed under this mark, not selectable */
 .inDeck {
   position: absolute;
