@@ -39,6 +39,14 @@ export function createCatalogPage(page: Page) {
       return deck.getByRole("region", { name });
     },
 
+    // the scrollable strip inside a carousel — the parent of its first slide
+    carouselTrack(name: string) {
+      return deck
+        .getByRole("region", { name })
+        .getByRole("group", { name: "1 of" })
+        .locator("xpath=..");
+    },
+
     thumb(name: string) {
       return deck.getByRole("button", { name: `Go to ${name}`, exact: true });
     },

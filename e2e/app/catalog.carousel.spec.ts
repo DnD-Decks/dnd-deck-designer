@@ -29,6 +29,18 @@ test.describe("catalog: card carousel", () => {
     await expect(catalogPage.position).toHaveText(/· 1 \/ \d+$/);
   });
 
+  test("a swipe along the track moves to the next card", async ({ catalogPage }) => {
+    await catalogPage.goto("wizard");
+    await expect(catalogPage.position).toHaveText(/· 1 \/ \d+$/);
+
+    await catalogPage.carouselTrack("Wizard cards").evaluate((track) => {
+      const slide = track.children[0];
+      track.scrollBy({ left: slide.getBoundingClientRect().width });
+    });
+
+    await expect(catalogPage.position).toHaveText(/· 2 \/ \d+$/);
+  });
+
   test("a thumbnail jumps to its card", async ({ catalogPage }) => {
     await catalogPage.goto("wizard");
 

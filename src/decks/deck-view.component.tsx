@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { CardCarousel } from "src/cards/card-carousel.component";
 import { useCardSpotlight } from "src/cards/card-spotlight.hook";
 import { DeckCardFace } from "src/cards/deck-card.component";
@@ -66,16 +66,11 @@ export function DeckView({ cls }: Props) {
   const { mode, choose } = useViewMode();
   const printing = usePrinting();
 
-  // stable identity: a new array every render would reset the carousel
-  const entries = useMemo(
-    () =>
-      deck.cards.map((card) => ({
-        key: cardKey(card),
-        card,
-        section: cardSection(card),
-      })),
-    [deck.cards]
-  );
+  const entries = deck.cards.map((card) => ({
+    key: cardKey(card),
+    card,
+    section: cardSection(card),
+  }));
 
   // the deck can change under a held card (browser back through the class hash)
   const [heldClass, setHeldClass] = useState(cls);
@@ -139,7 +134,7 @@ export function DeckView({ cls }: Props) {
             </section>
           ))
         ) : (
-          <CardCarousel label={`${deck.cls.label} cards`} entries={entries} />
+          <CardCarousel key={cls} label={`${deck.cls.label} cards`} entries={entries} />
         )}
       </main>
 

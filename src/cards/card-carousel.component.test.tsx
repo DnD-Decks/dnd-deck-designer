@@ -107,11 +107,20 @@ test("below renders for the current entry only", () => {
   expect(screen.queryByText(`Under ${three[0].key}`)).toBeNull();
 });
 
-test("a new list of entries starts back on the first card", () => {
+test("a shrinking deck clamps the position to the last card", () => {
   const { rerender } = render(<CardCarousel label="Fighter cards" entries={three} />);
   fireEvent.click(screen.getByRole("button", { name: "Next card" }));
-  screen.getByText("Class Features · 2 / 3");
+  fireEvent.click(screen.getByRole("button", { name: "Next card" }));
+  screen.getByText("Class Features · 3 / 3");
 
   rerender(<CardCarousel label="Fighter cards" entries={entries.slice(0, 2)} />);
-  screen.getByText("Resources · 1 / 2");
+  screen.getByText("Class Features · 2 / 2");
+});
+
+test("the card prop returning undefined leaves the centred card non-tappable", () => {
+  render(<CardCarousel label="Fighter cards" entries={three} card={() => undefined} />);
+
+  // the card face is still there, just not a button
+  screen.getByRole("article", { name: "Second Wind" });
+  expect(screen.queryByRole("button", { name: "Second Wind" })).toBeNull();
 });

@@ -11,8 +11,10 @@ type Props = {
   /** accessible name of the region, e.g. "Wizard cards" */
   label: string;
   entries: readonly CarouselEntry[];
-  /** makes the centred card a button (selection in #329, nudge in the play view) */
-  card?: (entry: CarouselEntry) => { name: string; pressed?: boolean; onTap: () => void };
+  /** makes the centred card a button (selection in #329, nudge in the play view); undefined = not tappable */
+  card?: (
+    entry: CarouselEntry
+  ) => { name: string; pressed?: boolean; onTap: () => void } | undefined;
   /** UI rendered under the centred card, outside the card face (play actions) */
   below?: (entry: CarouselEntry) => ReactNode;
 };
@@ -30,20 +32,16 @@ export function CardCarousel({ label, entries, card, below }: Props) {
   const trackRef = useRef<HTMLDivElement>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
   const indexRef = useRef(0);
-  const [index, setIndex] = useState(0);
+  const [position, setPosition] = useState(0);
 
-  // a different deck (another class) starts back on its first card
-  const [seen, setSeen] = useState(entries);
-  if (seen !== entries) {
-    setSeen(entries);
-    indexRef.current = 0;
-    setIndex(0);
-  }
+  // callers reset the carousel with a `key` change; the clamp keeps a shrinking
+  // deck from pointing past its last card in the meantime
+  const index = clamp(position, entries.length);
 
   const goTo = (i: number) => {
     const next = clamp(i, entries.length);
     indexRef.current = next;
-    setIndex(next);
+    setPosition(next);
     center(trackRef.current?.children[next]);
   };
 
@@ -58,7 +56,7 @@ export function CardCarousel({ label, entries, card, below }: Props) {
     const i = clamp(Math.round(track.scrollLeft / width), entries.length);
     if (i !== indexRef.current) {
       indexRef.current = i;
-      setIndex(i);
+      setPosition(i);
     }
   };
 
@@ -66,14 +64,6 @@ export function CardCarousel({ label, entries, card, below }: Props) {
   useEffect(() => {
     center(thumbsRef.current?.children[index]);
   }, [index]);
-
-  // switching class scrolls the track back to the start
-  useEffect(() => {
-    const track = trackRef.current;
-    if (entries.length > 0 && typeof track?.scrollTo === "function") {
-      track.scrollTo({ left: 0 });
-    }
-  }, [entries]);
 
   const step = (event: KeyboardEvent) => {
     if (event.key === "ArrowLeft") {
