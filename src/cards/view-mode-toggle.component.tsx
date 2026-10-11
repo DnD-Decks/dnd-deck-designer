@@ -8,7 +8,7 @@ type Props = {
 
 export function ViewModeToggle({ mode, choose }: Props) {
   return (
-    <div className={styles.viewToggle}>
+    <fieldset className={styles.viewToggle} aria-label="View">
       <button
         type="button"
         className={styles.viewButton}
@@ -25,6 +25,6 @@ export function ViewModeToggle({ mode, choose }: Props) {
       >
         Carousel
       </button>
-    </div>
+    </fieldset>
   );
 }

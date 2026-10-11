@@ -1,6 +1,11 @@
 .viewToggle {
   display: flex;
   gap: 6px;
+  /* fieldset reset */
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
 }
 
 .viewButton {

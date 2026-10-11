@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitForElementToBeRemoved } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitForElementToBeRemoved,
+  within,
+} from "@testing-library/react";
 import { decks } from "src/decks/deck.model";
 import { classes } from "src/models/class/classes.model";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
@@ -145,6 +151,9 @@ test("the catalog opens on the carousel", () => {
 
 test("the toggle switches between the carousel and the grid", () => {
   render(<DeckView cls="wizard" />);
+  const toggle = within(screen.getByRole("group", { name: "View" }));
+  toggle.getByRole("button", { name: "Grid" });
+  toggle.getByRole("button", { name: "Carousel" });
 
   fireEvent.click(screen.getByRole("button", { name: "Grid" }));
   screen.getByRole("heading", { name: /cantrips/i, level: 2 });
