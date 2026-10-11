@@ -22,9 +22,10 @@ type Props = {
 const clamp = (index: number, length: number) => Math.max(0, Math.min(index, length - 1));
 
 const center = (element: Element | undefined) => {
-  // jsdom has no layout and no scrollIntoView
+  // jsdom has no layout and no scrollIntoView; instant, or a second jump during
+  // a smooth scroll makes mandatory snap pull the track back to the old slide
   if (typeof element?.scrollIntoView === "function") {
-    element.scrollIntoView({ block: "nearest", inline: "center" });
+    element.scrollIntoView({ block: "nearest", inline: "center", behavior: "instant" });
   }
 };
 
