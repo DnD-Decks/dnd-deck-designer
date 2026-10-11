@@ -37,6 +37,14 @@
   font-weight: 700;
 }
 
+/* a blocked write keeps you here with your picks — say so */
+.alert {
+  margin: 0 auto 0 0;
+  align-self: center;
+  color: var(--danger);
+  font-size: 14px;
+}
+
 /* pinned at the thumb: Cancel backs out, the button confirms the pick */
 .bar {
   position: sticky;

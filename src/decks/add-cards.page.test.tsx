@@ -2,7 +2,7 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { App } from "src/app/app.component";
 import { brunhilde } from "src/characters/character.fixture";
 import { characterStorage } from "src/services/character.storage";
-import { beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { memoryLocation } from "wouter/memory-location";
 
 const renderAt = (path: string) => {
@@ -15,6 +15,7 @@ beforeEach(() => {
   localStorage.clear();
   characterStorage.save(brunhilde());
 });
+afterEach(() => vi.restoreAllMocks());
 
 const last = (memory: ReturnType<typeof renderAt>) => memory.history.slice(-1);
 
@@ -94,6 +95,24 @@ describe("<AddCardsPage />", () => {
       "spell-cure-wounds",
       "weapon-greataxe",
     ]);
+  });
+
+  test("a failed save stays on the picker with the selection, and says so", () => {
+    vi.spyOn(characterStorage, "save").mockReturnValue(false);
+    const memory = renderAt("/character/f1/add");
+
+    fireEvent.click(screen.getByRole("button", { name: "Go to Greataxe" }));
+    const card = screen.getByRole("button", { name: "Greataxe" });
+    fireEvent.click(card);
+
+    fireEvent.click(screen.getByRole("button", { name: "Add to Brünhilde (1)" }));
+
+    expect(screen.getByRole("alert").textContent).toBe(
+      "Couldn't save. Check your browser storage and try again."
+    );
+    expect(card.getAttribute("aria-pressed")).toBe("true");
+    screen.getByRole("button", { name: "Add to Brünhilde (1)" });
+    expect(last(memory)).toEqual(["/character/f1/add/fighter"]);
   });
 
   test("Cancel returns to the character without saving anything", () => {

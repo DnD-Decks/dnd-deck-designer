@@ -28,6 +28,7 @@ export function AddCardsPage({ id, cls }: Props) {
   const character = characterStorage.get(id);
   const [, navigate] = useLocation();
   const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
+  const [failed, setFailed] = useState(false);
 
   if (!character) return <Redirect to="/" replace />;
   if (!cls) return <Redirect to={`/character/${id}/add/${character.cls}`} replace />;
@@ -66,7 +67,10 @@ export function AddCardsPage({ id, cls }: Props) {
     });
 
   const confirm = () => {
-    characterStorage.save(withCustom(character, selected));
+    if (!characterStorage.save(withCustom(character, selected))) {
+      setFailed(true);
+      return;
+    }
     navigate(`/character/${id}`);
   };
 
@@ -91,14 +95,19 @@ export function AddCardsPage({ id, cls }: Props) {
         }
       />
       <div className={styles.bar}>
+        {failed && (
+          <p role="alert" className={styles.alert}>
+            Couldn't save. Check your browser storage and try again.
+          </p>
+        )}
         <Link href={`/character/${id}`} className={styles.cancel}>
           Cancel
         </Link>
-        {selected.size > 0 ? (
+        {selected.size > 0 && (
           <button type="button" className={styles.confirm} onClick={confirm}>
             Add to {character.name} ({selected.size})
           </button>
-        ) : null}
+        )}
       </div>
     </main>
   );
