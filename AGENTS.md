@@ -58,7 +58,7 @@
 
 ### End-to-end (`e2e/`)
 
-- Playwright, one desktop project, no network: the app has no backend to mock, so a catch-all route lets same-origin through and aborts (and logs) anything cross-origin.
+- Playwright, two projects split by spec name — `phone` (390×844, touch) for `home.*`, `builder.*`, `play.*`; desktop `chromium` for the rest — and no network: the app has no backend to mock, so a catch-all route lets same-origin through and aborts (and logs) anything cross-origin.
 - Specs live in `e2e/app/` as `${page}.${feature}.spec.ts`, one `describe` per file; plumbing (fixtures, page objects, network guard) lives in `e2e/integration/`.
 - Never import `@playwright/test` in a spec — import `test`/`expect` from `e2e/integration/fixtures/test.extend.ts`.
 - `toHaveScreenshot` on card locators only; baselines are Docker-made (`pnpm e2e:docker --update-snapshots`). Host runs skip visual assertions.
@@ -70,6 +70,7 @@ Full rules: [CONTRIBUTING.md § Agent-ready issues](CONTRIBUTING.md#agent-ready-
 
 - Only pick up issues labelled `agent-ready`.
 - One issue per branch (`<type>/<issue#>-<slug>`) and per PR; the PR body references the issue (`Part of #N` / `Closes #N`).
+- Exception: an issue that lists numbered **slices** ships one slice per branch/PR (`<type>/<issue#>-slice-<n>-<slug>`), in order; each PR says `Part of #N (slice n)`, the last one `Closes #N`. Tick the slice's boxes in the issue when its PR lands.
 - Run `pnpm blue-ball` and `pnpm e2e` before opening the PR; both must pass.
 - Never update the Docker visual baselines (`pnpm e2e:docker --update-snapshots`) — a human does that.
 - If the acceptance criteria are ambiguous, stop and comment on the issue instead of guessing.

@@ -14,12 +14,29 @@ e2e/
 │   ├── network.guard.ts        # catch-all route: same-origin through, cross-origin aborted
 │   ├── catalog.page.ts         # page objects: locators + intent helpers, no assertions
 │   ├── home.page.ts            #   (one per route: home = your characters, catalog = every class's cards,
-│   ├── play.page.ts            #    play = one character at the table)
-│   └── fixtures/test.extend.ts # `test`/`expect` every spec imports
+│   ├── builder.page.ts         #    builder = new / edit character, import = share-link preview,
+│   ├── import.page.ts          #    play = one character at the table)
+│   ├── play.page.ts
+│   └── fixtures/
+│       ├── test.extend.ts      # `test`/`expect` every spec imports
+│       └── builds.fixture.ts   # shared character builds for builder / play / import specs
 ├── playwright.config.ts
 ├── Dockerfile
 └── docker-compose.yml
 ```
+
+## Projects
+
+Two Playwright projects, split by spec file name (`PHONE_SPECS` in `playwright.config.ts`). Nothing
+runs twice, so the catalog's print-card baselines are not duplicated.
+
+| Project    | Device                                  | Specs                                   |
+| ---------- | --------------------------------------- | --------------------------------------- |
+| `phone`    | Chromium at 390×844, `isMobile`, touch  | `home.*`, `builder.*`, `play.*`         |
+| `chromium` | Desktop Chrome                          | everything else (`catalog.*`, `import.*`) |
+
+A new spec picks its project by its `${page}` prefix: name it after the page it drives, and the
+device follows. Adding a phone page means extending `PHONE_SPECS`.
 
 ## Running
 
@@ -76,9 +93,6 @@ Two traps worth naming, both hit while writing this suite:
 
 - The deck empty state (`No cards vendored for …`) is unreachable in the browser: all 12 classes
   ship level-1 cards. It stays a vitest test with a mocked model.
-- Two projects, split by file name: `builder.*` and `play.*` specs run only on `phone`
-  (Chromium at 390×844, touch), everything else only on `chromium` (desktop). Nothing runs
-  twice, so the catalog's print-card baselines are not duplicated.
 
 ## Keeping Docker in step
 
