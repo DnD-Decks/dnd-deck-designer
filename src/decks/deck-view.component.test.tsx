@@ -170,3 +170,17 @@ test("a corrupt stored view falls back to the carousel", () => {
   render(<DeckView cls="wizard" />);
   screen.getByRole("region", { name: "Wizard cards" });
 });
+
+test("printing swaps the carousel for the grid synchronously", () => {
+  render(<DeckView cls="wizard" />);
+  screen.getByRole("region", { name: "Wizard cards" });
+
+  // not wrapped in act: the printer cannot wait for React to settle
+  window.dispatchEvent(new Event("beforeprint"));
+  screen.getByRole("heading", { name: /cantrips/i, level: 2 });
+  expect(screen.queryByRole("region", { name: "Wizard cards" })).toBeNull();
+
+  window.dispatchEvent(new Event("afterprint"));
+  screen.getByRole("region", { name: "Wizard cards" });
+  expect(screen.queryByRole("heading", { name: /cantrips/i, level: 2 })).toBeNull();
+});
