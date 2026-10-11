@@ -38,6 +38,11 @@ describe("characters.parse()", () => {
     { label: "a level beyond 1", value: { ...brunhilde(), level: 2 } },
     { label: "a rule the class does not have", value: { ...brunhilde(), picks: { cantrips: [] } } },
     { label: "picks that are not strings", value: { ...brunhilde(), picks: { weapons: [1] } } },
+    { label: "a custom that is not a list", value: { ...brunhilde(), picks: { custom: "x" } } },
+    {
+      label: "custom keys that are not strings",
+      value: { ...brunhilde(), picks: { custom: [7] } },
+    },
     {
       label: "a weapon the class cannot pick",
       value: { ...brunhilde(), picks: { weapons: ["x"] } },
@@ -69,6 +74,21 @@ describe("characters.fromShareCode()", () => {
       }
     );
     assert.notEqual(imported?.id, "f1");
+  });
+
+  test("round-trips custom card keys", () => {
+    const hero = {
+      ...brunhilde(),
+      picks: { ...brunhilde().picks, custom: ["spell-cure-wounds", "feat-rogue-sneak-attack"] },
+    };
+    const imported = characters.fromShareCode(characters.toShareCode(hero));
+    assert.deepEqual(imported?.picks.custom, ["spell-cure-wounds", "feat-rogue-sneak-attack"]);
+  });
+
+  test("a payload without custom still parses", () => {
+    const imported = characters.fromShareCode(characters.toShareCode(brunhilde()));
+    assert.equal(imported?.picks.custom, undefined);
+    assert.deepEqual(imported?.picks.weapons, ["longsword", "shortbow", "dagger"]);
   });
 
   [
