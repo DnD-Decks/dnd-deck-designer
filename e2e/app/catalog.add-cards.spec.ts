@@ -43,9 +43,9 @@ test.describe("catalog: add cards", () => {
 
     // both landed in the deck, the spent card is still spent
     const carousel = playPage.carousel("Brünhilde's cards");
-    await expect(carousel.getByRole("button", { name: "Go to Greataxe" })).toBeVisible();
-    await expect(carousel.getByRole("button", { name: "Go to Cure Wounds" })).toBeVisible();
-    await expect(playPage.carouselCard("Second Wind, spent")).toBeVisible();
+    await expect.soft(carousel.getByRole("button", { name: "Go to Greataxe" })).toBeVisible();
+    await expect.soft(carousel.getByRole("button", { name: "Go to Cure Wounds" })).toBeVisible();
+    await expect.soft(playPage.carouselCard("Second Wind, spent")).toBeVisible();
 
     // the share link carries the added cards
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
@@ -53,7 +53,7 @@ test.describe("catalog: add cards", () => {
     await playPage.menu.getByRole("button", { name: "Share" }).click();
     const link = await page.evaluate(() => navigator.clipboard.readText());
     const code = link.split("#/import/")[1] ?? "";
-    expect.soft(code).not.toBe("");
+    expect(code).not.toBe("");
 
     await importPage.goto(code);
     await expect(importPage.card("Cure Wounds")).toBeVisible();
