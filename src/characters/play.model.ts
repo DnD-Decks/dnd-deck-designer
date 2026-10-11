@@ -1,4 +1,8 @@
-import type { DeckEntry } from "src/decks/deck.model";
+// Runtime imports are relative with .ts extension so node:test can resolve them
+// (the src/* alias only exists for tsc and vite).
+import { assertNever } from "../lib/assert-never.ts";
+
+import type { DeckCard, DeckEntry } from "src/decks/deck.model";
 import type { Resource } from "src/models/resources/resources.model";
 import type { RestType } from "src/models/rest/rest-actions.model";
 
@@ -24,8 +28,36 @@ const namesOf = (resources: readonly Resource[]) => [
   ...new Set(resources.map((resource) => resource.name)),
 ];
 
+// the fixed sections of the play table
+const SECTIONS = ["Resources", "Weapons", "Features", "Cantrips", "Spells"] as const;
+
+function sectionOf(card: DeckCard) {
+  switch (card.kind) {
+    case "resource":
+      return "Resources";
+    case "weapon":
+      return "Weapons";
+    case "feat":
+      return "Features";
+    case "spell":
+      return card.spell.level === 0 ? "Cantrips" : "Spells";
+    default:
+      return assertNever(card);
+  }
+}
+
 /** Play at the table: which cards can be spent and what each rest brings back. */
 export const play = {
+  sectionOf,
+
+  /** the deck grouped into the table's fixed sections, empty ones dropped */
+  sections(entries: readonly DeckEntry[]) {
+    return SECTIONS.map((label) => ({
+      label,
+      entries: entries.filter(({ card }) => sectionOf(card) === label),
+    })).filter((section) => section.entries.length > 0);
+  },
+
   spendable(entry: DeckEntry) {
     return entry.card.kind === "resource";
   },
