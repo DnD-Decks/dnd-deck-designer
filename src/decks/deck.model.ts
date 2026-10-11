@@ -132,9 +132,9 @@ export const decks = {
       }
     });
 
-    // Custom picks carry card keys; unknown keys and cards the class deck
-    // already has are skipped.
-    const seen = new Set(cards.map(cardKey));
+    // Custom picks carry card keys; unknown keys and cards already in the
+    // character's deck are skipped (an unpicked same-class card is appended).
+    const seen = new Set(kept.map(cardKey));
     for (const key of character.picks.custom ?? []) {
       const card = decks.findCard({ key });
       if (card && !seen.has(key)) {

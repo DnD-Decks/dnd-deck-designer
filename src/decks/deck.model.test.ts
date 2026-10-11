@@ -160,16 +160,18 @@ describe("decks.forCharacter()", () => {
     assert.equal(entries.filter(({ card }) => card.kind === "resource").length, 2);
   });
 
-  test("keeps the character's own class cards next to the custom ones", () => {
+  test("adds a same-class card the character did not pick", () => {
+    // burning hands is a wizard level-1 spell absent from the picks above
     const hero: Character = {
       ...wizard,
-      picks: { ...wizard.picks, custom: ["spell-cure-wounds"] },
+      picks: { ...wizard.picks, custom: ["spell-burning-hands"] },
     };
-    const keys = new Set(decks.forCharacter(hero).entries.map(({ key }) => key));
-    assert.ok(keys.has("spell-fire-bolt-0"));
-    assert.ok(keys.has("resource-wizard-mana-0"));
-    assert.ok(keys.has("weapon-dagger-0"));
-    assert.ok(keys.has("spell-cure-wounds-0"));
+    const keys = decks.forCharacter(hero).entries.map(({ key }) => key);
+    assert.equal(keys.filter((key) => key.startsWith("spell-burning-hands")).length, 1);
+    // the picked class cards are still there
+    assert.ok(keys.includes("spell-fire-bolt-0"));
+    assert.ok(keys.includes("resource-wizard-mana-0"));
+    assert.ok(keys.includes("weapon-dagger-0"));
   });
 
   test("adds cross-class spell, feat, resource and weapon cards", () => {
@@ -212,7 +214,7 @@ describe("decks.forCharacter()", () => {
     assert.deepEqual(decks.forCharacter(hero).entries, decks.forCharacter(wizard).entries);
   });
 
-  test("does not duplicate a card the class deck already has", () => {
+  test("does not duplicate a card the character already has", () => {
     const hero: Character = {
       ...wizard,
       picks: {
