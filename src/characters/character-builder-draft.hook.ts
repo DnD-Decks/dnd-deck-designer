@@ -4,6 +4,7 @@ import type { Character, Picks } from "src/characters/character.model";
 import { characters } from "src/characters/character.model";
 import type { ChoiceIssue, ChoiceSource } from "src/characters/choices.model";
 import { choices } from "src/characters/choices.model";
+import { decks } from "src/decks/deck.model";
 import type { CharacterClass } from "src/models/class/classes.model";
 import { characterStorage } from "src/services/character.storage";
 import { useLocation } from "wouter";
@@ -23,6 +24,15 @@ function issueMessage(issue: ChoiceIssue) {
     case "unknown":
       return `${issue.rule.label}: remove unavailable choices.`;
   }
+}
+
+// a stored custom key may name a card the data no longer ships — keep only real ones
+function withKnownCustom(picks: Picks): Picks {
+  if (!picks.custom?.length) return picks;
+  const known = picks.custom.filter((key) => decks.findCard({ key }));
+  if (known.length) return { ...picks, custom: known };
+  const { custom: _dropped, ...rest } = picks;
+  return rest;
 }
 
 // a fighter has no spells to choose: its steps are ["class", "weapon"]
@@ -45,7 +55,7 @@ function stepsFor(cls: CharacterClass | undefined, picks: Picks): BuilderStep[] 
 export function useCharacterBuilderDraft(initial?: Character) {
   const [, navigate] = useLocation();
   const [cls, setClass] = useState<CharacterClass | undefined>(initial?.cls);
-  const [picks, setPicks] = useState<Picks>(initial?.picks ?? {});
+  const [picks, setPicks] = useState<Picks>(() => withKnownCustom(initial?.picks ?? {}));
   const [name, setName] = useState(initial?.name ?? "");
   const [failed, setFailed] = useState(false);
   const steps = stepsFor(cls, picks);

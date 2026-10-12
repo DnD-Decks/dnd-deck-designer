@@ -10,7 +10,6 @@ type Props = {
 
 /** The cards a character picked up by hand in the catalog, each with its way back out. */
 export function CustomCards({ keys, onRemove }: Props) {
-  // a key survives in storage only while it still names a real card
   const entries = keys.flatMap((key) => {
     const card = decks.findCard({ key });
     return card ? [{ key, card }] : [];

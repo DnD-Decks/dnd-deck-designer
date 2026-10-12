@@ -232,6 +232,45 @@ describe("<CharacterBuilderPage />", () => {
       expect(characterStorage.get("f1")?.picks.custom).toEqual([]);
     });
 
+    test("a custom card that no longer exists drops the step and the dead key", () => {
+      characterStorage.save({
+        ...brunhilde(),
+        picks: { ...brunhilde().picks, custom: ["spell-does-not-exist"] },
+      });
+      const memory = renderAt("/character/f1/edit");
+
+      expect(stepNames().map(({ text }) => text)).toEqual(["1 Class", "2 Weapons"]);
+
+      next();
+      click("Build deck");
+      expect(memory.history.slice(-1)).toEqual(["/character/f1"]);
+      expect(characterStorage.get("f1")?.picks.custom).toBeUndefined();
+    });
+
+    test("a custom card that no longer exists leaves the step and save to the real ones", () => {
+      characterStorage.save({
+        ...brunhilde(),
+        picks: {
+          ...brunhilde().picks,
+          custom: ["spell-does-not-exist", "spell-cure-wounds"],
+        },
+      });
+      const memory = renderAt("/character/f1/edit");
+
+      expect(stepNames().map(({ text }) => text)).toEqual([
+        "1 Class",
+        "2 Weapons",
+        "3 Custom cards",
+      ]);
+      next();
+      next();
+      screen.getByRole("article", { name: "Cure Wounds" });
+
+      click("Build deck");
+      expect(memory.history.slice(-1)).toEqual(["/character/f1"]);
+      expect(characterStorage.get("f1")?.picks.custom).toEqual(["spell-cure-wounds"]);
+    });
+
     test("changing class drops the custom cards with the rest of the picks", () => {
       withCustom();
       renderAt("/character/f1/edit");
