@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { DeckCardFace } from "src/cards/deck-card.component";
 import { cardName, decks } from "src/decks/deck.model";
 import styles from "./custom-cards.module.css";
@@ -14,13 +15,36 @@ export function CustomCards({ keys, onRemove }: Props) {
     const card = decks.findCard({ key });
     return card ? [{ key, card }] : [];
   });
+  const buttons = useRef(new Map<string, HTMLButtonElement>());
+  const refocus = useRef<string | undefined>(undefined);
+
+  const remove = (index: number, key: string) => {
+    refocus.current = entries[index + 1]?.key ?? entries[index - 1]?.key;
+    onRemove(key);
+  };
+
+  // keyed on keys: the refocus lands after the list re-renders without the removed card
+  // biome-ignore lint/correctness/useExhaustiveDependencies: keys is the trigger, not a read
+  useEffect(() => {
+    const key = refocus.current;
+    refocus.current = undefined;
+    if (key) buttons.current.get(key)?.focus();
+  }, [keys]);
 
   return (
     <div className={styles.row}>
-      {entries.map(({ key, card }) => (
+      {entries.map(({ key, card }, index) => (
         <div key={key} className={styles.slot}>
           <DeckCardFace card={card} />
-          <button type="button" className={styles.remove} onClick={() => onRemove(key)}>
+          <button
+            type="button"
+            className={styles.remove}
+            ref={(node) => {
+              if (node) buttons.current.set(key, node);
+              else buttons.current.delete(key);
+            }}
+            onClick={() => remove(index, key)}
+          >
             Remove {cardName(card)}
           </button>
         </div>

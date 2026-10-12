@@ -271,6 +271,29 @@ describe("<CharacterBuilderPage />", () => {
       expect(characterStorage.get("f1")?.picks.custom).toEqual(["spell-cure-wounds"]);
     });
 
+    test("removing a custom card keeps focus on the neighbouring Remove button", () => {
+      characterStorage.save({
+        ...brunhilde(),
+        picks: {
+          ...brunhilde().picks,
+          custom: ["spell-cure-wounds", "weapon-greataxe", "weapon-greatsword"],
+        },
+      });
+      renderAt("/character/f1/edit");
+      next();
+      next();
+
+      // removing the first card moves focus to the next card's button
+      button("Remove Cure Wounds").focus();
+      click("Remove Cure Wounds");
+      expect(document.activeElement).toBe(button("Remove Greataxe"));
+
+      // removing the last card moves focus to the previous card's button
+      button("Remove Greatsword").focus();
+      click("Remove Greatsword");
+      expect(document.activeElement).toBe(button("Remove Greataxe"));
+    });
+
     test("changing class drops the custom cards with the rest of the picks", () => {
       withCustom();
       renderAt("/character/f1/edit");
