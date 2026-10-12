@@ -36,6 +36,7 @@ Hash routing with [wouter](https://github.com/molefrog/wouter) (`wouter/use-hash
 | `#/new` | Character builder (`src/characters/character-builder.page.tsx`) |
 | `#/character/<id>` | A saved character's deck, with Share (`src/characters/character.page.tsx`) |
 | `#/character/<id>/edit` | Edit an existing character in the builder |
+| `#/character/<id>/add/<cls>` | Add cards to a character from the catalog in selection mode (`src/decks/add-cards.page.tsx`); `#/character/<id>/add` and unknown classes go to the character's class |
 | `#/import/<code>` | Preview of a shared build with "Save to this device" (`src/characters/character-import.page.tsx`) |
 | `#/catalog/<cls>` | Card catalog: every card a class can have (`src/decks/catalog.page.tsx`); `#/catalog` and unknown classes go to the wizard |
 | `#<cls>` | pre-routing link, redirected to `#/catalog/<cls>` |
@@ -48,7 +49,7 @@ Hash routing with [wouter](https://github.com/molefrog/wouter) (`wouter/use-hash
 
 ## Character model
 
-**Character shape.** A character is `{ id, name, cls, level, picks }` where `picks` is a map from choice rule ID to selected card IDs. The builder handles class-granted choices only (defined in `src/data/choices/class-choices.json`). Custom cards added from the catalog are stored under a `custom` rule with unlimited picks.
+**Character shape.** A character is `{ id, name, cls, level, picks }` where `picks` is a map from choice rule ID to selected card IDs. The builder handles class-granted choices only (defined in `src/data/choices/class-choices.json`). Cards added by hand from the catalog live under a `custom` picks key — card keys (`spell-cure-wounds`), not card IDs — with no capacity limit. `custom` is not a choice rule, so `choices.validate` never sees it.
 
 **Choice rules.** Each rule has `{ id, label, pick, from: { kind, ... } }` where `pick` is the number to choose and `from` specifies the source (spells by level, weapons by proficiency). The validation helper `choices.validate()` reports missing or invalid picks.
 
@@ -60,7 +61,7 @@ Hash routing with [wouter](https://github.com/molefrog/wouter) (`wouter/use-hash
 
 **Catalog purpose.** The catalog (`#/catalog/<cls>`) shows every card a class can have — the full template deck. It serves as a reference and as a way to add custom cards to characters.
 
-**Adding cards to characters.** From a character's play view, users can open the catalog in selection mode. Selected cards are added to the character's `picks` under a `custom` rule (unlimited capacity). This allows players to add background feats, species traits, or any other cards the simple builder doesn't cover.
+**Adding cards to characters.** From a character's play view, *Add cards* opens the catalog carousel in selection mode at `#/character/<id>/add/<cls>` (`src/decks/add-cards.page.tsx`). Tapping the centred card toggles it; confirming writes the card keys to `picks.custom`. `decks.findCard({ key })` resolves a card key against a lazily built index of every class deck — `decks.forCharacter` appends the resolved cards to the character's deck (unknown keys skipped, no duplicates). This allows players to add background feats, species traits, or any other cards the simple builder doesn't cover.
 
 **Validation.** The catalog add flow does not validate whether a character can use a card (e.g., a wizard adding cleric spells). The player decides; the app trusts them.
 

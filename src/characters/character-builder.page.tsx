@@ -3,7 +3,9 @@ import { BuilderChoices } from "src/characters/character-builder-choices.compone
 import type { BuilderStep, Missing } from "src/characters/character-builder-draft.hook";
 import { useCharacterBuilderDraft } from "src/characters/character-builder-draft.hook";
 import type { Character } from "src/characters/character.model";
+import { CustomCards } from "src/characters/custom-cards.component";
 import { ClassSelector } from "src/decks/class-selector.component";
+import { cardName, decks } from "src/decks/deck.model";
 import { characterStorage } from "src/services/character.storage";
 import { Link } from "wouter";
 import styles from "./character-builder.module.css";
@@ -12,6 +14,7 @@ const STEP_LABELS: Record<BuilderStep, string> = {
   class: "Class",
   spell: "Spells",
   weapon: "Weapons",
+  custom: "Custom cards",
 };
 
 function BuilderSteps({ steps, current }: { steps: readonly BuilderStep[]; current: number }) {
@@ -119,7 +122,10 @@ function BuildTray({
 
 function Builder({ initial }: { initial?: Character }) {
   const draft = useCharacterBuilderDraft(initial);
-  const [index, setIndex] = useState(0);
+  const [position, setPosition] = useState(0);
+  const [removed, setRemoved] = useState<string>();
+  // removing the last custom card shrinks the steps — never point past the end
+  const index = Math.min(position, draft.steps.length - 1);
   const step = draft.steps[index] ?? "class";
   const isLast = !!draft.cls && index === draft.steps.length - 1;
   const nextStep = draft.steps[index + 1];
@@ -137,8 +143,22 @@ function Builder({ initial }: { initial?: Character }) {
       </header>
       <BuilderSteps steps={draft.steps} current={index} />
       <StepHeading key={step} step={step} />
+      {/* outside CustomCards: it unmounts with the step, this must outlive it */}
+      <output aria-live="polite" className={styles.visuallyHidden}>
+        {removed ? `${removed} removed` : ""}
+      </output>
       {step === "class" && <ClassSelector selected={draft.cls} onSelect={draft.chooseClass} />}
-      {step !== "class" && draft.cls && (
+      {step === "custom" && (
+        <CustomCards
+          keys={draft.picks.custom ?? []}
+          onRemove={(key) => {
+            const card = decks.findCard({ key });
+            if (card) setRemoved(cardName(card));
+            draft.chooseCustom((draft.picks.custom ?? []).filter((k) => k !== key));
+          }}
+        />
+      )}
+      {step !== "class" && step !== "custom" && draft.cls && (
         <BuilderChoices
           cls={draft.cls}
           kind={step}
@@ -154,8 +174,8 @@ function Builder({ initial }: { initial?: Character }) {
         name={draft.name}
         failed={draft.failed}
         onName={draft.setName}
-        onBack={() => setIndex(index - 1)}
-        onNext={() => setIndex(index + 1)}
+        onBack={() => setPosition(index - 1)}
+        onNext={() => setPosition(index + 1)}
         onBuild={draft.save}
       />
     </main>
