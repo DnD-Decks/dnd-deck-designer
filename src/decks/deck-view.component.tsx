@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { CardCarousel } from "src/cards/card-carousel.component";
-import { useCardSpotlight } from "src/cards/card-spotlight.hook";
 import { DeckCardFace } from "src/cards/deck-card.component";
-import { usePrinting } from "src/cards/print.hook";
+import { useCardSpotlight } from "src/cards/use-card-spotlight.hook";
+import { useDeckLayout } from "src/cards/use-deck-layout.hook";
 import { ViewModeToggle } from "src/cards/view-mode-toggle.component";
-import { useViewMode } from "src/cards/view-mode.hook";
 import type { DeckCard } from "src/decks/deck.model";
 import { cardKey, cardName, cardSection, decks } from "src/decks/deck.model";
 import type { CharacterClass } from "src/models/class/classes.model";
@@ -12,7 +11,6 @@ import styles from "./deck-view.module.css";
 
 type Props = { cls: CharacterClass };
 
-/** Group cards into ordered sections; deck.model emits cards grouped by section. */
 function sections(cards: readonly DeckCard[]) {
   const bySection = new Map<string, DeckCard[]>();
   for (const card of cards) {
@@ -30,7 +28,6 @@ type SlotProps = {
   onZoom: () => void;
 };
 
-/** A card on the mat, under a transparent control that picks it up. */
 function CardSlot({ card, trigger, onZoom }: SlotProps) {
   return (
     <div className={styles.slot}>
@@ -43,6 +40,37 @@ function CardSlot({ card, trigger, onZoom }: SlotProps) {
         onClick={onZoom}
       />
     </div>
+  );
+}
+
+type SectionProps = {
+  label: string;
+  cards: readonly DeckCard[];
+  trigger: (key: string) => SlotProps["trigger"];
+  hold: (key: string) => void;
+};
+
+function DeckSection({ label, cards, trigger, hold }: SectionProps) {
+  return (
+    <section className={styles.section} aria-label={label}>
+      {/* tally outside the h2: the heading should read "Level 1", not "Level 123 cards" */}
+      <header className={styles.sectionTitle}>
+        <h2 className={styles.sectionLabel}>{label}</h2>
+        <span className={styles.count}>
+          {cards.length} card{cards.length === 1 ? "" : "s"}
+        </span>
+      </header>
+      <div className={styles.cardRow}>
+        {cards.map((card) => (
+          <CardSlot
+            key={cardKey(card)}
+            card={card}
+            trigger={trigger(cardKey(card))}
+            onZoom={() => hold(cardKey(card))}
+          />
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -64,8 +92,7 @@ export function DeckView({ cls }: Props) {
     cards.map((card) => ({ key: cardKey(card), card }))
   );
   const { holding, hold, trigger, release, spotlight } = useCardSpotlight({ entries: ordered });
-  const { mode, choose } = useViewMode();
-  const printing = usePrinting();
+  const { mode, choose, carousel } = useDeckLayout();
 
   const entries = deck.cards.map((card) => ({
     key: cardKey(card),
@@ -82,8 +109,6 @@ export function DeckView({ cls }: Props) {
 
   if (deck.cards.length === 0) return <EmptyDeck cls={cls} label={deck.cls.label} />;
 
-  const grid = printing || mode === "grid";
-
   return (
     <>
       <ViewModeToggle mode={mode} choose={choose} />
@@ -94,30 +119,12 @@ export function DeckView({ cls }: Props) {
         inert={holding}
         aria-hidden={holding || undefined}
       >
-        {grid ? (
-          grouped.map(([label, cards]) => (
-            <section key={label} className={styles.section} aria-label={label}>
-              {/* tally outside the h2: the heading should read "Level 1", not "Level 123 cards" */}
-              <header className={styles.sectionTitle}>
-                <h2 className={styles.sectionLabel}>{label}</h2>
-                <span className={styles.count}>
-                  {cards.length} card{cards.length === 1 ? "" : "s"}
-                </span>
-              </header>
-              <div className={styles.cardRow}>
-                {cards.map((card) => (
-                  <CardSlot
-                    key={cardKey(card)}
-                    card={card}
-                    trigger={trigger(cardKey(card))}
-                    onZoom={() => hold(cardKey(card))}
-                  />
-                ))}
-              </div>
-            </section>
-          ))
-        ) : (
+        {carousel ? (
           <CardCarousel key={cls} label={`${deck.cls.label} cards`} entries={entries} />
+        ) : (
+          grouped.map(([label, cards]) => (
+            <DeckSection key={label} label={label} cards={cards} trigger={trigger} hold={hold} />
+          ))
         )}
       </main>
 

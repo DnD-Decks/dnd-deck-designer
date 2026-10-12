@@ -50,7 +50,6 @@ export function ResourceCard({ resource }: Props) {
         <span className={styles.metaItem}>Recharges: {REST_LABELS[resource.recharge]}</span>
       </div>
 
-      {/* Art window — the painting shows through here unblurred */}
       <div className={styles.artWindow} />
 
       <div className={styles.textBox}>

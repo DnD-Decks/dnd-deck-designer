@@ -3,6 +3,7 @@ import { CardCarousel } from "src/cards/card-carousel.component";
 import type { Character } from "src/characters/character.model";
 import { ClassSelector } from "src/decks/class-selector.component";
 import { cardKey, cardName, cardSection, decks } from "src/decks/deck.model";
+import { useCardSelection } from "src/decks/use-card-selection.hook";
 import { classes } from "src/models/class/classes.model";
 import { characterStorage } from "src/services/character.storage";
 import { Link, Redirect, useLocation } from "wouter";
@@ -23,11 +24,20 @@ function withCustom(character: Character, keys: ReadonlySet<string>): Character 
   };
 }
 
-/** Pick any catalog card for a character: swipe a class deck, tap the centred card to mark it. */
+function cardBadge({ owned, selected }: { owned: boolean; selected: boolean }) {
+  return owned ? (
+    <span className={styles.inDeck}>In deck</span>
+  ) : selected ? (
+    <span className={styles.seal} aria-hidden="true">
+      ✓
+    </span>
+  ) : undefined;
+}
+
 export function AddCardsPage({ id, cls }: Props) {
   const character = characterStorage.get(id);
   const [, navigate] = useLocation();
-  const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
+  const { selected, toggle } = useCardSelection();
   const [failed, setFailed] = useState(false);
 
   if (!character) return <Redirect to="/" replace />;
@@ -45,26 +55,9 @@ export function AddCardsPage({ id, cls }: Props) {
       card,
       section: cardSection(card),
       dimmed: owned.has(key),
-      badge: owned.has(key) ? (
-        <span className={styles.inDeck}>In deck</span>
-      ) : selected.has(key) ? (
-        <span className={styles.seal} aria-hidden="true">
-          ✓
-        </span>
-      ) : undefined,
+      badge: cardBadge({ owned: owned.has(key), selected: selected.has(key) }),
     };
   });
-
-  const toggle = (key: string) =>
-    setSelected((now) => {
-      const next = new Set(now);
-      if (next.has(key)) {
-        next.delete(key);
-      } else {
-        next.add(key);
-      }
-      return next;
-    });
 
   const confirm = () => {
     if (!characterStorage.save(withCustom(character, selected))) {

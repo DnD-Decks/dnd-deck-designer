@@ -8,6 +8,16 @@ import type { RestType } from "src/models/rest/rest-actions.model";
 
 type Rest = { entries: readonly DeckEntry[]; spent: readonly string[]; rest: RestType };
 
+export const REST_LABELS: Record<RestType, string> = {
+  "short-rest": "Short rest",
+  "long-rest": "Long rest",
+};
+
+function joinWithAnd(names: readonly string[]) {
+  const last = names[names.length - 1];
+  return names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${last}` : (last ?? "");
+}
+
 const resourceOf = (entry: DeckEntry) =>
   entry.card.kind === "resource" ? entry.card.resource : undefined;
 
@@ -80,5 +90,15 @@ export const play = {
 
   names(entries: readonly DeckEntry[]) {
     return namesOf(resourcesOf(entries));
+  },
+
+  /** what a rest would bring back, as a button hint */
+  restHint({ entries, rest }: Omit<Rest, "spent">) {
+    if (rest === "long-rest") return "Everything";
+    return joinWithAnd(play.restores({ entries, rest })) || "Nothing";
+  },
+
+  restStatus({ rest, recovered }: { rest: RestType; recovered: readonly DeckEntry[] }) {
+    return `${REST_LABELS[rest]}: ${joinWithAnd(play.names(recovered))} recovered`;
   },
 };

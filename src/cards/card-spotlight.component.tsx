@@ -1,28 +1,10 @@
-import {
-  type CSSProperties,
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type CSSProperties, type ReactNode, useMemo, useRef, useState } from "react";
+import { useLiftScale } from "src/cards/use-lift-scale.hook";
+import { useSpotlightFocus } from "src/cards/use-spotlight-focus.hook";
+import { useSpotlightPhase } from "src/cards/use-spotlight-phase.hook";
 import styles from "./card-spotlight.module.css";
 
-const EDGE_GAP = 24;
-const CONTROL_GAP = 72;
-const MAX_LIFT = 2.6;
-/** Mirrors the returning transition in card-spotlight.module.css. */
-const RETURN_MS = 180;
 const DEAL_PX = 14;
-
-function liftScale({ width, height }: { width: number; height: number }) {
-  if (!width || !height) return 1; // unmeasured (jsdom) — hold it at rest size
-  const byWidth = (window.innerWidth - EDGE_GAP * 2) / width;
-  const byHeight = (window.innerHeight - CONTROL_GAP * 2) / height;
-  return Math.min(byWidth, byHeight, MAX_LIFT);
-}
 
 function onTheMat(origin: DOMRect) {
   if (!origin.width) return "none"; // unmeasured (jsdom)
@@ -67,12 +49,6 @@ type Props = {
   children: ReactNode;
 };
 
-/**
- * Previews a card and returns focus to its trigger on dismissal.
- * - Fits the card to the viewport.
- * - Supports stepping when neighbours are supplied.
- * Throws on no expected input.
- */
 export function CardSpotlight({
   label,
   liftedFrom,
@@ -84,25 +60,11 @@ export function CardSpotlight({
 }: Props) {
   const stage = useRef<HTMLDialogElement>(null);
   const card = useRef<HTMLDivElement>(null);
-  const returning = useRef(false);
-  const returnFocusTo = useRef(liftedFrom);
   const origin = useMemo(() => liftedFrom.getBoundingClientRect(), [liftedFrom]);
-  const [scale, setScale] = useState(1);
-  const [phase, setPhase] = useState<"entering" | "held" | "returning">("entering");
   const [dealt, setDealt] = useState(0);
-
-  const close = useCallback<PutBack>(
-    (then) => {
-      if (returning.current) return;
-      returning.current = true;
-      setPhase("returning");
-      window.setTimeout(() => {
-        onClose();
-        then?.();
-      }, RETURN_MS);
-    },
-    [onClose]
-  );
+  const { phase, close } = useSpotlightPhase(onClose);
+  const scale = useLiftScale(card);
+  useSpotlightFocus({ stage, liftedFrom });
 
   const deal = (direction: -1 | 1) => {
     const neighbour = direction === -1 ? previous : next;
@@ -110,48 +72,6 @@ export function CardSpotlight({
     setDealt(direction);
     neighbour.hold();
   };
-
-  // the travel needs one painted frame at the origin before it can transition away from it
-  useLayoutEffect(() => {
-    const frame = requestAnimationFrame(() => setPhase("held"));
-    return () => cancelAnimationFrame(frame);
-  }, []);
-
-  // The trigger may be a small preview button, not a card. Fit the card itself,
-  // including after stepping to a card with a different size.
-  const fit = useCallback(() => {
-    const width = card.current?.offsetWidth ?? 0;
-    const height = card.current?.offsetHeight ?? 0;
-    const fittedScale = liftScale({ width, height });
-    setScale(fittedScale);
-  }, []);
-  useLayoutEffect(fit);
-
-  useEffect(() => {
-    window.addEventListener("resize", fit);
-    return () => window.removeEventListener("resize", fit);
-  }, [fit]);
-
-  useEffect(() => {
-    returnFocusTo.current = liftedFrom;
-  }, [liftedFrom]);
-
-  useEffect(() => {
-    const matOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    stage.current?.focus();
-
-    const keepFocusHere = (event: FocusEvent) => {
-      if (!stage.current?.contains(event.target as Node)) stage.current?.focus();
-    };
-    document.addEventListener("focusin", keepFocusHere);
-
-    return () => {
-      document.removeEventListener("focusin", keepFocusHere);
-      document.body.style.overflow = matOverflow;
-      returnFocusTo.current.focus();
-    };
-  }, []);
 
   return (
     // open, not showModal(): the stage covers the viewport itself, and jsdom 26 has no showModal
@@ -199,16 +119,5 @@ export function CardSpotlight({
         {next && <Step direction="next" name={next.name} onStep={() => deal(1)} />}
       </div>
     </dialog>
-  );
-}
-
-type ActionProps = { onClick: () => void; children: ReactNode };
-
-/** A button for the `actions` slot, styled to sit beside "Put it back". */
-export function SpotlightAction({ onClick, children }: ActionProps) {
-  return (
-    <button type="button" className={styles.action} onClick={onClick}>
-      {children}
-    </button>
   );
 }

@@ -1,8 +1,7 @@
 import { useState } from "react";
-import type { ChoiceSelection } from "src/characters/character-builder-choices.component";
 import type { Character, Picks } from "src/characters/character.model";
 import { characters } from "src/characters/character.model";
-import type { ChoiceIssue, ChoiceSource } from "src/characters/choices.model";
+import type { ChoiceIssue, ChoiceSelection, ChoiceSource } from "src/characters/choices.model";
 import { choices } from "src/characters/choices.model";
 import { decks } from "src/decks/deck.model";
 import type { CharacterClass } from "src/models/class/classes.model";
@@ -46,12 +45,6 @@ function stepsFor(cls: CharacterClass | undefined, picks: Picks): BuilderStep[] 
   ];
 }
 
-/**
- * Owns the level-one draft, its steps, validation, and persistence.
- * - Steps are Class, then Spells and Weapons when the class has those choices.
- * - Changing class clears picks; reselecting it preserves them.
- * - Editing preserves identity; failed saves retain the draft.
- */
 export function useCharacterBuilderDraft(initial?: Character) {
   const [, navigate] = useLocation();
   const [cls, setClass] = useState<CharacterClass | undefined>(initial?.cls);

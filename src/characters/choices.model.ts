@@ -20,6 +20,8 @@ export type ChoiceRule = {
   from: ChoiceSource;
 };
 
+export type ChoiceSelection = { ruleId: ChoiceRule["id"]; ids: readonly string[] };
+
 export type ChoiceIssue =
   | { rule: ChoiceRule; problem: "missing"; count: number }
   | { rule: ChoiceRule; problem: "too-many"; count: number }
