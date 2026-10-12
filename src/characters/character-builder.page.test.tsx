@@ -271,6 +271,46 @@ describe("<CharacterBuilderPage />", () => {
       expect(characterStorage.get("f1")?.picks.custom).toEqual(["spell-cure-wounds"]);
     });
 
+    test("the custom step renders the cards as a list", () => {
+      characterStorage.save({
+        ...brunhilde(),
+        picks: { ...brunhilde().picks, custom: ["spell-cure-wounds", "weapon-greataxe"] },
+      });
+      renderAt("/character/f1/edit");
+      next();
+      next();
+
+      const custom = screen
+        .getAllByRole("list")
+        .find((list) => within(list).queryAllByRole("button", { name: /^Remove / }).length > 0);
+      expect(custom).toBeDefined();
+      if (!custom) return;
+      // card faces carry their own trait lists — count the items that hold a Remove button
+      const items = within(custom)
+        .getAllByRole("listitem")
+        .filter((item) => within(item).queryByRole("button", { name: /^Remove / }));
+      expect(items).toHaveLength(2);
+    });
+
+    test("removing a custom card announces it, even the last one", () => {
+      characterStorage.save({
+        ...brunhilde(),
+        picks: { ...brunhilde().picks, custom: ["spell-cure-wounds", "weapon-greataxe"] },
+      });
+      renderAt("/character/f1/edit");
+      next();
+      next();
+
+      click("Remove Cure Wounds");
+      expect(screen.getByRole("status").textContent).toBe("Cure Wounds removed");
+
+      // the step is gone with the last card, but the live region stays —
+      // the step it falls back to adds its own status outputs, so match the text
+      click("Remove Greataxe");
+      expect(screen.queryByRole("button", { name: /^Remove / })).toBeNull();
+      screen.getByText("Greataxe removed");
+    });
+
     test("removing a custom card keeps focus on the neighbouring Remove button", () => {
       characterStorage.save({
         ...brunhilde(),

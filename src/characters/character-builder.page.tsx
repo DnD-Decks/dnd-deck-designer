@@ -5,6 +5,7 @@ import { useCharacterBuilderDraft } from "src/characters/character-builder-draft
 import type { Character } from "src/characters/character.model";
 import { CustomCards } from "src/characters/custom-cards.component";
 import { ClassSelector } from "src/decks/class-selector.component";
+import { cardName, decks } from "src/decks/deck.model";
 import { characterStorage } from "src/services/character.storage";
 import { Link } from "wouter";
 import styles from "./character-builder.module.css";
@@ -122,6 +123,7 @@ function BuildTray({
 function Builder({ initial }: { initial?: Character }) {
   const draft = useCharacterBuilderDraft(initial);
   const [position, setPosition] = useState(0);
+  const [removed, setRemoved] = useState<string>();
   // removing the last custom card shrinks the steps — never point past the end
   const index = Math.min(position, draft.steps.length - 1);
   const step = draft.steps[index] ?? "class";
@@ -141,13 +143,19 @@ function Builder({ initial }: { initial?: Character }) {
       </header>
       <BuilderSteps steps={draft.steps} current={index} />
       <StepHeading key={step} step={step} />
+      {/* outside CustomCards: it unmounts with the step, this must outlive it */}
+      <output aria-live="polite" className={styles.visuallyHidden}>
+        {removed ? `${removed} removed` : ""}
+      </output>
       {step === "class" && <ClassSelector selected={draft.cls} onSelect={draft.chooseClass} />}
       {step === "custom" && (
         <CustomCards
           keys={draft.picks.custom ?? []}
-          onRemove={(key) =>
-            draft.chooseCustom((draft.picks.custom ?? []).filter((k) => k !== key))
-          }
+          onRemove={(key) => {
+            const card = decks.findCard({ key });
+            if (card) setRemoved(cardName(card));
+            draft.chooseCustom((draft.picks.custom ?? []).filter((k) => k !== key));
+          }}
         />
       )}
       {step !== "class" && step !== "custom" && draft.cls && (

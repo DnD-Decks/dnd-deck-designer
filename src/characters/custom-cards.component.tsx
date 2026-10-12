@@ -32,9 +32,9 @@ export function CustomCards({ keys, onRemove }: Props) {
   }, [keys]);
 
   return (
-    <div className={styles.row}>
+    <ul className={styles.row}>
       {entries.map(({ key, card }, index) => (
-        <div key={key} className={styles.slot}>
+        <li key={key} className={styles.slot}>
           <DeckCardFace card={card} />
           <button
             type="button"
@@ -47,8 +47,8 @@ export function CustomCards({ keys, onRemove }: Props) {
           >
             Remove {cardName(card)}
           </button>
-        </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }
