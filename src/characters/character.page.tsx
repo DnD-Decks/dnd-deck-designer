@@ -262,6 +262,9 @@ function CharacterMenu({ character }: { character: Character }) {
         <Link href="/catalog" className={styles.menuItem}>
           Card catalog
         </Link>
+        <Link href={`/character/${character.id}/add`} className={styles.menuItem}>
+          Add cards
+        </Link>
         <hr className={styles.menuRule} />
         <button
           type="button"
