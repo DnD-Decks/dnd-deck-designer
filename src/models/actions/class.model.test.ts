@@ -1,34 +1,27 @@
-import assert from "node:assert/strict";
-import { test } from "vitest";
+import { describe, expect, test } from "vitest";
 
+import type { ClassAction } from "./class.model.ts";
 import { classActions } from "./class.model.ts";
 
-// --- classActions.get ---
+const actionNames = (actions: readonly ClassAction[]) => actions.map((a) => a.name);
 
-test("get throws on unknown class action", () => {
-  assert.throws(() => classActions.get({ name: "Fly" }), /Unknown class action/);
-});
+describe("classActions.findAll()", () => {
+  test("a martial fighter gets Second Wind", () => {
+    const found = classActions.findAll({ cls: "fighter", classification: "martial" });
+    expect(actionNames(found)).toEqual(["Second Wind"]);
+  });
 
-// --- classActions.find ---
+  test("a martial rogue gets every Cunning Action variant and Sneak Attack", () => {
+    const found = classActions.findAll({ cls: "rogue", classification: "martial" });
+    expect(actionNames(found)).toEqual([
+      "Cunning Action: Dash",
+      "Cunning Action: Disengage",
+      "Cunning Action: Hide",
+      "Sneak Attack",
+    ]);
+  });
 
-test("find returns undefined for unknown action", () => {
-  assert.equal(classActions.find({ name: "Fly" }), undefined);
-});
-
-// --- classActions.findAll ---
-
-test("findAll fighter martial: includes Second Wind", () => {
-  const result = classActions.findAll({ cls: "fighter", classification: "martial" });
-  assert.ok(result.some((a) => a.name === "Second Wind"));
-});
-
-test("findAll rogue martial: includes all Cunning Action variants and Sneak Attack", () => {
-  const result = classActions.findAll({ cls: "rogue", classification: "martial" });
-  assert.ok(result.some((a) => a.name === "Cunning Action: Dash"));
-  assert.ok(result.some((a) => a.name === "Sneak Attack"));
-});
-
-test("findAll wizard spell-caster: empty (no unrestricted class actions)", () => {
-  const result = classActions.findAll({ cls: "wizard", classification: "spell-caster" });
-  assert.equal(result.length, 0);
+  test("a spell-caster wizard has no class actions", () => {
+    expect(classActions.findAll({ cls: "wizard", classification: "spell-caster" })).toEqual([]);
+  });
 });

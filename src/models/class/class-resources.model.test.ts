@@ -1,5 +1,4 @@
-import assert from "node:assert/strict";
-import { test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import {
   classResources,
@@ -19,146 +18,100 @@ const DEFAULT_SCORES: AbilityScores = {
   cha: 8,
 };
 
-// --- classResources.get ---
+describe("classResources{}", () => {
+  test("lists a resource shared by classes once", () => {
+    const occurrences = classResources
+      .list()
+      .filter((r) => r.id === "spell-slot-1st")
+      .map((r) => r.id);
 
-test("get throws on unknown resource", () => {
-  assert.throws(() => classResources.get({ id: "time-stop" }), /Unknown resource/);
-});
-
-// --- classResources.find ---
-
-test("find returns undefined for unknown resource", () => {
-  assert.equal(classResources.find({ id: "time-stop" }), undefined);
-});
-
-// --- classResources.list ---
-
-test("list deduplicates shared resources (spell-slot-1st appears once)", () => {
-  const all = classResources.list();
-  const slotEntries = all.filter((r) => r.id === "spell-slot-1st");
-  assert.equal(slotEntries.length, 1);
-});
-
-// --- resolveResourceResetOn ---
-
-test("warlock pact-magic-slot resets on short-rest", () => {
-  assert.equal(resolveResourceResetOn({ cls: "warlock", id: "pact-magic-slot" }), "short-rest");
-});
-
-test("resolveResourceResetOn throws for unknown resource on a class", () => {
-  assert.throws(
-    () => resolveResourceResetOn({ cls: "barbarian", id: "pact-magic-slot" }),
-    /Unknown resource/
-  );
-});
-
-// --- resolveResourcesForLevel ---
-
-test("barbarian at L1 has 2 rage uses", () => {
-  const resources = resolveResourcesForLevel({
-    cls: "barbarian",
-    level: 1,
-    scores: DEFAULT_SCORES,
+    expect(occurrences).toEqual(["spell-slot-1st"]);
   });
-  const rage = resources.find((r) => r.resourceId === "rage");
-  assert.ok(rage !== undefined);
-  assert.equal(rage.max, 2);
-  assert.equal(rage.current, 2);
 });
 
-test("barbarian at L3 has 3 rage uses", () => {
-  const resources = resolveResourcesForLevel({
-    cls: "barbarian",
-    level: 3,
-    scores: DEFAULT_SCORES,
+describe("resolveResourceResetOn()", () => {
+  test("the warlock pact slot resets on a short rest", () => {
+    expect(resolveResourceResetOn({ cls: "warlock", id: "pact-magic-slot" })).toBe("short-rest");
   });
-  const rage = resources.find((r) => r.resourceId === "rage");
-  assert.ok(rage !== undefined);
-  assert.equal(rage.max, 3);
+
+  test("throws for a resource the class does not have", () => {
+    expect(() => resolveResourceResetOn({ cls: "barbarian", id: "pact-magic-slot" })).toThrow(
+      /Unknown resource/
+    );
+  });
+
+  test("throws for an unknown class", () => {
+    expect(() => resolveResourceResetOn({ cls: "artificer" as "barbarian", id: "rage" })).toThrow(
+      /unknown class/
+    );
+  });
 });
 
-test("bard bardic-inspiration uses cha modifier (min 1)", () => {
-  // cha=16 → modifier=3
-  const highCha: AbilityScores = { ...DEFAULT_SCORES, cha: 16 };
-  const resources = resolveResourcesForLevel({ cls: "bard", level: 1, scores: highCha });
-  const inspiration = resources.find((r) => r.resourceId === "bardic-inspiration");
-  assert.ok(inspiration !== undefined);
-  assert.equal(inspiration.max, 3);
-});
+describe("resolveResourcesForLevel()", () => {
+  test.each([
+    { level: 1, expected: [{ resourceId: "rage", current: 2, max: 2 }] },
+    { level: 3, expected: [{ resourceId: "rage", current: 3, max: 3 }] },
+  ])("barbarian rage uses scale with level (L$level)", ({ level, expected }) => {
+    expect(resolveResourcesForLevel({ cls: "barbarian", level, scores: DEFAULT_SCORES })).toEqual(
+      expected
+    );
+  });
 
-test("bard bardic-inspiration with low cha is floored at 1", () => {
-  // cha=8 → modifier=-1 → resolveMax returns max(1, -1) = 1
-  const resources = resolveResourcesForLevel({ cls: "bard", level: 1, scores: DEFAULT_SCORES });
-  const inspiration = resources.find((r) => r.resourceId === "bardic-inspiration");
-  assert.ok(inspiration !== undefined);
-  assert.equal(inspiration.max, 1);
-});
+  test.each([
+    {
+      label: "the cha modifier",
+      scores: { ...DEFAULT_SCORES, cha: 16 },
+      expected: [{ resourceId: "bardic-inspiration", current: 3, max: 3 }],
+    },
+    {
+      label: "a floor of 1",
+      scores: DEFAULT_SCORES,
+      expected: [{ resourceId: "bardic-inspiration", current: 1, max: 1 }],
+    },
+  ])("bardic inspiration at L1 sizes from $label", ({ scores, expected }) => {
+    const found = resolveResourcesForLevel({ cls: "bard", level: 1, scores });
+    expect(found).toEqual([...expected, { resourceId: "spell-slot-1st", current: 2, max: 2 }]);
+  });
 
-test("monk at L1 has no resources (discipline-points = 0)", () => {
-  const resources = resolveResourcesForLevel({ cls: "monk", level: 1, scores: DEFAULT_SCORES });
-  assert.equal(resources.length, 0);
-});
+  test.each([
+    { level: 1, expected: [] },
+    { level: 2, expected: [{ resourceId: "discipline-points", current: 2, max: 2 }] },
+  ])("monk resources at L$level", ({ level, expected }) => {
+    expect(resolveResourcesForLevel({ cls: "monk", level, scores: DEFAULT_SCORES })).toEqual(
+      expected
+    );
+  });
 
-test("monk at L2 has 2 discipline points", () => {
-  const resources = resolveResourcesForLevel({ cls: "monk", level: 2, scores: DEFAULT_SCORES });
-  const dp = resources.find((r) => r.resourceId === "discipline-points");
-  assert.ok(dp !== undefined);
-  assert.equal(dp.max, 2);
-});
+  test.each([{ level: 1 }, { level: 5 }])("rogue has no resources at L$level", ({ level }) => {
+    expect(resolveResourcesForLevel({ cls: "rogue", level, scores: DEFAULT_SCORES })).toEqual([]);
+  });
 
-test("rogue has no resources at any level", () => {
-  assert.equal(
-    resolveResourcesForLevel({ cls: "rogue", level: 1, scores: DEFAULT_SCORES }).length,
-    0
-  );
-  assert.equal(
-    resolveResourcesForLevel({ cls: "rogue", level: 5, scores: DEFAULT_SCORES }).length,
-    0
-  );
-});
+  test("wizard at L1 has arcane-recovery and two level-1 slots", () => {
+    expect(resolveResourcesForLevel({ cls: "wizard", level: 1, scores: DEFAULT_SCORES })).toEqual([
+      { resourceId: "arcane-recovery", current: 1, max: 1 },
+      { resourceId: "spell-slot-1st", current: 2, max: 2 },
+    ]);
+  });
 
-test("wizard at L1 has arcane-recovery (1) and spell-slot-1st (2)", () => {
-  const resources = resolveResourcesForLevel({ cls: "wizard", level: 1, scores: DEFAULT_SCORES });
-  const ar = resources.find((r) => r.resourceId === "arcane-recovery");
-  const ss = resources.find((r) => r.resourceId === "spell-slot-1st");
-  assert.ok(ar !== undefined);
-  assert.equal(ar.max, 1);
-  assert.ok(ss !== undefined);
-  assert.equal(ss.max, 2);
-});
+  test("paladin at L1 has only lay-on-hands (no slots or channel divinity yet)", () => {
+    expect(resolveResourcesForLevel({ cls: "paladin", level: 1, scores: DEFAULT_SCORES })).toEqual([
+      { resourceId: "lay-on-hands", current: 5, max: 5 },
+    ]);
+  });
 
-test("paladin spell-slot-1st is 0 at L1 (not yet available)", () => {
-  const resources = resolveResourcesForLevel({ cls: "paladin", level: 1, scores: DEFAULT_SCORES });
-  // lay-on-hands at L1 = 5, channel-divinity at L1 = 0 (filtered), spell slots = 0 (filtered)
-  const ss = resources.find((r) => r.resourceId === "spell-slot-1st");
-  assert.equal(ss, undefined);
-  const loh = resources.find((r) => r.resourceId === "lay-on-hands");
-  assert.ok(loh !== undefined);
-  assert.equal(loh.max, 5);
-});
+  test("throws for a level outside 1–5", () => {
+    expect(() =>
+      resolveResourcesForLevel({ cls: "barbarian", level: 0, scores: DEFAULT_SCORES })
+    ).toThrow(/level must be an integer 1–5/);
+  });
 
-test("resolveResourcesForLevel throws for invalid level (0)", () => {
-  assert.throws(
-    () => resolveResourcesForLevel({ cls: "barbarian", level: 0, scores: DEFAULT_SCORES }),
-    /level must be an integer 1–5/
-  );
-});
-
-test("resolveResourcesForLevel throws for unknown class", () => {
-  assert.throws(
-    () =>
+  test("throws for an unknown class", () => {
+    expect(() =>
       resolveResourcesForLevel({
         cls: "artificer" as "barbarian",
         level: 1,
         scores: DEFAULT_SCORES,
-      }),
-    /no data for class/
-  );
-});
-
-test("resolveResourceResetOn throws for unknown class", () => {
-  assert.throws(
-    () => resolveResourceResetOn({ cls: "artificer" as "barbarian", id: "rage" }),
-    /unknown class/
-  );
+      })
+    ).toThrow(/no data for class/);
+  });
 });

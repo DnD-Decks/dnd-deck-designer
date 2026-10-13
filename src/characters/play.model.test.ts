@@ -1,5 +1,4 @@
-import assert from "node:assert/strict";
-import { describe, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import type { Character } from "src/characters/character.model";
 import type { CharacterClass } from "src/models/class/classes.model";
@@ -28,7 +27,7 @@ describe("play.sections()", () => {
   test("groups the deck in table order: Resources, Weapons, Features, Cantrips, Spells", () => {
     const pick = (key: string) => {
       const card = decks.findCard({ key });
-      assert.ok(card, `unknown card ${key}`);
+      if (!card) throw new Error(`unknown card ${key}`);
       return { key, card };
     };
     const entries = [
@@ -40,21 +39,22 @@ describe("play.sections()", () => {
     ];
 
     const labels = play.sections(entries).map(({ label }) => label);
-    assert.deepEqual(labels, ["Resources", "Weapons", "Features", "Cantrips", "Spells"]);
+    expect(labels).toEqual(["Resources", "Weapons", "Features", "Cantrips", "Spells"]);
   });
 
   test("a level-0 spell sits in Cantrips, a levelled one in Spells", () => {
     const cantrip = decks.findCard({ key: "spell-fire-bolt" });
     const level1 = decks.findCard({ key: "spell-magic-missile" });
-    assert.ok(cantrip && level1);
-    assert.equal(play.sectionOf(cantrip), "Cantrips");
-    assert.equal(play.sectionOf(level1), "Spells");
+    if (!cantrip || !level1) throw new Error("fixture cards missing");
+
+    expect(play.sectionOf(cantrip)).toBe("Cantrips");
+    expect(play.sectionOf(level1)).toBe("Spells");
   });
 
   test("empty sections are dropped", () => {
     // a fresh fighter has only resources and features
     const labels = play.sections(entriesOf("fighter")).map(({ label }) => label);
-    assert.deepEqual(labels, ["Resources", "Features"]);
+    expect(labels).toEqual(["Resources", "Features"]);
   });
 });
 
@@ -72,8 +72,9 @@ describe("play.spendable()", () => {
   ).forEach(({ label, cls, key, expected }) => {
     test(`${label}: ${expected}`, () => {
       const entry = entriesOf(cls).find((e) => e.key === key);
-      assert.ok(entry);
-      assert.equal(play.spendable(entry), expected);
+      if (!entry) throw new Error(`no entry ${key}`);
+
+      expect(play.spendable(entry)).toBe(expected);
     });
   });
 });
@@ -138,7 +139,7 @@ describe("play.recovered()", () => {
         spent,
         rest,
       });
-      assert.deepEqual(keysOf(recovered), expected);
+      expect(keysOf(recovered)).toEqual(expected);
     });
   });
 });
@@ -153,7 +154,7 @@ describe("play.restores()", () => {
   ).forEach(({ cls, rest, expected }) => {
     test(`${cls} after a ${rest}: ${expected.join(", ") || "nothing"}`, () => {
       const entries = entriesOf(cls);
-      assert.deepEqual(play.restores({ entries, rest }), expected);
+      expect(play.restores({ entries, rest })).toEqual(expected);
     });
   });
 });

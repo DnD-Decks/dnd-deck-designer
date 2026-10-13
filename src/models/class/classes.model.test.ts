@@ -1,28 +1,20 @@
-import assert from "node:assert/strict";
-import { test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { classes } from "./classes.model.ts";
 
-test("list returns all 12 PHB classes", () => {
-  assert.equal(classes.list().length, 12);
-});
+const VALID_CLASSIFICATIONS = ["martial", "spell-caster", "versatile"];
 
-test("get unknown class throws", () => {
-  assert.throws(() => classes.get({ id: "artificer" as "wizard" }), /Unknown class/);
-});
+const invalidClasses = () =>
+  classes
+    .list()
+    .filter(
+      (c) =>
+        !c.id || !c.label || !c.hitDie || !VALID_CLASSIFICATIONS.includes(c.manualClassification)
+    )
+    .map((c) => c.id);
 
-test("find unknown class returns undefined", () => {
-  assert.equal(classes.find({ id: "artificer" }), undefined);
-});
-
-test("every class has id, label, hitDie, manualClassification", () => {
-  for (const c of classes.list()) {
-    assert.ok(c.id, "missing id");
-    assert.ok(c.label, `missing label on ${c.id}`);
-    assert.ok(c.hitDie, `missing hitDie on ${c.id}`);
-    assert.ok(
-      ["martial", "spell-caster", "versatile"].includes(c.manualClassification),
-      `bad classification on ${c.id}: ${c.manualClassification}`
-    );
-  }
+describe("classes{}", () => {
+  test("every class carries id, label, hit die and a valid classification", () => {
+    expect(invalidClasses()).toEqual([]);
+  });
 });

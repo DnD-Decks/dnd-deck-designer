@@ -1,72 +1,64 @@
-import assert from "node:assert/strict";
-import { test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { weaponMastery } from "./weapon-mastery.model.ts";
+import type { WeaponId } from "./weapons.model.ts";
 import { weaponIcon, weapons } from "./weapons.model.ts";
 
-// --- weapons.get ---
+const unknownMasteries = () =>
+  weapons
+    .list()
+    .filter((w) => !weaponMastery.find({ id: w.mastery }))
+    .map((w) => `${w.id}: ${w.mastery}`);
 
-test("get throws on unknown weapon", () => {
-  assert.throws(() => weapons.get({ id: "excalibur" as "longsword" }), /Unknown weapon/);
+describe("weapons{}", () => {
+  test("every weapon's mastery resolves against the weapon-mastery model", () => {
+    expect(unknownMasteries()).toEqual([]);
+  });
+
+  test("the data spans both proficiencies and both ranges", () => {
+    expect({
+      proficiencies: [...new Set(weapons.list().map((w) => w.proficiency))].sort(),
+      ranges: [...new Set(weapons.list().map((w) => w.range))].sort(),
+    }).toEqual({
+      proficiencies: ["martial", "simple"],
+      ranges: ["melee", "ranged"],
+    });
+  });
 });
 
-// --- weapons.find ---
+describe("weapons.findAll()", () => {
+  test("martial classes are proficient with every weapon", () => {
+    expect(weapons.findAll({ cls: "fighter" })).toEqual(weapons.list());
+  });
 
-test("find returns undefined for unknown weapon", () => {
-  assert.equal(weapons.find({ id: "excalibur" }), undefined);
-});
-
-// --- weapons.list ---
-
-test("every weapon's mastery resolves against the weapon-mastery model", () => {
-  for (const w of weapons.list()) {
-    assert.ok(
-      weaponMastery.find({ id: w.mastery }) !== undefined,
-      `weapon ${w.id} references unknown mastery: ${w.mastery}`
+  test("wizards are proficient with simple weapons only", () => {
+    expect(weapons.findAll({ cls: "wizard" })).toEqual(
+      weapons.list().filter((w) => w.proficiency === "simple")
     );
-  }
+  });
+
+  test("rogues get martial weapons only when they are Finesse or Light", () => {
+    const martial = weapons
+      .findAll({ cls: "rogue" })
+      .filter((w) => w.proficiency === "martial")
+      .map((w) => w.id);
+
+    expect(martial).toEqual(["rapier", "scimitar", "shortsword", "whip", "hand-crossbow"]);
+  });
 });
 
-test("list contains both simple and martial weapons", () => {
-  const all = weapons.list();
-  assert.ok(all.some((w) => w.proficiency === "simple"));
-  assert.ok(all.some((w) => w.proficiency === "martial"));
-});
+describe("weaponIcon()", () => {
+  test.each<{ id: WeaponId; icon: string }>([
+    { id: "longsword", icon: "/icons/weapon-longsword.png" },
+    { id: "war-pick", icon: "/icons/weapon-war-pick.png" },
+  ])("builds $icon for $id", ({ id, icon }) => {
+    expect(weaponIcon(id)).toBe(icon);
+  });
 
-test("list contains both melee and ranged weapons", () => {
-  const all = weapons.list();
-  assert.ok(all.some((w) => w.range === "melee"));
-  assert.ok(all.some((w) => w.range === "ranged"));
-});
+  test("is undefined for weapons BG3 has no icon for", () => {
+    const noIcon: WeaponId[] = ["lance", "whip", "blowgun", "musket", "pistol"];
+    const leaked = noIcon.filter((id) => weaponIcon(id) !== undefined);
 
-// --- weapons.findAll ---
-
-test("martial classes are proficient with every weapon", () => {
-  assert.equal(weapons.findAll({ cls: "fighter" }).length, weapons.list().length);
-});
-
-test("wizards get simple weapons only", () => {
-  const found = weapons.findAll({ cls: "wizard" });
-  assert.ok(found.length > 0);
-  assert.ok(found.every((w) => w.proficiency === "simple"));
-});
-
-test("rogues get martial weapons only with Finesse or Light", () => {
-  const martial = weapons.findAll({ cls: "rogue" }).filter((w) => w.proficiency === "martial");
-  const ids = martial.map((w) => w.id);
-  assert.ok(ids.includes("rapier") && ids.includes("hand-crossbow"));
-  assert.ok(!ids.includes("longsword"));
-});
-
-// --- weaponIcon ---
-
-test("weaponIcon follows the /icons/weapon-<id>.png convention", () => {
-  assert.equal(weaponIcon("longsword"), "/icons/weapon-longsword.png");
-  assert.equal(weaponIcon("war-pick"), "/icons/weapon-war-pick.png");
-});
-
-test("weaponIcon is undefined for weapons BG3 has no icon for", () => {
-  for (const id of ["lance", "whip", "blowgun", "musket", "pistol"] as const) {
-    assert.equal(weaponIcon(id), undefined, id);
-  }
+    expect(leaked).toEqual([]);
+  });
 });

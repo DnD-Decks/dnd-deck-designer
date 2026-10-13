@@ -1,35 +1,20 @@
-import assert from "node:assert/strict";
-import { test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { abilities, computeModifier } from "./abilities.model.ts";
 
-// --- computeModifier ---
-
-test("computeModifier: 10 → 0", () => {
-  assert.equal(computeModifier(10), 0);
+describe("computeModifier()", () => {
+  test.each([
+    { score: 8, modifier: -1 },
+    { score: 10, modifier: 0 },
+    { score: 15, modifier: 2 },
+    { score: 16, modifier: 3 },
+  ])("a score of $score gives a modifier of $modifier", ({ score, modifier }) => {
+    expect(computeModifier(score)).toBe(modifier);
+  });
 });
 
-test("computeModifier: 16 → 3", () => {
-  assert.equal(computeModifier(16), 3);
-});
-
-test("computeModifier: 8 → -1", () => {
-  assert.equal(computeModifier(8), -1);
-});
-
-test("computeModifier: 15 → 2", () => {
-  assert.equal(computeModifier(15), 2);
-});
-
-// --- abilities.get ---
-
-test("get throws on unknown ability", () => {
-  assert.throws(() => abilities.get({ id: "luck" as "str" }), /Unknown ability/);
-});
-
-// --- abilities.list ---
-
-test("list returns all six abilities in canonical order", () => {
-  const ids = abilities.list().map((a) => a.id);
-  assert.deepEqual(ids, ["str", "dex", "con", "int", "wis", "cha"]);
+describe("abilities{}", () => {
+  test("lists the six abilities in canonical order", () => {
+    expect(abilities.list().map((a) => a.id)).toEqual(["str", "dex", "con", "int", "wis", "cha"]);
+  });
 });

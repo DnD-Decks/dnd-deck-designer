@@ -1,39 +1,46 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { expect, test } from "vitest";
+import { fireEvent, render, screen, within } from "@testing-library/react";
+import { describe, expect, test, vi } from "vitest";
 import { ClassSelector } from "./class-selector.component.tsx";
 
-test("renders one button per character class (12 total)", () => {
-  render(<ClassSelector selected="wizard" onSelect={() => {}} />);
-  expect(screen.getAllByRole("button")).toHaveLength(12);
-});
+// the label, classification and hit-die spans render adjacent, so a button's
+// name is their concatenated text (the visible spacing comes from CSS)
+const buttonNames = ({ pressed }: { pressed?: boolean } = {}) =>
+  within(screen.getByRole("navigation", { name: "Character class" }))
+    .getAllByRole("button", pressed === undefined ? {} : { pressed })
+    .map((b) => b.textContent);
 
-test("nav has accessible label 'Character class'", () => {
-  render(<ClassSelector selected="wizard" onSelect={() => {}} />);
-  screen.getByRole("navigation", { name: "Character class" });
-});
+describe("<ClassSelector />", () => {
+  test("the nav offers one toggle per class", () => {
+    render(<ClassSelector selected="wizard" onSelect={() => {}} />);
 
-test("selected class button has aria-pressed=true", () => {
-  render(<ClassSelector selected="wizard" onSelect={() => {}} />);
-  const btn = screen.getByRole("button", { name: /wizard/i });
-  expect(btn.getAttribute("aria-pressed")).toBe("true");
-});
+    expect(buttonNames()).toEqual([
+      "Barbarianmartiald12",
+      "Bardspell-casterd8",
+      "Clericspell-casterd8",
+      "Druidspell-casterd8",
+      "Fightermartiald10",
+      "Monkmartiald8",
+      "Paladinversatiled10",
+      "Rangerversatiled10",
+      "Roguemartiald8",
+      "Sorcererspell-casterd6",
+      "Warlockspell-casterd8",
+      "Wizardspell-casterd6",
+    ]);
+  });
 
-test("non-selected class buttons have aria-pressed=false", () => {
-  render(<ClassSelector selected="wizard" onSelect={() => {}} />);
-  const btn = screen.getByRole("button", { name: /barbarian/i });
-  expect(btn.getAttribute("aria-pressed")).toBe("false");
-});
+  test("only the selected class is pressed", () => {
+    render(<ClassSelector selected="wizard" onSelect={() => {}} />);
 
-test("clicking a class button calls onSelect with that class id", () => {
-  let called = "";
-  render(
-    <ClassSelector
-      selected="wizard"
-      onSelect={(cls) => {
-        called = cls;
-      }}
-    />
-  );
-  fireEvent.click(screen.getByRole("button", { name: /barbarian/i }));
-  expect(called).toBe("barbarian");
+    expect(buttonNames({ pressed: true })).toEqual(["Wizardspell-casterd6"]);
+  });
+
+  test("clicking a class reports its id", () => {
+    const onSelect = vi.fn();
+    render(<ClassSelector selected="wizard" onSelect={onSelect} />);
+
+    fireEvent.click(screen.getByRole("button", { name: /^Barbarian/ }));
+
+    expect(onSelect).toHaveBeenCalledWith("barbarian");
+  });
 });

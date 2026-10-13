@@ -1,27 +1,32 @@
-import assert from "node:assert/strict";
-import { describe, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { brunhilde } from "./character.fixture.ts";
 import { characters } from "./character.model.ts";
 
 describe("characters.create()", () => {
-  test("create starts a level-1 character with no picks", () => {
+  test("starts a level-1 character with no picks", () => {
     const hero = characters.create({ name: "Elminster", cls: "wizard" });
-    assert.equal(hero.level, 1);
-    assert.deepEqual(hero.picks, {});
-    assert.ok(hero.id.length > 0);
+
+    expect(hero).toEqual({
+      id: expect.any(String),
+      name: "Elminster",
+      cls: "wizard",
+      level: 1,
+      picks: {},
+    });
   });
 
-  test("create gives every character its own id", () => {
+  test("gives every character its own id", () => {
     const a = characters.create({ name: "A", cls: "fighter" });
     const b = characters.create({ name: "B", cls: "fighter" });
-    assert.notEqual(a.id, b.id);
+
+    expect(a.id).not.toBe(b.id);
   });
 });
 
 describe("characters.parse()", () => {
   test("keeps a well-formed character", () => {
-    assert.deepEqual(characters.parse(brunhilde()), {
+    expect(characters.parse(brunhilde())).toEqual({
       id: "f1",
       name: "Brünhilde",
       cls: "fighter",
@@ -49,31 +54,29 @@ describe("characters.parse()", () => {
     },
   ].forEach(({ label, value }) =>
     test(`rejects ${label}`, () => {
-      assert.equal(characters.parse(value), undefined);
+      expect(characters.parse(value)).toBeUndefined();
     })
   );
 });
 
 describe("characters.toShareCode()", () => {
   test("is URL-safe", () => {
-    assert.match(characters.toShareCode(brunhilde()), /^[A-Za-z0-9_-]+$/);
+    expect(characters.toShareCode(brunhilde())).toMatch(/^[A-Za-z0-9_-]+$/);
   });
 });
 
 describe("characters.fromShareCode()", () => {
   test("round-trips the build under a new id", () => {
     const imported = characters.fromShareCode(characters.toShareCode(brunhilde()));
-    assert.deepEqual(
-      { ...imported, id: "new" },
-      {
-        id: "new",
-        name: "Brünhilde",
-        cls: "fighter",
-        level: 1,
-        picks: { weapons: ["longsword", "shortbow", "dagger"] },
-      }
-    );
-    assert.notEqual(imported?.id, "f1");
+
+    expect({ ...imported, id: "new" }).toEqual({
+      id: "new",
+      name: "Brünhilde",
+      cls: "fighter",
+      level: 1,
+      picks: { weapons: ["longsword", "shortbow", "dagger"] },
+    });
+    expect(imported?.id).not.toBe("f1");
   });
 
   test("round-trips custom card keys", () => {
@@ -81,14 +84,17 @@ describe("characters.fromShareCode()", () => {
       ...brunhilde(),
       picks: { ...brunhilde().picks, custom: ["spell-cure-wounds", "feat-rogue-sneak-attack"] },
     };
+
     const imported = characters.fromShareCode(characters.toShareCode(hero));
-    assert.deepEqual(imported?.picks.custom, ["spell-cure-wounds", "feat-rogue-sneak-attack"]);
+
+    expect(imported?.picks.custom).toEqual(["spell-cure-wounds", "feat-rogue-sneak-attack"]);
   });
 
   test("a payload without custom still parses", () => {
     const imported = characters.fromShareCode(characters.toShareCode(brunhilde()));
-    assert.equal(imported?.picks.custom, undefined);
-    assert.deepEqual(imported?.picks.weapons, ["longsword", "shortbow", "dagger"]);
+
+    expect(imported?.picks.custom).toBeUndefined();
+    expect(imported?.picks.weapons).toEqual(["longsword", "shortbow", "dagger"]);
   });
 
   [
@@ -98,7 +104,7 @@ describe("characters.fromShareCode()", () => {
     { label: "empty", code: "" },
   ].forEach(({ label, code }) =>
     test(`a code that is ${label} decodes to nothing`, () => {
-      assert.equal(characters.fromShareCode(code), undefined);
+      expect(characters.fromShareCode(code)).toBeUndefined();
     })
   );
 });

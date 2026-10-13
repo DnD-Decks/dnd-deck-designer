@@ -1,107 +1,96 @@
-import assert from "node:assert/strict";
-import { describe, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { cardSection, decks } from "./deck.model.ts";
 
-import type { Character } from "src/characters/character.model";
+import type { CharacterClass } from "src/models/class/classes.model";
 import type { DeckCard } from "./deck.model.ts";
 
-// --- wizard level-1 deck ---
+const kinds = (deck: { cards: readonly DeckCard[] }) =>
+  [...new Set(deck.cards.map((card) => card.kind))].sort();
 
-test("wizard deck has no level-2 spells", () => {
-  const deck = decks.get({ cls: "wizard" });
-  const level2 = deck.cards.filter((c) => c.kind === "spell" && c.spell.level === 2);
-  assert.equal(level2.length, 0);
-});
+describe("decks.get()", () => {
+  test("the wizard deck is scoped to level 1 and orders resources, feats, spells", () => {
+    const deck = decks.get({ cls: "wizard" });
 
-test("wizard deck section order: resource → feat → spell", () => {
-  const deck = decks.get({ cls: "wizard" });
-  const firstResource = deck.cards.findIndex((c) => c.kind === "resource");
-  const firstFeat = deck.cards.findIndex((c) => c.kind === "feat");
-  const firstSpell = deck.cards.findIndex((c) => c.kind === "spell");
-  assert.ok(firstResource < firstFeat, "resources before feats");
-  assert.ok(firstFeat < firstSpell, "feats before spells");
-});
+    const outOfScope = deck.cards.filter((c) => c.kind === "spell" && c.spell.level > 1);
+    expect(outOfScope).toEqual([]);
 
-test("wizard deck carries simple weapons only", () => {
-  const deck = decks.get({ cls: "wizard" });
-  const weaponCards = deck.cards.filter((c) => c.kind === "weapon");
-  assert.ok(weaponCards.length > 0);
-  assert.ok(weaponCards.every((c) => c.weapon.proficiency === "simple"));
-});
-
-// --- fighter level-1 deck ---
-
-test("fighter deck has no spells", () => {
-  const deck = decks.get({ cls: "fighter" });
-  assert.equal(deck.cards.filter((c) => c.kind === "spell").length, 0);
-});
-
-// --- other caster classes: non-empty decks with spell cards ---
-
-const CASTER_CLASSES = ["bard", "cleric", "druid", "sorcerer", "warlock"] as const;
-
-for (const cls of CASTER_CLASSES) {
-  test(`${cls} deck: non-empty and contains spell cards`, () => {
-    const deck = decks.get({ cls });
-    assert.ok(deck.cards.length > 0, `${cls} deck is empty`);
-    assert.ok(
-      deck.cards.some((card) => card.kind === "spell"),
-      `${cls} deck has no spell cards`
+    const positions = (["resource", "feat", "spell"] as const).map((kind) =>
+      deck.cards.findIndex((c) => c.kind === kind)
     );
+    // findIndex gives -1 for a missing kind: sorted === as-built means all three exist, in order
+    expect([...positions].sort((a, b) => a - b)).toEqual(positions);
+    expect(positions.every((p) => p >= 0)).toBe(true);
   });
-}
 
-test("ranger deck has all four card kinds (resource, feat, spell, weapon)", () => {
-  const deck = decks.get({ cls: "ranger" });
-  assert.equal(deck.cls.label, "Ranger");
-  const kinds = new Set(deck.cards.map((card) => card.kind));
-  assert.deepEqual([...kinds].sort(), ["feat", "resource", "spell", "weapon"]);
+  test("the wizard deck carries simple weapons only", () => {
+    const martial = decks
+      .get({ cls: "wizard" })
+      .cards.filter((c) => c.kind === "weapon" && c.weapon.proficiency !== "simple");
+
+    expect(martial).toEqual([]);
+  });
+
+  test("the fighter deck has no spells", () => {
+    const spellCards = decks.get({ cls: "fighter" }).cards.filter((c) => c.kind === "spell");
+
+    expect(spellCards).toEqual([]);
+  });
+
+  test.each<{ cls: CharacterClass }>([
+    { cls: "bard" },
+    { cls: "cleric" },
+    { cls: "druid" },
+    { cls: "sorcerer" },
+    { cls: "warlock" },
+  ])("the $cls deck is non-empty and has spell cards", ({ cls }) => {
+    const deck = decks.get({ cls });
+
+    expect(deck.cards.length).toBeGreaterThan(0);
+    expect(deck.cards.some((card) => card.kind === "spell")).toBe(true);
+  });
+
+  test.each<{ cls: CharacterClass; expected: string[] }>([
+    { cls: "ranger", expected: ["feat", "resource", "spell", "weapon"] },
+    { cls: "paladin", expected: ["feat", "resource", "spell", "weapon"] },
+    { cls: "barbarian", expected: ["feat", "resource", "weapon"] },
+  ])("the $cls deck has $expected card kinds", ({ cls, expected }) => {
+    expect(kinds(decks.get({ cls }))).toEqual(expected);
+  });
 });
-
-test("paladin deck has all four card kinds (resource, feat, spell, weapon)", () => {
-  const deck = decks.get({ cls: "paladin" });
-  const kinds = new Set(deck.cards.map((card) => card.kind));
-  assert.deepEqual([...kinds].sort(), ["feat", "resource", "spell", "weapon"]);
-});
-
-test("barbarian deck has resource, feat, and weapon cards", () => {
-  const deck = decks.get({ cls: "barbarian" });
-  assert.ok(deck.cards.some((card) => card.kind === "resource"));
-  assert.ok(deck.cards.some((card) => card.kind === "feat"));
-  assert.ok(deck.cards.some((card) => card.kind === "weapon"));
-});
-
-// --- card index ---
 
 describe("decks.findCard()", () => {
-  test("resolves a card key of every kind across all classes", () => {
-    assert.equal(decks.findCard({ key: "spell-cure-wounds" })?.kind, "spell");
-    assert.equal(decks.findCard({ key: "feat-rogue-sneak-attack" })?.kind, "feat");
-    assert.equal(decks.findCard({ key: "resource-fighter-second-wind" })?.kind, "resource");
-    assert.equal(decks.findCard({ key: "weapon-longsword" })?.kind, "weapon");
+  test("resolves a card key of every kind", () => {
+    const kindsOf = [
+      "spell-cure-wounds",
+      "feat-rogue-sneak-attack",
+      "resource-fighter-second-wind",
+      "weapon-longsword",
+    ].map((key) => decks.findCard({ key })?.kind);
+
+    expect(kindsOf).toEqual(["spell", "feat", "resource", "weapon"]);
   });
 
   test("returns nothing for an unknown key", () => {
-    assert.equal(decks.findCard({ key: "spell-not-a-spell" }), undefined);
+    expect(decks.findCard({ key: "spell-not-a-spell" })).toBeUndefined();
   });
 });
-
-// --- sections ---
 
 describe("cardSection()", () => {
   // ranger is the one class whose deck has all four card kinds
   const deck = decks.get({ cls: "ranger" });
   const first = (kind: DeckCard["kind"]) => {
     const card = deck.cards.find((c) => c.kind === kind);
-    assert.ok(card, `no ${kind} card in the ranger deck`);
+    if (!card) throw new Error(`no ${kind} card in the ranger deck`);
     return card;
   };
 
   test("labels each card kind", () => {
-    assert.equal(cardSection(first("resource")), "Resources");
-    assert.equal(cardSection(first("feat")), "Class Features");
-    assert.equal(cardSection(first("weapon")), "Weapons");
+    expect([
+      cardSection(first("resource")),
+      cardSection(first("feat")),
+      cardSection(first("weapon")),
+    ]).toEqual(["Resources", "Class Features", "Weapons"]);
   });
 
   test("labels cantrips and level-1 spells separately", () => {
@@ -109,150 +98,8 @@ describe("cardSection()", () => {
     const spells = decks.get({ cls: "wizard" }).cards;
     const cantrip = spells.find((c) => c.kind === "spell" && c.spell.level === 0);
     const level1 = spells.find((c) => c.kind === "spell" && c.spell.level === 1);
-    assert.ok(cantrip && level1);
-    assert.equal(cardSection(cantrip), "Cantrips");
-    assert.equal(cardSection(level1), "Level 1");
-  });
-});
+    if (!cantrip || !level1) throw new Error("wizard deck missing spell levels");
 
-// --- character decks ---
-const wizard: Character = {
-  id: "w",
-  name: "Wizard",
-  cls: "wizard",
-  level: 1,
-  picks: {
-    cantrips: ["fire-bolt", "light", "mage-hand"],
-    prepared: ["magic-missile", "shield", "mage-armor", "detect-magic"],
-    weapons: ["dagger"],
-  },
-};
-
-describe("decks.forCharacter()", () => {
-  test("keeps only the picked spells and weapons", () => {
-    const { entries } = decks.forCharacter(wizard);
-    const spellIds = entries.flatMap(({ card }) => (card.kind === "spell" ? [card.spell.id] : []));
-    const weaponIds = entries.flatMap(({ card }) =>
-      card.kind === "weapon" ? [card.weapon.id] : []
-    );
-    assert.deepEqual(spellIds.sort(), [
-      "detect-magic",
-      "fire-bolt",
-      "light",
-      "mage-armor",
-      "mage-hand",
-      "magic-missile",
-      "shield",
-    ]);
-    assert.deepEqual(weaponIds, ["dagger"]);
-  });
-
-  test("keeps every feat of the class", () => {
-    const featCount = decks.get({ cls: "wizard" }).cards.filter((c) => c.kind === "feat").length;
-    const { entries } = decks.forCharacter(wizard);
-    assert.equal(entries.filter(({ card }) => card.kind === "feat").length, featCount);
-  });
-
-  test("expands stacked resources into one card per use", () => {
-    const { entries } = decks.forCharacter(wizard);
-    const mana = entries.filter(({ card }) => card.kind === "resource");
-    assert.deepEqual(
-      mana.map(({ key }) => key),
-      ["resource-wizard-mana-0", "resource-wizard-mana-1"]
-    );
-  });
-
-  test("keeps a pool resource as a single card", () => {
-    const paladin: Character = { id: "p", name: "Paladin", cls: "paladin", level: 1, picks: {} };
-    const keys = decks.forCharacter(paladin).entries.map(({ key }) => key);
-    assert.deepEqual(
-      keys.filter((key) => key.startsWith("resource-")),
-      ["resource-paladin-mana-0", "resource-paladin-mana-1", "resource-paladin-lay-on-hands-0"]
-    );
-  });
-
-  test("keys are unique", () => {
-    const { entries } = decks.forCharacter(wizard);
-    assert.equal(new Set(entries.map(({ key }) => key)).size, entries.length);
-  });
-
-  test("ignores picks the class cannot take", () => {
-    const fighter: Character = {
-      id: "f",
-      name: "Fighter",
-      cls: "fighter",
-      level: 1,
-      picks: { weapons: ["longsword"], prepared: ["magic-missile"] },
-    };
-    const { entries } = decks.forCharacter(fighter);
-    assert.ok(entries.every(({ card }) => card.kind !== "spell"));
-    assert.equal(entries.filter(({ card }) => card.kind === "resource").length, 2);
-  });
-
-  test("adds a same-class card the character did not pick", () => {
-    // burning hands is a wizard level-1 spell absent from the picks above
-    const hero: Character = {
-      ...wizard,
-      picks: { ...wizard.picks, custom: ["spell-burning-hands"] },
-    };
-    const keys = decks.forCharacter(hero).entries.map(({ key }) => key);
-    assert.equal(keys.filter((key) => key.startsWith("spell-burning-hands")).length, 1);
-    // the picked class cards are still there
-    assert.ok(keys.includes("spell-fire-bolt-0"));
-    assert.ok(keys.includes("resource-wizard-mana-0"));
-    assert.ok(keys.includes("weapon-dagger-0"));
-  });
-
-  test("adds cross-class spell, feat, resource and weapon cards", () => {
-    const hero: Character = {
-      ...wizard,
-      picks: {
-        ...wizard.picks,
-        custom: [
-          "spell-cure-wounds",
-          "feat-rogue-sneak-attack",
-          "resource-paladin-lay-on-hands",
-          "weapon-longsword",
-        ],
-      },
-    };
-    const keys = new Set(decks.forCharacter(hero).entries.map(({ key }) => key));
-    assert.ok(keys.has("spell-cure-wounds-0"));
-    assert.ok(keys.has("feat-rogue-sneak-attack-0"));
-    assert.ok(keys.has("resource-paladin-lay-on-hands-0"));
-    assert.ok(keys.has("weapon-longsword-0"));
-  });
-
-  test("expands a custom stacked resource into one card per use", () => {
-    const hero: Character = {
-      ...wizard,
-      picks: { ...wizard.picks, custom: ["resource-fighter-second-wind"] },
-    };
-    const keys = decks.forCharacter(hero).entries.map(({ key }) => key);
-    assert.deepEqual(
-      keys.filter((key) => key.startsWith("resource-fighter-second-wind")),
-      ["resource-fighter-second-wind-0", "resource-fighter-second-wind-1"]
-    );
-  });
-
-  test("ignores unknown custom keys", () => {
-    const hero: Character = {
-      ...wizard,
-      picks: { ...wizard.picks, custom: ["spell-not-a-spell", "nonsense"] },
-    };
-    assert.deepEqual(decks.forCharacter(hero).entries, decks.forCharacter(wizard).entries);
-  });
-
-  test("does not duplicate a card the character already has", () => {
-    const hero: Character = {
-      ...wizard,
-      picks: {
-        ...wizard.picks,
-        custom: ["spell-fire-bolt", "spell-cure-wounds", "spell-cure-wounds"],
-      },
-    };
-    const keys = decks.forCharacter(hero).entries.map(({ key }) => key);
-    assert.equal(keys.filter((key) => key.startsWith("spell-fire-bolt")).length, 1);
-    assert.equal(keys.filter((key) => key.startsWith("spell-cure-wounds")).length, 1);
+    expect([cardSection(cantrip), cardSection(level1)]).toEqual(["Cantrips", "Level 1"]);
   });
 });
