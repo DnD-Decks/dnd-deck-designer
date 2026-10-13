@@ -1,6 +1,4 @@
 import barbarianData from "../../data/classes/barbarian.json" with { type: "json" };
-
-import type { SkillName } from "src/models/skills/skills.model";
 import bardData from "../../data/classes/bard.json" with { type: "json" };
 import clericData from "../../data/classes/cleric.json" with { type: "json" };
 import druidData from "../../data/classes/druid.json" with { type: "json" };
@@ -12,6 +10,9 @@ import rogueData from "../../data/classes/rogue.json" with { type: "json" };
 import sorcererData from "../../data/classes/sorcerer.json" with { type: "json" };
 import warlockData from "../../data/classes/warlock.json" with { type: "json" };
 import wizardData from "../../data/classes/wizard.json" with { type: "json" };
+import { lookup } from "../../lib/lookup.ts";
+
+import type { SkillName } from "src/models/skills/skills.model";
 
 export type ManualClassification = "martial" | "spell-caster" | "versatile";
 
@@ -78,7 +79,7 @@ const CLASSIFICATIONS = new Set<string>([
   "versatile",
 ] satisfies ManualClassification[]);
 
-function parseRawClass(id: CharacterClass, data: RawClassInput): RawClass {
+function parseClass({ id, data }: { id: CharacterClass; data: RawClassInput }): ClassDetails {
   if (!HIT_DICE.has(data.hitDie)) {
     throw new Error(`Class ${id}: unknown hitDie "${data.hitDie}"`);
   }
@@ -86,6 +87,7 @@ function parseRawClass(id: CharacterClass, data: RawClassInput): RawClass {
     throw new Error(`Class ${id}: unknown manualClassification "${data.manualClassification}"`);
   }
   return {
+    id,
     ...data,
     hitDie: data.hitDie as HitDie,
     manualClassification: data.manualClassification as ManualClassification,
@@ -93,39 +95,26 @@ function parseRawClass(id: CharacterClass, data: RawClassInput): RawClass {
   };
 }
 
-const RAW: Record<CharacterClass, RawClass> = {
-  barbarian: parseRawClass("barbarian", barbarianData),
-  bard: parseRawClass("bard", bardData),
-  cleric: parseRawClass("cleric", clericData),
-  druid: parseRawClass("druid", druidData),
-  fighter: parseRawClass("fighter", fighterData),
-  monk: parseRawClass("monk", monkData),
-  paladin: parseRawClass("paladin", paladinData),
-  ranger: parseRawClass("ranger", rangerData),
-  rogue: parseRawClass("rogue", rogueData),
-  sorcerer: parseRawClass("sorcerer", sorcererData),
-  warlock: parseRawClass("warlock", warlockData),
-  wizard: parseRawClass("wizard", wizardData),
+const RAW: Record<CharacterClass, RawClassInput> = {
+  barbarian: barbarianData,
+  bard: bardData,
+  cleric: clericData,
+  druid: druidData,
+  fighter: fighterData,
+  monk: monkData,
+  paladin: paladinData,
+  ranger: rangerData,
+  rogue: rogueData,
+  sorcerer: sorcererData,
+  warlock: warlockData,
+  wizard: wizardData,
 };
 
-const ALL: ClassDetails[] = (Object.keys(RAW) as CharacterClass[]).map((id) => ({
-  id,
-  ...RAW[id],
-}));
-const BY_ID = new Map<string, ClassDetails>(ALL.map((c) => [c.id, c]));
+const ALL = (Object.keys(RAW) as CharacterClass[]).map((id) => parseClass({ id, data: RAW[id] }));
+const TABLE = lookup({ items: ALL, key: "id", label: "class" });
 
 export const classes = {
-  get({ id }: { id: CharacterClass }): ClassDetails {
-    const found = BY_ID.get(id);
-    if (!found) throw new Error(`Unknown class: ${id}`);
-    return found;
-  },
-
-  find({ id }: { id: string }): ClassDetails | undefined {
-    return BY_ID.get(id);
-  },
-
-  list(): readonly ClassDetails[] {
-    return ALL;
-  },
+  get: ({ id }: { id: CharacterClass }) => TABLE.get(id),
+  find: ({ id }: { id: string }) => TABLE.find(id),
+  list: TABLE.list,
 };

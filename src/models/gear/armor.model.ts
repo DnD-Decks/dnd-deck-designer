@@ -1,4 +1,5 @@
 import armorData from "../../data/gear/armor.json" with { type: "json" };
+import { lookup } from "../../lib/lookup.ts";
 
 export type ArmorCategory = "light" | "medium" | "heavy" | "shield";
 
@@ -31,20 +32,11 @@ export type Armor = {
 } & ArmorDexBonusCap;
 
 const DATA = armorData as Armor[];
-const BY_ID = new Map<string, Armor>(DATA.map((a) => [a.id, a]));
+
+const TABLE = lookup({ items: DATA, key: "id", label: "armor" });
 
 export const armor = {
-  get({ id }: { id: ArmorId }): Armor {
-    const found = BY_ID.get(id);
-    if (!found) throw new Error(`Unknown armor: ${id}`);
-    return found;
-  },
-
-  find({ id }: { id: string }): Armor | undefined {
-    return BY_ID.get(id);
-  },
-
-  list(): readonly Armor[] {
-    return DATA;
-  },
+  get: ({ id }: { id: ArmorId }) => TABLE.get(id),
+  find: ({ id }: { id: string }) => TABLE.find(id),
+  list: TABLE.list,
 };

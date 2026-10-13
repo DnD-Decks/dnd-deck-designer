@@ -1,4 +1,5 @@
 import weaponMasteryData from "../../data/gear/weapon-mastery.json" with { type: "json" };
+import { lookup } from "../../lib/lookup.ts";
 
 export type WeaponMasteryName =
   | "cleave"
@@ -22,20 +23,11 @@ const DATA: WeaponMasteryDetails[] = (Object.keys(RAW) as WeaponMasteryName[]).m
   id,
   description: RAW[id],
 }));
-const BY_ID = new Map<string, WeaponMasteryDetails>(DATA.map((m) => [m.id, m]));
+
+const TABLE = lookup({ items: DATA, key: "id", label: "weapon mastery" });
 
 export const weaponMastery = {
-  get({ id }: { id: WeaponMasteryName }): WeaponMasteryDetails {
-    const found = BY_ID.get(id);
-    if (!found) throw new Error(`Unknown weapon mastery: ${id}`);
-    return found;
-  },
-
-  find({ id }: { id: string }): WeaponMasteryDetails | undefined {
-    return BY_ID.get(id);
-  },
-
-  list(): readonly WeaponMasteryDetails[] {
-    return DATA;
-  },
+  get: ({ id }: { id: WeaponMasteryName }) => TABLE.get(id),
+  find: ({ id }: { id: string }) => TABLE.find(id),
+  list: TABLE.list,
 };

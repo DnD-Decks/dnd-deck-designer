@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Icon } from "src/lib/icon.component";
 import {
   DURATION_ICON,
@@ -9,22 +10,35 @@ import {
 import type { Spell } from "src/models/spells/spells.model";
 import styles from "./spell-card.module.css";
 
-type DamageItemProps = { damage: NonNullable<Spell["damage"]> };
+type StatItemProps = { icon: string; label: string; children: ReactNode };
 
-function DamageItem({ damage }: DamageItemProps) {
-  const dSrc = diceIcon(damage.dice);
+/** One glyph + value on the stat strip; spell and weapon cards share it. */
+export function StatItem({ icon, label, children }: StatItemProps) {
   return (
     <span className={styles.statItem}>
-      {dSrc ? <Icon src={dSrc} label={damage.dice} className={styles.statIcon} /> : null}
-      {damage.type.map((t) => {
-        const src = damageIcon(t);
-        return src ? (
-          <Icon key={t} src={src} label={t} className={styles.statIcon} />
-        ) : (
-          <span key={t}>{t}</span>
-        );
-      })}
-      <span>{damage.dice}</span>
+      <Icon src={icon} label={label} className={styles.statIcon} />
+      <span>{children}</span>
+    </span>
+  );
+}
+
+function DamageTypeGlyph({ type }: { type: string }) {
+  const src = damageIcon(type);
+  if (!src) return <span>{type}</span>;
+  return <Icon src={src} label={type} className={styles.statIcon} />;
+}
+
+type DamageItemProps = { dice: string; types: readonly string[]; children: ReactNode };
+
+export function DamageItem({ dice, types, children }: DamageItemProps) {
+  const diceSrc = diceIcon(dice);
+  return (
+    <span className={styles.statItem}>
+      {diceSrc && <Icon src={diceSrc} label={dice} className={styles.statIcon} />}
+      {types.map((type) => (
+        <DamageTypeGlyph key={type} type={type} />
+      ))}
+      <span>{children}</span>
     </span>
   );
 }
@@ -34,21 +48,22 @@ type Props = Pick<Spell, "range" | "duration" | "save" | "damage">;
 export function SpellCardStatStrip({ range, duration, save, damage }: Props) {
   return (
     <div className={styles.statStrip}>
-      <span className={styles.statItem}>
-        <Icon src={rangeIcon(range)} label="Range" className={styles.statIcon} />
-        <span>{range}</span>
-      </span>
-      <span className={styles.statItem}>
-        <Icon src={DURATION_ICON} label="Duration" className={styles.statIcon} />
-        <span>{duration}</span>
-      </span>
-      {save ? (
-        <span className={styles.statItem}>
-          <Icon src={SAVING_THROW_ICON} label="Saving throw" className={styles.statIcon} />
-          <span>{save}</span>
-        </span>
-      ) : null}
-      {damage ? <DamageItem damage={damage} /> : null}
+      <StatItem icon={rangeIcon(range)} label="Range">
+        {range}
+      </StatItem>
+      <StatItem icon={DURATION_ICON} label="Duration">
+        {duration}
+      </StatItem>
+      {save && (
+        <StatItem icon={SAVING_THROW_ICON} label="Saving throw">
+          {save}
+        </StatItem>
+      )}
+      {damage && (
+        <DamageItem dice={damage.dice} types={damage.type}>
+          {damage.dice}
+        </DamageItem>
+      )}
     </div>
   );
 }

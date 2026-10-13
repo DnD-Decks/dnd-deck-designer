@@ -6,6 +6,7 @@ import {
   StepHeading,
 } from "src/characters/character-builder-steps.component";
 import { BuildTray } from "src/characters/character-builder-tray.component";
+import { CharacterNotFound } from "src/characters/character-dead-end.component";
 import type { Character } from "src/characters/character.model";
 import { CustomCards } from "src/characters/custom-cards.component";
 import { useCharacterBuilderDraft } from "src/characters/use-character-builder-draft.hook";
@@ -20,6 +21,13 @@ function Builder({ initial }: { initial?: Character }) {
   const draft = useCharacterBuilderDraft(initial);
   const { index, step, isLast, nextStep, missing, back, next } = useCharacterBuilderSteps(draft);
   const [removed, setRemoved] = useState<string>();
+  const custom = draft.picks.custom ?? [];
+
+  const removeCustom = (key: string) => {
+    const card = decks.findCard({ key });
+    if (card) setRemoved(cardName(card));
+    draft.chooseCustom(custom.filter((k) => k !== key));
+  };
 
   return (
     <main className={styles.page}>
@@ -33,19 +41,10 @@ function Builder({ initial }: { initial?: Character }) {
       <StepHeading key={step} step={step} />
       {/* outside CustomCards: it unmounts with the step, this must outlive it */}
       <output aria-live="polite" className={styles.visuallyHidden}>
-        {removed ? `${removed} removed` : ""}
+        {removed && `${removed} removed`}
       </output>
       {step === "class" && <ClassSelector selected={draft.cls} onSelect={draft.chooseClass} />}
-      {step === "custom" && (
-        <CustomCards
-          keys={draft.picks.custom ?? []}
-          onRemove={(key) => {
-            const card = decks.findCard({ key });
-            if (card) setRemoved(cardName(card));
-            draft.chooseCustom((draft.picks.custom ?? []).filter((k) => k !== key));
-          }}
-        />
-      )}
+      {step === "custom" && <CustomCards keys={custom} onRemove={removeCustom} />}
       {step !== "class" && step !== "custom" && draft.cls && (
         <BuilderChoices
           cls={draft.cls}
@@ -72,16 +71,6 @@ function Builder({ initial }: { initial?: Character }) {
 
 export function CharacterBuilderPage({ id }: { id?: string }) {
   const initial = id ? characterStorage.get(id) : undefined;
-  if (id && !initial) {
-    return (
-      <main className={styles.page}>
-        <h2 className={styles.title}>Character not found</h2>
-        <p className={styles.hint}>This device has no character with that link.</p>
-        <Link href="/" className={styles.cancel}>
-          Back to your characters
-        </Link>
-      </main>
-    );
-  }
+  if (id && !initial) return <CharacterNotFound />;
   return <Builder key={id ?? "new"} initial={initial} />;
 }

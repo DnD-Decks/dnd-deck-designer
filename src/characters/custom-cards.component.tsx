@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { DeckCardFace } from "src/cards/deck-card.component";
 import { cardName, decks } from "src/decks/deck.model";
+import { useRefMap } from "src/lib/use-ref-map.hook";
 import styles from "./custom-cards.module.css";
 
 type Props = {
@@ -14,10 +15,10 @@ export function CustomCards({ keys, onRemove }: Props) {
     const card = decks.findCard({ key });
     return card ? [{ key, card }] : [];
   });
-  const buttons = useRef(new Map<string, HTMLButtonElement>());
+  const buttons = useRefMap<HTMLButtonElement>();
   const refocus = useRef<string | undefined>(undefined);
 
-  const remove = (index: number, key: string) => {
+  const remove = ({ index, key }: { index: number; key: string }) => {
     refocus.current = entries[index + 1]?.key ?? entries[index - 1]?.key;
     onRemove(key);
   };
@@ -27,7 +28,7 @@ export function CustomCards({ keys, onRemove }: Props) {
   useEffect(() => {
     const key = refocus.current;
     refocus.current = undefined;
-    if (key) buttons.current.get(key)?.focus();
+    if (key) buttons.get(key)?.focus();
   }, [keys]);
 
   return (
@@ -38,11 +39,8 @@ export function CustomCards({ keys, onRemove }: Props) {
           <button
             type="button"
             className={styles.remove}
-            ref={(node) => {
-              if (node) buttons.current.set(key, node);
-              else buttons.current.delete(key);
-            }}
-            onClick={() => remove(index, key)}
+            ref={buttons.ref(key)}
+            onClick={() => remove({ index, key })}
           >
             Remove {cardName(card)}
           </button>

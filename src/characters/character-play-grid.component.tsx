@@ -1,30 +1,25 @@
+import { CardZoom } from "src/cards/card-zoom.component";
 import { DeckCardFace } from "src/cards/deck-card.component";
+import type { Zoom } from "src/cards/use-card-spotlight.hook";
 import { SpentMark, withSpent } from "src/characters/character-spent-mark.component";
 import type { play } from "src/characters/play.model";
 import type { DeckCard } from "src/decks/deck.model";
 import { cardName } from "src/decks/deck.model";
 import styles from "./character-view.module.css";
 
-type SlotProps = {
-  card: DeckCard;
-  spent: boolean;
-  trigger: (element: HTMLElement | null) => () => void;
-  onZoom: () => void;
-};
+type SlotProps = { card: DeckCard; spent: boolean; zoom: Zoom };
 
-function CardSlot({ card, spent, trigger, onZoom }: SlotProps) {
+function CardSlot({ card, spent, zoom }: SlotProps) {
   return (
     <div className={styles.slot} data-spent={spent || undefined}>
       <div className={styles.face}>
         <DeckCardFace card={card} />
       </div>
       {spent && <SpentMark className={styles.spentLabel} />}
-      <button
-        type="button"
+      <CardZoom
+        name={withSpent({ name: cardName(card), spent })}
         className={styles.zoom}
-        aria-label={`Zoom ${withSpent(cardName(card), spent)}`}
-        ref={trigger}
-        onClick={onZoom}
+        zoom={zoom}
       />
     </div>
   );
@@ -33,11 +28,10 @@ function CardSlot({ card, spent, trigger, onZoom }: SlotProps) {
 type GridProps = {
   sections: ReturnType<typeof play.sections>;
   spentKeys: ReadonlySet<string>;
-  trigger: (key: string) => SlotProps["trigger"];
-  hold: (key: string) => void;
+  zoom: (key: string) => Zoom;
 };
 
-export function PlayGrid({ sections, spentKeys, trigger, hold }: GridProps) {
+export function PlayGrid({ sections, spentKeys, zoom }: GridProps) {
   return (
     <>
       {sections.map(({ label, entries }) => (
@@ -45,13 +39,7 @@ export function PlayGrid({ sections, spentKeys, trigger, hold }: GridProps) {
           <h2 className={styles.sectionLabel}>{label}</h2>
           <div className={styles.row}>
             {entries.map(({ key, card }) => (
-              <CardSlot
-                key={key}
-                card={card}
-                spent={spentKeys.has(key)}
-                trigger={trigger(key)}
-                onZoom={() => hold(key)}
-              />
+              <CardSlot key={key} card={card} spent={spentKeys.has(key)} zoom={zoom(key)} />
             ))}
           </div>
         </section>

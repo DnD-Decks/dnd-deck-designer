@@ -1,22 +1,17 @@
 import { useState } from "react";
+import { DeadEnd } from "src/characters/character-dead-end.component";
 import { CharacterView } from "src/characters/character-view.component";
 import { characters } from "src/characters/character.model";
 import { characterStorage } from "src/services/character.storage";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import styles from "./characters.module.css";
 
 function BrokenLink() {
   return (
-    <main className={styles.page}>
-      <h2 className={styles.heading}>This share link doesn't work</h2>
-      <div className={styles.empty}>
-        <p>The link is incomplete or was changed after it was copied.</p>
-        <p>Ask for the link again, and make sure it is copied in full.</p>
-        <Link href="/" className={styles.action}>
-          Back to your characters
-        </Link>
-      </div>
-    </main>
+    <DeadEnd title="This share link doesn't work">
+      <p>The link is incomplete or was changed after it was copied.</p>
+      <p>Ask for the link again, and make sure it is copied in full.</p>
+    </DeadEnd>
   );
 }
 

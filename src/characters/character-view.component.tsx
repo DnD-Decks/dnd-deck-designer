@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { SpotlightAction } from "src/cards/card-spotlight-action.component";
+import type { PutBack } from "src/cards/card-spotlight.component";
 import { useCardSpotlight } from "src/cards/use-card-spotlight.hook";
 import { useDeckLayout } from "src/cards/use-deck-layout.hook";
 import { ViewModeToggle } from "src/cards/view-mode-toggle.component";
@@ -7,7 +8,9 @@ import { PlayCarousel } from "src/characters/character-play-carousel.component";
 import { PlayGrid } from "src/characters/character-play-grid.component";
 import { spendLabel } from "src/characters/character-spent-mark.component";
 import type { Character } from "src/characters/character.model";
+import { characters } from "src/characters/character.model";
 import { play } from "src/characters/play.model";
+import type { DeckEntry } from "src/decks/deck.model";
 import { decks } from "src/decks/deck.model";
 import { Link } from "wouter";
 import styles from "./character-view.module.css";
@@ -21,14 +24,9 @@ type Props = {
   menu?: ReactNode;
 };
 
-type HeaderProps = {
-  character: Character;
-  classLabel: string;
-  actions: ReactNode;
-  menu?: ReactNode;
-};
+type HeaderProps = Pick<Props, "character" | "actions" | "menu">;
 
-function PlayHeader({ character, classLabel, actions, menu }: HeaderProps) {
+function PlayHeader({ character, actions, menu }: HeaderProps) {
   return (
     <header className={styles.header}>
       <Link href="/" className={styles.back} aria-label="Back to your characters">
@@ -36,9 +34,7 @@ function PlayHeader({ character, classLabel, actions, menu }: HeaderProps) {
       </Link>
       <hgroup className={styles.title}>
         <h2 className={styles.name}>{character.name}</h2>
-        <p className={styles.subtitle}>
-          Level {character.level} {classLabel}
-        </p>
+        <p className={styles.subtitle}>{characters.classLine(character)}</p>
       </hgroup>
       <div className={styles.actions}>{actions}</div>
       {menu}
@@ -47,22 +43,24 @@ function PlayHeader({ character, classLabel, actions, menu }: HeaderProps) {
 }
 
 export function CharacterView({ character, spent = [], onToggleSpent, actions, menu }: Props) {
-  const { cls, entries } = decks.forCharacter(character);
+  const { entries } = decks.forCharacter(character);
   const grouped = play.sections(entries);
   // arrow order is the order you see
   const ordered = grouped.flatMap((section) => section.entries);
   const spentKeys = new Set(spent);
-  const { holding, hold, trigger, spotlight } = useCardSpotlight({
-    entries: ordered,
-    actions: ({ entry, putBack }) =>
-      onToggleSpent &&
-      play.spendable(entry) && (
-        <SpotlightAction onClick={() => putBack(() => onToggleSpent(entry.key))}>
-          {spendLabel(spentKeys.has(entry.key))}
-        </SpotlightAction>
-      ),
-  });
+
+  const spendAction = ({ entry, putBack }: { entry: DeckEntry; putBack: PutBack }) => {
+    if (!onToggleSpent || !play.spendable(entry)) return null;
+    return (
+      <SpotlightAction onClick={() => putBack(() => onToggleSpent(entry.key))}>
+        {spendLabel(spentKeys.has(entry.key))}
+      </SpotlightAction>
+    );
+  };
+
+  const { holding, zoom, spotlight } = useCardSpotlight({ entries: ordered, actions: spendAction });
   const { mode, choose, carousel } = useDeckLayout();
+  const showCarousel = carousel && !!onToggleSpent && entries.length > 0;
 
   return (
     <>
@@ -72,7 +70,7 @@ export function CharacterView({ character, spent = [], onToggleSpent, actions, m
         inert={holding}
         aria-hidden={holding || undefined}
       >
-        <PlayHeader character={character} classLabel={cls.label} actions={actions} menu={menu} />
+        <PlayHeader character={character} actions={actions} menu={menu} />
         {/* the import preview has no onToggleSpent: it only gets the grid, no toggle */}
         {!!onToggleSpent && <ViewModeToggle mode={mode} choose={choose} />}
 
@@ -82,7 +80,7 @@ export function CharacterView({ character, spent = [], onToggleSpent, actions, m
           </p>
         )}
 
-        {carousel && onToggleSpent && entries.length > 0 ? (
+        {showCarousel && (
           <PlayCarousel
             key={character.id}
             character={character}
@@ -90,9 +88,8 @@ export function CharacterView({ character, spent = [], onToggleSpent, actions, m
             spentKeys={spentKeys}
             onToggleSpent={onToggleSpent}
           />
-        ) : (
-          <PlayGrid sections={grouped} spentKeys={spentKeys} trigger={trigger} hold={hold} />
         )}
+        {!showCarousel && <PlayGrid sections={grouped} spentKeys={spentKeys} zoom={zoom} />}
       </main>
 
       {spotlight}

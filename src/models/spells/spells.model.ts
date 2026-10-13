@@ -9,6 +9,7 @@ import spellsLevel1Data from "../../data/spells/spells-level-1.json" with { type
 import spellsLevel2Data from "../../data/spells/spells-level-2.json" with { type: "json" };
 import warlockSpellsData from "../../data/spells/warlock-spells.json" with { type: "json" };
 import wizardSpellsData from "../../data/spells/wizard-spells.json" with { type: "json" };
+import { lookup } from "../../lib/lookup.ts";
 
 import type { CharacterClass } from "src/models/class/classes.model";
 import type { DamageType } from "src/models/damage/damage-types.model";
@@ -32,12 +33,14 @@ export type Spell = {
   icon?: string;
 };
 
-const ALL_CANTRIPS = cantripsData as Record<string, Spell>;
-const ALL_LEVEL_1 = spellsLevel1Data as Record<string, Spell>;
-const ALL_LEVEL_2 = spellsLevel2Data as Record<string, Spell>;
+type SpellTable = Record<string, Spell>;
+
+const ALL_CANTRIPS = cantripsData as SpellTable;
+const ALL_LEVEL_1 = spellsLevel1Data as SpellTable;
+const ALL_LEVEL_2 = spellsLevel2Data as SpellTable;
 
 const ALL: Spell[] = [ALL_CANTRIPS, ALL_LEVEL_1, ALL_LEVEL_2].flatMap(Object.values);
-const BY_ID = new Map(ALL.map((s) => [s.id, s]));
+const TABLE = lookup({ items: ALL, key: "id", label: "spell" });
 
 type ClassSpellList = {
   cantrips: string[];
@@ -45,7 +48,9 @@ type ClassSpellList = {
   level2?: string[];
 };
 
-function resolveSpellIds(ids: string[], table: Record<string, Spell>, source: string): Spell[] {
+type ResolveIds = { ids: string[]; table: SpellTable; source: string };
+
+function resolveSpellIds({ ids, table, source }: ResolveIds) {
   return ids.map((id) => {
     const s = table[id];
     if (!s) throw new Error(`${source} references unknown spell id: "${id}"`);
@@ -53,43 +58,32 @@ function resolveSpellIds(ids: string[], table: Record<string, Spell>, source: st
   });
 }
 
-function resolveClassSpells(data: ClassSpellList, source: string) {
+function resolveClassSpells({ data, source }: { data: ClassSpellList; source: string }) {
+  const { cantrips, level1, level2 } = data;
   return {
-    cantrips: resolveSpellIds(data.cantrips, ALL_CANTRIPS, source),
-    level1: resolveSpellIds(data.level1, ALL_LEVEL_1, source),
-    level2: data.level2 ? resolveSpellIds(data.level2, ALL_LEVEL_2, source) : undefined,
+    cantrips: resolveSpellIds({ ids: cantrips, table: ALL_CANTRIPS, source }),
+    level1: resolveSpellIds({ ids: level1, table: ALL_LEVEL_1, source }),
+    level2: level2 && resolveSpellIds({ ids: level2, table: ALL_LEVEL_2, source }),
   };
 }
 
-const CLASS_DATA: Partial<
-  Record<CharacterClass, { cantrips: Spell[]; level1: Spell[]; level2?: Spell[] }>
-> = {
-  bard: resolveClassSpells(bardSpellsData as ClassSpellList, "bard-spells.json"),
-  cleric: resolveClassSpells(clericSpellsData as ClassSpellList, "cleric-spells.json"),
-  druid: resolveClassSpells(druidSpellsData as ClassSpellList, "druid-spells.json"),
-  paladin: resolveClassSpells(paladinSpellsData as ClassSpellList, "paladin-spells.json"),
-  ranger: resolveClassSpells(rangerSpellsData as ClassSpellList, "ranger-spells.json"),
-  sorcerer: resolveClassSpells(sorcererSpellsData as ClassSpellList, "sorcerer-spells.json"),
-  warlock: resolveClassSpells(warlockSpellsData as ClassSpellList, "warlock-spells.json"),
-  wizard: resolveClassSpells(wizardSpellsData as ClassSpellList, "wizard-spells.json"),
+const CLASS_DATA: Partial<Record<CharacterClass, ReturnType<typeof resolveClassSpells>>> = {
+  bard: resolveClassSpells({ data: bardSpellsData, source: "bard-spells.json" }),
+  cleric: resolveClassSpells({ data: clericSpellsData, source: "cleric-spells.json" }),
+  druid: resolveClassSpells({ data: druidSpellsData, source: "druid-spells.json" }),
+  paladin: resolveClassSpells({ data: paladinSpellsData, source: "paladin-spells.json" }),
+  ranger: resolveClassSpells({ data: rangerSpellsData, source: "ranger-spells.json" }),
+  sorcerer: resolveClassSpells({ data: sorcererSpellsData, source: "sorcerer-spells.json" }),
+  warlock: resolveClassSpells({ data: warlockSpellsData, source: "warlock-spells.json" }),
+  wizard: resolveClassSpells({ data: wizardSpellsData, source: "wizard-spells.json" }),
 };
 
 export const spells = {
-  get({ id }: { id: string }): Spell {
-    const found = BY_ID.get(id);
-    if (!found) throw new Error(`Unknown spell: ${id}`);
-    return found;
-  },
+  get: ({ id }: { id: string }) => TABLE.get(id),
+  find: ({ id }: { id: string }) => TABLE.find(id),
+  list: TABLE.list,
 
-  find({ id }: { id: string }): Spell | undefined {
-    return BY_ID.get(id);
-  },
-
-  list(): Spell[] {
-    return ALL;
-  },
-
-  findAll({ cls, level }: { cls: CharacterClass; level: SpellLevel }): Spell[] {
+  findAll({ cls, level }: { cls: CharacterClass; level: SpellLevel }) {
     const data = CLASS_DATA[cls];
     if (!data) return [];
     if (level === 0) return data.cantrips;

@@ -6,9 +6,7 @@ export const SAVING_THROW_ICON = "/icons/saving-throw.png";
 export const CONCENTRATION_ICON = "/icons/concentration.png";
 export const RITUAL_ICON = "/icons/ritual.png";
 
-export type IconRef = { src: string; label: string };
-
-export const actionIcon = (castingTime: string): IconRef | undefined => {
+export const actionIcon = (castingTime: string) => {
   const t = castingTime.toLowerCase();
   if (t.includes("bonus")) return { src: ACTION_TIMING_ICONS["bonus-action"], label: castingTime };
   if (t.includes("reaction")) return { src: ACTION_TIMING_ICONS.reaction, label: castingTime };
@@ -17,13 +15,13 @@ export const actionIcon = (castingTime: string): IconRef | undefined => {
   return undefined;
 };
 
-export const rangeIcon = (range: string): string => {
+export const rangeIcon = (range: string) => {
   const r = range.toLowerCase();
   if (r === "self" || r === "touch" || r.startsWith("melee")) return "/icons/melee-range.png";
   return "/icons/range.png";
 };
 
-const DAMAGE_ICONS: Record<string, string> = {
+const DAMAGE_ICONS: Partial<Record<string, string>> = {
   acid: "/icons/damage-acid.png",
   bludgeoning: "/icons/damage-bludgeoning.png",
   cold: "/icons/damage-cold.png",
@@ -39,9 +37,9 @@ const DAMAGE_ICONS: Record<string, string> = {
   thunder: "/icons/damage-thunder.png",
 };
 
-export const damageIcon = (type: string): string | undefined => DAMAGE_ICONS[type.toLowerCase()];
+export const damageIcon = (type: string) => DAMAGE_ICONS[type.toLowerCase()];
 
-const DICE_ICONS: Record<string, string> = {
+const DICE_ICONS: Partial<Record<string, string>> = {
   "4": "/icons/d4.png",
   "6": "/icons/d6.png",
   "8": "/icons/d8.png",
@@ -51,7 +49,7 @@ const DICE_ICONS: Record<string, string> = {
 
 const DICE_PATTERN = /d(\d+)/gi;
 
-export const diceIcon = (dice: string): string | undefined => {
+export const diceIcon = (dice: string) => {
   const sizes = [...dice.matchAll(DICE_PATTERN)].map((m) => m[1]);
   const distinct = [...new Set(sizes)];
   // return an icon only when the notation maps to exactly one die size

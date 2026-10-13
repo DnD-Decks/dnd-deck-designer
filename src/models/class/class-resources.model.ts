@@ -1,6 +1,7 @@
 import classResourcesData from "../../data/classes/class-resources.json" with { type: "json" };
 
 // Runtime import: relative .ts path so node:test can resolve without the src/* alias.
+import { lookup } from "../../lib/lookup.ts";
 import { computeModifier } from "../abilities/abilities.model.ts";
 
 import type { AbilityName, AbilityScores } from "src/models/abilities/abilities.model";
@@ -37,28 +38,24 @@ type RawClassEntry = { resources: RawResourceEntry[] };
 
 const RAW = classResourcesData as Record<CharacterClass, RawClassEntry>;
 
-// Deduplicate resource definitions across classes (e.g. spell-slot-1st appears in many classes).
-const ALL_DEFS: ResourceDefinition[] = [];
-const BY_RESOURCE_ID = new Map<ResourceId, ResourceDefinition>();
-
-for (const [className, classEntry] of Object.entries(RAW)) {
+function classEntries([className, classEntry]: [string, RawClassEntry]) {
   if (!Array.isArray(classEntry.resources)) {
     throw new Error(`class-resources.json: missing "resources" array for class "${className}"`);
   }
   for (const r of classEntry.resources) {
     if (!r.id)
       throw new Error(`class-resources.json: resource entry missing "id" in class "${className}"`);
-    if (!BY_RESOURCE_ID.has(r.id)) {
-      const def: ResourceDefinition = {
-        id: r.id,
-        name: r.name,
-        description: r.description,
-      };
-      ALL_DEFS.push(def);
-      BY_RESOURCE_ID.set(r.id, def);
-    }
   }
+  return classEntry.resources;
 }
+
+// Deduplicate resource definitions across classes (e.g. spell-slot-1st appears in many classes).
+const DEFS_BY_ID = new Map<ResourceId, ResourceDefinition>();
+for (const r of Object.entries(RAW).flatMap(classEntries)) {
+  if (!DEFS_BY_ID.has(r.id))
+    DEFS_BY_ID.set(r.id, { id: r.id, name: r.name, description: r.description });
+}
+const TABLE = lookup({ items: [...DEFS_BY_ID.values()], key: "id", label: "resource" });
 
 const ABILITY_MOD_MAP: Record<AbilityModKey, AbilityName> = {
   "str-mod": "str",
@@ -69,52 +66,35 @@ const ABILITY_MOD_MAP: Record<AbilityModKey, AbilityName> = {
   "cha-mod": "cha",
 };
 
-function resolveMax(value: ProgressionValue, scores: AbilityScores): number {
+function resolveMax({ value, scores }: { value: ProgressionValue; scores: AbilityScores }) {
   if (typeof value === "number") return value;
   return Math.max(1, computeModifier(scores[ABILITY_MOD_MAP[value]]));
 }
 
-export function resolveResourcesForLevel(
-  characterClass: CharacterClass,
-  level: number,
-  abilityScores: AbilityScores
-): CharacterResource[] {
+type ForLevel = { cls: CharacterClass; level: number; scores: AbilityScores };
+
+export function resolveResourcesForLevel({ cls, level, scores }: ForLevel) {
   if (!Number.isInteger(level) || level < 1 || level > 5) {
     throw new Error(`resolveResourcesForLevel: level must be an integer 1–5, got ${level}`);
   }
-  const entry = RAW[characterClass];
-  if (!entry) throw new Error(`resolveResourcesForLevel: no data for class "${characterClass}"`);
+  const entry = RAW[cls];
+  if (!entry) throw new Error(`resolveResourcesForLevel: no data for class "${cls}"`);
   return entry.resources.flatMap((r) => {
-    const rawValue = r.progression[String(level)] ?? 0;
-    const max = resolveMax(rawValue, abilityScores);
-    if (max <= 0) return [];
-    return [{ resourceId: r.id, current: max, max }];
+    const max = resolveMax({ value: r.progression[String(level)] ?? 0, scores });
+    return max > 0 ? [{ resourceId: r.id, current: max, max }] : [];
   });
 }
 
-export function resolveResourceResetOn(
-  characterClass: CharacterClass,
-  resourceId: ResourceId
-): RestType {
-  const entry = RAW[characterClass];
-  if (!entry) throw new Error(`resolveResourceResetOn: unknown class "${characterClass}"`);
-  const resource = entry.resources.find((r) => r.id === resourceId);
-  if (!resource) throw new Error(`Unknown resource "${resourceId}" for class "${characterClass}"`);
+export function resolveResourceResetOn({ cls, id }: { cls: CharacterClass; id: ResourceId }) {
+  const entry = RAW[cls];
+  if (!entry) throw new Error(`resolveResourceResetOn: unknown class "${cls}"`);
+  const resource = entry.resources.find((r) => r.id === id);
+  if (!resource) throw new Error(`Unknown resource "${id}" for class "${cls}"`);
   return resource.resetOn;
 }
 
 export const classResources = {
-  get({ id }: { id: ResourceId }): ResourceDefinition {
-    const found = BY_RESOURCE_ID.get(id);
-    if (!found) throw new Error(`Unknown resource: ${id}`);
-    return found;
-  },
-
-  find({ id }: { id: ResourceId }): ResourceDefinition | undefined {
-    return BY_RESOURCE_ID.get(id);
-  },
-
-  list(): ResourceDefinition[] {
-    return ALL_DEFS;
-  },
+  get: ({ id }: { id: ResourceId }) => TABLE.get(id),
+  find: ({ id }: { id: ResourceId }) => TABLE.find(id),
+  list: TABLE.list,
 };

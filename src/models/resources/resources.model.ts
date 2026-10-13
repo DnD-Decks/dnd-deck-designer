@@ -53,7 +53,7 @@ const CLASS_DATA: Partial<Record<CharacterClass, Resource[]>> = {
 };
 
 export const resources = {
-  findAll({ cls }: { cls: CharacterClass }): Resource[] {
+  findAll({ cls }: { cls: CharacterClass }) {
     return CLASS_DATA[cls] ?? [];
   },
 };

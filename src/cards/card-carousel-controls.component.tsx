@@ -20,7 +20,7 @@ export function CarouselControls({ index, total, section, onGo }: ControlsProps)
         ‹
       </button>
       <p className={styles.position} aria-live="polite">
-        {section ? `${section} · ${index + 1} / ${total}` : null}
+        {section && `${section} · ${index + 1} / ${total}`}
       </p>
       <button
         type="button"

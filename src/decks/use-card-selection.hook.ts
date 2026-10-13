@@ -6,11 +6,7 @@ export function useCardSelection() {
   const toggle = (key: string) =>
     setSelected((now) => {
       const next = new Set(now);
-      if (next.has(key)) {
-        next.delete(key);
-      } else {
-        next.add(key);
-      }
+      if (!next.delete(key)) next.add(key);
       return next;
     });
 

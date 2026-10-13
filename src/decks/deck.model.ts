@@ -74,6 +74,13 @@ export function cardSection(card: DeckCard) {
   }
 }
 
+/** a catalog card as a carousel slide: keyed once per card (no copies), with its catalog section */
+export const catalogEntry = (card: DeckCard) => ({
+  key: cardKey(card),
+  card,
+  section: cardSection(card),
+});
+
 const copies = (card: DeckCard) =>
   card.kind === "resource" && card.resource.stack ? card.resource.uses : 1;
 
@@ -96,36 +103,25 @@ const cardIndex = () => {
 };
 
 export const decks = {
-  get({ cls }: { cls: CharacterClass }): Deck {
+  get({ cls }: { cls: CharacterClass }) {
     const cached = CACHE.get(cls);
     if (cached) return cached;
 
-    const resourceCards: DeckCard[] = resources
-      .findAll({ cls })
-      .map((resource): DeckCard => ({ kind: "resource", resource }));
-
-    const featCards: DeckCard[] = feats
-      .findAll({ cls })
-      .map((feat): DeckCard => ({ kind: "feat", feat }));
-
-    const spellCards: DeckCard[] = SPELL_LEVELS.flatMap((level) =>
-      spells.findAll({ cls, level }).map((spell): DeckCard => ({ kind: "spell", spell }))
-    );
-
-    const weaponCards: DeckCard[] = weapons
-      .findAll({ cls })
-      .map((weapon): DeckCard => ({ kind: "weapon", weapon }));
-
-    const deck: Deck = {
-      cls: classes.get({ id: cls }),
-      cards: [...resourceCards, ...featCards, ...spellCards, ...weaponCards],
-    };
+    const cards: DeckCard[] = [
+      ...resources.findAll({ cls }).map((resource) => ({ kind: "resource" as const, resource })),
+      ...feats.findAll({ cls }).map((feat) => ({ kind: "feat" as const, feat })),
+      ...SPELL_LEVELS.flatMap((level) =>
+        spells.findAll({ cls, level }).map((spell) => ({ kind: "spell" as const, spell }))
+      ),
+      ...weapons.findAll({ cls }).map((weapon) => ({ kind: "weapon" as const, weapon })),
+    ];
+    const deck: Deck = { cls: classes.get({ id: cls }), cards };
     CACHE.set(cls, deck);
     return deck;
   },
 
   /** a card by its `cardKey`, across every class's deck */
-  findCard({ key }: { key: string }): DeckCard | undefined {
+  findCard({ key }: { key: string }) {
     return cardIndex().get(key);
   },
 

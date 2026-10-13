@@ -1,12 +1,16 @@
 import type { KeyboardEvent } from "react";
 import { useCallback, useRef, useState } from "react";
 
-const clamp = (index: number, length: number) => Math.max(0, Math.min(index, length - 1));
+const STEPS: Partial<Record<string, -1 | 1>> = { ArrowLeft: -1, ArrowRight: 1 };
+
+const clamp = ({ index, length }: { index: number; length: number }) =>
+  Math.max(0, Math.min(index, length - 1));
 
 // scroll the container, never scrollIntoView: that one drags the page with it.
 // instant, or a second jump during a smooth scroll makes mandatory snap pull
 // the track back to the old slide; jsdom has no layout at all
-export const centre = (container: HTMLElement | null, child: Element | undefined) => {
+export const centre = ({ container, index }: { container: HTMLElement | null; index: number }) => {
+  const child = container?.children[index];
   if (!container || !child || typeof container.scrollTo !== "function") return;
   const box = container.getBoundingClientRect();
   const item = child.getBoundingClientRect();
@@ -23,15 +27,15 @@ export function useCarouselPosition({ length }: { length: number }) {
 
   // callers reset the carousel with a `key` change; the clamp keeps a shrinking
   // deck from pointing past its last card in the meantime
-  const index = clamp(position, length);
+  const index = clamp({ index: position, length });
 
   // stable so memoised thumbnails keep their onSelect across internal re-renders
   const goTo = useCallback(
     (i: number) => {
-      const next = clamp(i, length);
+      const next = clamp({ index: i, length });
       indexRef.current = next;
       setPosition(next);
-      centre(trackRef.current, trackRef.current?.children[next]);
+      centre({ container: trackRef.current, index: next });
     },
     [length]
   );
@@ -40,25 +44,19 @@ export function useCarouselPosition({ length }: { length: number }) {
   // and only re-render when the centred slide actually changes
   const followScroll = () => {
     const track = trackRef.current;
-    const slide = track?.children[0];
-    if (!track || !slide) return;
-    const width = slide.getBoundingClientRect().width;
-    if (!width) return;
-    const i = clamp(Math.round(track.scrollLeft / width), length);
-    if (i !== indexRef.current) {
-      indexRef.current = i;
-      setPosition(i);
-    }
+    const width = track?.children[0]?.getBoundingClientRect().width;
+    if (!track || !width) return;
+    const i = clamp({ index: Math.round(track.scrollLeft / width), length });
+    if (i === indexRef.current) return;
+    indexRef.current = i;
+    setPosition(i);
   };
 
   const step = (event: KeyboardEvent) => {
-    if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      goTo(indexRef.current - 1);
-    } else if (event.key === "ArrowRight") {
-      event.preventDefault();
-      goTo(indexRef.current + 1);
-    }
+    const delta = STEPS[event.key];
+    if (!delta) return;
+    event.preventDefault();
+    goTo(indexRef.current + delta);
   };
 
   return { index, goTo, trackRef, followScroll, step };

@@ -46,9 +46,9 @@ const CarouselSlide = memo(function CarouselSlide({
           <DeckCardFace card={entry.card} />
         </div>
         {entry.badge}
-        {action ? <CardTap action={action} /> : null}
+        {action && <CardTap action={action} />}
       </div>
-      {below ? <div className={styles.below}>{below}</div> : null}
+      {below && <div className={styles.below}>{below}</div>}
     </fieldset>
   );
 });

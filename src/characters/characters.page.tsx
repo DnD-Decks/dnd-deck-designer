@@ -1,17 +1,14 @@
 import { type CSSProperties, useId } from "react";
 import { DeckCardFace } from "src/cards/deck-card.component";
 import type { Character } from "src/characters/character.model";
+import { characters } from "src/characters/character.model";
 import type { DeckEntry } from "src/decks/deck.model";
 import { cardKey, cardName, decks } from "src/decks/deck.model";
-import { classes } from "src/models/class/classes.model";
 import { characterStorage } from "src/services/character.storage";
 import { Link } from "wouter";
 import styles from "./characters.module.css";
 
 const HAND = ["resource", "weapon", "spell"] as const;
-
-const classLine = (character: Character) =>
-  `Level ${character.level} ${classes.get({ id: character.cls }).label}`;
 
 // feats are landscape and would break the fan, so the hand is portrait cards only
 function hand(entries: readonly DeckEntry[]) {
@@ -59,7 +56,7 @@ function ContinueCard({ character }: { character: Character }) {
       <Hand entries={entries} />
       <span className={styles.heroText}>
         <span className={styles.heroName}>{character.name}</span>
-        <span className={styles.subtitle}>{classLine(character)}</span>
+        <span className={styles.subtitle}>{characters.classLine(character)}</span>
         {spent.length > 0 && (
           <span className={styles.spent}>Spent until a rest: {spent.join(", ")}</span>
         )}
@@ -90,7 +87,7 @@ function CharacterList({ title, list }: { title?: string; list: readonly Charact
             <li key={character.id}>
               <Link href={`/character/${character.id}`} className={styles.item}>
                 <span className={styles.itemName}>{character.name}</span>
-                <span className={styles.subtitle}>{classLine(character)}</span>
+                <span className={styles.subtitle}>{characters.classLine(character)}</span>
               </Link>
             </li>
           ))}

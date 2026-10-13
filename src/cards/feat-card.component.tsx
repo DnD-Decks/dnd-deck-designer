@@ -14,7 +14,7 @@ export function FeatCard({ feat }: Props) {
       <CardArt assetId={feat.id} />
       <header className={styles.header}>
         {/* class badge; decorative — the heading already names the card */}
-        {feat.icon ? <Icon src={feat.icon} label="" decorative className={styles.badge} /> : null}
+        {feat.icon && <Icon src={feat.icon} label="" decorative className={styles.badge} />}
         <h3 id={headingId} className={styles.name}>
           {feat.name}
         </h3>

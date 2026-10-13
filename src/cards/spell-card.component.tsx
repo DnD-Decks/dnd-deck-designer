@@ -13,6 +13,14 @@ import styles from "./spell-card.module.css";
 
 const levelLabel = (level: Spell["level"]) => (level === 0 ? "Cantrip" : `Level ${level}`);
 
+function SpellTag({ icon, label }: { icon: string; label: string }) {
+  return (
+    <span className={styles.tag}>
+      <Icon src={icon} label={label} className={styles.tagIcon} />
+    </span>
+  );
+}
+
 type Props = { spell: Spell };
 
 export function SpellCard({ spell }: Props) {
@@ -32,12 +40,10 @@ export function SpellCard({ spell }: Props) {
           {spell.name}
         </h3>
         <span className={styles.costCluster}>
-          {action ? (
-            <Icon src={action.src} label={action.label} className={styles.actionIcon} />
-          ) : null}
+          {action && <Icon src={action.src} label={action.label} className={styles.actionIcon} />}
           <span className={styles.manaBadge}>
             <Icon src={MANA_ICON} label="Mana" className={styles.manaIcon} />
-            {spell.level > 0 ? <span className={styles.manaLevel}>{spell.level}</span> : null}
+            {spell.level > 0 && <span className={styles.manaLevel}>{spell.level}</span>}
           </span>
         </span>
       </div>
@@ -49,16 +55,8 @@ export function SpellCard({ spell }: Props) {
           {spell.school} · {levelLabel(spell.level)}
         </span>
         <span className={styles.tags}>
-          {spell.ritual ? (
-            <span className={styles.tag}>
-              <Icon src={RITUAL_ICON} label="Ritual" className={styles.tagIcon} />
-            </span>
-          ) : null}
-          {spell.concentration ? (
-            <span className={styles.tag}>
-              <Icon src={CONCENTRATION_ICON} label="Concentration" className={styles.tagIcon} />
-            </span>
-          ) : null}
+          {spell.ritual && <SpellTag icon={RITUAL_ICON} label="Ritual" />}
+          {spell.concentration && <SpellTag icon={CONCENTRATION_ICON} label="Concentration" />}
         </span>
       </div>
 

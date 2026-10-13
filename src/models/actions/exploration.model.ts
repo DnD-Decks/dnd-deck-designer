@@ -1,4 +1,5 @@
 import actionsData from "../../data/actions/actions.json" with { type: "json" };
+import { lookup } from "../../lib/lookup.ts";
 
 import type { ManualClassification } from "src/models/class/classes.model";
 
@@ -12,24 +13,14 @@ export type ExplorationAction = {
 };
 
 const DATA = actionsData.exploration as ExplorationAction[];
-const BY_NAME = new Map(DATA.map((a) => [a.name, a]));
+const TABLE = lookup({ items: DATA, key: "name", label: "exploration action" });
 
 export const explorationActions = {
-  get({ name }: { name: string }): ExplorationAction {
-    const found = BY_NAME.get(name);
-    if (!found) throw new Error(`Unknown exploration action: ${name}`);
-    return found;
-  },
+  get: ({ name }: { name: string }) => TABLE.get(name),
+  find: ({ name }: { name: string }) => TABLE.find(name),
+  list: TABLE.list,
 
-  find({ name }: { name: string }): ExplorationAction | undefined {
-    return BY_NAME.get(name);
-  },
-
-  list(): ExplorationAction[] {
-    return DATA;
-  },
-
-  findAll({ classification }: { classification: ManualClassification }): ExplorationAction[] {
+  findAll({ classification }: { classification: ManualClassification }) {
     return DATA.filter(
       (a) => !a.classificationRestriction || a.classificationRestriction.includes(classification)
     );

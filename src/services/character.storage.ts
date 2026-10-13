@@ -1,5 +1,7 @@
 import type { Character } from "src/characters/character.model";
 import { characters } from "src/characters/character.model";
+import { isRecord, isStringList } from "src/lib/json.guard";
+import { localStore } from "src/services/local.storage";
 
 const CHARACTERS_KEY = "dnd-deck-designer:characters";
 const PLAY_KEY = "dnd-deck-designer:play";
@@ -8,31 +10,22 @@ const LAST_PLAYED_KEY = "dnd-deck-designer:last-played";
 type PlayState = { spent: string[] };
 type PlayStates = Record<string, PlayState>;
 
-const isStringList = (value: unknown): value is string[] =>
-  Array.isArray(value) && value.every((item) => typeof item === "string");
-
-// localStorage throws in private mode, with site data blocked, or over quota
 function read(key: string): unknown {
+  const raw = localStore.read(key);
   try {
-    const raw = localStorage.getItem(key);
-    return raw === null ? undefined : JSON.parse(raw);
+    return raw === undefined ? undefined : JSON.parse(raw);
   } catch {
     return undefined;
   }
 }
 
 function write({ key, value }: { key: string; value: unknown }) {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-    return true;
-  } catch {
-    return false;
-  }
+  return localStore.write({ key, value: JSON.stringify(value) });
 }
 
 function readPlay() {
   const value = read(PLAY_KEY);
-  return typeof value === "object" && value !== null ? (value as PlayStates) : {};
+  return isRecord(value) ? (value as PlayStates) : {};
 }
 
 function withoutPlay(id: string) {

@@ -1,4 +1,5 @@
 import skillsData from "../../data/skills/skills.json" with { type: "json" };
+import { lookup } from "../../lib/lookup.ts";
 
 import type { AbilityName } from "src/models/abilities/abilities.model";
 
@@ -29,24 +30,15 @@ export type SkillDefinition = {
 };
 
 const DATA = skillsData as SkillDefinition[];
-const BY_NAME = new Map<string, SkillDefinition>(DATA.map((s) => [s.name, s]));
+
+const TABLE = lookup({ items: DATA, key: "name", label: "skill" });
 
 export const skills = {
-  get({ name }: { name: SkillName }): SkillDefinition {
-    const found = BY_NAME.get(name);
-    if (!found) throw new Error(`Unknown skill: ${name}`);
-    return found;
-  },
+  get: ({ name }: { name: SkillName }) => TABLE.get(name),
+  find: ({ name }: { name: string }) => TABLE.find(name),
+  list: TABLE.list,
 
-  find({ name }: { name: string }): SkillDefinition | undefined {
-    return BY_NAME.get(name);
-  },
-
-  list(): readonly SkillDefinition[] {
-    return DATA;
-  },
-
-  findAll({ ability }: { ability: AbilityName }): SkillDefinition[] {
+  findAll({ ability }: { ability: AbilityName }) {
     return DATA.filter((s) => s.ability === ability);
   },
 };

@@ -1,4 +1,12 @@
-import { type CSSProperties, type ReactNode, useMemo, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  type KeyboardEvent,
+  type MouseEvent,
+  type ReactNode,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useLiftScale } from "src/cards/use-lift-scale.hook";
 import { useSpotlightFocus } from "src/cards/use-spotlight-focus.hook";
 import { useSpotlightPhase } from "src/cards/use-spotlight-phase.hook";
@@ -73,6 +81,16 @@ export function CardSpotlight({
     neighbour.hold();
   };
 
+  const closeOnMat = (event: MouseEvent) => {
+    if (event.target === event.currentTarget) close();
+  };
+
+  const onKey = (event: KeyboardEvent) => {
+    if (event.key === "Escape") close();
+    if (event.key === "ArrowLeft") deal(-1);
+    if (event.key === "ArrowRight") deal(1);
+  };
+
   return (
     // open, not showModal(): the stage covers the viewport itself, and jsdom 26 has no showModal
     <dialog
@@ -84,14 +102,8 @@ export function CardSpotlight({
       data-phase={phase}
       aria-modal="true"
       aria-label={label}
-      onClick={(event) => {
-        if (event.target === event.currentTarget) close();
-      }}
-      onKeyDown={(event) => {
-        if (event.key === "Escape") close();
-        if (event.key === "ArrowLeft") deal(-1);
-        if (event.key === "ArrowRight") deal(1);
-      }}
+      onClick={closeOnMat}
+      onKeyDown={onKey}
     >
       <div
         className={styles.lift}
