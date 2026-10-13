@@ -12,7 +12,6 @@ import styles from "./spell-card.module.css";
 
 type StatItemProps = { icon: string; label: string; children: ReactNode };
 
-/** One glyph + value on the stat strip; spell and weapon cards share it. */
 export function StatItem({ icon, label, children }: StatItemProps) {
   return (
     <span className={styles.statItem}>

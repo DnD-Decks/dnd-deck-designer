@@ -74,7 +74,6 @@ export function cardSection(card: DeckCard) {
   }
 }
 
-/** a catalog card as a carousel slide: keyed once per card (no copies), with its catalog section */
 export const catalogEntry = (card: DeckCard) => ({
   key: cardKey(card),
   card,

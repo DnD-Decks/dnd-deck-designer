@@ -58,7 +58,6 @@ export const characters = {
     return { id: crypto.randomUUID(), name, cls, level: 1, picks: {} };
   },
 
-  /** `classLine(elminster)` is "Level 1 Wizard". */
   classLine({ level, cls }: Pick<Character, "level" | "cls">) {
     return `Level ${level} ${classes.get({ id: cls }).label}`;
   },

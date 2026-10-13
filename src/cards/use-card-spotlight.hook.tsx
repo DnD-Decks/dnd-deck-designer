@@ -9,7 +9,6 @@ import { useRefMap } from "src/lib/use-ref-map.hook";
 
 type Held = { index: number; trigger: HTMLElement };
 
-/** what a card's zoom button needs: its ref (focus returns there) and its click */
 export type Zoom = { ref: (element: HTMLElement | null) => () => void; onClick: () => void };
 
 type Options = {

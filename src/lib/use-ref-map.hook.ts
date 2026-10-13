@@ -1,6 +1,5 @@
 import { useRef } from "react";
 
-/** One element per key: `ref(key)` registers it, `get(key)` reads it back. */
 export function useRefMap<T extends HTMLElement>() {
   const elements = useRef(new Map<string, T>());
 

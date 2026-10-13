@@ -1,10 +1,3 @@
-/**
- * The `get` / `find` / `list` trio every model exposes, over static data keyed by one field.
- * - `lookup({ items: ARMOR, key: "id", label: "armor" }).get("shield")` is the shield
- * - `.find("mithral-plate")` is undefined
- *
- * `get` throws on an unknown key: `Unknown armor: mithral-plate`.
- */
 export function lookup<T, K extends keyof T>({
   items,
   key,

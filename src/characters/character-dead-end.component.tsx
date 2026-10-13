@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { Link } from "wouter";
 import styles from "./characters.module.css";
 
-/** A page whose only way out is home: an unknown character, a broken share link. */
 export function DeadEnd({ title, children }: { title: string; children: ReactNode }) {
   return (
     <main className={styles.page}>
