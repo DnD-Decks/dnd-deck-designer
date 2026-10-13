@@ -26,7 +26,7 @@ function issueMessage(issue: ChoiceIssue) {
 }
 
 // a stored custom key may name a card the data no longer ships — keep only real ones
-function withKnownCustom(picks: Picks): Picks {
+function withKnownCustom(picks: Picks) {
   if (!picks.custom?.length) return picks;
   const known = picks.custom.filter((key) => decks.findCard({ key }));
   if (known.length) return { ...picks, custom: known };
@@ -35,7 +35,10 @@ function withKnownCustom(picks: Picks): Picks {
 }
 
 // a fighter has no spells to choose: its steps are ["class", "weapon"]
-function stepsFor(cls: CharacterClass | undefined, picks: Picks): BuilderStep[] {
+function stepsFor({
+  cls,
+  picks,
+}: { cls: CharacterClass | undefined; picks: Picks }): BuilderStep[] {
   const kinds = new Set(cls ? choices.for({ cls, level: 1 }).map((rule) => rule.from.kind) : []);
   return [
     "class",
@@ -51,7 +54,7 @@ export function useCharacterBuilderDraft(initial?: Character) {
   const [picks, setPicks] = useState<Picks>(() => withKnownCustom(initial?.picks ?? {}));
   const [name, setName] = useState(initial?.name ?? "");
   const [failed, setFailed] = useState(false);
-  const steps = stepsFor(cls, picks);
+  const steps = stepsFor({ cls, picks });
   const issues = cls ? choices.validate({ cls, level: 1, picks }) : [];
   const missing: Missing[] = [
     ...(!cls ? [{ step: "class" as const, message: "Choose a class." }] : []),

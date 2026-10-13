@@ -1,4 +1,5 @@
 import { choices } from "../characters/choices.model.ts";
+import { isRecord, isStringList } from "../lib/json.guard.ts";
 import { classes } from "../models/class/classes.model.ts";
 
 import type { ChoiceRuleId } from "src/characters/choices.model";
@@ -18,12 +19,6 @@ export type Character = {
 };
 
 type Build = Omit<Character, "id">;
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const isStringList = (value: unknown): value is string[] =>
-  Array.isArray(value) && value.every((item) => typeof item === "string");
 
 const hasUnknownPick = (build: Build) =>
   choices.validate(build).some((issue) => issue.problem === "unknown");
@@ -61,6 +56,10 @@ function fromBase64Url(code: string) {
 export const characters = {
   create({ name, cls }: { name: string; cls: CharacterClass }): Character {
     return { id: crypto.randomUUID(), name, cls, level: 1, picks: {} };
+  },
+
+  classLine({ level, cls }: Pick<Character, "level" | "cls">) {
+    return `Level ${level} ${classes.get({ id: cls }).label}`;
   },
 
   parse(value: unknown) {

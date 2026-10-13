@@ -10,12 +10,15 @@ import styles from "./character-view.module.css";
 
 type Nudge = { key: string; n: number };
 
-const nextNudge = (now: Nudge | undefined, key: string) => ({
+const nextNudge = ({ now, key }: { now: Nudge | undefined; key: string }) => ({
   key,
   n: (now?.key === key ? now.n : 0) + 1,
 });
 
-const toSlides = (entries: readonly DeckEntry[], spentKeys: ReadonlySet<string>) =>
+const toSlides = ({
+  entries,
+  spentKeys,
+}: { entries: readonly DeckEntry[]; spentKeys: ReadonlySet<string> }) =>
   entries.map((entry) => ({
     ...entry,
     section: play.sectionOf(entry.card),
@@ -57,33 +60,37 @@ export function PlayCarousel({ character, entries, spentKeys, onToggleSpent }: C
   // a tap on a spendable card pulses the actions under it; `n` remounts the
   // group so the animation restarts on every tap
   const [nudge, setNudge] = useState<Nudge | undefined>();
-  const slides = toSlides(entries, spentKeys);
+  const slides = toSlides({ entries, spentKeys });
+
+  const tapToNudge = (entry: DeckEntry) => {
+    if (!play.spendable(entry)) return undefined;
+    const { key, card } = entry;
+    return {
+      name: withSpent({ name: cardName(card), spent: spentKeys.has(key) }),
+      onTap: () => setNudge((now) => nextNudge({ now, key })),
+    };
+  };
+
+  const actionsBelow = (entry: DeckEntry) => {
+    if (!play.spendable(entry)) return null;
+    const { key, card } = entry;
+    return (
+      <CardActions
+        name={cardName(card)}
+        spent={spentKeys.has(key)}
+        nudgeN={nudge?.key === key ? nudge.n : undefined}
+        onToggle={() => onToggleSpent(key)}
+        onNudgeEnd={() => setNudge(undefined)}
+      />
+    );
+  };
 
   return (
     <CardCarousel
       label={`${character.name}'s cards`}
       entries={slides}
-      card={(entry) =>
-        play.spendable(entry)
-          ? {
-              name: withSpent(cardName(entry.card), spentKeys.has(entry.key)),
-              onTap: () => setNudge((now) => nextNudge(now, entry.key)),
-            }
-          : undefined
-      }
-      below={(entry) => {
-        if (!play.spendable(entry)) return null;
-        const name = cardName(entry.card);
-        return (
-          <CardActions
-            name={name}
-            spent={spentKeys.has(entry.key)}
-            nudgeN={nudge?.key === entry.key ? nudge.n : undefined}
-            onToggle={() => onToggleSpent(entry.key)}
-            onNudgeEnd={() => setNudge(undefined)}
-          />
-        );
-      }}
+      card={tapToNudge}
+      below={actionsBelow}
     />
   );
 }

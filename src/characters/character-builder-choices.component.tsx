@@ -1,5 +1,7 @@
 import { useId } from "react";
+import { CardZoom } from "src/cards/card-zoom.component";
 import { DeckCardFace } from "src/cards/deck-card.component";
+import type { Zoom } from "src/cards/use-card-spotlight.hook";
 import { useCardSpotlight } from "src/cards/use-card-spotlight.hook";
 import type { Picks } from "src/characters/character.model";
 import type { ChoiceRule, ChoiceSelection, ChoiceSource } from "src/characters/choices.model";
@@ -31,13 +33,9 @@ function choiceEntry({ id, kind }: { id: string; kind: ChoiceRule["from"]["kind"
   return { key: id, card: { kind: "spell", spell: spells.get({ id }) } };
 }
 
-type ChoiceSlotProps = Omit<ChoiceGroupProps, "cls"> & {
-  id: string;
-  trigger: (element: HTMLElement | null) => () => void;
-  onZoom: () => void;
-};
+type ChoiceSlotProps = Omit<ChoiceGroupProps, "cls"> & { id: string; zoom: Zoom };
 
-function ChoiceSlot({ id, rule, picked, trigger, onChange, onZoom }: ChoiceSlotProps) {
+function ChoiceSlot({ id, rule, picked, zoom, onChange }: ChoiceSlotProps) {
   const entry = choiceEntry({ id, kind: rule.from.kind });
   const name = cardName(entry.card);
   const checked = picked.includes(id);
@@ -56,13 +54,7 @@ function ChoiceSlot({ id, rule, picked, trigger, onChange, onZoom }: ChoiceSlotP
         disabled={disabled}
         onChange={toggle}
       />
-      <button
-        type="button"
-        className={styles.zoom}
-        aria-label={`Zoom ${name}`}
-        ref={trigger}
-        onClick={onZoom}
-      />
+      <CardZoom name={name} className={styles.zoom} zoom={zoom} />
     </div>
   );
 }
@@ -72,7 +64,7 @@ function ChoiceGroup({ cls, rule, picked, onChange }: ChoiceGroupProps) {
   const options = choices.options({ cls, rule });
   const hint = rule.optional ? `Optional — choose up to ${rule.pick}.` : `Choose ${rule.pick}.`;
   const entries = options.map((id) => choiceEntry({ id, kind: rule.from.kind }));
-  const { hold, trigger, spotlight } = useCardSpotlight({ entries });
+  const { zoom, spotlight } = useCardSpotlight({ entries });
 
   return (
     <fieldset className={styles.group} aria-describedby={hintId}>
@@ -90,9 +82,8 @@ function ChoiceGroup({ cls, rule, picked, onChange }: ChoiceGroupProps) {
             id={id}
             rule={rule}
             picked={picked}
-            trigger={trigger(id)}
+            zoom={zoom(id)}
             onChange={onChange}
-            onZoom={() => hold(id)}
           />
         ))}
       </div>

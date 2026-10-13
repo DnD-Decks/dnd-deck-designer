@@ -38,7 +38,7 @@ const CLASS_DATA: Partial<Record<CharacterClass, Feat[]>> = {
 };
 
 export const feats = {
-  findAll({ cls }: { cls: CharacterClass }): Feat[] {
+  findAll({ cls }: { cls: CharacterClass }) {
     // feats carry no icon of their own; the class badge gives every feat card its identity
     const icon = classes.find({ id: cls })?.icon;
     return (CLASS_DATA[cls] ?? []).map((feat) => ({ ...feat, icon }));

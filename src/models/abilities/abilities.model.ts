@@ -1,4 +1,5 @@
 import abilitiesData from "../../data/abilities/abilities.json" with { type: "json" };
+import { lookup } from "../../lib/lookup.ts";
 
 export type AbilityName = "str" | "dex" | "con" | "int" | "wis" | "cha";
 export type AbilityScores = Record<AbilityName, number>;
@@ -9,21 +10,13 @@ export type AbilityDetails = {
   short: string;
 };
 
-export function computeModifier(score: number): number {
+export function computeModifier(score: number) {
   return Math.floor((score - 10) / 2);
 }
 
-const DATA = abilitiesData as AbilityDetails[];
-const BY_ID = new Map(DATA.map((a) => [a.id, a]));
+const TABLE = lookup({ items: abilitiesData as AbilityDetails[], key: "id", label: "ability" });
 
 export const abilities = {
-  get({ id }: { id: AbilityName }): AbilityDetails {
-    const found = BY_ID.get(id);
-    if (!found) throw new Error(`Unknown ability: ${id}`);
-    return found;
-  },
-
-  list(): AbilityDetails[] {
-    return DATA;
-  },
+  get: ({ id }: { id: AbilityName }) => TABLE.get(id),
+  list: TABLE.list,
 };

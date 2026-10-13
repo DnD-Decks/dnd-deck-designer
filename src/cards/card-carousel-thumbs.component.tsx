@@ -44,7 +44,7 @@ export function CarouselThumbs({ entries, index, onSelect }: ThumbsProps) {
   const thumbsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    centre(thumbsRef.current, thumbsRef.current?.children[index]);
+    centre({ container: thumbsRef.current, index });
   }, [index]);
 
   return (

@@ -51,7 +51,7 @@ export const choices = {
   },
 
   /** everything that keeps a build from being complete; empty means ready to play */
-  validate({ cls, level, picks }: Build): ChoiceIssue[] {
+  validate({ cls, level, picks }: Build) {
     return choices.for({ cls, level }).flatMap((rule): ChoiceIssue[] => {
       const picked = picks[rule.id] ?? [];
       const options = new Set(choices.options({ cls, rule }));

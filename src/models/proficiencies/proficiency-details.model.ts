@@ -1,6 +1,7 @@
 import proficiencyData from "../../data/proficiencies/proficiency-details.json" with {
   type: "json",
 };
+import { lookup } from "../../lib/lookup.ts";
 
 import type { ProficiencyKey } from "src/models/class/classes.model";
 
@@ -17,20 +18,11 @@ const DATA: ProficiencyDetails[] = (Object.keys(RAW) as ProficiencyKey[]).map((i
   id,
   ...RAW[id],
 }));
-const BY_ID = new Map<string, ProficiencyDetails>(DATA.map((p) => [p.id, p]));
+
+const TABLE = lookup({ items: DATA, key: "id", label: "proficiency" });
 
 export const proficiencyDetails = {
-  get({ id }: { id: ProficiencyKey }): ProficiencyDetails {
-    const found = BY_ID.get(id);
-    if (!found) throw new Error(`Unknown proficiency: ${id}`);
-    return found;
-  },
-
-  find({ id }: { id: string }): ProficiencyDetails | undefined {
-    return BY_ID.get(id);
-  },
-
-  list(): readonly ProficiencyDetails[] {
-    return DATA;
-  },
+  get: ({ id }: { id: ProficiencyKey }) => TABLE.get(id),
+  find: ({ id }: { id: string }) => TABLE.find(id),
+  list: TABLE.list,
 };

@@ -17,13 +17,28 @@
 - **Filename pattern**: `<module>.<role>.ts(x)` — e.g. `wizard.controller.ts`, `spell.service.ts`, `feat-card.component.tsx`. The module comes first, the role second.
 - import: use absolute `src/*` paths.
 - use relative imports only for same-folder files (e.g. CSS modules: `./spell-card.module.css`).
-- sanctioned exception: **runtime** imports in modules that also run under `node:test` use relative paths with the `.ts` extension (the `src/*` alias only exists for tsc and vite) — see `src/decks/deck.model.ts`. Type-only imports keep the `src/*` form.
+- legacy exception: **runtime** imports in `*.model.ts` modules (and the `src/lib/` primitives they import) use relative paths with the `.ts` extension — see `src/decks/deck.model.ts`. They date from when model tests ran under `node:test`, which has no `src/*` alias; nothing needs it now, so keep the form only inside those files and don't spread it. Type-only imports keep the `src/*` form.
 - use `import type` for type-only imports.
 - prefer `type` for data shapes; reserve `interface` for semantic behavior contracts (e.g. `Runnable { run() }`).
 - Prefer plain functions and closures over `class` syntax.
 - Use **function factories** for encapsulation and polymorphism.
 - no `this`, no `new`, no class-based patterns.
 - let TypeScript infer return types; only annotate when inference fails or the public API needs it explicit.
+- functions with 2+ parameters take one object: `withSpent({ name, spent })`, never `withSpent(name, spent)`.
+- JSX: render each branch with its own `&&` (`{a && <A />}{!a && <B />}`), not `{a ? <A /> : <B />}`.
+- JSX: a handler or render callback longer than a couple of lines is a named `const` in the component, passed by name (`onClick={closeOnMat}`); one-liners stay inline.
+- comments explain a non-obvious why or format; no JSDoc or made-up example on code whose name and types already say it.
+
+### Shared building blocks
+
+Reuse these before writing a new one:
+
+- **Models**: `lookup({ items, key, label })` (`src/lib/lookup.ts`) gives the `get` / `find` / `list` trio; `get` throws `Unknown <label>: <key>`.
+- **Zoomable card slot**: `useCardSpotlight({ entries })` returns `zoom(key)`; pass it to `<CardZoom>` (`src/cards/card-zoom.component.tsx`).
+- **Stat strip**: `StatItem` / `DamageItem` from `src/cards/spell-card-stat-strip.component.tsx` (spell and weapon cards).
+- **Dead-end page**: `DeadEnd` / `CharacterNotFound` (`src/characters/character-dead-end.component.tsx`).
+- **Primitives**: `useRefMap` (one element per key), `isRecord` / `isStringList` (`src/lib/json.guard.ts`), `localStore` (`src/services/local.storage.ts`: `localStorage` that never throws).
+- **Projections**: `catalogEntry(card)` (`deck.model.ts`), `characters.classLine(character)` ("Level 1 Wizard").
 
 ### Folder layout
 
@@ -37,7 +52,7 @@
 
 - **Bundler**: Vite + React + TypeScript.
 - **Styles**: `*.module.css` (CSS modules). No CSS-in-JS, no Tailwind.
-- **Tests**: `vitest` for component tests; `node:test` is acceptable for pure model/logic tests; `Playwright` for end-to-end (`e2e/`, excluded from the vitest run).
+- **Tests**: `vitest` for every unit test, components and models alike (model tests may assert with `node:assert/strict`); `Playwright` for end-to-end (`e2e/`, excluded from the vitest run).
 - **Lint/format**: biome.
 - **Package manager**: pnpm.
 - **Minimize dependencies**: every new `dependency` or `devDependency` must be justified. Prefer solving in userland before reaching for a package.

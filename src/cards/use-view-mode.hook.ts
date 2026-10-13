@@ -3,7 +3,7 @@ import { viewModeStorage } from "src/services/view-mode.storage";
 
 export type ViewMode = "grid" | "carousel";
 
-const read = (): ViewMode => {
+const read = () => {
   const saved = viewModeStorage.read();
   return saved === "grid" || saved === "carousel" ? saved : "carousel";
 };

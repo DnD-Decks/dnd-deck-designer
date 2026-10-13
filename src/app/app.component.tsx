@@ -25,9 +25,8 @@ function AppShell() {
 
   return (
     <div className={styles.root} data-mode={playing ? "play" : undefined}>
-      {playing ? (
-        <h1 className={styles.visuallyHidden}>D&amp;D Deck Designer</h1>
-      ) : (
+      {playing && <h1 className={styles.visuallyHidden}>D&amp;D Deck Designer</h1>}
+      {!playing && (
         <header className={styles.header}>
           <h1 className={styles.title}>
             D<span className={styles.amp}>&amp;</span>D Deck Designer

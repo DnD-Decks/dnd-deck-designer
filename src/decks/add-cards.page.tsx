@@ -1,8 +1,9 @@
 import { useState } from "react";
+import type { CarouselEntry } from "src/cards/card-carousel.component";
 import { CardCarousel } from "src/cards/card-carousel.component";
 import type { Character } from "src/characters/character.model";
 import { ClassSelector } from "src/decks/class-selector.component";
-import { cardKey, cardName, cardSection, decks } from "src/decks/deck.model";
+import { cardKey, cardName, catalogEntry, decks } from "src/decks/deck.model";
 import { useCardSelection } from "src/decks/use-card-selection.hook";
 import { classes } from "src/models/class/classes.model";
 import { characterStorage } from "src/services/character.storage";
@@ -14,24 +15,19 @@ type Props = {
   cls?: string;
 };
 
-function withCustom(character: Character, keys: ReadonlySet<string>): Character {
-  return {
-    ...character,
-    picks: {
-      ...character.picks,
-      custom: [...new Set([...(character.picks.custom ?? []), ...keys])],
-    },
-  };
+function withCustom({ character, keys }: { character: Character; keys: ReadonlySet<string> }) {
+  const custom = [...new Set([...(character.picks.custom ?? []), ...keys])];
+  return { ...character, picks: { ...character.picks, custom } };
 }
 
 function cardBadge({ owned, selected }: { owned: boolean; selected: boolean }) {
-  return owned ? (
-    <span className={styles.inDeck}>In deck</span>
-  ) : selected ? (
+  if (owned) return <span className={styles.inDeck}>In deck</span>;
+  if (!selected) return undefined;
+  return (
     <span className={styles.seal} aria-hidden="true">
       ✓
     </span>
-  ) : undefined;
+  );
 }
 
 export function AddCardsPage({ id, cls }: Props) {
@@ -49,22 +45,21 @@ export function AddCardsPage({ id, cls }: Props) {
   const owned = new Set(decks.forCharacter(character).entries.map((e) => cardKey(e.card)));
 
   const entries = decks.get({ cls: found.id }).cards.map((card) => {
-    const key = cardKey(card);
-    return {
-      key,
-      card,
-      section: cardSection(card),
-      dimmed: owned.has(key),
-      badge: cardBadge({ owned: owned.has(key), selected: selected.has(key) }),
-    };
+    const entry = catalogEntry(card);
+    const inDeck = owned.has(entry.key);
+    const badge = cardBadge({ owned: inDeck, selected: selected.has(entry.key) });
+    return { ...entry, dimmed: inDeck, badge };
   });
 
+  const tapToSelect = ({ key, card }: CarouselEntry) => {
+    if (owned.has(key)) return undefined;
+    return { name: cardName(card), pressed: selected.has(key), onTap: () => toggle(key) };
+  };
+
   const confirm = () => {
-    if (!characterStorage.save(withCustom(character, selected))) {
-      setFailed(true);
-      return;
-    }
-    navigate(`/character/${id}`, { replace: true });
+    const saved = characterStorage.save(withCustom({ character, keys: selected }));
+    if (saved) navigate(`/character/${id}`, { replace: true });
+    else setFailed(true);
   };
 
   return (
@@ -80,15 +75,7 @@ export function AddCardsPage({ id, cls }: Props) {
         key={found.id}
         label={`${found.label} cards`}
         entries={entries}
-        card={(entry) =>
-          owned.has(entry.key)
-            ? undefined
-            : {
-                name: cardName(entry.card),
-                pressed: selected.has(entry.key),
-                onTap: () => toggle(entry.key),
-              }
-        }
+        card={tapToSelect}
       />
       <div className={styles.bar}>
         {failed && (

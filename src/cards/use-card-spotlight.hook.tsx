@@ -1,12 +1,15 @@
 import type { ReactNode } from "react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import type { PutBack } from "src/cards/card-spotlight.component";
 import { CardSpotlight } from "src/cards/card-spotlight.component";
 import { DeckCardFace } from "src/cards/deck-card.component";
 import type { DeckEntry } from "src/decks/deck.model";
 import { cardName } from "src/decks/deck.model";
+import { useRefMap } from "src/lib/use-ref-map.hook";
 
 type Held = { index: number; trigger: HTMLElement };
+
+export type Zoom = { ref: (element: HTMLElement | null) => () => void; onClick: () => void };
 
 type Options = {
   entries: readonly DeckEntry[];
@@ -16,13 +19,13 @@ type Options = {
 
 /** Lifts one of `entries` into the spotlight; ← / → step through them in the order given. */
 export function useCardSpotlight({ entries, actions }: Options) {
-  const triggers = useRef(new Map<string, HTMLElement>());
+  const triggers = useRefMap<HTMLElement>();
   const [held, setHeld] = useState<Held | null>(null);
   const release = useCallback(() => setHeld(null), []);
 
   const holdAt = (index: number) => {
     const entry = entries[index];
-    const trigger = entry && triggers.current.get(entry.key);
+    const trigger = entry && triggers.get(entry.key);
     if (trigger) setHeld({ index, trigger });
   };
 
@@ -31,12 +34,10 @@ export function useCardSpotlight({ entries, actions }: Options) {
     return entry ? { name: cardName(entry.card), hold: () => holdAt(index) } : undefined;
   };
 
-  const trigger = (key: string) => (element: HTMLElement | null) => {
-    if (element) triggers.current.set(key, element);
-    return () => {
-      triggers.current.delete(key);
-    };
-  };
+  const zoom = (key: string) => ({
+    ref: triggers.ref(key),
+    onClick: () => holdAt(entries.findIndex((entry) => entry.key === key)),
+  });
 
   const heldEntry = held ? entries[held.index] : undefined;
   const spotlight = held && heldEntry && (
@@ -52,11 +53,5 @@ export function useCardSpotlight({ entries, actions }: Options) {
     </CardSpotlight>
   );
 
-  return {
-    holding: held !== null,
-    hold: (key: string) => holdAt(entries.findIndex((entry) => entry.key === key)),
-    trigger,
-    release,
-    spotlight,
-  };
+  return { holding: held !== null, zoom, release, spotlight };
 }

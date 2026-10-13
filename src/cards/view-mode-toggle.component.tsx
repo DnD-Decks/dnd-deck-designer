@@ -6,25 +6,25 @@ type Props = {
   choose: (mode: ViewMode) => void;
 };
 
+const MODES: { mode: ViewMode; label: string }[] = [
+  { mode: "grid", label: "Grid" },
+  { mode: "carousel", label: "Carousel" },
+];
+
 export function ViewModeToggle({ mode, choose }: Props) {
   return (
     <fieldset className={styles.viewToggle} aria-label="View">
-      <button
-        type="button"
-        className={styles.viewButton}
-        aria-pressed={mode === "grid"}
-        onClick={() => choose("grid")}
-      >
-        Grid
-      </button>
-      <button
-        type="button"
-        className={styles.viewButton}
-        aria-pressed={mode === "carousel"}
-        onClick={() => choose("carousel")}
-      >
-        Carousel
-      </button>
+      {MODES.map((option) => (
+        <button
+          key={option.mode}
+          type="button"
+          className={styles.viewButton}
+          aria-pressed={mode === option.mode}
+          onClick={() => choose(option.mode)}
+        >
+          {option.label}
+        </button>
+      ))}
     </fieldset>
   );
 }
