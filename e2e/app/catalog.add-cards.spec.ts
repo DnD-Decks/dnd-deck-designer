@@ -68,7 +68,7 @@ test.describe("catalog: add cards", () => {
     await playPage.open(fighter);
     const id = characterId(page.url());
 
-    await catalogPage.gotoAdd(id);
+    await catalogPage.gotoAdd({ id });
     await catalogPage.thumb("Greataxe").click();
     await catalogPage.carouselCard("Greataxe").click();
     await catalogPage.cancelAdd.click();

@@ -3,7 +3,7 @@ import { globalSetup } from "../integration/global.setup";
 
 globalSetup();
 
-test.describe("catalog: deep linking", () => {
+test.describe("catalog: deep link", () => {
   test("opens the class named in the URL hash", async ({ catalogPage }) => {
     await catalogPage.goto("fighter");
 

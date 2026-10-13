@@ -3,7 +3,7 @@ import { globalSetup } from "../integration/global.setup";
 
 globalSetup();
 
-test.describe("catalog: offline by construction", () => {
+test.describe("catalog: offline", () => {
   test("every icon the deck references actually loads", async ({ catalogPage }) => {
     await catalogPage.goto("wizard");
     await expect(catalogPage.cards.first()).toBeVisible();

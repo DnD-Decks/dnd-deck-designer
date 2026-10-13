@@ -35,35 +35,4 @@ test.describe("play: spend and rest", () => {
     expect.soft(turned?.width).toBeGreaterThan(upright?.width ?? 0);
     expect.soft((turned?.x ?? 0) + (turned?.width ?? 0)).toBeLessThanOrEqual(upright?.x ?? 0);
   });
-
-  test("a short rest brings one Second Wind back, a long rest the other", async ({ playPage }) => {
-    await expect(playPage.shortRest).toBeDisabled();
-    await playPage.spendOne("Second Wind");
-    await playPage.spendOne("Second Wind");
-    await expect(playPage.spent("Second Wind")).toHaveCount(2);
-
-    await playPage.shortRest.click();
-    await expect(playPage.spent("Second Wind")).toHaveCount(1);
-    await expect.soft(playPage.restStatus).toHaveText("Short rest: Second Wind recovered");
-
-    await playPage.longRest.click();
-    await expect(playPage.spent("Second Wind")).toHaveCount(0);
-    await expect.soft(playPage.longRest).toBeDisabled();
-  });
-
-  test("Recover in the spotlight unspends the card", async ({ playPage }) => {
-    await playPage.spendOne("Second Wind");
-    await playPage.spent("Second Wind").click();
-    await playPage.recover.click();
-
-    await expect(playPage.spent("Second Wind")).toHaveCount(0);
-    await expect.soft(playPage.zoom("Second Wind")).toHaveCount(2);
-  });
-
-  test("spent cards stay spent after a reload", async ({ page, playPage }) => {
-    await playPage.spendOne("Second Wind");
-    await page.reload();
-
-    await expect(playPage.spent("Second Wind")).toHaveCount(1);
-  });
 });

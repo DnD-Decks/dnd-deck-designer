@@ -12,6 +12,7 @@ e2e/
 ├── integration/                # plumbing only, no test cases
 │   ├── global.setup.ts         # called at module level by every spec
 │   ├── network.guard.ts        # catch-all route: same-origin through, cross-origin aborted
+│   ├── deck.locators.ts        # deck/carousel/spotlight locators shared by catalog and play
 │   ├── catalog.page.ts         # page objects: locators + intent helpers, no assertions
 │   ├── home.page.ts            #   (one per route: home = your characters, catalog = every class's cards,
 │   ├── builder.page.ts         #    builder = new / edit character, import = share-link preview,
@@ -43,7 +44,7 @@ device follows. Adding a phone page means extending `PHONE_SPECS`.
 ```bash
 pnpm e2e                      # host run; starts vite itself, reuses one already running
 pnpm e2e --grep "print"       # all Playwright CLI flags pass through
-pnpm e2e:docker               # the same suite in the pinned Playwright image
+pnpm e2e:docker               # the same suite in the pinned Playwright image (rebuilt each run: it bakes in src/)
 ```
 
 `pnpm blue-ball` deliberately leaves e2e out — it needs browsers, not just node.

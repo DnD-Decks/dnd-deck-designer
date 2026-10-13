@@ -8,7 +8,7 @@ import { globalSetup } from "../integration/global.setup";
 
 globalSetup();
 
-test.describe("builder.card-picking{}", () => {
+test.describe("builder: card picking", () => {
   test("new character fits the phone viewport", async ({ page, homePage }) => {
     await homePage.goto();
     await page.getByRole("link", { name: "New character" }).click();
