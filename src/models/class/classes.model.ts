@@ -12,8 +12,6 @@ import warlockData from "../../data/classes/warlock.json" with { type: "json" };
 import wizardData from "../../data/classes/wizard.json" with { type: "json" };
 import { lookup } from "../../lib/lookup.ts";
 
-import type { SkillName } from "src/models/skills/skills.model";
-
 export type ManualClassification = "martial" | "spell-caster" | "versatile";
 
 export type ProficiencyKey =
@@ -53,7 +51,7 @@ export type ClassDetails = {
   description: string;
   manualClassification: ManualClassification;
   proficiencies: Record<ProficiencyKey, ProficiencyGrant> & {
-    skills: { n: number; options: SkillName[] };
+    skills: { n: number; options: string[] };
     tools?: string[];
   };
 };

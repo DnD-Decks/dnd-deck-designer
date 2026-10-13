@@ -148,7 +148,6 @@ JSON for spells is vendored from sibling repo [`dnd-beginner-character-sheet-5e-
 | `spells/spells-level-2.json` | 35 level-2 spells, keyed by id (vendored; not in L1 decks) |
 | `spells/{class}-spells.json` | Spell id lists for 8 caster classes |
 | `classes/<cls>.json` | 12 class files: label, icon, hitDie, saves, proficiencies |
-| `classes/class-resources.json` | Level-progression resource data for all 12 classes (consumed by `class-resources.model.ts`) |
 | `resources/<cls>-resources.json` | L1 resources for 10 classes (monk, rogue: none) |
 | `feats/<cls>-feats.json` | L1 class features for all 12 classes |
 | `gear/weapons.json` | 38 SRD weapons: damage, properties, mastery (feeds the weapon cards) |

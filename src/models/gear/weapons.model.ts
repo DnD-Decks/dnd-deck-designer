@@ -6,10 +6,21 @@ import type { CharacterClass, ProficiencyGrant } from "src/models/class/classes.
 
 import type { DamageType } from "src/models/damage/damage-types.model";
 import type { WeaponMasteryName } from "src/models/gear/weapon-mastery.model";
-import type { WeaponPropertyId } from "src/models/gear/weapon-properties.model";
 
 export type WeaponProficiency = "simple" | "martial";
 export type WeaponRange = "melee" | "ranged";
+
+export type WeaponPropertyId =
+  | "ammunition"
+  | "finesse"
+  | "heavy"
+  | "light"
+  | "loading"
+  | "range"
+  | "reach"
+  | "thrown"
+  | "two-handed"
+  | "versatile";
 
 export type WeaponPropertyRef = WeaponPropertyId | { id: WeaponPropertyId; detail: string };
 

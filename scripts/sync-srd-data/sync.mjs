@@ -185,23 +185,6 @@ for (const [cls, file] of [
   }
 }
 
-// class-resources.json — all 12 classes, name-presence only
-const classResources = readJson("src/data/classes/class-resources.json");
-for (const [cls, { resources }] of Object.entries(classResources)) {
-  const clsName = cls[0].toUpperCase() + cls.slice(1);
-  const body = sliceSection(`## **${clsName}**`, `## **${clsName} Subclass`)
-    .join("\n")
-    .toLowerCase();
-  for (const r of resources) {
-    if (isAlias(r.id)) {
-      unverified("resource", r.id, "spell-slot alias");
-      continue;
-    }
-    if (body.includes(r.name.toLowerCase())) ok();
-    else missingInSrd("resource", r.id);
-  }
-}
-
 // ── REPORT ────────────────────────────────────────────────────────────────────
 console.log(
   "\n══════════════════════════════════════\n  SRD CORRECTNESS SCAN\n══════════════════════════════════════\n"
