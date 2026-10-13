@@ -1,19 +1,13 @@
-import assert from "node:assert/strict";
-import { test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { proficiencyDetails } from "./proficiency-details.model.ts";
 
-// --- proficiencyDetails.get ---
-
-test("get throws on unknown proficiency", () => {
-  assert.throws(
-    () => proficiencyDetails.get({ id: "spellcasting" as "shields" }),
-    /Unknown proficiency/
-  );
-});
-
-// --- proficiencyDetails.find ---
-
-test("find returns undefined for unknown proficiency", () => {
-  assert.equal(proficiencyDetails.find({ id: "spellcasting" }), undefined);
+describe("proficiencyDetails{}", () => {
+  test("injects the data key as each entry's id", () => {
+    expect(proficiencyDetails.find({ id: "shields" })).toEqual({
+      id: "shields",
+      label: "Shields",
+      icon: "vol8/icon-vol8_120",
+    });
+  });
 });

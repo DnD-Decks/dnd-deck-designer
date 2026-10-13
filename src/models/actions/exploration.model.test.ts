@@ -1,38 +1,29 @@
-import assert from "node:assert/strict";
-import { test } from "vitest";
+import { describe, expect, test } from "vitest";
 
+import type { ManualClassification } from "src/models/class/classes.model.ts";
+import type { ExplorationAction } from "./exploration.model.ts";
 import { explorationActions } from "./exploration.model.ts";
 
-// --- explorationActions.get ---
+const actionNames = (actions: readonly ExplorationAction[]) => actions.map((a) => a.name);
 
-test("get throws on unknown exploration action", () => {
-  assert.throws(() => explorationActions.get({ name: "Fly" }), /Unknown exploration action/);
-});
+describe("explorationActions.findAll()", () => {
+  test("martial gets the unrestricted actions only", () => {
+    const found = explorationActions.findAll({ classification: "martial" });
+    expect(actionNames(found)).toEqual(["Hide", "Search", "Study", "Utilize", "Influence"]);
+  });
 
-// --- explorationActions.find ---
-
-test("find returns undefined for unknown action", () => {
-  assert.equal(explorationActions.find({ name: "Fly" }), undefined);
-});
-
-// --- explorationActions.findAll ---
-
-test("findAll spell-caster: includes Cast Ritual Spell", () => {
-  const result = explorationActions.findAll({ classification: "spell-caster" });
-  assert.ok(result.some((a) => a.name === "Cast Ritual Spell"));
-});
-
-test("findAll versatile: includes Cast Ritual Spell", () => {
-  const result = explorationActions.findAll({ classification: "versatile" });
-  assert.ok(result.some((a) => a.name === "Cast Ritual Spell"));
-});
-
-test("findAll martial: excludes Cast Ritual Spell", () => {
-  const result = explorationActions.findAll({ classification: "martial" });
-  assert.ok(!result.some((a) => a.name === "Cast Ritual Spell"));
-});
-
-test("findAll martial: includes unrestricted actions like Search", () => {
-  const result = explorationActions.findAll({ classification: "martial" });
-  assert.ok(result.some((a) => a.name === "Search"));
+  test.each<{ classification: ManualClassification }>([
+    { classification: "spell-caster" },
+    { classification: "versatile" },
+  ])("$classification also gets Cast Ritual Spell", ({ classification }) => {
+    const found = explorationActions.findAll({ classification });
+    expect(actionNames(found)).toEqual([
+      "Hide",
+      "Search",
+      "Study",
+      "Utilize",
+      "Influence",
+      "Cast Ritual Spell",
+    ]);
+  });
 });

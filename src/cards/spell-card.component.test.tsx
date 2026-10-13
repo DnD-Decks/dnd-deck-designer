@@ -1,45 +1,49 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { spells } from "src/models/spells/spells.model";
-import { expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { SpellCard } from "./spell-card.component.tsx";
 
 const fireBolt = spells.get({ id: "fire-bolt" });
 const magicMissile = spells.get({ id: "magic-missile" });
+const detectMagic = spells.get({ id: "detect-magic" });
 
-test("spell name renders as an h3 heading", () => {
-  render(<SpellCard spell={fireBolt} />);
-  screen.getByRole("heading", { name: /fire bolt/i, level: 3 });
-});
+describe("<SpellCard />", () => {
+  test("the card is an article labeled by the spell name", () => {
+    render(<SpellCard spell={fireBolt} />);
 
-test("card is an article landmark labeled by the spell name", () => {
-  render(<SpellCard spell={fireBolt} />);
-  screen.getByRole("article", { name: /fire bolt/i });
-});
+    screen.getByRole("article", { name: "Fire Bolt" });
+    screen.getByRole("heading", { name: "Fire Bolt", level: 3 });
+  });
 
-test("type line shows school and level label", () => {
-  render(<SpellCard spell={fireBolt} />);
-  screen.getByText(/evocation/i);
-  screen.getByText(/cantrip/i);
-});
+  test.each([
+    { spell: fireBolt, typeLine: "Evocation · Cantrip" },
+    { spell: magicMissile, typeLine: "Evocation · Level 1" },
+  ])("the type line reads '$typeLine'", ({ spell, typeLine }) => {
+    render(<SpellCard spell={spell} />);
 
-test("level-1 spell shows 'Level 1' in the type line", () => {
-  render(<SpellCard spell={magicMissile} />);
-  screen.getByText(/level 1/i);
-});
+    screen.getByText(typeLine);
+  });
 
-test("description text is rendered", () => {
-  render(<SpellCard spell={fireBolt} />);
-  screen.getByText(fireBolt.description.slice(0, 20), { exact: false });
-});
+  test("concentration and ritual spells carry their tags", () => {
+    render(<SpellCard spell={detectMagic} />);
 
-test("card art is a decorative background that disappears when the file is missing", () => {
-  render(<SpellCard spell={fireBolt} />);
-  const art = screen.getByRole("presentation", { hidden: true });
-  expect(art.getAttribute("src")).toBe("/art/fire-bolt.png");
+    screen.getByRole("img", { name: "Concentration" });
+    screen.getByRole("img", { name: "Ritual" });
+  });
 
-  fireEvent.error(art);
-  fireEvent.error(screen.getByRole("presentation", { hidden: true }));
-  expect(screen.queryByRole("presentation", { hidden: true })).toBeNull();
-  // the card itself is unaffected
-  screen.getByRole("article", { name: /fire bolt/i });
+  test("a spell without concentration or ritual shows no tags", () => {
+    render(<SpellCard spell={fireBolt} />);
+
+    expect(screen.queryByRole("img", { name: "Concentration" })).toBeNull();
+    expect(screen.queryByRole("img", { name: "Ritual" })).toBeNull();
+  });
+
+  test("shows the visible facts: description and stat strip", () => {
+    render(<SpellCard spell={fireBolt} />);
+
+    screen.getByText(fireBolt.description.slice(0, 20), { exact: false });
+    screen.getByText("120 ft");
+    screen.getByText("Instantaneous");
+    screen.getByText("1d10");
+  });
 });

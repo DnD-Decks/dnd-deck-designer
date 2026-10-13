@@ -1,5 +1,4 @@
-import assert from "node:assert/strict";
-import { describe, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { classes } from "src/models/class/classes.model.ts";
 import { choices } from "./choices.model.ts";
@@ -24,7 +23,7 @@ describe("choices.for()", () => {
     "$cls picks $cantrips cantrips and $prepared prepared spells",
     ({ cls, cantrips, prepared }) => {
       const pick = (id: string) => ruleOf({ cls, id })?.pick ?? 0;
-      assert.deepEqual([pick("cantrips"), pick("prepared")], [cantrips, prepared]);
+      expect([pick("cantrips"), pick("prepared")]).toEqual([cantrips, prepared]);
     }
   );
 
@@ -36,15 +35,12 @@ describe("choices.for()", () => {
     { cls: "rogue", count: 2 },
   ])("$cls must pick $count Weapon Mastery weapons", ({ cls, count }) => {
     const rule = ruleOf({ cls, id: "weapons" });
-    assert.deepEqual([rule?.pick, rule?.optional], [count, undefined]);
+    expect([rule?.pick, rule?.optional]).toEqual([count, undefined]);
   });
 
   test("monk has no spells and optional weapons only", () => {
     const rules = choices.for({ cls: "monk", level: 1 });
-    assert.deepEqual(
-      rules.map((r) => [r.id, r.optional]),
-      [["weapons", true]]
-    );
+    expect(rules.map((r) => [r.id, r.optional])).toEqual([["weapons", true]]);
   });
 });
 
@@ -52,11 +48,12 @@ describe("choices.options()", () => {
   test.each(classes.list().map(({ id }) => ({ cls: id })))(
     "$cls has enough options for every rule",
     ({ cls }) => {
-      const rules = choices.for({ cls, level: 1 });
-      assert.deepEqual(
-        rules.map((rule) => [rule.id, choices.options({ cls, rule }).length >= rule.pick]),
-        rules.map((rule) => [rule.id, true])
-      );
+      const shortfalls = choices
+        .for({ cls, level: 1 })
+        .filter((rule) => choices.options({ cls, rule }).length < rule.pick)
+        .map((rule) => rule.id);
+
+      expect(shortfalls).toEqual([]);
     }
   );
 });
@@ -64,22 +61,19 @@ describe("choices.options()", () => {
 describe("choices.validate()", () => {
   test("an empty wizard build is missing cantrips and prepared spells", () => {
     const issues = choices.validate({ cls: "wizard", level: 1, picks: {} });
-    assert.deepEqual(
-      issues.map((i) => [i.rule.id, i.problem, "count" in i && i.count]),
-      [
-        ["cantrips", "missing", 3],
-        ["prepared", "missing", 4],
-      ]
-    );
+    expect(issues.map((i) => [i.rule.id, i.problem, "count" in i && i.count])).toEqual([
+      ["cantrips", "missing", 3],
+      ["prepared", "missing", 4],
+    ]);
   });
 
   test("a complete fighter build has no issues", () => {
     const picks = { weapons: ["longsword", "greatsword", "longbow"] };
-    assert.deepEqual(choices.validate({ cls: "fighter", level: 1, picks }), []);
+    expect(choices.validate({ cls: "fighter", level: 1, picks })).toEqual([]);
   });
 
   test("an optional rule left empty is not an issue", () => {
-    assert.deepEqual(choices.validate({ cls: "monk", level: 1, picks: {} }), []);
+    expect(choices.validate({ cls: "monk", level: 1, picks: {} })).toEqual([]);
   });
 
   test("reports too many picks", () => {
@@ -88,10 +82,7 @@ describe("choices.validate()", () => {
       level: 1,
       picks: { weapons: ["longsword", "greatsword", "longbow", "dagger"] },
     });
-    assert.deepEqual(
-      issues.map((i) => [i.problem, "count" in i && i.count]),
-      [["too-many", 1]]
-    );
+    expect(issues.map((i) => [i.problem, "count" in i && i.count])).toEqual([["too-many", 1]]);
   });
 
   test("reports ids the class cannot pick", () => {
@@ -101,7 +92,7 @@ describe("choices.validate()", () => {
       picks: { cantrips: ["fire-bolt", "not-a-spell"] },
     });
     const cantrips = issues.find((i) => i.rule.id === "cantrips");
-    assert.deepEqual(cantrips?.problem === "unknown" && cantrips.ids, ["not-a-spell"]);
+    expect(cantrips?.problem === "unknown" && cantrips.ids).toEqual(["not-a-spell"]);
   });
 });
 
@@ -112,6 +103,6 @@ describe("choices.picked()", () => {
       level: 1,
       picks: { prepared: ["bless"], weapons: ["longsword"] },
     });
-    assert.deepEqual([[...picked.spell], [...picked.weapon]], [["bless"], ["longsword"]]);
+    expect([[...picked.spell], [...picked.weapon]]).toEqual([["bless"], ["longsword"]]);
   });
 });
