@@ -2,5 +2,9 @@
 node_modules
 dist
 .git
+# local tool worktrees: full clones of this repo (node_modules and all) that
+# would otherwise balloon the build context past the builder's disk
+.delta
+.claude
 e2e/test-results
 e2e/playwright-report

@@ -44,7 +44,7 @@ device follows. Adding a phone page means extending `PHONE_SPECS`.
 ```bash
 pnpm e2e                      # host run; starts vite itself, reuses one already running
 pnpm e2e --grep "print"       # all Playwright CLI flags pass through
-pnpm e2e:docker               # the same suite in the pinned Playwright image
+pnpm e2e:docker               # the same suite in the pinned Playwright image (rebuilt each run: it bakes in src/)
 ```
 
 `pnpm blue-ball` deliberately leaves e2e out — it needs browsers, not just node.
