@@ -27,7 +27,7 @@ function TimingItem({ timing }: { timing: ActionTiming }) {
 
 export function ResourceCard({ resource }: Props) {
   const headingId = useId();
-  const recharge = restActions.get({ id: resource.recharge }).label;
+  const recharge = restActions.find({ id: resource.recharge })?.label;
 
   return (
     <article className={styles.card} aria-labelledby={headingId}>

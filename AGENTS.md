@@ -17,7 +17,7 @@
 - **Filename pattern**: `<module>.<role>.ts(x)` — e.g. `wizard.controller.ts`, `spell.service.ts`, `feat-card.component.tsx`. The module comes first, the role second.
 - import: use absolute `src/*` paths.
 - use relative imports only for same-folder files (e.g. CSS modules: `./spell-card.module.css`).
-- sanctioned exception: **runtime** imports in `*.model.ts` modules (and the `src/lib/` primitives they import) use relative paths with the `.ts` extension, so the models stay runnable by plain node, where the `src/*` alias doesn't exist — see `src/decks/deck.model.ts`. Type-only imports keep the `src/*` form.
+- legacy exception: **runtime** imports in `*.model.ts` modules (and the `src/lib/` primitives they import) use relative paths with the `.ts` extension — see `src/decks/deck.model.ts`. They date from when model tests ran under `node:test`, which has no `src/*` alias; nothing needs it now, so keep the form only inside those files and don't spread it. Type-only imports keep the `src/*` form.
 - use `import type` for type-only imports.
 - prefer `type` for data shapes; reserve `interface` for semantic behavior contracts (e.g. `Runnable { run() }`).
 - Prefer plain functions and closures over `class` syntax.
