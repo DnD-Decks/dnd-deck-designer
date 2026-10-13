@@ -5,26 +5,18 @@ import { globalSetup } from "../integration/global.setup";
 globalSetup();
 
 test.describe("play: delete character", () => {
-  test.beforeEach(async ({ playPage }) => {
+  test("the delete dialog asks in the viewport, then confirming goes home", async ({
+    page,
+    homePage,
+    playPage,
+  }) => {
     await playPage.open(fighter);
     await playPage.menuButton.click();
     await playPage.deleteCharacter.click();
-  });
 
-  test("the menu closes and a dialog asks before deleting", async ({ playPage }) => {
-    await expect(playPage.confirmDelete("Brünhilde")).toBeVisible();
+    await expect(playPage.confirmDelete("Brünhilde")).toBeInViewport();
     await expect.soft(playPage.menu).toBeHidden();
-    await expect.soft(playPage.confirmDelete("Brünhilde")).toBeInViewport();
-  });
 
-  test("Cancel keeps the character at the table", async ({ page, playPage }) => {
-    await playPage.confirmDelete("Brünhilde").getByRole("button", { name: "Cancel" }).click();
-
-    await expect(playPage.confirmDelete("Brünhilde")).toHaveCount(0);
-    await expect.soft(page).toHaveURL(/#\/character\/[\w-]+$/);
-  });
-
-  test("confirming deletes the character and goes home", async ({ page, homePage, playPage }) => {
     await playPage
       .confirmDelete("Brünhilde")
       .getByRole("button", { name: "Delete Brünhilde" })

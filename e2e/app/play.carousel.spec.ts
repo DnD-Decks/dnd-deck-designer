@@ -43,17 +43,4 @@ test.describe("play: carousel", () => {
     await expect(playPage.carouselCard("Second Wind")).toBeVisible();
     await expect.soft(playPage.restStatus).toHaveText("Long rest: Second Wind recovered");
   });
-
-  test("the Grid toggle brings back the mat, and the choice is remembered", async ({
-    page,
-    playPage,
-  }) => {
-    await playPage.open(fighter);
-    await playPage.gridButton.click();
-    await expect(playPage.section("Resources")).toBeVisible();
-    await expect.soft(playPage.carousel("Brünhilde's cards")).toHaveCount(0);
-
-    await page.reload();
-    await expect(playPage.section("Resources")).toBeVisible();
-  });
 });

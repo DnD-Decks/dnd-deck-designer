@@ -12,6 +12,7 @@ e2e/
 ├── integration/                # plumbing only, no test cases
 │   ├── global.setup.ts         # called at module level by every spec
 │   ├── network.guard.ts        # catch-all route: same-origin through, cross-origin aborted
+│   ├── deck.locators.ts        # deck/carousel/spotlight locators shared by catalog and play
 │   ├── catalog.page.ts         # page objects: locators + intent helpers, no assertions
 │   ├── home.page.ts            #   (one per route: home = your characters, catalog = every class's cards,
 │   ├── builder.page.ts         #    builder = new / edit character, import = share-link preview,

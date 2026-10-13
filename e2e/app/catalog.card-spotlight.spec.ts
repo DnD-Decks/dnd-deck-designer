@@ -20,7 +20,7 @@ test.describe("catalog: card spotlight", () => {
     // the mat is inert while a card is held: no <main> left in the accessibility tree
     await expect.soft(page.getByRole("main")).toHaveCount(0);
 
-    await catalogPage.dismissSpotlight.click();
+    await catalogPage.putBack.click();
     await expect(catalogPage.spotlight).toBeHidden();
     await expect(page.getByRole("main")).toBeVisible();
   });
