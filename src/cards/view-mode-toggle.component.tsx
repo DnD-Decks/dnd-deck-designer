@@ -1,4 +1,4 @@
-import type { ViewMode } from "src/cards/view-mode.hook";
+import type { ViewMode } from "src/cards/use-view-mode.hook";
 import styles from "./view-mode-toggle.module.css";
 
 type Props = {

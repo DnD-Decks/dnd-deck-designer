@@ -27,7 +27,6 @@ export function SpellCard({ spell }: Props) {
     >
       <CardArt assetId={spell.id} />
 
-      {/* Title bar — name left, cost cluster right */}
       <div className={styles.titleBar}>
         <h3 id={headingId} className={styles.name}>
           {spell.name}
@@ -43,10 +42,8 @@ export function SpellCard({ spell }: Props) {
         </span>
       </div>
 
-      {/* Art window — the painting shows through here unblurred */}
       <div className={styles.artWindow} />
 
-      {/* Type line — school · level + flag icons */}
       <div className={styles.typeLine}>
         <span>
           {spell.school} · {levelLabel(spell.level)}
@@ -65,7 +62,6 @@ export function SpellCard({ spell }: Props) {
         </span>
       </div>
 
-      {/* Text box — description + stat strip */}
       <div className={styles.textBox}>
         <p>{spell.description}</p>
         <SpellCardStatStrip

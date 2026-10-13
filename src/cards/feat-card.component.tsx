@@ -23,7 +23,6 @@ export function FeatCard({ feat }: Props) {
 
       <div className={styles.typeLine}>Class Feature</div>
 
-      {/* Art window — the painting shows through here unblurred; the text panel sits below */}
       <div className={styles.artWindow} />
 
       <div className={styles.textBox}>

@@ -9,7 +9,6 @@ type Props = {
   onRemove: (key: string) => void;
 };
 
-/** The cards a character picked up by hand in the catalog, each with its way back out. */
 export function CustomCards({ keys, onRemove }: Props) {
   const entries = keys.flatMap((key) => {
     const card = decks.findCard({ key });
