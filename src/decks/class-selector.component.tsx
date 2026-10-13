@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Icon } from "src/lib/icon.component";
 import type { CharacterClass } from "src/models/class/classes.model";
 import { classes } from "src/models/class/classes.model";
@@ -12,27 +13,38 @@ type Props = {
 const ALL_CLASSES = classes.list();
 
 export function ClassSelector({ selected, onSelect }: Props) {
+  const baseId = useId();
+
   return (
     <nav className={styles.selector} aria-label="Character class">
-      {ALL_CLASSES.map((cls) => (
-        <button
-          key={cls.id}
-          type="button"
-          className={styles.classButton}
-          aria-pressed={cls.id === selected}
-          onClick={() => onSelect(cls.id)}
-        >
-          {/* decorative: the visible label already names the button */}
-          <Icon src={cls.icon} label={cls.label} decorative className={styles.badge} />
-          <span className={styles.text}>
-            <span className={styles.label}>{cls.label}</span>
-            <span className={styles.meta}>
-              <span className={styles.classification}>{cls.manualClassification}</span>
-              <span className={styles.hitDie}>{cls.hitDie}</span>
+      {ALL_CLASSES.map((cls) => {
+        const labelId = `${baseId}-${cls.id}-label`;
+        const metaId = `${baseId}-${cls.id}-meta`;
+
+        return (
+          <button
+            key={cls.id}
+            type="button"
+            className={styles.classButton}
+            aria-pressed={cls.id === selected}
+            aria-labelledby={labelId}
+            aria-describedby={metaId}
+            onClick={() => onSelect(cls.id)}
+          >
+            {/* decorative: the visible label already names the button */}
+            <Icon src={cls.icon} label={cls.label} decorative className={styles.badge} />
+            <span className={styles.text}>
+              <span className={styles.label} id={labelId}>
+                {cls.label}
+              </span>
+              <span className={styles.meta} id={metaId}>
+                <span className={styles.classification}>{cls.manualClassification}</span>{" "}
+                <span className={styles.hitDie}>{cls.hitDie}</span>
+              </span>
             </span>
-          </span>
-        </button>
-      ))}
+          </button>
+        );
+      })}
     </nav>
   );
 }
