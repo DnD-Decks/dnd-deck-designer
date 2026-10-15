@@ -13,5 +13,27 @@
     "jump",
     "longstrider",
     "speak-with-animals"
-  ]
+  ],
+  "level3": [
+    "conjure-animals",
+    "daylight",
+    "dispel-magic",
+    "meld-into-stone",
+    "nondetection",
+    "plant-growth",
+    "protection-from-energy",
+    "revivify",
+    "speak-with-plants",
+    "water-breathing",
+    "water-walk",
+    "wind-wall"
+  ],
+  "level4": [
+    "conjure-woodland-beings",
+    "dominate-beast",
+    "freedom-of-movement",
+    "locate-creature",
+    "stoneskin"
+  ],
+  "level5": ["commune-with-nature", "greater-restoration", "tree-stride"]
 }

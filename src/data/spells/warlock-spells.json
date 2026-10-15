@@ -29,5 +29,40 @@
     "tashas-hideous-laughter",
     "unseen-servant",
     "witch-bolt"
+  ],
+  "level3": [
+    "counterspell",
+    "dispel-magic",
+    "fear",
+    "fly",
+    "gaseous-form",
+    "hypnotic-pattern",
+    "magic-circle",
+    "major-image",
+    "remove-curse",
+    "tongues",
+    "vampiric-touch"
+  ],
+  "level4": ["banishment", "blight", "charm-monster", "dimension-door", "hallucinatory-terrain"],
+  "level5": [
+    "contact-other-plane",
+    "dream",
+    "hold-monster",
+    "mislead",
+    "planar-binding",
+    "scrying",
+    "teleportation-circle"
+  ],
+  "level6": ["circle-of-death", "create-undead", "eyebite", "true-seeing"],
+  "level7": ["etherealness", "finger-of-death", "forcecage", "plane-shift"],
+  "level8": ["befuddlement", "demiplane", "dominate-monster", "glibness", "power-word-stun"],
+  "level9": [
+    "astral-projection",
+    "foresight",
+    "gate",
+    "imprisonment",
+    "power-word-kill",
+    "true-polymorph",
+    "weird"
   ]
 }

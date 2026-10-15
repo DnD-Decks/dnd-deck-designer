@@ -538,8 +538,8 @@
     "ritual": false,
     "description": "You create a shard of ice and fling it at one creature within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 Piercing damage. Hit or miss, the shard then explodes. The target and each creature within 5 feet of it must succeed on a Dexterity saving throw or take 2d6 Cold damage.",
     "damage": {
-      "dice": "1d10",
-      "type": ["piercing"]
+      "dice": "1d10 + 2d6",
+      "type": ["piercing", "cold"]
     },
     "attack": "ranged",
     "save": "Dexterity",
@@ -583,12 +583,12 @@
     "concentration": false,
     "ritual": false,
     "description": "A creature you touch makes a Constitution saving throw, taking 2d10 Necrotic damage on a failed save or half as much damage on a successful one.",
-    "attack": "melee",
     "damage": {
-      "dice": "3d10",
+      "dice": "2d10",
       "type": ["necrotic"]
     },
-    "atHigherLevels": "The damage increases by 1d10 for each spell slot level above 1."
+    "atHigherLevels": "The damage increases by 1d10 for each spell slot level above 1.",
+    "save": "Constitution"
   },
   "jump": {
     "id": "jump",
@@ -694,7 +694,6 @@
       "dice": "2d8",
       "type": ["poison"]
     },
-    "save": "Constitution",
     "attack": "ranged",
     "atHigherLevels": "The damage increases by 1d8 for each spell slot level above 1."
   },
@@ -764,7 +763,8 @@
     "duration": "Up to 1 minute",
     "concentration": true,
     "ritual": false,
-    "description": "Each creature of your choice in a 5-foot-radius Sphere centered on a point within range must succeed on a Wisdom saving throw or have the Incapacitated condition until the end of its next turn, at which point it must repeat the save. If the target fails the second save, the target has the Unconscious condition for the duration. The spell ends on a target if it takes damage or someone within 5 feet of it takes an action to shake it out of the spell's effect. Creatures that don't sleep, such as elves, or that have Immunity to the Exhaustion condition automatically succeed on saves against this spell."
+    "description": "Each creature of your choice in a 5-foot-radius Sphere centered on a point within range must succeed on a Wisdom saving throw or have the Incapacitated condition until the end of its next turn, at which point it must repeat the save. If the target fails the second save, the target has the Unconscious condition for the duration. The spell ends on a target if it takes damage or someone within 5 feet of it takes an action to shake it out of the spell's effect. Creatures that don't sleep, such as elves, or that have Immunity to the Exhaustion condition automatically succeed on saves against this spell.",
+    "save": "Wisdom"
   },
   "speak-with-animals": {
     "id": "speak-with-animals",
@@ -842,7 +842,7 @@
     "ritual": false,
     "description": "A beam of crackling energy lances toward a creature within range, forming a sustained arc of lightning between you and the target. Make a ranged spell attack against that creature. On a hit, the target takes 2d12 Lightning damage. On each of your subsequent turns, you can use a Bonus Action to deal 1d12 Lightning damage to the target automatically. The spell ends if the target is ever outside the spell's range or if it has Total Cover from you.",
     "damage": {
-      "dice": "2d12",
+      "dice": "2d12 / 1d12",
       "type": ["lightning"]
     },
     "attack": "ranged",
