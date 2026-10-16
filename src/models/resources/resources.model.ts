@@ -7,6 +7,7 @@ import druidResourcesData from "../../data/resources/druid-resources.json" with 
 import fighterResourcesData from "../../data/resources/fighter-resources.json" with {
   type: "json",
 };
+import monkResourcesData from "../../data/resources/monk-resources.json" with { type: "json" };
 import paladinResourcesData from "../../data/resources/paladin-resources.json" with {
   type: "json",
 };
@@ -21,7 +22,10 @@ import wizardResourcesData from "../../data/resources/wizard-resources.json" wit
 
 import type { ActionTiming } from "src/models/actions/combat.model";
 import type { CharacterClass } from "src/models/class/classes.model";
+import type { CharacterLevel, SubclassId } from "src/models/class/progression.model";
+import type { Provenance } from "src/models/provenance/provenance.model";
 import type { RestType } from "src/models/rest/rest-actions.model";
+import { progression } from "../class/progression.model.ts";
 
 export type Resource = {
   id: string;
@@ -37,6 +41,9 @@ export type Resource = {
   action?: ActionTiming;
   description: string;
   icon?: string;
+  level?: CharacterLevel;
+  subclass?: SubclassId;
+  provenance?: Provenance;
 };
 
 const CLASS_DATA: Partial<Record<CharacterClass, Resource[]>> = {
@@ -50,10 +57,42 @@ const CLASS_DATA: Partial<Record<CharacterClass, Resource[]>> = {
   warlock: warlockResourcesData as Resource[],
   wizard: wizardResourcesData as Resource[],
   fighter: fighterResourcesData as Resource[],
+  monk: monkResourcesData as Resource[],
 };
 
 export const resources = {
-  findAll({ cls }: { cls: CharacterClass }) {
-    return CLASS_DATA[cls] ?? [];
+  findAll({
+    cls,
+    level = 1,
+    subclass = "champion",
+  }: { cls: CharacterClass; level?: CharacterLevel; subclass?: SubclassId }): Resource[] {
+    const current = progression.get({ cls, level });
+    const cards = (CLASS_DATA[cls] ?? [])
+      .filter((resource) => (resource.level ?? 1) <= level)
+      .filter((resource) => !resource.subclass || resource.subclass === subclass)
+      .map((resource) => {
+        const suffix = resource.id.slice(cls.length + 1);
+        const uses = current.uses?.[suffix] ?? resource.uses;
+        if (suffix !== "mana" || !current.slots) return { ...resource, uses };
+        const slotLevel = current.pactLevel ?? 1;
+        const count = current.slots[0];
+        return {
+          ...resource,
+          uses: count,
+          description: `You have ${count} level-${slotLevel} ${cls === "warlock" ? "Pact Magic " : ""}spell slots. Expend one to cast a prepared spell of level ${slotLevel} or lower. Regain all slots after a ${cls === "warlock" ? "Short or Long" : "Long"} Rest.`,
+        };
+      });
+    const secondLevelSlots = current.slots?.[1] ?? 0;
+    if (secondLevelSlots > 0)
+      cards.push({
+        id: `${cls}-mana-2`,
+        name: "Level 2 Mana",
+        uses: secondLevelSlots,
+        stack: true,
+        icon: "/icons/mana.png",
+        recharge: "long-rest",
+        description: `You have ${secondLevelSlots} level-2 spell slots. Expend one to cast a prepared spell of level 2 or lower, including a lower-level spell at level 2. Regain all slots after a Long Rest.`,
+      });
+    return cards;
   },
 };

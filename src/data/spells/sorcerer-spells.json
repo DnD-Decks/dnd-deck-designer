@@ -128,5 +128,32 @@
     "power-word-stun",
     "sunburst"
   ],
-  "level9": ["gate", "meteor-swarm", "power-word-kill", "time-stop", "wish"]
+  "level9": ["gate", "meteor-swarm", "power-word-kill", "time-stop", "wish"],
+  "level2": [
+    "alter-self",
+    "blindness-deafness",
+    "blur",
+    "darkness",
+    "darkvision",
+    "detect-thoughts",
+    "dragons-breath",
+    "enhance-ability",
+    "enlarge-reduce",
+    "flame-blade",
+    "flaming-sphere",
+    "gust-of-wind",
+    "hold-person",
+    "invisibility",
+    "knock",
+    "levitate",
+    "magic-weapon",
+    "mirror-image",
+    "misty-step",
+    "scorching-ray",
+    "see-invisibility",
+    "shatter",
+    "spider-climb",
+    "suggestion",
+    "web"
+  ]
 }

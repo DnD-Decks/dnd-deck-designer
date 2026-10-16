@@ -3,7 +3,11 @@
     "id": "druid-spellcasting",
     "name": "Spellcasting",
     "source": "Druid Level 1",
-    "description": "You can cast Druid spells using Wisdom as your spellcasting ability. You know 2 cantrips and have 4 prepared level-1 spells; you can replace one prepared spell whenever you gain a Druid level. You can use a Druidic Focus as your spellcasting focus."
+    "description": "Cast Druid spells using Wisdom. You know 2 cantrips and prepare 4 spells of level 1. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace your prepared spells. You can use a Druidic Focus as your spellcasting focus.",
+    "descriptions": {
+      "2": "Cast Druid spells using Wisdom. You know 2 cantrips and prepare 5 spells of level 1. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace your prepared spells. You can use a Druidic Focus as your spellcasting focus.",
+      "3": "Cast Druid spells using Wisdom. You know 2 cantrips and prepare 6 spells of level 1 or 2. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace your prepared spells. You can use a Druidic Focus as your spellcasting focus."
+    }
   },
   {
     "id": "druid-druidic",
@@ -16,5 +20,33 @@
     "name": "Primal Order",
     "source": "Druid Level 1",
     "description": "You have dedicated yourself to a sacred role of your choice. Magician: you know one extra cantrip from the Druid spell list, and you gain a bonus to Intelligence (Arcana or Nature) checks equal to your Wisdom modifier (minimum +1). Warden: trained for battle, you gain proficiency with Martial weapons and training with Medium armor."
+  },
+  {
+    "id": "druid-wild-shape-feature",
+    "name": "Wild Shape",
+    "source": "Druid Level 2",
+    "level": 2,
+    "description": "As a Bonus Action, take one of four known Beast forms (CR 1/4 or lower, no Fly Speed) for half your Druid level in hours. Gain Temporary HP equal to your Druid level; retain your own HP and mental abilities. You cannot cast spells, but keep Concentration. See SRD Wild Shape for the full stat and equipment rules."
+  },
+  {
+    "id": "druid-wild-companion",
+    "name": "Wild Companion",
+    "source": "Druid Level 2",
+    "level": 2,
+    "description": "As a Magic action, expend a spell slot or one Wild Shape use to cast Find Familiar without Material components. The familiar is Fey and disappears when you finish a Long Rest."
+  },
+  {
+    "id": "druid-circle-of-the-land-spells",
+    "name": "Circle of the Land Spells",
+    "source": "Circle of the Land Level 3",
+    "level": 3,
+    "description": "Choose arid, polar, temperate, or tropical land after each Long Rest. The spells for your chosen land are always prepared and do not count against your prepared spell choices. Change your land in Edit character."
+  },
+  {
+    "id": "druid-lands-aid",
+    "name": "Land's Aid",
+    "source": "Circle of the Land Level 3",
+    "level": 3,
+    "description": "As a Magic action, expend one Wild Shape use and choose a point within 60 feet. Creatures of your choice in a 10-foot-radius Sphere make a Constitution save, taking 2d6 Necrotic damage on failure or half on success. One creature of your choice in the area regains 2d6 HP."
   }
 ]

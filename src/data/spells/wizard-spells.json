@@ -80,7 +80,10 @@
     "shatter",
     "spider-climb",
     "suggestion",
-    "web"
+    "web",
+    "augury",
+    "enhance-ability",
+    "enlarge-reduce"
   ],
   "level3": [
     "animate-dead",

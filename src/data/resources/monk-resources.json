@@ -1,0 +1,20 @@
+[
+  {
+    "id": "monk-focus-points",
+    "name": "Focus Points",
+    "level": 2,
+    "uses": 2,
+    "recharge": "short-rest",
+    "description": "Spend Focus Points on Flurry of Blows, Patient Defense, Step of the Wind, or other Monk features. Save DC = 8 + Wisdom modifier + Proficiency Bonus. Regain all points after a Short or Long Rest.",
+    "stack": true
+  },
+  {
+    "id": "monk-uncanny-metabolism",
+    "name": "Uncanny Metabolism",
+    "level": 2,
+    "uses": 1,
+    "recharge": "long-rest",
+    "description": "When you roll Initiative, regain all expended Focus Points. Also regain HP equal to your Monk level + 1d6. Regain this use after a Long Rest.",
+    "stack": true
+  }
+]

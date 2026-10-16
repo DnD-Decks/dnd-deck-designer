@@ -9,7 +9,10 @@
     "id": "rogue-sneak-attack",
     "name": "Sneak Attack",
     "source": "Rogue Level 1",
-    "description": "Once per turn, you can deal an extra 1d6 damage to one creature you hit with an attack roll if you have Advantage on the roll and the attack uses a Finesse or Ranged weapon. You don't need Advantage if an ally is within 5 feet of the target, the ally isn't Incapacitated, and you don't have Disadvantage on the roll."
+    "description": "Once per turn, you can deal an extra 1d6 damage to one creature you hit with an attack roll if you have Advantage on the roll and the attack uses a Finesse or Ranged weapon. You don't need Advantage if an ally is within 5 feet of the target, the ally isn't Incapacitated, and you don't have Disadvantage on the roll.",
+    "descriptions": {
+      "3": "Once per turn, you can deal an extra 2d6 damage to one creature you hit with an attack roll if you have Advantage on the roll and the attack uses a Finesse or Ranged weapon. You don't need Advantage if an ally is within 5 feet of the target, the ally isn't Incapacitated, and you don't have Disadvantage on the roll."
+    }
   },
   {
     "id": "rogue-thieves-cant",
@@ -22,5 +25,33 @@
     "name": "Weapon Mastery",
     "source": "Rogue Level 1",
     "description": "Your training allows you to use the mastery properties of 2 kinds of weapons of your choice with which you have proficiency, such as Daggers and Shortbows. Whenever you finish a Long Rest, you can change those weapon choices. See Weapon Mastery cards for property details."
+  },
+  {
+    "id": "rogue-cunning-action",
+    "name": "Cunning Action",
+    "source": "Rogue Level 2",
+    "level": 2,
+    "description": "On your turn, take Dash, Disengage, or Hide as a Bonus Action."
+  },
+  {
+    "id": "rogue-steady-aim",
+    "name": "Steady Aim",
+    "source": "Rogue Level 3",
+    "level": 3,
+    "description": "As a Bonus Action, gain Advantage on your next attack roll this turn. You must not have moved this turn; your Speed becomes 0 until the end of the turn."
+  },
+  {
+    "id": "rogue-fast-hands",
+    "name": "Fast Hands",
+    "source": "Thief Level 3",
+    "level": 3,
+    "description": "As a Bonus Action, make a Dexterity (Sleight of Hand) check to pick a lock or disarm a trap with Thieves' Tools, or pick a pocket. Alternatively, take the Utilize action or the Magic action to use a magic item that requires it."
+  },
+  {
+    "id": "rogue-second-story-work",
+    "name": "Second-Story Work",
+    "source": "Thief Level 3",
+    "level": 3,
+    "description": "Gain a Climb Speed equal to your Speed. You can use Dexterity instead of Strength to determine your jump distance."
   }
 ]

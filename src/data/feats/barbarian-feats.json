@@ -10,5 +10,33 @@
     "name": "Weapon Mastery",
     "source": "Barbarian Level 1",
     "description": "Your training allows you to use the mastery properties of 2 kinds of Simple or Martial Melee weapons of your choice, such as Greataxes and Handaxes. Whenever you finish a Long Rest, you can change one of those weapon choices. See Weapon Mastery cards for property details."
+  },
+  {
+    "id": "barbarian-danger-sense",
+    "name": "Danger Sense",
+    "source": "Barbarian Level 2",
+    "level": 2,
+    "description": "You have Advantage on Dexterity saving throws unless you have the Incapacitated condition."
+  },
+  {
+    "id": "barbarian-reckless-attack",
+    "name": "Reckless Attack",
+    "source": "Barbarian Level 2",
+    "level": 2,
+    "description": "When you make your first attack roll on your turn, you can attack recklessly. You gain Advantage on attack rolls using Strength until the start of your next turn, but attack rolls against you have Advantage during that time."
+  },
+  {
+    "id": "barbarian-primal-knowledge",
+    "name": "Primal Knowledge",
+    "source": "Barbarian Level 3",
+    "level": 3,
+    "description": "Gain proficiency in one more skill from the Barbarian skill list. While raging, you can use Strength for Acrobatics, Intimidation, Perception, Stealth, and Survival checks."
+  },
+  {
+    "id": "barbarian-frenzy",
+    "name": "Frenzy",
+    "source": "Path of the Berserker Level 3",
+    "level": 3,
+    "description": "While raging, if you use Reckless Attack, the first target you hit on your turn with a Strength-based attack takes an extra 2d6 damage. The damage has the same type as the weapon or Unarmed Strike used."
   }
 ]

@@ -7,5 +7,14 @@
     "stack": true,
     "recharge": "short-rest",
     "description": "You have 1 level-1 Pact Magic spell slot. Expend it to cast a prepared level-1 spell. You regain all expended mana after a Short or Long Rest."
+  },
+  {
+    "id": "warlock-magical-cunning",
+    "name": "Magical Cunning",
+    "level": 2,
+    "uses": 1,
+    "recharge": "long-rest",
+    "description": "Perform a rite for 1 minute to recover expended Pact Magic slots, up to half your maximum (round up). At Warlock levels 2 and 3, recover one slot. Regain this use after a Long Rest.",
+    "stack": true
   }
 ]

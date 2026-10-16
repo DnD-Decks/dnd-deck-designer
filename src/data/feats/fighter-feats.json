@@ -10,5 +10,28 @@
     "name": "Weapon Mastery",
     "source": "Fighter Level 1",
     "description": "Your training allows you to use the mastery property of 3 weapons you are proficient with. You can change which weapons you use this with after a Long Rest. See Weapon Mastery cards for property details."
+  },
+  {
+    "id": "fighter-tactical-mind",
+    "name": "Tactical Mind",
+    "source": "Fighter Level 2",
+    "level": 2,
+    "description": "When you fail an ability check, expend one Second Wind use to add 1d10 to the check instead of healing. If the check still fails, the use is not expended."
+  },
+  {
+    "id": "fighter-improved-critical",
+    "name": "Improved Critical",
+    "source": "Champion Level 3",
+    "level": 3,
+    "description": "Your weapon and Unarmed Strike attack rolls score a Critical Hit on a d20 roll of 19 or 20.",
+    "subclass": "champion"
+  },
+  {
+    "id": "fighter-remarkable-athlete",
+    "name": "Remarkable Athlete",
+    "source": "Champion Level 3",
+    "level": 3,
+    "description": "You have Advantage on Initiative rolls and Strength (Athletics) checks. Immediately after scoring a Critical Hit, you can move up to half your Speed without provoking Opportunity Attacks.",
+    "subclass": "champion"
   }
 ]

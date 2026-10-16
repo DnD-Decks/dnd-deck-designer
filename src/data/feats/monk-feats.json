@@ -10,5 +10,47 @@
     "name": "Unarmored Defense",
     "source": "Monk Level 1",
     "description": "While you aren't wearing armor or wielding a Shield, your base Armor Class equals 10 plus your Dexterity and Wisdom modifiers."
+  },
+  {
+    "id": "monk-flurry-of-blows",
+    "name": "Flurry of Blows",
+    "source": "Monk Level 2",
+    "level": 2,
+    "description": "Expend 1 Focus Point to make two Unarmed Strikes as a Bonus Action."
+  },
+  {
+    "id": "monk-patient-defense",
+    "name": "Patient Defense",
+    "source": "Monk Level 2",
+    "level": 2,
+    "description": "Take the Disengage action as a Bonus Action. Alternatively, expend 1 Focus Point to take both Disengage and Dodge as a Bonus Action."
+  },
+  {
+    "id": "monk-step-of-the-wind",
+    "name": "Step of the Wind",
+    "source": "Monk Level 2",
+    "level": 2,
+    "description": "Take the Dash action as a Bonus Action. Alternatively, expend 1 Focus Point to take both Disengage and Dash as a Bonus Action and double your jump distance for the turn."
+  },
+  {
+    "id": "monk-unarmored-movement",
+    "name": "Unarmored Movement",
+    "source": "Monk Level 2",
+    "level": 2,
+    "description": "Your Speed increases by 10 feet while you are not wearing armor or wielding a Shield."
+  },
+  {
+    "id": "monk-deflect-attacks",
+    "name": "Deflect Attacks",
+    "source": "Monk Level 3",
+    "level": 3,
+    "description": "When an attack hits you with Bludgeoning, Piercing, or Slashing damage, use your Reaction to reduce its total damage by 1d10 + Dexterity modifier + Monk level. If reduced to 0, spend 1 Focus Point to redirect it: a visible target within 5 feet (melee) or 60 feet without Total Cover (ranged) makes a Dexterity save or takes 2d6 + Dexterity modifier damage of the same type."
+  },
+  {
+    "id": "monk-open-hand-technique",
+    "name": "Open Hand Technique",
+    "source": "Warrior of the Open Hand Level 3",
+    "level": 3,
+    "description": "When Flurry of Blows hits, choose one effect: Addle prevents Opportunity Attacks until the start of the target's next turn; Push moves it up to 15 feet on a failed Strength save; Topple knocks it Prone on a failed Dexterity save. Save DC = 8 + Wisdom modifier + Proficiency Bonus."
   }
 ]

@@ -3,12 +3,44 @@
     "id": "ranger-spellcasting",
     "name": "Spellcasting",
     "source": "Ranger Level 1",
-    "description": "You can cast Ranger spells using Wisdom as your spellcasting ability. You have 2 prepared level-1 spells; whenever you finish a Long Rest, you can replace one prepared spell with another Ranger spell. You can use a Druidic Focus as your spellcasting focus."
+    "description": "Cast Ranger spells using Wisdom. Prepare 2 spells of level 1. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace one prepared spell. You can use a Druidic Focus as your spellcasting focus.",
+    "descriptions": {
+      "2": "Cast Ranger spells using Wisdom. Prepare 3 spells of level 1. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace one prepared spell. You can use a Druidic Focus as your spellcasting focus.",
+      "3": "Cast Ranger spells using Wisdom. Prepare 4 spells of level 1. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace one prepared spell. You can use a Druidic Focus as your spellcasting focus."
+    }
   },
   {
     "id": "ranger-weapon-mastery",
     "name": "Weapon Mastery",
     "source": "Ranger Level 1",
     "description": "Your training allows you to use the mastery property of 2 weapons you are proficient with. You can change which weapons you use this with after a Long Rest. See Weapon Mastery cards for property details."
+  },
+  {
+    "id": "ranger-deft-explorer",
+    "name": "Deft Explorer",
+    "source": "Ranger Level 2",
+    "level": 2,
+    "description": "Gain Expertise in one of your skill proficiencies that lacks it. Learn two languages of your choice."
+  },
+  {
+    "id": "ranger-fighting-style",
+    "name": "Fighting Style",
+    "source": "Ranger Level 2",
+    "level": 2,
+    "description": "Choose a Fighting Style feat. Alternatively, Druidic Warrior teaches two Druid cantrips using Wisdom; replace one when you gain a Ranger level."
+  },
+  {
+    "id": "ranger-hunters-lore",
+    "name": "Hunter's Lore",
+    "source": "Hunter Level 3",
+    "level": 3,
+    "description": "While a creature is marked by your Hunter's Mark, you know its Immunities, Resistances, and Vulnerabilities, if any."
+  },
+  {
+    "id": "ranger-hunters-prey",
+    "name": "Hunter's Prey",
+    "source": "Hunter Level 3",
+    "level": 3,
+    "description": "Choose after a Short or Long Rest: Colossus Slayer deals an extra 1d8 weapon damage once per turn to a target missing HP. Horde Breaker lets you make one extra attack per turn with the same weapon against another creature within 5 feet of the first, within range, that you have not attacked this turn."
   }
 ]

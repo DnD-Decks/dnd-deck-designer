@@ -20,10 +20,12 @@ import { lookup } from "../../lib/lookup.ts";
 
 import type { CharacterClass } from "src/models/class/classes.model";
 import type { DamageType } from "src/models/damage/damage-types.model";
+import type { Provenance } from "src/models/provenance/provenance.model";
 
 export type SpellLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export type Spell = {
+  provenance?: Provenance;
   id: string;
   name: string;
   level: SpellLevel;

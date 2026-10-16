@@ -1,0 +1,23 @@
+[
+  {
+    "id": "srd-5.2.1",
+    "publication": "System Reference Document 5.2.1",
+    "publisher": "Wizards of the Coast",
+    "openContent": true,
+    "license": "CC-BY-4.0",
+    "publicationUrl": "https://www.dndbeyond.com/srd"
+  },
+  {
+    "id": "phb-2024",
+    "publication": "Player's Handbook (2024)",
+    "publisher": "Wizards of the Coast",
+    "openContent": false,
+    "license": null,
+    "publicationUrl": "https://www.dndbeyond.com/sources/dnd/phb-2024",
+    "consultedUrl": "https://5e.tools/classes.html#fighter_xphb,state:sub-battlemaster-xphb=b1",
+    "consultedDataUrl": "https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/optionalfeatures.json",
+    "consultedOn": "2026-10-16",
+    "wording": "Original summaries of game mechanics; not verbatim book text.",
+    "note": "Not SRD or open content. A reference site is not a license grant."
+  }
+]

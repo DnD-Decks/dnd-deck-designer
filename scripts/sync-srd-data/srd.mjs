@@ -16,9 +16,17 @@ export function sliceSection(fromExact, toPartial) {
 
 /** Extract { level, name } for every "## **Level N: Name**" heading in given lines */
 export function featureHeadings(sectionLines) {
+  let level;
   return sectionLines.flatMap((l) => {
     const m = l.match(/^## \*\*Level (\d+): (.+?)\*\*/);
-    return m ? [{ level: Number(m[1]), name: m[2].trim() }] : [];
+    if (m) {
+      level = Number(m[1]);
+      return [{ level, name: m[2].trim() }];
+    }
+    // Channel Divinity and Monk's Focus effects are inline subfeatures in the SRD.
+    return level === undefined
+      ? []
+      : [...l.matchAll(/_\*\*([^*]+?)\.\*\*_/g)].map((match) => ({ level, name: match[1].trim() }));
   });
 }
 

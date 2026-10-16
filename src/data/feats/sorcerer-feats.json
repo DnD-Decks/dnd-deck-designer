@@ -3,6 +3,38 @@
     "id": "sorcerer-spellcasting",
     "name": "Spellcasting",
     "source": "Sorcerer Level 1",
-    "description": "You can cast Sorcerer spells using Charisma as your spellcasting ability. You know 4 cantrips and have 2 prepared level-1 spells; you can replace one cantrip or one prepared spell whenever you gain a Sorcerer level. You can use an Arcane Focus as your spellcasting focus."
+    "description": "Cast Sorcerer spells using Charisma. You know 4 cantrips and prepare 2 spells of level 1. Spells that a feature always prepares do not count against these choices. Replace one prepared spell when you gain a class level. You can use a Arcane Focus as your spellcasting focus.",
+    "descriptions": {
+      "2": "Cast Sorcerer spells using Charisma. You know 4 cantrips and prepare 4 spells of level 1. Spells that a feature always prepares do not count against these choices. Replace one prepared spell when you gain a class level. You can use a Arcane Focus as your spellcasting focus.",
+      "3": "Cast Sorcerer spells using Charisma. You know 4 cantrips and prepare 6 spells of level 1 or 2. Spells that a feature always prepares do not count against these choices. Replace one prepared spell when you gain a class level. You can use a Arcane Focus as your spellcasting focus."
+    }
+  },
+  {
+    "id": "sorcerer-font-of-magic",
+    "name": "Font of Magic",
+    "source": "Sorcerer Level 2",
+    "level": 2,
+    "description": "Expend a spell slot to gain Sorcery Points equal to its level (no action). As a Bonus Action, create a level-1 spell slot for 2 points, or at Sorcerer level 3 a level-2 slot for 3 points. Created slots vanish after a Long Rest. You cannot exceed your Sorcery Point maximum."
+  },
+  {
+    "id": "sorcerer-metamagic",
+    "name": "Metamagic",
+    "source": "Sorcerer Level 2",
+    "level": 2,
+    "description": "Choose two Metamagic options from the SRD. Spend Sorcery Points as specified by an option to modify a spell you cast. Use only one option per spell unless it says otherwise. Replace one option when you gain a Sorcerer level."
+  },
+  {
+    "id": "sorcerer-draconic-resilience",
+    "name": "Draconic Resilience",
+    "source": "Draconic Sorcery Level 3",
+    "level": 3,
+    "description": "Your Hit Point maximum increases by 3, then by 1 for each further Sorcerer level. While not wearing armor, your base AC is 10 + your Dexterity and Charisma modifiers."
+  },
+  {
+    "id": "sorcerer-draconic-spells",
+    "name": "Draconic Spells",
+    "source": "Draconic Sorcery Level 3",
+    "level": 3,
+    "description": "You always have Alter Self, Chromatic Orb, Command, and Dragon's Breath prepared. These spells do not count against your prepared spell choices."
   }
 ]

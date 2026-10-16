@@ -13,9 +13,29 @@
     "name": "Lay on Hands",
     "icon": "/icons/resource-lay-on-hands.png",
     "uses": 5,
-    "pool": "5 × Paladin level",
+    "pool": "5 \u00d7 Paladin level",
     "recharge": "long-rest",
     "action": "bonus-action",
     "description": "Your blessed touch can heal wounds. You have a pool of healing power that replenishes when you finish a Long Rest. With that pool, you can restore a total number of Hit Points equal to five times your Paladin level. As a Bonus Action, you can touch a creature (which could be yourself) and draw power from the pool of healing to restore a number of Hit Points to that creature, up to the maximum amount remaining in the pool. You can also expend 5 Hit Points from the pool of healing power to remove the Poisoned condition from the creature; those points don't also restore Hit Points to the creature."
+  },
+  {
+    "id": "paladin-free-smite",
+    "name": "Paladin's Smite",
+    "level": 2,
+    "uses": 1,
+    "recharge": "long-rest",
+    "description": "Cast Divine Smite without expending a spell slot. Regain this free casting after a Long Rest.",
+    "stack": true,
+    "action": "bonus-action"
+  },
+  {
+    "id": "paladin-channel-divinity",
+    "name": "Channel Divinity",
+    "level": 3,
+    "uses": 2,
+    "recharge": "long-rest",
+    "description": "Expend one use for Divine Sense, Sacred Weapon, or another Paladin Channel Divinity effect. Regain one use after a Short Rest and all uses after a Long Rest.",
+    "stack": true,
+    "shortRest": 1
   }
 ]
