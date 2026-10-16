@@ -1,6 +1,6 @@
 # dnd-deck-designer
 
-A mobile-first web tool for building and playing with **D&D 2024 (5.5e, SRD 5.2.1)** character card decks. Build a character on desktop, then open it on your phone at the table to track resources and spells during play.
+A mobile-first web tool for building and playing with **D&D 2024 (5.5e, SRD 5.2.1)** character card decks. Build a character on desktop, then open it on your phone at the table to track resources and spells during play. Create, edit, and share characters of levels **1–3**, with level-appropriate spells, resources, and the SRD subclass for each class.
 
 ## Docs
 

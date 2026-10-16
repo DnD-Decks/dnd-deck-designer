@@ -7,5 +7,16 @@
     "stack": true,
     "recharge": "long-rest",
     "description": "You have 2 level-1 spell slots. Expend one to cast a prepared level-1 spell. You regain all expended mana after a Long Rest."
+  },
+  {
+    "id": "druid-wild-shape",
+    "name": "Wild Shape",
+    "level": 2,
+    "uses": 2,
+    "recharge": "long-rest",
+    "description": "Expend one use to assume a known Beast form, or to fuel Wild Companion or another Druid feature. Regain one use after a Short Rest and all uses after a Long Rest.",
+    "stack": true,
+    "action": "bonus-action",
+    "shortRest": 1
   }
 ]

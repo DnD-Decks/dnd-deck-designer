@@ -96,5 +96,24 @@
     "symbol"
   ],
   "level8": ["antimagic-field", "control-weather", "earthquake", "holy-aura", "sunburst"],
-  "level9": ["astral-projection", "gate", "mass-heal", "power-word-heal", "true-resurrection"]
+  "level9": ["astral-projection", "gate", "mass-heal", "power-word-heal", "true-resurrection"],
+  "level2": [
+    "aid",
+    "augury",
+    "blindness-deafness",
+    "calm-emotions",
+    "continual-flame",
+    "enhance-ability",
+    "find-traps",
+    "gentle-repose",
+    "hold-person",
+    "lesser-restoration",
+    "locate-object",
+    "prayer-of-healing",
+    "protection-from-poison",
+    "silence",
+    "spiritual-weapon",
+    "warding-bond",
+    "zone-of-truth"
+  ]
 }

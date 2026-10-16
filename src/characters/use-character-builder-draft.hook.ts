@@ -5,6 +5,7 @@ import type { ChoiceIssue, ChoiceSelection, ChoiceSource } from "src/characters/
 import { choices } from "src/characters/choices.model";
 import { decks } from "src/decks/deck.model";
 import type { CharacterClass } from "src/models/class/classes.model";
+import type { CharacterLevel, LandType } from "src/models/class/progression.model";
 import { characterStorage } from "src/services/character.storage";
 import { useLocation } from "wouter";
 
@@ -38,8 +39,9 @@ function withKnownCustom(picks: Picks) {
 function stepsFor({
   cls,
   picks,
-}: { cls: CharacterClass | undefined; picks: Picks }): BuilderStep[] {
-  const kinds = new Set(cls ? choices.for({ cls, level: 1 }).map((rule) => rule.from.kind) : []);
+  level,
+}: { cls: CharacterClass | undefined; picks: Picks; level: CharacterLevel }): BuilderStep[] {
+  const kinds = new Set(cls ? choices.for({ cls, level }).map((rule) => rule.from.kind) : []);
   return [
     "class",
     ...CHOICE_STEPS.filter((kind) => kinds.has(kind)),
@@ -51,11 +53,15 @@ function stepsFor({
 export function useCharacterBuilderDraft(initial?: Character) {
   const [, navigate] = useLocation();
   const [cls, setClass] = useState<CharacterClass | undefined>(initial?.cls);
-  const [picks, setPicks] = useState<Picks>(() => withKnownCustom(initial?.picks ?? {}));
+  const [level, setLevel] = useState<CharacterLevel>(initial?.level ?? 1);
+  const [land, setLand] = useState<LandType>(initial?.land ?? "temperate");
+  const [picks, setPicks] = useState<Picks>(() =>
+    withKnownCustom(initial ? choices.reconcile(initial) : {})
+  );
   const [name, setName] = useState(initial?.name ?? "");
   const [failed, setFailed] = useState(false);
-  const steps = stepsFor({ cls, picks });
-  const issues = cls ? choices.validate({ cls, level: 1, picks }) : [];
+  const steps = stepsFor({ cls, picks, level });
+  const issues = cls ? choices.validate({ cls, level, land, picks }) : [];
   const missing: Missing[] = [
     ...(!cls ? [{ step: "class" as const, message: "Choose a class." }] : []),
     ...issues.map((issue) => ({ step: issue.rule.from.kind, message: issueMessage(issue) })),
@@ -65,7 +71,20 @@ export function useCharacterBuilderDraft(initial?: Character) {
   const chooseClass = (selected: CharacterClass) => {
     if (cls === selected) return;
     setClass(selected);
+    setLand("temperate");
     setPicks({});
+  };
+
+  const chooseLevel = (selected: CharacterLevel) => {
+    setLevel(selected);
+    if (cls)
+      setPicks((current) => choices.reconcile({ cls, level: selected, land, picks: current }));
+  };
+
+  const chooseLand = (selected: LandType) => {
+    setLand(selected);
+    if (cls)
+      setPicks((current) => choices.reconcile({ cls, level, land: selected, picks: current }));
   };
 
   const choosePicks = ({ ruleId, ids }: ChoiceSelection) => {
@@ -80,19 +99,31 @@ export function useCharacterBuilderDraft(initial?: Character) {
     if (!cls || missing.length) return;
     const trimmedName = name.trim();
     const base = initial ?? characters.create({ cls, name: trimmedName });
-    const character = { ...base, cls, name: trimmedName, picks };
+    const { land: _, ...identity } = base;
+    const character = {
+      ...identity,
+      cls,
+      level,
+      name: trimmedName,
+      picks,
+      ...(cls === "druid" && level === 3 ? { land } : {}),
+    };
     if (characterStorage.save(character)) navigate(`/character/${character.id}`);
     else setFailed(true);
   };
 
   return {
     cls,
+    level,
+    land,
     picks,
     name,
     failed,
     steps,
     missing,
     chooseClass,
+    chooseLevel,
+    chooseLand,
     choosePicks,
     chooseCustom,
     setName,

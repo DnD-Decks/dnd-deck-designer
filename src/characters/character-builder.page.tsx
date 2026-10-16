@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BuilderChoices } from "src/characters/character-builder-choices.component";
+import { BuilderLevel } from "src/characters/character-builder-level.component";
 import {
   BuilderSteps,
   STEP_LABELS,
@@ -43,11 +44,24 @@ function Builder({ initial }: { initial?: Character }) {
       <output aria-live="polite" className={styles.visuallyHidden}>
         {removed && `${removed} removed`}
       </output>
-      {step === "class" && <ClassSelector selected={draft.cls} onSelect={draft.chooseClass} />}
+      {step === "class" && (
+        <>
+          <BuilderLevel
+            cls={draft.cls}
+            level={draft.level}
+            land={draft.land}
+            onLevel={draft.chooseLevel}
+            onLand={draft.chooseLand}
+          />
+          <ClassSelector selected={draft.cls} onSelect={draft.chooseClass} />
+        </>
+      )}
       {step === "custom" && <CustomCards keys={custom} onRemove={removeCustom} />}
       {step !== "class" && step !== "custom" && draft.cls && (
         <BuilderChoices
           cls={draft.cls}
+          level={draft.level}
+          land={draft.land}
           kind={step}
           picks={draft.picks}
           onChange={draft.choosePicks}

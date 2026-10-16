@@ -9,12 +9,16 @@ import { choices } from "src/characters/choices.model";
 import type { DeckEntry } from "src/decks/deck.model";
 import { cardName } from "src/decks/deck.model";
 import type { CharacterClass } from "src/models/class/classes.model";
+import type { CharacterLevel, LandType } from "src/models/class/progression.model";
+import { progression } from "src/models/class/progression.model";
 import { weapons } from "src/models/gear/weapons.model";
 import { spells } from "src/models/spells/spells.model";
 import styles from "./character-builder.module.css";
 
 type BuilderChoicesProps = {
   cls: CharacterClass;
+  level: CharacterLevel;
+  land: LandType;
   kind: ChoiceSource["kind"];
   picks: Picks;
   onChange: (selection: ChoiceSelection) => void;
@@ -92,15 +96,35 @@ function ChoiceGroup({ cls, rule, picked, onChange }: ChoiceGroupProps) {
   );
 }
 
-export function BuilderChoices({ cls, kind, picks, onChange }: BuilderChoicesProps) {
-  const rules = choices.for({ cls, level: 1 }).filter((rule) => rule.from.kind === kind);
-  return rules.map((rule) => (
-    <ChoiceGroup
-      key={`${cls}-${rule.id}`}
-      cls={cls}
-      rule={rule}
-      picked={picks[rule.id] ?? []}
-      onChange={(ids) => onChange({ ruleId: rule.id, ids })}
-    />
-  ));
+export function BuilderChoices({ cls, level, land, kind, picks, onChange }: BuilderChoicesProps) {
+  const rules = choices.for({ cls, level, land }).filter((rule) => rule.from.kind === kind);
+  const automatic = kind === "spell" ? progression.alwaysPrepared({ cls, level, land }) : [];
+  return (
+    <>
+      {rules.map((rule) => (
+        <ChoiceGroup
+          key={`${cls}-${level}-${land}-${rule.id}`}
+          cls={cls}
+          rule={rule}
+          picked={picks[rule.id] ?? []}
+          onChange={(ids) => onChange({ ruleId: rule.id, ids })}
+        />
+      ))}
+      {automatic.length > 0 && (
+        <section aria-label="Always prepared" className={styles.group}>
+          <h4 className={styles.legend}>Always prepared</h4>
+          <p className={styles.hint}>
+            Included by your class features. These do not use your spell choices.
+          </p>
+          <div className={styles.hand}>
+            {automatic.map((id) => (
+              <div key={id} className={styles.slot}>
+                <DeckCardFace card={choiceEntry({ id, kind: "spell" }).card} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+    </>
+  );
 }

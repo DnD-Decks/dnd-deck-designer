@@ -128,7 +128,7 @@ for (const w of ourWeapons) {
 
 // ── CLASS FEATURES ────────────────────────────────────────────────────────────
 console.log("scanning class features…");
-for (const [cls, file] of [
+const classFeatureFiles = [
   ["Barbarian", "src/data/feats/barbarian-feats.json"],
   ["Bard", "src/data/feats/bard-feats.json"],
   ["Cleric", "src/data/feats/cleric-feats.json"],
@@ -141,11 +141,21 @@ for (const [cls, file] of [
   ["Sorcerer", "src/data/feats/sorcerer-feats.json"],
   ["Warlock", "src/data/feats/warlock-feats.json"],
   ["Wizard", "src/data/feats/wizard-feats.json"],
-]) {
-  const section = sliceSection(`## **${cls}**`, `## **${cls} Subclass`);
+];
+for (const [index, [cls, file]] of classFeatureFiles.entries()) {
+  const nextClass = classFeatureFiles[index + 1]?.[0];
+  const section = sliceSection(
+    `## **${cls}**`,
+    nextClass ? `## **${nextClass}**` : "## **Character Origins"
+  );
   // straighten curly apostrophes so "Thieves' Cant" matches SRD "Thieves’ Cant"
   const featKey = (name) => name.toLowerCase().replace(/’/g, "'");
-  const byName = new Map(featureHeadings(section).map((h) => [featKey(h.name), h.level]));
+  const byName = new Map();
+  for (const feature of featureHeadings(section)) {
+    const key = featKey(feature.name);
+    // Improved versions can repeat a subfeature's name at a higher level.
+    byName.set(key, Math.min(byName.get(key) ?? feature.level, feature.level));
+  }
   for (const feat of readJson(file)) {
     const srdLvl = byName.get(featKey(feat.name));
     if (srdLvl === undefined) {
@@ -174,7 +184,10 @@ for (const [cls, file] of [
   ["Warlock", "src/data/resources/warlock-resources.json"],
   ["Wizard", "src/data/resources/wizard-resources.json"],
 ]) {
-  const body = sliceSection(`## **${cls}**`, `## **${cls} Subclass`).join("\n").toLowerCase();
+  const body = sliceSection(`## **${cls}**`, `## **${cls} Subclass`)
+    .join("\n")
+    .toLowerCase()
+    .replace(/’/g, "'");
   for (const r of readJson(file)) {
     if (isAlias(r.id)) {
       unverified("resource", r.id, `"${r.name}" is our alias for SRD "Spell Slots"`);

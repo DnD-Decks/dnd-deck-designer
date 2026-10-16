@@ -3,6 +3,7 @@ import { App } from "src/app/app.component";
 import type { ChoiceSource } from "src/characters/choices.model";
 import { choices } from "src/characters/choices.model";
 import type { CharacterClass } from "src/models/class/classes.model";
+import type { CharacterLevel } from "src/models/class/progression.model";
 import { weapons } from "src/models/gear/weapons.model";
 import { spells } from "src/models/spells/spells.model";
 import { memoryLocation } from "wouter/memory-location";
@@ -41,9 +42,10 @@ export function optionName({ kind, id }: { kind: ChoiceSource["kind"]; id: strin
 export function completeRequired({
   cls,
   kind,
-}: { cls: CharacterClass; kind: ChoiceSource["kind"] }) {
+  level = 1,
+}: { cls: CharacterClass; kind: ChoiceSource["kind"]; level?: CharacterLevel }) {
   const rules = choices
-    .for({ cls, level: 1 })
+    .for({ cls, level })
     .filter((rule) => rule.from.kind === kind && !rule.optional);
   for (const rule of rules) {
     const group = within(screen.getByRole("group", { name: rule.label }));

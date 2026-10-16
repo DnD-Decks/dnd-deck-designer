@@ -12,7 +12,8 @@ import warlockFeatsData from "../../data/feats/warlock-feats.json" with { type: 
 import wizardFeatsData from "../../data/feats/wizard-feats.json" with { type: "json" };
 
 import type { CharacterClass } from "src/models/class/classes.model";
-import { classes } from "src/models/class/classes.model";
+import type { CharacterLevel } from "src/models/class/progression.model";
+import { classes } from "../class/classes.model.ts";
 
 export type Feat = {
   id: string;
@@ -20,6 +21,8 @@ export type Feat = {
   source: string;
   description: string;
   icon?: string;
+  level?: CharacterLevel;
+  descriptions?: Partial<Record<CharacterLevel, string>>;
 };
 
 const CLASS_DATA: Partial<Record<CharacterClass, Feat[]>> = {
@@ -38,9 +41,15 @@ const CLASS_DATA: Partial<Record<CharacterClass, Feat[]>> = {
 };
 
 export const feats = {
-  findAll({ cls }: { cls: CharacterClass }) {
+  findAll({ cls, level = 1 }: { cls: CharacterClass; level?: CharacterLevel }): Feat[] {
     // feats carry no icon of their own; the class badge gives every feat card its identity
     const icon = classes.find({ id: cls })?.icon;
-    return (CLASS_DATA[cls] ?? []).map((feat) => ({ ...feat, icon }));
+    return (CLASS_DATA[cls] ?? [])
+      .filter((feat) => (feat.level ?? 1) <= level)
+      .map((feat) => ({
+        ...feat,
+        icon,
+        description: feat.descriptions?.[level] ?? feat.description,
+      }));
   },
 };

@@ -64,5 +64,17 @@
     "power-word-kill",
     "true-polymorph",
     "weird"
+  ],
+  "level2": [
+    "darkness",
+    "enthrall",
+    "hold-person",
+    "invisibility",
+    "mind-spike",
+    "mirror-image",
+    "misty-step",
+    "ray-of-enfeeblement",
+    "spider-climb",
+    "suggestion"
   ]
 }

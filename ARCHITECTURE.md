@@ -14,15 +14,24 @@ A mobile-first web tool for D&D 2024 players. The main use case is playing at th
 
 | Category | Kind | Layout | Status | Example |
 |---|---|---|---|---|
-| Resource | `resource` | vertical | ✓ 10 classes with L1 resources (monk, rogue: none) | "Mana ×2", "Second Wind ×1" |
-| Class feature / feat | `feat` | horizontal (landscape) | ✓ all 12 classes (L1) | "Arcane Recovery", "Fighting Style" |
-| Spell | `spell` | vertical | ✓ all 8 caster classes (L1 only) | "Fire Bolt" (Wizard) |
+| Resource | `resource` | vertical | ✓ 11 classes through L3 (rogue: none) | "Mana ×2", "Second Wind ×2" |
+| Class feature / feat | `feat` | horizontal (landscape) | ✓ all 12 classes (L1–3) | "Arcane Recovery", "Fighting Style" |
+| Spell | `spell` | vertical | ✓ all 8 caster classes (through character level 3) | "Fire Bolt" (Wizard) |
 | Weapon | `weapon` | vertical (spell layout) | ✓ all 12 classes — every weapon the class is proficient with; the card carries its mastery property | "Longsword", "Shortbow" |
 | Companion stats | `companion` | — | deferred | Ranger's beast companion |
 
-Spells shared between classes are intentionally duplicated — visual class identity is in card style, not shared components. Decks show cantrips + level-1 only (`SPELL_LEVELS = [0, 1]` in `deck.model.ts`). Section order: Resources → Weapons → Features → Cantrips → Spells.
+Spells shared between classes are intentionally duplicated — visual class identity is in card style, not shared components. The catalog defaults to character level 1. Character decks use their selected level (1–3); level-3 full casters and Warlocks also gain level-2 spells. Play section order: Resources → Weapons → Features → Cantrips → Spells.
 
-**Template vs character.** `decks.get({ cls })` is the class template (the catalog). `decks.forCharacter(character)` narrows it to the character's picks (`src/characters/choices.model.ts`, rules in `src/data/choices/class-choices.json`) and expands resources marked `stack: true` into one card per use (Mana ×2 → 2 cards); pools such as Lay on Hands stay one card.
+**Template vs character.** `decks.get({ cls, level = 1, land })` is the class template (the catalog), cached by class, level, and land choice. `decks.forCharacter(character)` narrows it to the character's picks (`src/characters/choices.model.ts`, rules in `src/data/choices/class-choices.json`) and expands resources marked `stack: true` into one card per use (Mana ×2 → 2 cards); pools such as Lay on Hands stay one card.
+
+## Character levels
+
+The builder supports levels 1, 2, and 3 for all twelve classes. `src/models/class/progression.model.ts` projects `src/data/classes/class-progression.json`: prepared-spell counts, slot counts, resource pools, always-prepared spells, and the SRD subclass gained at level 3. The SRD supplies one subclass per class; it is included automatically and named in the builder and character header. Circle of the Land Druids choose arid, polar, temperate, or tropical land; this optional `land` field is saved and shared, and defaults to temperate.
+
+- Choices keep the same rule ids across levels. At level 3, full casters and Warlocks can mix level-1 and level-2 prepared spells; Paladins and Rangers still use level-1 spells. Always-prepared spells are included separately and do not consume choices.
+- Changing level preserves available choices, removes unavailable spells, and trims choices to the new limits. Editing an older build moves spells now granted automatically out of its manual choices and asks for any replacements needed. Existing level-1 saves and share links remain readable.
+- Feat data uses optional `level` (default 1) and `descriptions` overrides by character level. Resource data uses optional `level`, with counts projected from class progression. Full casters get separate level-2 Mana cards; Warlock Mana becomes level 2 at character level 3 and still recharges on a Short Rest.
+- Internal feature options such as Fighting Styles, Metamagic, and Eldritch Invocations remain described on reference cards; the builder selects spells and weapons, rather than providing a full character sheet.
 
 ---
 
@@ -41,7 +50,7 @@ Hash routing with [wouter](https://github.com/molefrog/wouter) (`wouter/use-hash
 | `#/catalog/<cls>` | Card catalog: every card a class can have (`src/decks/catalog.page.tsx`); `#/catalog` and unknown classes go to the wizard |
 | `#<cls>` | pre-routing link, redirected to `#/catalog/<cls>` |
 
-**Storage and sharing.** Characters and their play state (`spent` card keys) live in localStorage via `src/services/character.storage.ts`; every access is wrapped so the app still runs when storage is blocked, and stored entries are re-validated with `characters.parse`. A share code is the build `{ cls, level, name, picks }` as base64url JSON (`characters.toShareCode` / `fromShareCode`); the id stays out, so an import is a new copy.
+**Storage and sharing.** Characters and their play state (`spent` card keys) live in localStorage via `src/services/character.storage.ts`; every access is wrapped so the app still runs when storage is blocked, and stored entries are re-validated with `characters.parse`. A share code is the build `{ cls, level, name, picks, land? }` as base64url JSON (`characters.toShareCode` / `fromShareCode`); the id stays out, so an import is a new copy.
 
 **Play state.** Each copy of a resource is its own card. Tap a card to zoom it, then Spend / Recover beside "Put it back". Spent cards turn a quarter-turn and dim. A long rest recovers everything; a short rest recovers `short-rest` resources, or `shortRest` uses when a resource sets it (Second Wind, Rage: one). The `spent` array stores deck-entry keys; `src/characters/play.model.ts` decides what each rest brings back.
 
@@ -144,13 +153,14 @@ JSON for spells is vendored from sibling repo [`dnd-beginner-character-sheet-5e-
 | Path | Contents |
 |---|---|
 | `spells/spells-level-0.json` | 33 cantrips, keyed by id |
-| `spells/spells-level-1.json` | 55 level-1 spells, keyed by id |
-| `spells/spells-level-2.json` | 35 level-2 spells, keyed by id (vendored; not in L1 decks) |
+| `spells/spells-level-1.json` | 56 level-1 spells, keyed by id |
+| `spells/spells-level-2.json` | 57 level-2 spells, keyed by id (used by level-3 caster characters) |
 | `spells/{class}-spells.json` | Spell id lists for 8 caster classes |
 | `classes/<cls>.json` | 12 class files: label, icon, hitDie, saves, proficiencies |
 | `classes/class-resources.json` | Level-progression resource data for all 12 classes (consumed by `class-resources.model.ts`) |
-| `resources/<cls>-resources.json` | L1 resources for 10 classes (monk, rogue: none) |
-| `feats/<cls>-feats.json` | L1 class features for all 12 classes |
+| `resources/<cls>-resources.json` | Resources through L3 for 11 classes (rogue: none); unlock level and recharge rules |
+| `feats/<cls>-feats.json` | Class and SRD subclass features through L3 for all 12 classes |
+| `classes/class-progression.json` | Character levels 1–3: prepared spells, slots, resource counts, subclass names, granted spells |
 | `gear/weapons.json` | 38 SRD weapons: damage, properties, mastery (feeds the weapon cards) |
 | `gear/weapon-mastery.json` | All 8 PHB 2024 mastery properties, SRD-audited (printed on each weapon card) |
 

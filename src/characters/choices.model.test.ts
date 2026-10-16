@@ -1,14 +1,33 @@
+import assert from "node:assert/strict";
 import { describe, expect, test } from "vitest";
 
 import { classes } from "src/models/class/classes.model.ts";
 import { choices } from "./choices.model.ts";
 
 import type { CharacterClass } from "src/models/class/classes.model";
+import { progression } from "src/models/class/progression.model";
 
 const ruleOf = ({ cls, id }: { cls: CharacterClass; id: string }) =>
   choices.for({ cls, level: 1 }).find((rule) => rule.id === id);
 
 describe("choices.for()", () => {
+  test.each<{ cls: CharacterClass; prepared: number[] }>([
+    { cls: "bard", prepared: [4, 5, 6] },
+    { cls: "cleric", prepared: [4, 5, 6] },
+    { cls: "druid", prepared: [4, 5, 6] },
+    { cls: "wizard", prepared: [4, 5, 6] },
+    { cls: "sorcerer", prepared: [2, 4, 6] },
+    { cls: "warlock", prepared: [2, 3, 4] },
+    { cls: "paladin", prepared: [2, 3, 4] },
+    { cls: "ranger", prepared: [2, 3, 4] },
+  ])("$cls prepared choices follow SRD progression", ({ cls, prepared }) => {
+    assert.deepEqual(
+      progression.levels.map(
+        (level) => choices.for({ cls, level }).find((rule) => rule.id === "prepared")?.pick
+      ),
+      prepared
+    );
+  });
   // 2024 PHB level-1 cantrips / prepared spells
   test.each<{ cls: CharacterClass; cantrips: number; prepared: number }>([
     { cls: "bard", cantrips: 2, prepared: 4 },
@@ -45,6 +64,39 @@ describe("choices.for()", () => {
 });
 
 describe("choices.options()", () => {
+  for (const { id: cls } of classes.list()) {
+    for (const level of progression.levels) {
+      test(`${cls} level ${level} can complete all choices`, () => {
+        const picks = Object.fromEntries(
+          choices
+            .for({ cls, level })
+            .map((rule) => [rule.id, choices.options({ cls, rule }).slice(0, rule.pick)])
+        );
+        assert.deepEqual(choices.validate({ cls, level, picks }), []);
+      });
+    }
+  }
+
+  test("level-three wizard can mix first- and second-level prepared spells", () => {
+    const prepared = (level: 1 | 2 | 3) =>
+      choices.for({ cls: "wizard", level }).find((rule) => rule.id === "prepared");
+    const options = (level: 1 | 2 | 3) => {
+      const rule = prepared(level);
+      assert.ok(rule);
+      return choices.options({ cls: "wizard", rule });
+    };
+    assert.ok(options(3).includes("misty-step"));
+    assert.ok(options(3).includes("shield"));
+    assert.ok(!options(2).includes("misty-step"));
+  });
+
+  test("always-prepared spells do not consume a spell choice", () => {
+    const rule = choices.for({ cls: "cleric", level: 3 }).find((rule) => rule.id === "prepared");
+    assert.ok(rule);
+    assert.equal(rule.pick, 6);
+    assert.ok(!choices.options({ cls: "cleric", rule }).includes("bless"));
+    assert.ok(choices.picked({ cls: "cleric", level: 3, picks: {} }).spell.has("bless"));
+  });
   test.each(classes.list().map(({ id }) => ({ cls: id })))(
     "$cls has enough options for every rule",
     ({ cls }) => {
@@ -56,6 +108,51 @@ describe("choices.options()", () => {
       expect(shortfalls).toEqual([]);
     }
   );
+});
+
+describe("choices.reconcile()", () => {
+  test("downgrading removes unavailable spells, trims counts, and retains valid choices", () => {
+    assert.deepEqual(
+      choices.reconcile({
+        cls: "wizard",
+        level: 1,
+        picks: {
+          cantrips: ["fire-bolt"],
+          prepared: [
+            "misty-step",
+            "shield",
+            "magic-missile",
+            "mage-armor",
+            "detect-magic",
+            "sleep",
+          ],
+          weapons: ["dagger"],
+        },
+      }),
+      {
+        cantrips: ["fire-bolt"],
+        prepared: ["shield", "magic-missile", "mage-armor", "detect-magic"],
+        weapons: ["dagger"],
+      }
+    );
+  });
+
+  test("old ranger picks remain readable when Hunter's Mark becomes automatic", () => {
+    const picks = { prepared: ["hunters-mark", "cure-wounds"] };
+    assert.ok(
+      !choices
+        .validate({ cls: "ranger", level: 1, picks })
+        .some((issue) => issue.problem === "unknown")
+    );
+    assert.deepEqual(choices.reconcile({ cls: "ranger", level: 1, picks }), {
+      prepared: ["cure-wounds"],
+    });
+    assert.ok(
+      choices
+        .validate({ cls: "ranger", level: 1, picks: { weapons: ["hunters-mark"] } })
+        .some((issue) => issue.problem === "unknown")
+    );
+  });
 });
 
 describe("choices.validate()", () => {

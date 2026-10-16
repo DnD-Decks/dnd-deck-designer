@@ -120,5 +120,29 @@
     "mind-blank",
     "power-word-stun"
   ],
-  "level9": ["foresight", "power-word-heal", "power-word-kill", "prismatic-wall", "true-polymorph"]
+  "level9": ["foresight", "power-word-heal", "power-word-kill", "prismatic-wall", "true-polymorph"],
+  "level2": [
+    "aid",
+    "animal-messenger",
+    "blindness-deafness",
+    "calm-emotions",
+    "detect-thoughts",
+    "enhance-ability",
+    "enlarge-reduce",
+    "enthrall",
+    "heat-metal",
+    "hold-person",
+    "invisibility",
+    "knock",
+    "lesser-restoration",
+    "locate-animals-or-plants",
+    "locate-object",
+    "magic-mouth",
+    "mirror-image",
+    "see-invisibility",
+    "shatter",
+    "silence",
+    "suggestion",
+    "zone-of-truth"
+  ]
 }

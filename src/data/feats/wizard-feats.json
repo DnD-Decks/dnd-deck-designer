@@ -3,7 +3,11 @@
     "id": "wizard-spellcasting",
     "name": "Spellcasting",
     "source": "Wizard Level 1",
-    "description": "You can cast wizard spells using Intelligence as your spellcasting ability. Prepare a number of spells equal to your Intelligence modifier + your Wizard level after each Long Rest. You may use an arcane focus or component pouch as a spellcasting focus."
+    "description": "Cast Wizard spells using Intelligence. You know 3 cantrips and prepare 4 spells of level 1. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace your prepared spells. You can use a Arcane Focus as your spellcasting focus.",
+    "descriptions": {
+      "2": "Cast Wizard spells using Intelligence. You know 3 cantrips and prepare 5 spells of level 1. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace your prepared spells. You can use a Arcane Focus as your spellcasting focus.",
+      "3": "Cast Wizard spells using Intelligence. You know 3 cantrips and prepare 6 spells of level 1 or 2. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace your prepared spells. You can use a Arcane Focus as your spellcasting focus."
+    }
   },
   {
     "id": "wizard-ritual-adept",
@@ -16,5 +20,26 @@
     "name": "Arcane Recovery",
     "source": "Wizard Level 1",
     "description": "Once per Long Rest, when you finish a Short Rest, you can recover expended spell slots. The total level of the recovered slots cannot exceed half your Wizard level (rounded up). None of the recovered slots can be level 6 or higher."
+  },
+  {
+    "id": "wizard-scholar",
+    "name": "Scholar",
+    "source": "Wizard Level 2",
+    "level": 2,
+    "description": "Choose Arcana, History, Investigation, Medicine, Nature, or Religion in which you have proficiency. Gain Expertise in that skill."
+  },
+  {
+    "id": "wizard-evocation-savant",
+    "name": "Evocation Savant",
+    "source": "Evoker Level 3",
+    "level": 3,
+    "description": "Add two Wizard Evocation spells of level 1 or 2 to your spellbook for free. Whenever you gain access to a new level of Wizard spell slots, add one eligible Evocation spell to the book for free."
+  },
+  {
+    "id": "wizard-potent-cantrip",
+    "name": "Potent Cantrip",
+    "source": "Evoker Level 3",
+    "level": 3,
+    "description": "When you cast a damaging cantrip at a creature and miss with the attack roll or it succeeds on its save, it takes half the cantrip's damage (if any) with no additional effect."
   }
 ]

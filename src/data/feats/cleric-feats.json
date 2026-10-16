@@ -3,12 +3,51 @@
     "id": "cleric-spellcasting",
     "name": "Spellcasting",
     "source": "Cleric Level 1",
-    "description": "You can cast Cleric spells using Wisdom as your spellcasting ability. You know 3 cantrips and have 4 prepared level-1 spells; you can replace one prepared spell whenever you gain a Cleric level. You can use a Holy Symbol as your spellcasting focus."
+    "description": "Cast Cleric spells using Wisdom. You know 3 cantrips and prepare 4 spells of level 1. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace your prepared spells. You can use a Holy Symbol as your spellcasting focus.",
+    "descriptions": {
+      "2": "Cast Cleric spells using Wisdom. You know 3 cantrips and prepare 5 spells of level 1. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace your prepared spells. You can use a Holy Symbol as your spellcasting focus.",
+      "3": "Cast Cleric spells using Wisdom. You know 3 cantrips and prepare 6 spells of level 1 or 2. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace your prepared spells. You can use a Holy Symbol as your spellcasting focus."
+    }
   },
   {
     "id": "cleric-divine-order",
     "name": "Divine Order",
     "source": "Cleric Level 1",
     "description": "You have dedicated yourself to a sacred role of your choice. Protector: trained for battle, you gain proficiency with Martial weapons and training with Heavy armor. Thaumaturge: you know one extra cantrip from the Cleric spell list, and you gain a bonus to Intelligence (Arcana or Religion) checks equal to your Wisdom modifier (minimum +1)."
+  },
+  {
+    "id": "cleric-divine-spark",
+    "name": "Divine Spark",
+    "source": "Cleric Level 2",
+    "level": 2,
+    "description": "As a Magic action, expend one Channel Divinity and target another creature you can see within 30 feet. Roll 1d8 + your Wisdom modifier. Restore that many Hit Points, or deal that much Necrotic or Radiant damage (Constitution save for half damage)."
+  },
+  {
+    "id": "cleric-turn-undead",
+    "name": "Turn Undead",
+    "source": "Cleric Level 2",
+    "level": 2,
+    "description": "As a Magic action, expend one Channel Divinity. Undead of your choice within 30 feet make a Wisdom save. On failure, they are Frightened and Incapacitated for 1 minute and try to move away from you. Ends on damage, your Incapacitation, or your death."
+  },
+  {
+    "id": "cleric-disciple-of-life",
+    "name": "Disciple of Life",
+    "source": "Life Domain Level 3",
+    "level": 3,
+    "description": "When a spell cast with a spell slot restores Hit Points, each creature healed regains additional Hit Points on the turn you cast it equal to 2 + the slot level."
+  },
+  {
+    "id": "cleric-life-domain-spells",
+    "name": "Life Domain Spells",
+    "source": "Life Domain Level 3",
+    "level": 3,
+    "description": "You always have Aid, Bless, Cure Wounds, and Lesser Restoration prepared. These spells do not count against your prepared spell choices."
+  },
+  {
+    "id": "cleric-preserve-life",
+    "name": "Preserve Life",
+    "source": "Life Domain Level 3",
+    "level": 3,
+    "description": "As a Magic action, expend one Channel Divinity. Divide 15 Hit Points among Bloodied creatures within 30 feet, including yourself. This cannot restore a creature to more than half its Hit Point maximum."
   }
 ]

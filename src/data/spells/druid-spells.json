@@ -116,5 +116,28 @@
     "sunburst",
     "tsunami"
   ],
-  "level9": ["foresight", "shapechange", "storm-of-vengeance", "true-resurrection"]
+  "level9": ["foresight", "shapechange", "storm-of-vengeance", "true-resurrection"],
+  "level2": [
+    "aid",
+    "animal-messenger",
+    "augury",
+    "barkskin",
+    "continual-flame",
+    "darkvision",
+    "enhance-ability",
+    "enlarge-reduce",
+    "find-traps",
+    "flame-blade",
+    "flaming-sphere",
+    "gust-of-wind",
+    "heat-metal",
+    "hold-person",
+    "lesser-restoration",
+    "locate-animals-or-plants",
+    "locate-object",
+    "moonbeam",
+    "pass-without-trace",
+    "protection-from-poison",
+    "spike-growth"
+  ]
 }

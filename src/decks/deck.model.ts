@@ -3,6 +3,7 @@
 import { choices } from "../characters/choices.model.ts";
 import { assertNever } from "../lib/assert-never.ts";
 import { classes } from "../models/class/classes.model.ts";
+import { progression } from "../models/class/progression.model.ts";
 import { feats } from "../models/feats/feats.model.ts";
 import { weapons } from "../models/gear/weapons.model.ts";
 import { resources } from "../models/resources/resources.model.ts";
@@ -10,6 +11,7 @@ import { spells } from "../models/spells/spells.model.ts";
 
 import type { Character } from "src/characters/character.model";
 import type { CharacterClass, ClassDetails } from "src/models/class/classes.model";
+import type { CharacterLevel, LandType } from "src/models/class/progression.model";
 import type { Feat } from "src/models/feats/feats.model";
 import type { Weapon } from "src/models/gear/weapons.model";
 import type { Resource } from "src/models/resources/resources.model";
@@ -83,10 +85,8 @@ export const catalogEntry = (card: DeckCard) => ({
 const copies = (card: DeckCard) =>
   card.kind === "resource" && card.resource.stack ? card.resource.uses : 1;
 
-const SPELL_LEVELS: SpellLevel[] = [0, 1];
-
-// Decks are pure over static JSON, so each class is assembled at most once.
-const CACHE = new Map<CharacterClass, Deck>();
+// Static class templates are assembled once per level and land choice.
+const CACHE = new Map<string, Deck>();
 
 // Same for the key index across every class's deck: built once, on first lookup.
 let CARD_INDEX: Map<string, DeckCard> | undefined;
@@ -94,28 +94,57 @@ let CARD_INDEX: Map<string, DeckCard> | undefined;
 const cardIndex = () => {
   if (!CARD_INDEX) {
     CARD_INDEX = new Map();
-    for (const { id } of classes.list()) {
-      for (const card of decks.get({ cls: id }).cards) CARD_INDEX.set(cardKey(card), card);
+    for (const level of progression.levels) {
+      for (const { id } of classes.list()) {
+        for (const card of decks.get({ cls: id, level }).cards) {
+          const key = cardKey(card);
+          if (!CARD_INDEX.has(key)) CARD_INDEX.set(key, card);
+        }
+      }
     }
   }
   return CARD_INDEX;
 };
 
 export const decks = {
-  get({ cls }: { cls: CharacterClass }) {
-    const cached = CACHE.get(cls);
+  get({
+    cls,
+    level = 1,
+    land,
+  }: { cls: CharacterClass; level?: CharacterLevel; land?: LandType }): Deck {
+    const cacheKey = `${cls}-${level}-${land ?? "temperate"}`;
+    const cached = CACHE.get(cacheKey);
     if (cached) return cached;
 
-    const cards: DeckCard[] = [
-      ...resources.findAll({ cls }).map((resource) => ({ kind: "resource" as const, resource })),
-      ...feats.findAll({ cls }).map((feat) => ({ kind: "feat" as const, feat })),
-      ...SPELL_LEVELS.flatMap((level) =>
-        spells.findAll({ cls, level }).map((spell) => ({ kind: "spell" as const, spell }))
-      ),
-      ...weapons.findAll({ cls }).map((weapon) => ({ kind: "weapon" as const, weapon })),
-    ];
-    const deck: Deck = { cls: classes.get({ id: cls }), cards };
-    CACHE.set(cls, deck);
+    const resourceCards: DeckCard[] = resources
+      .findAll({ cls, level })
+      .map((resource): DeckCard => ({ kind: "resource", resource }));
+
+    const featCards: DeckCard[] = feats
+      .findAll({ cls, level })
+      .map((feat): DeckCard => ({ kind: "feat", feat }));
+
+    const spellLevels: SpellLevel[] =
+      progression.spellLevel({ cls, level }) === 2 ? [0, 1, 2] : [0, 1];
+    const available = spellLevels.flatMap((spellLevel) =>
+      spells.findAll({ cls, level: spellLevel })
+    );
+    for (const id of progression.alwaysPrepared({ cls, level, land })) {
+      if (!available.some((spell) => spell.id === id)) available.push(spells.get({ id }));
+    }
+    const spellCards = available
+      .sort((a, b) => a.level - b.level)
+      .map((spell): DeckCard => ({ kind: "spell", spell }));
+
+    const weaponCards: DeckCard[] = weapons
+      .findAll({ cls })
+      .map((weapon): DeckCard => ({ kind: "weapon", weapon }));
+
+    const deck: Deck = {
+      cls: classes.get({ id: cls }),
+      cards: [...resourceCards, ...featCards, ...spellCards, ...weaponCards],
+    };
+    CACHE.set(cacheKey, deck);
     return deck;
   },
 
@@ -126,7 +155,7 @@ export const decks = {
 
   /** the class template narrowed to a character's picks, stacked resources expanded per use */
   forCharacter(character: Character): CharacterDeck {
-    const { cls, cards } = decks.get({ cls: character.cls });
+    const { cls, cards } = decks.get(character);
     const picked = choices.picked(character);
 
     const kept = cards.filter((card) => {

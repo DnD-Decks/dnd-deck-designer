@@ -1,0 +1,261 @@
+{
+  "barbarian": {
+    "subclass": "Path of the Berserker",
+    "levels": {
+      "1": {
+        "uses": {
+          "rage": 2
+        }
+      },
+      "2": {
+        "uses": {
+          "rage": 2
+        }
+      },
+      "3": {
+        "uses": {
+          "rage": 3
+        }
+      }
+    }
+  },
+  "bard": {
+    "subclass": "College of Lore",
+    "levels": {
+      "1": {
+        "prepared": 4,
+        "slots": [2, 0]
+      },
+      "2": {
+        "prepared": 5,
+        "slots": [3, 0]
+      },
+      "3": {
+        "prepared": 6,
+        "slots": [4, 2]
+      }
+    }
+  },
+  "cleric": {
+    "subclass": "Life Domain",
+    "levels": {
+      "1": {
+        "prepared": 4,
+        "slots": [2, 0],
+        "uses": {
+          "channel-divinity": 0
+        }
+      },
+      "2": {
+        "prepared": 5,
+        "slots": [3, 0],
+        "uses": {
+          "channel-divinity": 2
+        }
+      },
+      "3": {
+        "prepared": 6,
+        "slots": [4, 2],
+        "uses": {
+          "channel-divinity": 2
+        }
+      }
+    },
+    "alwaysPrepared": {
+      "3": ["aid", "bless", "cure-wounds", "lesser-restoration"]
+    }
+  },
+  "druid": {
+    "subclass": "Circle of the Land",
+    "levels": {
+      "1": {
+        "prepared": 4,
+        "slots": [2, 0],
+        "uses": {
+          "wild-shape": 0
+        }
+      },
+      "2": {
+        "prepared": 5,
+        "slots": [3, 0],
+        "uses": {
+          "wild-shape": 2
+        }
+      },
+      "3": {
+        "prepared": 6,
+        "slots": [4, 2],
+        "uses": {
+          "wild-shape": 2
+        }
+      }
+    },
+    "alwaysPrepared": {
+      "1": ["speak-with-animals"]
+    },
+    "landSpells": {
+      "arid": ["blur", "burning-hands", "fire-bolt"],
+      "polar": ["fog-cloud", "hold-person", "ray-of-frost"],
+      "temperate": ["misty-step", "shocking-grasp", "sleep"],
+      "tropical": ["acid-splash", "ray-of-sickness", "web"]
+    }
+  },
+  "fighter": {
+    "subclass": "Champion",
+    "levels": {
+      "1": {},
+      "2": {},
+      "3": {}
+    }
+  },
+  "monk": {
+    "subclass": "Warrior of the Open Hand",
+    "levels": {
+      "1": {
+        "uses": {
+          "focus-points": 0
+        }
+      },
+      "2": {
+        "uses": {
+          "focus-points": 2
+        }
+      },
+      "3": {
+        "uses": {
+          "focus-points": 3
+        }
+      }
+    }
+  },
+  "paladin": {
+    "subclass": "Oath of Devotion",
+    "levels": {
+      "1": {
+        "prepared": 2,
+        "slots": [2, 0],
+        "uses": {
+          "lay-on-hands": 5,
+          "channel-divinity": 0
+        }
+      },
+      "2": {
+        "prepared": 3,
+        "slots": [2, 0],
+        "uses": {
+          "lay-on-hands": 10,
+          "channel-divinity": 0
+        }
+      },
+      "3": {
+        "prepared": 4,
+        "slots": [3, 0],
+        "uses": {
+          "lay-on-hands": 15,
+          "channel-divinity": 2
+        }
+      }
+    },
+    "alwaysPrepared": {
+      "2": ["divine-smite"],
+      "3": ["protection-from-evil-and-good", "shield-of-faith"]
+    }
+  },
+  "ranger": {
+    "subclass": "Hunter",
+    "levels": {
+      "1": {
+        "prepared": 2,
+        "slots": [2, 0]
+      },
+      "2": {
+        "prepared": 3,
+        "slots": [2, 0]
+      },
+      "3": {
+        "prepared": 4,
+        "slots": [3, 0]
+      }
+    },
+    "alwaysPrepared": {
+      "1": ["hunters-mark"]
+    }
+  },
+  "rogue": {
+    "subclass": "Thief",
+    "levels": {
+      "1": {},
+      "2": {},
+      "3": {}
+    }
+  },
+  "sorcerer": {
+    "subclass": "Draconic Sorcery",
+    "levels": {
+      "1": {
+        "prepared": 2,
+        "slots": [2, 0],
+        "uses": {
+          "sorcery-points": 0
+        }
+      },
+      "2": {
+        "prepared": 4,
+        "slots": [3, 0],
+        "uses": {
+          "sorcery-points": 2
+        }
+      },
+      "3": {
+        "prepared": 6,
+        "slots": [4, 2],
+        "uses": {
+          "sorcery-points": 3
+        }
+      }
+    },
+    "alwaysPrepared": {
+      "3": ["alter-self", "chromatic-orb", "command", "dragons-breath"]
+    }
+  },
+  "warlock": {
+    "subclass": "Fiend Patron",
+    "levels": {
+      "1": {
+        "prepared": 2,
+        "slots": [1, 0],
+        "pactLevel": 1
+      },
+      "2": {
+        "prepared": 3,
+        "slots": [2, 0],
+        "pactLevel": 1
+      },
+      "3": {
+        "prepared": 4,
+        "slots": [2, 0],
+        "pactLevel": 2
+      }
+    },
+    "alwaysPrepared": {
+      "3": ["burning-hands", "command", "scorching-ray", "suggestion"]
+    }
+  },
+  "wizard": {
+    "subclass": "Evoker",
+    "levels": {
+      "1": {
+        "prepared": 4,
+        "slots": [2, 0]
+      },
+      "2": {
+        "prepared": 5,
+        "slots": [3, 0]
+      },
+      "3": {
+        "prepared": 6,
+        "slots": [4, 2]
+      }
+    }
+  }
+}

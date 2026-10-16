@@ -3,12 +3,34 @@
     "id": "warlock-eldritch-invocations",
     "name": "Eldritch Invocations",
     "source": "Warlock Level 1",
-    "description": "You have unearthed pieces of forbidden knowledge. You know 1 Eldritch Invocation of your choice, such as Pact of the Tome, which imbues you with an abiding magical ability. Whenever you gain a Warlock level, you can replace one invocation with another one for which you qualify."
+    "description": "You have unearthed pieces of forbidden knowledge. You know 1 Eldritch Invocation of your choice, such as Pact of the Tome, which imbues you with an abiding magical ability. Whenever you gain a Warlock level, you can replace one invocation with another one for which you qualify.",
+    "descriptions": {
+      "2": "You have unearthed pieces of forbidden knowledge. You know 3 Eldritch Invocations of your choice, such as Pact of the Tome, which imbues you with an abiding magical ability. Whenever you gain a Warlock level, you can replace one invocation with another one for which you qualify.",
+      "3": "You have unearthed pieces of forbidden knowledge. You know 3 Eldritch Invocations of your choice, such as Pact of the Tome, which imbues you with an abiding magical ability. Whenever you gain a Warlock level, you can replace one invocation with another one for which you qualify."
+    }
   },
   {
     "id": "warlock-pact-magic",
     "name": "Pact Magic",
     "source": "Warlock Level 1",
-    "description": "Your pact with a mysterious entity grants you the ability to cast Warlock spells using Charisma as your spellcasting ability. You know 2 cantrips and have 2 prepared level-1 spells; you can replace one cantrip or one prepared spell whenever you gain a Warlock level. You can use an Arcane Focus as your spellcasting focus."
+    "description": "Cast Warlock spells using Charisma. You know 2 cantrips and prepare 2 spells of level 1. Spells that a feature always prepares do not count against these choices. Replace one prepared spell when you gain a class level. You can use a Arcane Focus as your spellcasting focus.",
+    "descriptions": {
+      "2": "Cast Warlock spells using Charisma. You know 2 cantrips and prepare 3 spells of level 1. Spells that a feature always prepares do not count against these choices. Replace one prepared spell when you gain a class level. You can use a Arcane Focus as your spellcasting focus.",
+      "3": "Cast Warlock spells using Charisma. You know 2 cantrips and prepare 4 spells of level 1 or 2. Spells that a feature always prepares do not count against these choices. Replace one prepared spell when you gain a class level. You can use a Arcane Focus as your spellcasting focus."
+    }
+  },
+  {
+    "id": "warlock-dark-ones-blessing",
+    "name": "Dark One's Blessing",
+    "source": "Fiend Patron Level 3",
+    "level": 3,
+    "description": "When you reduce an enemy to 0 HP, or another creature reduces an enemy within 10 feet of you to 0 HP, gain Temporary HP equal to your Charisma modifier + Warlock level (minimum 1)."
+  },
+  {
+    "id": "warlock-fiend-spells",
+    "name": "Fiend Spells",
+    "source": "Fiend Patron Level 3",
+    "level": 3,
+    "description": "You always have Burning Hands, Command, Scorching Ray, and Suggestion prepared. These spells do not count against your prepared spell choices."
   }
 ]
