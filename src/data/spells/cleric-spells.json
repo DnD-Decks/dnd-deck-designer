@@ -24,5 +24,77 @@
     "purify-food-and-drink",
     "sanctuary",
     "shield-of-faith"
-  ]
+  ],
+  "level3": [
+    "animate-dead",
+    "beacon-of-hope",
+    "bestow-curse",
+    "clairvoyance",
+    "create-food-and-water",
+    "daylight",
+    "dispel-magic",
+    "glyph-of-warding",
+    "magic-circle",
+    "mass-healing-word",
+    "meld-into-stone",
+    "protection-from-energy",
+    "remove-curse",
+    "revivify",
+    "sending",
+    "speak-with-dead",
+    "spirit-guardians",
+    "tongues",
+    "water-walk"
+  ],
+  "level4": [
+    "aura-of-life",
+    "banishment",
+    "control-water",
+    "death-ward",
+    "divination",
+    "freedom-of-movement",
+    "guardian-of-faith",
+    "locate-creature",
+    "stone-shape"
+  ],
+  "level5": [
+    "commune",
+    "contagion",
+    "dispel-evil-and-good",
+    "flame-strike",
+    "geas",
+    "greater-restoration",
+    "hallow",
+    "insect-plague",
+    "legend-lore",
+    "mass-cure-wounds",
+    "planar-binding",
+    "raise-dead",
+    "scrying"
+  ],
+  "level6": [
+    "blade-barrier",
+    "create-undead",
+    "find-the-path",
+    "forbiddance",
+    "harm",
+    "heal",
+    "heroes-feast",
+    "planar-ally",
+    "sunbeam",
+    "true-seeing",
+    "word-of-recall"
+  ],
+  "level7": [
+    "conjure-celestial",
+    "divine-word",
+    "etherealness",
+    "fire-storm",
+    "plane-shift",
+    "regenerate",
+    "resurrection",
+    "symbol"
+  ],
+  "level8": ["antimagic-field", "control-weather", "earthquake", "holy-aura", "sunburst"],
+  "level9": ["astral-projection", "gate", "mass-heal", "power-word-heal", "true-resurrection"]
 }

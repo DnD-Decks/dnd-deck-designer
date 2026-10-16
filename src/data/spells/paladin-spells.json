@@ -11,5 +11,15 @@
     "protection-from-evil-and-good",
     "purify-food-and-drink",
     "shield-of-faith"
-  ]
+  ],
+  "level3": [
+    "create-food-and-water",
+    "daylight",
+    "dispel-magic",
+    "magic-circle",
+    "remove-curse",
+    "revivify"
+  ],
+  "level4": ["aura-of-life", "banishment", "death-ward", "locate-creature"],
+  "level5": ["dispel-evil-and-good", "geas", "greater-restoration", "raise-dead"]
 }

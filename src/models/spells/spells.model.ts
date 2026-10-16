@@ -7,6 +7,13 @@ import sorcererSpellsData from "../../data/spells/sorcerer-spells.json" with { t
 import cantripsData from "../../data/spells/spells-level-0.json" with { type: "json" };
 import spellsLevel1Data from "../../data/spells/spells-level-1.json" with { type: "json" };
 import spellsLevel2Data from "../../data/spells/spells-level-2.json" with { type: "json" };
+import spellsLevel3Data from "../../data/spells/spells-level-3.json" with { type: "json" };
+import spellsLevel4Data from "../../data/spells/spells-level-4.json" with { type: "json" };
+import spellsLevel5Data from "../../data/spells/spells-level-5.json" with { type: "json" };
+import spellsLevel6Data from "../../data/spells/spells-level-6.json" with { type: "json" };
+import spellsLevel7Data from "../../data/spells/spells-level-7.json" with { type: "json" };
+import spellsLevel8Data from "../../data/spells/spells-level-8.json" with { type: "json" };
+import spellsLevel9Data from "../../data/spells/spells-level-9.json" with { type: "json" };
 import warlockSpellsData from "../../data/spells/warlock-spells.json" with { type: "json" };
 import wizardSpellsData from "../../data/spells/wizard-spells.json" with { type: "json" };
 import { lookup } from "../../lib/lookup.ts";
@@ -28,6 +35,7 @@ export type Spell = {
   concentration: boolean;
   ritual: boolean;
   description: string;
+  atHigherLevels?: string;
   save?: string;
   damage?: { dice: string; type: DamageType[] };
   icon?: string;
@@ -35,18 +43,25 @@ export type Spell = {
 
 type SpellTable = Record<string, Spell>;
 
-const ALL_CANTRIPS = cantripsData as SpellTable;
-const ALL_LEVEL_1 = spellsLevel1Data as SpellTable;
-const ALL_LEVEL_2 = spellsLevel2Data as SpellTable;
+const LEVEL_TABLES: Record<SpellLevel, SpellTable> = {
+  0: cantripsData as SpellTable,
+  1: spellsLevel1Data as SpellTable,
+  2: spellsLevel2Data as SpellTable,
+  3: spellsLevel3Data as SpellTable,
+  4: spellsLevel4Data as SpellTable,
+  5: spellsLevel5Data as SpellTable,
+  6: spellsLevel6Data as SpellTable,
+  7: spellsLevel7Data as SpellTable,
+  8: spellsLevel8Data as SpellTable,
+  9: spellsLevel9Data as SpellTable,
+};
 
-const ALL: Spell[] = [ALL_CANTRIPS, ALL_LEVEL_1, ALL_LEVEL_2].flatMap(Object.values);
+const ALL: Spell[] = Object.values(LEVEL_TABLES).flatMap(Object.values);
 const TABLE = lookup({ items: ALL, key: "id", label: "spell" });
 
-type ClassSpellList = {
-  cantrips: string[];
-  level1: string[];
-  level2?: string[];
-};
+type ClassSpellList = { cantrips: string[] } & Partial<
+  Record<`level${Exclude<SpellLevel, 0>}`, string[]>
+>;
 
 type ResolveIds = { ids: string[]; table: SpellTable; source: string };
 
@@ -59,12 +74,17 @@ function resolveSpellIds({ ids, table, source }: ResolveIds) {
 }
 
 function resolveClassSpells({ data, source }: { data: ClassSpellList; source: string }) {
-  const { cantrips, level1, level2 } = data;
-  return {
-    cantrips: resolveSpellIds({ ids: cantrips, table: ALL_CANTRIPS, source }),
-    level1: resolveSpellIds({ ids: level1, table: ALL_LEVEL_1, source }),
-    level2: level2 && resolveSpellIds({ ids: level2, table: ALL_LEVEL_2, source }),
-  };
+  const levels = Object.keys(LEVEL_TABLES).map(Number) as SpellLevel[];
+  return Object.fromEntries(
+    levels.map((level) => [
+      level,
+      resolveSpellIds({
+        ids: data[level === 0 ? "cantrips" : (`level${level}` as const)] ?? [],
+        table: LEVEL_TABLES[level],
+        source,
+      }),
+    ])
+  ) as Record<SpellLevel, Spell[]>;
 }
 
 const CLASS_DATA: Partial<Record<CharacterClass, ReturnType<typeof resolveClassSpells>>> = {
@@ -86,9 +106,6 @@ export const spells = {
   findAll({ cls, level }: { cls: CharacterClass; level: SpellLevel }) {
     const data = CLASS_DATA[cls];
     if (!data) return [];
-    if (level === 0) return data.cantrips;
-    if (level === 1) return data.level1;
-    if (level === 2) return data.level2 ?? [];
-    return [];
+    return data[level];
   },
 };

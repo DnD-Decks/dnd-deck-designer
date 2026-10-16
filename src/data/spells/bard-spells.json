@@ -38,5 +38,87 @@
     "tashas-hideous-laughter",
     "thunderwave",
     "unseen-servant"
-  ]
+  ],
+  "level3": [
+    "bestow-curse",
+    "clairvoyance",
+    "dispel-magic",
+    "fear",
+    "glyph-of-warding",
+    "hypnotic-pattern",
+    "major-image",
+    "mass-healing-word",
+    "nondetection",
+    "plant-growth",
+    "sending",
+    "slow",
+    "speak-with-dead",
+    "speak-with-plants",
+    "stinking-cloud",
+    "tiny-hut",
+    "tongues"
+  ],
+  "level4": [
+    "charm-monster",
+    "compulsion",
+    "confusion",
+    "dimension-door",
+    "freedom-of-movement",
+    "greater-invisibility",
+    "hallucinatory-terrain",
+    "locate-creature",
+    "phantasmal-killer",
+    "polymorph"
+  ],
+  "level5": [
+    "animate-objects",
+    "awaken",
+    "dominate-person",
+    "dream",
+    "geas",
+    "greater-restoration",
+    "hold-monster",
+    "legend-lore",
+    "mass-cure-wounds",
+    "mislead",
+    "modify-memory",
+    "planar-binding",
+    "raise-dead",
+    "scrying",
+    "seeming",
+    "telepathic-bond",
+    "teleportation-circle"
+  ],
+  "level6": [
+    "eyebite",
+    "find-the-path",
+    "guards-and-wards",
+    "heroes-feast",
+    "irresistible-dance",
+    "mass-suggestion",
+    "programmed-illusion",
+    "true-seeing"
+  ],
+  "level7": [
+    "arcane-sword",
+    "etherealness",
+    "forcecage",
+    "magnificent-mansion",
+    "mirage-arcane",
+    "prismatic-spray",
+    "project-image",
+    "regenerate",
+    "resurrection",
+    "symbol",
+    "teleport"
+  ],
+  "level8": [
+    "antipathy-sympathy",
+    "befuddlement",
+    "dominate-monster",
+    "glibness",
+    "mind-blank",
+    "power-word-stun"
+  ],
+  "level9": ["foresight", "power-word-heal", "power-word-kill", "prismatic-wall", "true-polymorph"]
 }
