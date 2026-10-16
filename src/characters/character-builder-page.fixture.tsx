@@ -4,6 +4,7 @@ import type { ChoiceSource } from "src/characters/choices.model";
 import { choices } from "src/characters/choices.model";
 import type { CharacterClass } from "src/models/class/classes.model";
 import type { CharacterLevel } from "src/models/class/progression.model";
+import { feats } from "src/models/feats/feats.model";
 import { weapons } from "src/models/gear/weapons.model";
 import { spells } from "src/models/spells/spells.model";
 import { memoryLocation } from "wouter/memory-location";
@@ -36,6 +37,7 @@ export function selectFighterWeapons() {
 }
 
 export function optionName({ kind, id }: { kind: ChoiceSource["kind"]; id: string }) {
+  if (kind === "feat") return feats.get({ id }).name;
   return kind === "weapon" ? weapons.find({ id })?.name : spells.get({ id }).name;
 }
 

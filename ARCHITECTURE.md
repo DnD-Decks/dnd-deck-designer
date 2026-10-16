@@ -22,16 +22,24 @@ A mobile-first web tool for D&D 2024 players. The main use case is playing at th
 
 Spells shared between classes are intentionally duplicated — visual class identity is in card style, not shared components. The catalog defaults to character level 1. Character decks use their selected level (1–3); level-3 full casters and Warlocks also gain level-2 spells. Play section order: Resources → Weapons → Features → Cantrips → Spells.
 
-**Template vs character.** `decks.get({ cls, level = 1, land })` is the class template (the catalog), cached by class, level, and land choice. `decks.forCharacter(character)` narrows it to the character's picks (`src/characters/choices.model.ts`, rules in `src/data/choices/class-choices.json`) and expands resources marked `stack: true` into one card per use (Mana ×2 → 2 cards); pools such as Lay on Hands stay one card.
+**Template vs character.** `decks.get({ cls, level = 1, land, subclass })` is the class template (the catalog), cached by class, level, land, and subclass choice. `decks.forCharacter(character)` narrows it to the character's picks (`src/characters/choices.model.ts`, rules in `src/data/choices/class-choices.json`) and expands resources marked `stack: true` into one card per use (Mana ×2 → 2 cards); pools such as Lay on Hands stay one card.
 
 ## Character levels
 
-The builder supports levels 1, 2, and 3 for all twelve classes. `src/models/class/progression.model.ts` projects `src/data/classes/class-progression.json`: prepared-spell counts, slot counts, resource pools, always-prepared spells, and the SRD subclass gained at level 3. The SRD supplies one subclass per class; it is included automatically and named in the builder and character header. Circle of the Land Druids choose arid, polar, temperate, or tropical land; this optional `land` field is saved and shared, and defaults to temperate.
+The builder supports levels 1, 2, and 3 for all twelve classes. `src/models/class/progression.model.ts` projects `src/data/classes/class-progression.json`: prepared-spell counts, slot counts, resource pools, always-prepared spells, and subclass options. The SRD subclass is included automatically at level 3. Fighters choose Champion (the backward-compatible default when `subclass` is omitted) or Battle Master (PHB 2024). Battle Masters choose three of twenty maneuvers and receive four individually spendable d8 Superiority Dice, all recovered on a Short or Long Rest. Their optional `subclass` and maneuver picks are saved and shared. Champion features are excluded when Battle Master is selected. Student of War describes the extra skill and Artisan's Tools proficiencies; the builder does not model those choices. Circle of the Land Druids choose arid, polar, temperate, or tropical land; this optional `land` field is saved and shared, and defaults to temperate.
 
 - Choices keep the same rule ids across levels. At level 3, full casters and Warlocks can mix level-1 and level-2 prepared spells; Paladins and Rangers still use level-1 spells. Always-prepared spells are included separately and do not consume choices.
 - Changing level preserves available choices, removes unavailable spells, and trims choices to the new limits. Editing an older build moves spells now granted automatically out of its manual choices and asks for any replacements needed. Existing level-1 saves and share links remain readable.
 - Feat data uses optional `level` (default 1) and `descriptions` overrides by character level. Resource data uses optional `level`, with counts projected from class progression. Full casters get separate level-2 Mana cards; Warlock Mana becomes level 2 at character level 3 and still recharges on a Short Rest.
-- Internal feature options such as Fighting Styles, Metamagic, and Eldritch Invocations remain described on reference cards; the builder selects spells and weapons, rather than providing a full character sheet.
+- Internal feature options such as Fighting Styles, Metamagic, and Eldritch Invocations remain described on reference cards. The builder selects spells, weapons, and Battle Master maneuvers; it does not provide a full character sheet.
+
+### Content provenance
+
+Spell, feature, weapon, and resource data accept optional `provenance: { source, page?, referenceUrl? }`. `src/data/provenance/sources.json` identifies the original publication, publisher, open-content status, license, and consulted reference separately. No declaration means SRD 5.2.1 / CC-BY-4.0, following the project's default assumption. An unknown explicit source throws rather than silently treating the card as open.
+
+All Battle Master features, maneuvers, Superiority Dice, and its subclass option declare `source: "phb-2024"` and a PHB page. This source is non-SRD (`openContent: false`, `license: null`), with 5e.tools recorded as the consulted reference. Card text consists of original mechanical summaries. Reference availability does not imply a license grant; see NOTICE.
+
+`cardProvenance(card)` resolves the metadata for every card kind, including stacked copies and custom additions. A future open-content filter can use `entries.filter(({ card }) => cardProvenance(card).openContent)` without parsing display labels. The SRD audit reports explicitly non-SRD entries as outside its scope.
 
 ---
 
@@ -160,6 +168,8 @@ JSON for spells is vendored from sibling repo [`dnd-beginner-character-sheet-5e-
 | `classes/class-resources.json` | Level-progression resource data for all 12 classes (consumed by `class-resources.model.ts`) |
 | `resources/<cls>-resources.json` | Resources through L3 for 11 classes (rogue: none); unlock level and recharge rules |
 | `feats/<cls>-feats.json` | Class and SRD subclass features through L3 for all 12 classes |
+| `feats/fighter-battle-master-feats.json` | PHB 2024 Battle Master features and 20 selectable maneuvers, with explicit provenance |
+| `provenance/sources.json` | Publication, consulted references, and open-content status; missing card provenance defaults to SRD |
 | `classes/class-progression.json` | Character levels 1–3: prepared spells, slots, resource counts, subclass names, granted spells |
 | `gear/weapons.json` | 38 SRD weapons: damage, properties, mastery (feeds the weapon cards) |
 | `gear/weapon-mastery.json` | All 8 PHB 2024 mastery properties, SRD-audited (printed on each weapon card) |

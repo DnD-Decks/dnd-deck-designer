@@ -50,8 +50,10 @@ function Builder({ initial }: { initial?: Character }) {
             cls={draft.cls}
             level={draft.level}
             land={draft.land}
+            subclass={draft.subclass}
             onLevel={draft.chooseLevel}
             onLand={draft.chooseLand}
+            onSubclass={draft.chooseSubclass}
           />
           <ClassSelector selected={draft.cls} onSelect={draft.chooseClass} />
         </>
@@ -62,6 +64,7 @@ function Builder({ initial }: { initial?: Character }) {
           cls={draft.cls}
           level={draft.level}
           land={draft.land}
+          subclass={draft.subclass}
           kind={step}
           picks={draft.picks}
           onChange={draft.choosePicks}

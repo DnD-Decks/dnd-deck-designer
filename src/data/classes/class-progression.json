@@ -106,7 +106,21 @@
       "1": {},
       "2": {},
       "3": {}
-    }
+    },
+    "subclasses": [
+      {
+        "id": "champion",
+        "label": "Champion"
+      },
+      {
+        "id": "battle-master",
+        "label": "Battle Master",
+        "provenance": {
+          "source": "phb-2024",
+          "page": 93
+        }
+      }
+    ]
   },
   "monk": {
     "subclass": "Warrior of the Open Hand",

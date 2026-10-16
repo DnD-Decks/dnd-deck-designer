@@ -5,7 +5,7 @@ import { progression } from "../models/class/progression.model.ts";
 
 import type { ChoiceRuleId } from "src/characters/choices.model";
 import type { CharacterClass } from "src/models/class/classes.model";
-import type { CharacterLevel, LandType } from "src/models/class/progression.model";
+import type { CharacterLevel, LandType, SubclassId } from "src/models/class/progression.model";
 
 export type { CharacterLevel } from "src/models/class/progression.model";
 
@@ -19,6 +19,7 @@ export type Character = {
   level: CharacterLevel;
   /** Circle of the Land's choice after a Long Rest; defaults to temperate. */
   land?: LandType;
+  subclass?: SubclassId;
   picks: Picks;
 };
 
@@ -29,16 +30,24 @@ const hasUnknownPick = (build: Build) =>
 
 function parseBuild(value: unknown) {
   if (!isRecord(value)) return undefined;
-  const { name, cls, level, land, picks } = value;
+  const { name, cls, level, land, subclass, picks } = value;
   if (typeof name !== "string" || name.trim() === "") return undefined;
   if (typeof cls !== "string" || !progression.isLevel(level) || !isRecord(picks)) return undefined;
   if (land !== undefined && (cls !== "druid" || level !== 3 || !progression.isLand(land)))
+    return undefined;
+  if (
+    subclass !== undefined &&
+    (cls !== "fighter" || level !== 3 || !progression.isSubclass(subclass))
+  )
     return undefined;
 
   const found = classes.find({ id: cls });
   if (!found) return undefined;
 
-  const ruleIds = new Set<string>(choices.for({ cls: found.id, level }).map((rule) => rule.id));
+  const selected = progression.isSubclass(subclass) ? { subclass } : {};
+  const ruleIds = new Set<string>(
+    choices.for({ cls: found.id, level, ...selected }).map((rule) => rule.id)
+  );
   const badRule = ([rule, ids]: [string, unknown]) =>
     (rule !== "custom" && !ruleIds.has(rule)) || !isStringList(ids);
   if (Object.entries(picks).some(badRule)) return undefined;
@@ -49,6 +58,7 @@ function parseBuild(value: unknown) {
     level,
     picks: picks as Picks,
     ...(progression.isLand(land) ? { land } : {}),
+    ...selected,
   };
   return hasUnknownPick(build) ? undefined : build;
 }
@@ -74,9 +84,9 @@ export const characters = {
     return { id: crypto.randomUUID(), name, cls, level, picks: {} };
   },
 
-  classLine({ level, cls }: Pick<Character, "level" | "cls">) {
-    const subclass = progression.subclass({ cls, level });
-    return `Level ${level} ${classes.get({ id: cls }).label}${subclass ? ` · ${subclass}` : ""}`;
+  classLine(character: Pick<Character, "level" | "cls" | "subclass">) {
+    const subclass = progression.subclass(character);
+    return `Level ${character.level} ${classes.get({ id: character.cls }).label}${subclass ? ` · ${subclass}` : ""}`;
   },
 
   parse(value: unknown) {
@@ -85,8 +95,8 @@ export const characters = {
     return build && { id: value.id, ...build };
   },
 
-  toShareCode({ cls, level, name, picks, land }: Character) {
-    return toBase64Url(JSON.stringify({ cls, level, name, picks, land }));
+  toShareCode({ cls, level, name, picks, land, subclass }: Character) {
+    return toBase64Url(JSON.stringify({ cls, level, name, picks, land, subclass }));
   },
 
   fromShareCode(code: string) {

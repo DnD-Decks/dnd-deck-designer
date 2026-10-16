@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // SRD correctness scan — reads src/data/*.json and compares against reference/srd/SRD_5.2.1.md
 // Run: pnpm scripts:sync-srd-data
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { featureHeadings, parseSpells, parseWeapons, sliceSection } from "./srd.mjs";
@@ -46,6 +46,12 @@ const mismatch = (cat, id, field, ours, srd) =>
   findings.mismatch.push({ cat, id, field, ours: String(ours), srd: String(srd) });
 const missingInSrd = (cat, id) => findings.missingInSrd.push({ cat, id });
 const unverified = (cat, id, note) => findings.unverified.push({ cat, id, note });
+const outsideSrd = (cat, entry) => {
+  const source = entry.provenance?.source;
+  if (!source || source === "srd-5.2.1") return false;
+  unverified(cat, entry.id, `outside SRD scope: ${source}`);
+  return true;
+};
 
 // ── SPELLS ────────────────────────────────────────────────────────────────────
 console.log("scanning spells…");
@@ -73,6 +79,7 @@ const ourSpells = ["spells-level-0", "spells-level-1", "spells-level-2"].flatMap
 );
 
 for (const sp of ourSpells) {
+  if (outsideSrd("spell", sp)) continue;
   const s = srdSpells.get(srdKey(sp.name));
   if (!s) {
     missingInSrd("spell", sp.id);
@@ -112,6 +119,7 @@ const ourWeapons = readJson("src/data/gear/weapons.json");
 if (!srdWeapons.size) console.warn("⚠ weapon blob parse failed — check SRD heading");
 
 for (const w of ourWeapons) {
+  if (outsideSrd("weapon", w)) continue;
   const s = srdWeapons.get(w.name.toLowerCase());
   if (!s) {
     missingInSrd("weapon", w.id);
@@ -156,7 +164,11 @@ for (const [index, [cls, file]] of classFeatureFiles.entries()) {
     // Improved versions can repeat a subfeature's name at a higher level.
     byName.set(key, Math.min(byName.get(key) ?? feature.level, feature.level));
   }
-  for (const feat of readJson(file)) {
+  const featureFiles = readdirSync(path.join(ROOT, path.dirname(file))).filter(
+    (name) => name.startsWith(`${cls.toLowerCase()}-`) && name.endsWith("-feats.json")
+  );
+  for (const feat of featureFiles.flatMap((name) => readJson(`src/data/feats/${name}`))) {
+    if (outsideSrd("feature", feat)) continue;
     const srdLvl = byName.get(featKey(feat.name));
     if (srdLvl === undefined) {
       missingInSrd("feature", feat.id);
@@ -189,6 +201,7 @@ for (const [cls, file] of [
     .toLowerCase()
     .replace(/’/g, "'");
   for (const r of readJson(file)) {
+    if (outsideSrd("resource", r)) continue;
     if (isAlias(r.id)) {
       unverified("resource", r.id, `"${r.name}" is our alias for SRD "Spell Slots"`);
       continue;
@@ -206,6 +219,7 @@ for (const [cls, { resources }] of Object.entries(classResources)) {
     .join("\n")
     .toLowerCase();
   for (const r of resources) {
+    if (outsideSrd("resource", r)) continue;
     if (isAlias(r.id)) {
       unverified("resource", r.id, "spell-slot alias");
       continue;

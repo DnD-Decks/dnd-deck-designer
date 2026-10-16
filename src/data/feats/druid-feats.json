@@ -22,7 +22,7 @@
     "description": "You have dedicated yourself to a sacred role of your choice. Magician: you know one extra cantrip from the Druid spell list, and you gain a bonus to Intelligence (Arcana or Nature) checks equal to your Wisdom modifier (minimum +1). Warden: trained for battle, you gain proficiency with Martial weapons and training with Medium armor."
   },
   {
-    "id": "druid-wild-shape",
+    "id": "druid-wild-shape-feature",
     "name": "Wild Shape",
     "source": "Druid Level 2",
     "level": 2,

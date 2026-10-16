@@ -9,8 +9,9 @@ import { choices } from "src/characters/choices.model";
 import type { DeckEntry } from "src/decks/deck.model";
 import { cardName } from "src/decks/deck.model";
 import type { CharacterClass } from "src/models/class/classes.model";
-import type { CharacterLevel, LandType } from "src/models/class/progression.model";
+import type { CharacterLevel, LandType, SubclassId } from "src/models/class/progression.model";
 import { progression } from "src/models/class/progression.model";
+import { feats } from "src/models/feats/feats.model";
 import { weapons } from "src/models/gear/weapons.model";
 import { spells } from "src/models/spells/spells.model";
 import styles from "./character-builder.module.css";
@@ -19,6 +20,7 @@ type BuilderChoicesProps = {
   cls: CharacterClass;
   level: CharacterLevel;
   land: LandType;
+  subclass: SubclassId;
   kind: ChoiceSource["kind"];
   picks: Picks;
   onChange: (selection: ChoiceSelection) => void;
@@ -32,6 +34,7 @@ type ChoiceGroupProps = {
 };
 
 function choiceEntry({ id, kind }: { id: string; kind: ChoiceRule["from"]["kind"] }): DeckEntry {
+  if (kind === "feat") return { key: id, card: { kind: "feat", feat: feats.get({ id }) } };
   const weapon = kind === "weapon" ? weapons.find({ id }) : undefined;
   if (weapon) return { key: id, card: { kind: "weapon", weapon } };
   return { key: id, card: { kind: "spell", spell: spells.get({ id }) } };
@@ -96,14 +99,24 @@ function ChoiceGroup({ cls, rule, picked, onChange }: ChoiceGroupProps) {
   );
 }
 
-export function BuilderChoices({ cls, level, land, kind, picks, onChange }: BuilderChoicesProps) {
-  const rules = choices.for({ cls, level, land }).filter((rule) => rule.from.kind === kind);
+export function BuilderChoices({
+  cls,
+  level,
+  land,
+  subclass,
+  kind,
+  picks,
+  onChange,
+}: BuilderChoicesProps) {
+  const rules = choices
+    .for({ cls, level, land, subclass })
+    .filter((rule) => rule.from.kind === kind);
   const automatic = kind === "spell" ? progression.alwaysPrepared({ cls, level, land }) : [];
   return (
     <>
       {rules.map((rule) => (
         <ChoiceGroup
-          key={`${cls}-${level}-${land}-${rule.id}`}
+          key={`${cls}-${level}-${land}-${subclass}-${rule.id}`}
           cls={cls}
           rule={rule}
           picked={picks[rule.id] ?? []}

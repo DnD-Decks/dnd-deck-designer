@@ -22,18 +22,62 @@ test.describe("builder: card picking", () => {
     await openFighterWeapons(page);
     const hand = page.getByRole("group", { name: "Weapon Mastery" });
     await expect(hand.getByRole("article").first()).toBeInViewport();
-    // the checkbox covers the card face, so this is a tap on the card
+    // Tap the visible artwork rather than targeting the checkbox directly.
     const firstCard = hand.getByRole("checkbox").first();
-    const box = await firstCard.boundingBox();
-    await page.mouse.click((box?.x ?? 0) + 40, (box?.y ?? 0) + 40);
+    const box = await hand.getByRole("article").first().boundingBox();
+    expect(box).not.toBeNull();
+    await page.touchscreen.tap((box?.x ?? 0) + (box?.width ?? 0) / 2, (box?.y ?? 0) + 100);
     await expect.soft(firstCard).toBeChecked();
-    await firstCard.uncheck();
+    const selectedBox = await firstCard.boundingBox();
+    await page.touchscreen.tap((selectedBox?.x ?? 0) + 40, (selectedBox?.y ?? 0) + 40);
+    await expect(firstCard).not.toBeChecked();
     await selectFighterWeapons(page);
     await expect
       .soft(page.getByRole("checkbox", { name: "Greatsword", exact: true }))
       .toBeDisabled();
     await expect.soft(page.getByRole("button", { name: "Build deck" })).toBeVisible();
   });
+
+  test("touch layouts keep an unselected card still when hover is synthesized", async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await openFighterWeapons(page);
+    const card = page.getByRole("group", { name: "Weapon Mastery" }).getByRole("article").first();
+    const before = await card.boundingBox();
+    expect(before).not.toBeNull();
+    await page.mouse.move((before?.x ?? 0) + 100, (before?.y ?? 0) + 100);
+    const hovered = await card.boundingBox();
+    expect(hovered?.y).toBe(before?.y);
+  });
+
+  for (const { cls, name, battleMaster } of [
+    { cls: "Wizard", name: "Fire Bolt", battleMaster: false },
+    { cls: "Fighter", name: "Ambush", battleMaster: true },
+  ]) {
+    test(`a touch tap selects and puts back ${name}`, async ({ page }) => {
+      await page.goto("/#/new");
+      await page.getByRole("button", { name: new RegExp(`^${cls}`) }).click();
+      if (battleMaster) {
+        await page.getByRole("combobox", { name: "Character level" }).selectOption("3");
+        await page.getByRole("combobox", { name: "Subclass" }).selectOption("battle-master");
+      }
+      await page.getByRole("button", { name: "Next" }).click();
+      const card = page.getByRole("article", { name, exact: true });
+      const choice = page.getByRole("checkbox", { name, exact: true });
+      await choice.scrollIntoViewIfNeeded();
+      await expect(card).toBeInViewport();
+      for (const checked of [true, false]) {
+        const bounds = await card.boundingBox();
+        expect(bounds).not.toBeNull();
+        await page.touchscreen.tap(
+          (bounds?.x ?? 0) + (bounds?.width ?? 0) / 2,
+          (bounds?.y ?? 0) + 100
+        );
+        await expect(choice).toBeChecked({ checked });
+      }
+    });
+  }
 
   test("zoom fits a locked card on the phone and restores focus", async ({ page }) => {
     await openFighterWeapons(page);

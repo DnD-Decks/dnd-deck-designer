@@ -6,12 +6,13 @@ import { classes } from "../models/class/classes.model.ts";
 import { progression } from "../models/class/progression.model.ts";
 import { feats } from "../models/feats/feats.model.ts";
 import { weapons } from "../models/gear/weapons.model.ts";
+import { provenance } from "../models/provenance/provenance.model.ts";
 import { resources } from "../models/resources/resources.model.ts";
 import { spells } from "../models/spells/spells.model.ts";
 
 import type { Character } from "src/characters/character.model";
 import type { CharacterClass, ClassDetails } from "src/models/class/classes.model";
-import type { CharacterLevel, LandType } from "src/models/class/progression.model";
+import type { CharacterLevel, LandType, SubclassId } from "src/models/class/progression.model";
 import type { Feat } from "src/models/feats/feats.model";
 import type { Weapon } from "src/models/gear/weapons.model";
 import type { Resource } from "src/models/resources/resources.model";
@@ -29,6 +30,21 @@ export type Deck = { cls: ClassDetails; cards: readonly DeckCard[] };
 export type DeckEntry = { key: string; card: DeckCard };
 
 export type CharacterDeck = { cls: ClassDetails; entries: readonly DeckEntry[] };
+
+export function cardProvenance(card: DeckCard) {
+  switch (card.kind) {
+    case "spell":
+      return provenance.resolve(card.spell.provenance);
+    case "feat":
+      return provenance.resolve(card.feat.provenance);
+    case "resource":
+      return provenance.resolve(card.resource.provenance);
+    case "weapon":
+      return provenance.resolve(card.weapon.provenance);
+    default:
+      return assertNever(card);
+  }
+}
 
 export function cardKey(card: DeckCard) {
   switch (card.kind) {
@@ -96,9 +112,15 @@ const cardIndex = () => {
     CARD_INDEX = new Map();
     for (const level of progression.levels) {
       for (const { id } of classes.list()) {
-        for (const card of decks.get({ cls: id, level }).cards) {
-          const key = cardKey(card);
-          if (!CARD_INDEX.has(key)) CARD_INDEX.set(key, card);
+        const subclasses = [
+          undefined,
+          ...progression.subclasses({ cls: id, level }).map((option) => option.id),
+        ];
+        for (const subclass of subclasses) {
+          for (const card of decks.get({ cls: id, level, subclass }).cards) {
+            const key = cardKey(card);
+            if (!CARD_INDEX.has(key)) CARD_INDEX.set(key, card);
+          }
         }
       }
     }
@@ -111,17 +133,23 @@ export const decks = {
     cls,
     level = 1,
     land,
-  }: { cls: CharacterClass; level?: CharacterLevel; land?: LandType }): Deck {
-    const cacheKey = `${cls}-${level}-${land ?? "temperate"}`;
+    subclass = "champion",
+  }: {
+    cls: CharacterClass;
+    level?: CharacterLevel;
+    land?: LandType;
+    subclass?: SubclassId;
+  }): Deck {
+    const cacheKey = `${cls}-${level}-${land ?? "temperate"}-${subclass}`;
     const cached = CACHE.get(cacheKey);
     if (cached) return cached;
 
     const resourceCards: DeckCard[] = resources
-      .findAll({ cls, level })
+      .findAll({ cls, level, subclass })
       .map((resource): DeckCard => ({ kind: "resource", resource }));
 
     const featCards: DeckCard[] = feats
-      .findAll({ cls, level })
+      .findAll({ cls, level, subclass })
       .map((feat): DeckCard => ({ kind: "feat", feat }));
 
     const spellLevels: SpellLevel[] =
@@ -165,8 +193,9 @@ export const decks = {
         case "weapon":
           return picked.weapon.has(card.weapon.id);
         case "resource":
-        case "feat":
           return true;
+        case "feat":
+          return !card.feat.choice || picked.feat.has(card.feat.id);
         default:
           return assertNever(card);
       }

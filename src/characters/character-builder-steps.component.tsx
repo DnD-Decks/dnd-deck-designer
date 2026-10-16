@@ -5,6 +5,7 @@ import styles from "./character-builder.module.css";
 export const STEP_LABELS: Record<BuilderStep, string> = {
   class: "Class",
   spell: "Spells",
+  feat: "Maneuvers",
   weapon: "Weapons",
   custom: "Custom cards",
 };

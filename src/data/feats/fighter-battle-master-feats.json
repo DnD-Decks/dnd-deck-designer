@@ -1,0 +1,286 @@
+[
+  {
+    "id": "fighter-combat-superiority",
+    "name": "Combat Superiority",
+    "source": "Battle Master Level 3",
+    "level": 3,
+    "subclass": "battle-master",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 93
+    },
+    "description": "Choose three maneuvers. Each costs one d8 Superiority Die; only one maneuver can modify an attack. You have four dice and recover them all after a Short or Long Rest. Maneuver save DC = 8 + Proficiency Bonus + your choice of Strength or Dexterity modifier."
+  },
+  {
+    "id": "fighter-student-of-war",
+    "name": "Student of War",
+    "source": "Battle Master Level 3",
+    "level": 3,
+    "subclass": "battle-master",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 94
+    },
+    "description": "Choose one Artisan's Tools proficiency and one skill proficiency from the Fighter's starting skill list."
+  },
+  {
+    "id": "fighter-ambush",
+    "name": "Ambush",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 94
+    },
+    "description": "Spend 1 Superiority Die (d8). Add d8 to Initiative or Dexterity (Stealth); unavailable while Incapacitated."
+  },
+  {
+    "id": "fighter-bait-and-switch",
+    "name": "Bait and Switch",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 94
+    },
+    "description": "Spend 1 Superiority Die (d8). On your turn, spend 5 feet of movement to swap with a willing, non-Incapacitated creature within 5 feet; neither provokes Opportunity Attacks for this move. You or that creature gains +d8 AC until your next turn starts."
+  },
+  {
+    "id": "fighter-commanders-strike",
+    "name": "Commander's Strike",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 94
+    },
+    "description": "Spend 1 Superiority Die (d8). During your Attack action, replace one attack. A willing creature seeing or hearing you can use its Reaction for a weapon attack or Unarmed Strike, with +d8 damage on a hit. Your Bonus Action remains available."
+  },
+  {
+    "id": "fighter-commanding-presence",
+    "name": "Commanding Presence",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). Add d8 to a Charisma check using Intimidation, Performance, or Persuasion."
+  },
+  {
+    "id": "fighter-disarming-attack",
+    "name": "Disarming Attack",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). After an attack roll hits, add d8 damage. A failed Strength save makes the target drop one held object you choose into its own space."
+  },
+  {
+    "id": "fighter-distracting-strike",
+    "name": "Distracting Strike",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). After an attack roll hits, add d8 damage. Another attacker's next attack against that target has Advantage if made before your next turn starts."
+  },
+  {
+    "id": "fighter-evasive-footwork",
+    "name": "Evasive Footwork",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). Use a Bonus Action to Disengage and gain +d8 AC until your next turn starts."
+  },
+  {
+    "id": "fighter-feinting-attack",
+    "name": "Feinting Attack",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). Use a Bonus Action to select a creature within 5 feet. Your next attack against it this turn has Advantage and, if it hits, +d8 damage."
+  },
+  {
+    "id": "fighter-goading-attack",
+    "name": "Goading Attack",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). After an attack roll hits, add d8 damage. On a failed Wisdom save, the target attacks others with Disadvantage until your next turn ends."
+  },
+  {
+    "id": "fighter-lunging-attack",
+    "name": "Lunging Attack",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). Use a Bonus Action to Dash. This turn, add d8 damage to a melee hit during your Attack action if you moved at least 5 feet straight immediately before that hit."
+  },
+  {
+    "id": "fighter-maneuvering-attack",
+    "name": "Maneuvering Attack",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). After an attack roll hits, add d8 damage. A willing creature seeing or hearing you can use its Reaction to move half its Speed; that movement avoids Opportunity Attacks from the target you hit."
+  },
+  {
+    "id": "fighter-menacing-attack",
+    "name": "Menacing Attack",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). After an attack roll hits, add d8 damage. On a failed Wisdom save, the target is Frightened until your next turn ends."
+  },
+  {
+    "id": "fighter-parry",
+    "name": "Parry",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). When another creature damages you with a melee attack roll, use your Reaction to reduce that damage by d8 + your choice of Strength or Dexterity modifier."
+  },
+  {
+    "id": "fighter-precision-attack",
+    "name": "Precision Attack",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). After an attack roll misses, add d8 to that roll; the result may turn the miss into a hit."
+  },
+  {
+    "id": "fighter-pushing-attack",
+    "name": "Pushing Attack",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). After a weapon attack or Unarmed Strike hits, add d8 damage. A Large or smaller target failing a Strength save moves up to 15 feet directly away from you."
+  },
+  {
+    "id": "fighter-rally",
+    "name": "Rally",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). Use a Bonus Action to grant an ally within 30 feet d8 + half your Fighter level (rounded down) Temporary HP. The ally must see or hear you."
+  },
+  {
+    "id": "fighter-riposte",
+    "name": "Riposte",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). When a melee attack roll misses you, use your Reaction for a melee weapon attack or Unarmed Strike against that attacker. A hit adds d8 damage."
+  },
+  {
+    "id": "fighter-sweeping-attack",
+    "name": "Sweeping Attack",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). After a melee weapon attack or Unarmed Strike hits, select another creature within your reach and 5 feet of the first target. If the original attack roll meets its AC, it takes d8 damage of the original type."
+  },
+  {
+    "id": "fighter-tactical-assessment",
+    "name": "Tactical Assessment",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). Add d8 to Intelligence (History or Investigation) or Wisdom (Insight)."
+  },
+  {
+    "id": "fighter-trip-attack",
+    "name": "Trip Attack",
+    "source": "Battle Master Maneuver · PHB 2024",
+    "level": 3,
+    "subclass": "battle-master",
+    "choice": "maneuvers",
+    "provenance": {
+      "source": "phb-2024",
+      "page": 95
+    },
+    "description": "Spend 1 Superiority Die (d8). After a weapon attack or Unarmed Strike hits, add d8 damage. A Large or smaller target failing a Strength save becomes Prone."
+  }
+]

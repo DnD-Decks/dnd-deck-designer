@@ -1,6 +1,6 @@
 import type { ChangeEvent } from "react";
 import type { CharacterClass } from "src/models/class/classes.model";
-import type { CharacterLevel, LandType } from "src/models/class/progression.model";
+import type { CharacterLevel, LandType, SubclassId } from "src/models/class/progression.model";
 import { progression } from "src/models/class/progression.model";
 import styles from "./character-builder.module.css";
 
@@ -8,12 +8,15 @@ type Props = {
   cls?: CharacterClass;
   level: CharacterLevel;
   land: LandType;
+  subclass: SubclassId;
   onLevel: (level: CharacterLevel) => void;
   onLand: (land: LandType) => void;
+  onSubclass: (subclass: SubclassId) => void;
 };
 
-export function BuilderLevel({ cls, level, land, onLevel, onLand }: Props) {
-  const subclass = cls && progression.subclass({ cls, level });
+export function BuilderLevel({ cls, level, land, subclass, onLevel, onLand, onSubclass }: Props) {
+  const options = cls ? progression.subclasses({ cls, level }) : [];
+  const label = cls && progression.subclass({ cls, level, subclass });
   const chooseLevel = (event: ChangeEvent<HTMLSelectElement>) => {
     const selected = Number(event.target.value);
     if (progression.isLevel(selected)) onLevel(selected);
@@ -21,6 +24,10 @@ export function BuilderLevel({ cls, level, land, onLevel, onLand }: Props) {
   const chooseLand = (event: ChangeEvent<HTMLSelectElement>) => {
     const selected = event.target.value;
     if (progression.isLand(selected)) onLand(selected);
+  };
+  const chooseSubclass = (event: ChangeEvent<HTMLSelectElement>) => {
+    const selected = event.target.value;
+    if (progression.isSubclass(selected)) onSubclass(selected);
   };
 
   return (
@@ -36,6 +43,18 @@ export function BuilderLevel({ cls, level, land, onLevel, onLand }: Props) {
             ))}
           </select>
         </label>
+        {options.length > 0 && (
+          <label className={styles.setting}>
+            Subclass
+            <select className={styles.select} value={subclass} onChange={chooseSubclass}>
+              {options.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         {cls === "druid" && level === 3 && (
           <label className={styles.setting}>
             Land type
@@ -49,11 +68,7 @@ export function BuilderLevel({ cls, level, land, onLevel, onLand }: Props) {
           </label>
         )}
       </div>
-      {subclass && (
-        <p className={styles.hint}>
-          Includes {subclass}. One subclass per class is available in SRD 5.2.1.
-        </p>
-      )}
+      {label && options.length === 0 && <p className={styles.hint}>Includes {label}.</p>}
     </>
   );
 }

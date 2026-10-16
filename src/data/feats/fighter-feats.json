@@ -23,13 +23,15 @@
     "name": "Improved Critical",
     "source": "Champion Level 3",
     "level": 3,
-    "description": "Your weapon and Unarmed Strike attack rolls score a Critical Hit on a d20 roll of 19 or 20."
+    "description": "Your weapon and Unarmed Strike attack rolls score a Critical Hit on a d20 roll of 19 or 20.",
+    "subclass": "champion"
   },
   {
     "id": "fighter-remarkable-athlete",
     "name": "Remarkable Athlete",
     "source": "Champion Level 3",
     "level": 3,
-    "description": "You have Advantage on Initiative rolls and Strength (Athletics) checks. Immediately after scoring a Critical Hit, you can move up to half your Speed without provoking Opportunity Attacks."
+    "description": "You have Advantage on Initiative rolls and Strength (Athletics) checks. Immediately after scoring a Critical Hit, you can move up to half your Speed without provoking Opportunity Attacks.",
+    "subclass": "champion"
   }
 ]

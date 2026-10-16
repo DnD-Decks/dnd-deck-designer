@@ -22,7 +22,8 @@ import wizardResourcesData from "../../data/resources/wizard-resources.json" wit
 
 import type { ActionTiming } from "src/models/actions/combat.model";
 import type { CharacterClass } from "src/models/class/classes.model";
-import type { CharacterLevel } from "src/models/class/progression.model";
+import type { CharacterLevel, SubclassId } from "src/models/class/progression.model";
+import type { Provenance } from "src/models/provenance/provenance.model";
 import type { RestType } from "src/models/rest/rest-actions.model";
 import { progression } from "../class/progression.model.ts";
 
@@ -41,6 +42,8 @@ export type Resource = {
   description: string;
   icon?: string;
   level?: CharacterLevel;
+  subclass?: SubclassId;
+  provenance?: Provenance;
 };
 
 const CLASS_DATA: Partial<Record<CharacterClass, Resource[]>> = {
@@ -58,10 +61,15 @@ const CLASS_DATA: Partial<Record<CharacterClass, Resource[]>> = {
 };
 
 export const resources = {
-  findAll({ cls, level = 1 }: { cls: CharacterClass; level?: CharacterLevel }): Resource[] {
+  findAll({
+    cls,
+    level = 1,
+    subclass = "champion",
+  }: { cls: CharacterClass; level?: CharacterLevel; subclass?: SubclassId }): Resource[] {
     const current = progression.get({ cls, level });
     const cards = (CLASS_DATA[cls] ?? [])
       .filter((resource) => (resource.level ?? 1) <= level)
+      .filter((resource) => !resource.subclass || resource.subclass === subclass)
       .map((resource) => {
         const suffix = resource.id.slice(cls.length + 1);
         const uses = current.uses?.[suffix] ?? resource.uses;

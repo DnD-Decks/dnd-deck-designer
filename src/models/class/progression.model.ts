@@ -1,9 +1,12 @@
 import progressionData from "../../data/classes/class-progression.json" with { type: "json" };
 
 import type { CharacterClass } from "src/models/class/classes.model";
+import type { Provenance } from "src/models/provenance/provenance.model";
 
 export type CharacterLevel = 1 | 2 | 3;
 export type LandType = "arid" | "polar" | "temperate" | "tropical";
+export type SubclassId = "champion" | "battle-master";
+type SubclassOption = { id: SubclassId; label: string; provenance?: Provenance };
 
 type LevelProgression = {
   prepared?: number;
@@ -14,6 +17,7 @@ type LevelProgression = {
 
 type ClassProgression = {
   subclass: string;
+  subclasses?: SubclassOption[];
   levels: Record<CharacterLevel, LevelProgression>;
   alwaysPrepared?: Partial<Record<CharacterLevel, string[]>>;
   landSpells?: Record<LandType, string[]>;
@@ -35,6 +39,14 @@ export const progression = {
     return LANDS.some((land) => land === value);
   },
 
+  isSubclass(value: unknown): value is SubclassId {
+    return value === "champion" || value === "battle-master";
+  },
+
+  subclasses({ cls, level }: { cls: CharacterClass; level: CharacterLevel }) {
+    return level === 3 ? (DATA[cls].subclasses ?? []) : [];
+  },
+
   get({ cls, level = 1 }: { cls: CharacterClass; level?: CharacterLevel }) {
     return DATA[cls].levels[level];
   },
@@ -44,8 +56,16 @@ export const progression = {
     return current.pactLevel === 2 || (current.slots?.[1] ?? 0) > 0 ? 2 : 1;
   },
 
-  subclass({ cls, level }: { cls: CharacterClass; level: CharacterLevel }) {
-    return level === 3 ? DATA[cls].subclass : undefined;
+  subclass({
+    cls,
+    level,
+    subclass,
+  }: { cls: CharacterClass; level: CharacterLevel; subclass?: SubclassId }) {
+    if (level !== 3) return undefined;
+    return (
+      DATA[cls].subclasses?.find((option) => option.id === (subclass ?? "champion"))?.label ??
+      DATA[cls].subclass
+    );
   },
 
   alwaysPrepared({
