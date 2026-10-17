@@ -4,7 +4,6 @@ import { weaponMastery } from "src/models/gear/weapon-mastery.model";
 import type { Weapon, WeaponPropertyRef } from "src/models/gear/weapons.model";
 import { damageIcon, diceIcon, rangeIcon } from "src/models/spells/spell-icon.model";
 import { CardArt } from "./card-art.component";
-import { StatItem } from "./spell-card-stat-strip.component";
 import spellStyles from "./spell-card.module.css";
 import styles from "./weapon-card.module.css";
 
@@ -21,7 +20,7 @@ const titleCase = (id: string) =>
     .join("-");
 
 // `ammunition("80/320; arrow")` is { range: "80/320", ammo: "arrow" }:
-// the range goes on the stat strip, the ammo stays in the properties
+// the range goes on the info line, the ammo stays in the properties
 function ammunition(detail: string) {
   const [range, ammo] = detail.split("; ");
   return { range, ammo };
@@ -33,7 +32,7 @@ function propertyLabel(ref: WeaponPropertyRef) {
   return `${titleCase(ref.id)} (${detail})`;
 }
 
-// only ammunition weapons have a reach worth a footer slot; "Melee" is already on the info line
+// only ammunition weapons get a range on the info line; "Melee" is already in the weapon type
 function rangeLabel(weapon: Weapon) {
   for (const ref of weapon.properties) {
     if (typeof ref !== "string" && ref.id === "ammunition") {
@@ -79,7 +78,17 @@ export function WeaponCard({ weapon }: Props) {
       <div className={spellStyles.artWindow} />
 
       <div className={spellStyles.typeLine}>
-        {titleCase(weapon.proficiency)} {titleCase(weapon.range)} Weapon
+        <span>
+          {titleCase(weapon.proficiency)} {titleCase(weapon.range)} Weapon
+        </span>
+        {range && (
+          <span className={styles.range}>
+            <span className={spellStyles.tag}>
+              <Icon src={rangeIcon(range)} label="Range" className={spellStyles.tagIcon} />
+            </span>
+            {range}
+          </span>
+        )}
       </div>
 
       <div className={spellStyles.textBox}>
@@ -92,11 +101,6 @@ export function WeaponCard({ weapon }: Props) {
       </div>
 
       <div className={spellStyles.statStrip}>
-        {range && (
-          <StatItem icon={rangeIcon(range)} label="Range">
-            {range}
-          </StatItem>
-        )}
         {weapon.properties.length > 0 && (
           <ul className={styles.properties} aria-label="Properties">
             {weapon.properties.map((ref) => (

@@ -53,6 +53,18 @@
   background: var(--parchment);
 }
 
+/* ── Info line: range on the right ───────────────────────────────────────── */
+.range {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  font-family: var(--font-value);
+  font-style: normal;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ── Footer and text box ────────────────────────────────────────────────────────────── */
 /* each property spreads across the footer like the spell stats, not as one clump */
 .properties {
