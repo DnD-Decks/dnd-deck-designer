@@ -42,6 +42,13 @@ export function DamageItem({ dice, types, children }: DamageItemProps) {
   );
 }
 
+// the footer has one line, so saves use the abilities' standard short form: "Constitution / Wisdom" is "CON / WIS"
+const abbreviateSave = (save: string) =>
+  save
+    .split(" / ")
+    .map((ability) => ability.slice(0, 3).toUpperCase())
+    .join(" / ");
+
 type Props = Pick<Spell, "range" | "duration" | "save" | "damage">;
 
 export function SpellCardStatStrip({ range, duration, save, damage }: Props) {
@@ -54,8 +61,8 @@ export function SpellCardStatStrip({ range, duration, save, damage }: Props) {
         {duration}
       </StatItem>
       {save && (
-        <StatItem icon={SAVING_THROW_ICON} label="Saving throw">
-          {save}
+        <StatItem icon={SAVING_THROW_ICON} label={`${save} saving throw`}>
+          {abbreviateSave(save)}
         </StatItem>
       )}
       {damage && (

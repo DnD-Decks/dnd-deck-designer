@@ -1,38 +1,84 @@
-/* Weapon card — shell, panels and stat strip come from spell-card.module.css */
+/* Weapon card — shell and panels come from spell-card.module.css */
 
-.weaponIcon {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
+/* ── Header damage ───────────────────────────────────────────────────────── */
+/* The main fact of a weapon, read across the table: dice, die, type, type glyph. */
+.damage {
+  display: flex;
+  align-items: center;
+  gap: 3px;
   flex-shrink: 0;
   margin-left: 6px;
+  color: var(--text-hi);
 }
 
-.properties {
+/* "1d6" over "bludgeoning": stacked, so long weapon names keep their room */
+.damageText {
   display: flex;
-  flex-wrap: wrap;
-  gap: 2px 6px;
-  margin: 0;
-  padding: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-right: 1px;
+}
+
+.dice {
+  font-family: var(--font-value);
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 0.95;
+}
+
+.die,
+.damageGlyph {
+  height: 24px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+}
+
+.damageType {
+  font-family: var(--font-value);
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+/* the glyphs are dark ink: a parchment disc keeps them legible on the steel bar */
+.damageGlyph {
+  width: 24px;
+  padding: 2px;
+  border-radius: 50%;
+  background: var(--parchment);
+}
+
+/* ── Footer and text box ────────────────────────────────────────────────────────────── */
+/* each property spreads across the footer like the spell stats, not as one clump */
+.properties {
+  display: contents;
+}
+
+.properties li {
   list-style: none;
-  font-family: var(--font-sans);
-  font-size: 7px;
-  font-weight: 700;
-  color: var(--ink-900);
-  flex-shrink: 0;
 }
 
 .mastery {
   flex: 1;
-  padding-left: 5px;
-  border-left: 2px solid var(--school-color);
 }
 
 .masteryTitle {
   margin: 0 0 1px;
   font-family: var(--font-caps);
-  font-size: 7.5px;
+  font-size: 8.5px;
   font-weight: 700;
   letter-spacing: 0.03em;
   color: var(--school-color);
+}
+
+.masteryKeyword {
+  font-family: var(--font-value);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }

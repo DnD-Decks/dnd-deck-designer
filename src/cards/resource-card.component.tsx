@@ -41,16 +41,20 @@ export function ResourceCard({ resource }: Props) {
         </h3>
       </header>
 
-      <div className={styles.metaLine}>
-        {resource.action && <TimingItem timing={resource.action} />}
-        {resource.pool && <span className={styles.metaItem}>Pool: {resource.pool}</span>}
-        <span className={styles.metaItem}>Recharges: {recharge}</span>
-      </div>
-
       <div className={styles.artWindow} />
+
+      <div className={styles.typeLine}>
+        <span>Class Resource</span>
+        {resource.action && <TimingItem timing={resource.action} />}
+      </div>
 
       <div className={styles.textBox}>
         <p>{resource.description}</p>
+      </div>
+
+      <div className={styles.footer}>
+        {resource.pool && <span className={styles.metaItem}>Pool: {resource.pool}</span>}
+        <span className={styles.metaItem}>Recharges: {recharge}</span>
       </div>
     </article>
   );

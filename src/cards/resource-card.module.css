@@ -19,8 +19,9 @@
 
 /* ── Panels over the painting ────────────────────────────────────────────── */
 .titleBar,
-.metaLine,
-.textBox {
+.typeLine,
+.textBox,
+.footer {
   position: relative;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -34,12 +35,13 @@
   padding: 4px 6px 4px 8px;
   background: color-mix(in srgb, var(--resource-color) 72%, transparent);
   color: var(--ink-900);
-  min-height: 22px;
+  height: calc(2 * var(--card-unit));
   flex-shrink: 0;
 }
 
 .name {
-  font-size: 10px;
+  margin: 0;
+  font-size: 12px;
   font-weight: bold;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -58,10 +60,11 @@
   margin-right: 5px;
 }
 
-/* ── Meta line ───────────────────────────────────────────────────────────── */
-.metaLine {
+/* ── Type line ───────────────────────────────────────────────────────────── */
+.typeLine {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 6px;
   padding: 2px 8px;
   background: color-mix(
@@ -70,10 +73,10 @@
     transparent
   );
   color: var(--text-hi);
-  font-size: 7.5px;
+  font-size: 8.5px;
   font-style: italic;
   letter-spacing: 0.05em;
-  min-height: 16px;
+  height: var(--card-unit);
   flex-shrink: 0;
 }
 
@@ -83,43 +86,56 @@
   gap: 3px;
 }
 
-/* dot separator between meta items */
-.metaItem + .metaItem::before {
-  content: "·";
-  margin-right: 3px;
-  opacity: 0.7;
-}
-
 .metaIcon {
-  width: 10px;
-  height: 10px;
+  width: 11px;
+  height: 11px;
   object-fit: contain;
   flex-shrink: 0;
 }
 
 /* ── Art window ──────────────────────────────────────────────────────────── */
+/* Takes the rest of the grid (9 units); an overlong text box eats into it. */
 .artWindow {
-  /* takes whatever the text panel leaves, never less than the old fixed window */
   flex: 1;
-  min-height: 26mm;
+  min-height: calc(4 * var(--card-unit));
 }
 
 /* ── Text box ────────────────────────────────────────────────────────────── */
 .textBox {
-  flex: 0 1 auto;
-  /* the painting wins the space, but the panel never drops below a third of the card */
-  min-height: 30mm;
+  flex: 0 0 auto;
+  /* grows past 6 units only when the rules text needs it, taking it from the picture */
+  min-height: calc(6 * var(--card-unit));
   display: flex;
   flex-direction: column;
   margin: 4px;
   padding: 5px 8px 4px;
   overflow-y: auto;
-  --wash: color-mix(in srgb, var(--parchment) 47%, transparent);
+  --wash: color-mix(in srgb, var(--parchment) 43%, transparent);
   background: var(--wash);
   /* no hard edge: the same wash blurs outward so the panel dissolves into the painting */
   box-shadow: 0 0 5px 3px var(--wash);
   border-radius: 6px;
   gap: 4px;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 8px;
+  height: var(--card-unit);
+  padding: 0 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  background: color-mix(in srgb, var(--parchment) 78%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--resource-color) 45%, transparent);
+  font-family: var(--font-value);
+  font-size: 8.5px;
+  font-weight: 600;
+  color: var(--ink-700);
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
 }
 
 @media print {
@@ -137,7 +153,7 @@
 
 .textBox p {
   margin: 0;
-  font-size: 7.5px;
+  font-size: 8.5px;
   line-height: 1.35;
   color: var(--ink-900);
   flex: 1;
