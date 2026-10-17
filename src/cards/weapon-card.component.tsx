@@ -44,8 +44,14 @@ function rangeLabel(weapon: Weapon) {
 
 // the damage takes the header's right end, where a player's eye lands first:
 // "1d6" over "bludgeoning", then the d6 and the bludgeoning glyph
+// one die icon per die rolled: `2d6` shows two d6, `1` (Blowgun) shows none
+function diceCount(dice: string) {
+  return Number(/^(\d+)d\d+$/.exec(dice)?.[1] ?? 0);
+}
+
 function HeaderDamage({ dice, type }: Weapon["damage"]) {
   const die = diceIcon(dice);
+  const dieKeys = Array.from({ length: diceCount(dice) }, (_, i) => `die-${i + 1}`);
   const glyph = damageIcon(type);
   return (
     <section className={styles.damage} aria-label="Damage">
@@ -53,7 +59,13 @@ function HeaderDamage({ dice, type }: Weapon["damage"]) {
         <span className={styles.dice}>{dice}</span>
         <span className={styles.damageType}>{type}</span>
       </span>
-      {die && <Icon src={die} label={dice} className={styles.die} decorative />}
+      {die && (
+        <span className={styles.dicePool}>
+          {dieKeys.map((key) => (
+            <Icon key={key} src={die} label={dice} className={styles.die} decorative />
+          ))}
+        </span>
+      )}
       {glyph && <Icon src={glyph} label={type} className={styles.damageGlyph} decorative />}
     </section>
   );

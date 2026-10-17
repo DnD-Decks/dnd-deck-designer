@@ -27,6 +27,15 @@
   line-height: 0.95;
 }
 
+.dicePool {
+  display: flex;
+}
+
+/* dice tossed together overlap a little, which also keeps the header narrow */
+.die + .die {
+  margin-left: -8px;
+}
+
 .die,
 .damageGlyph {
   height: 24px;
