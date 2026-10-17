@@ -62,13 +62,14 @@ export function SpellCard({ spell }: Props) {
 
       <div className={styles.textBox}>
         <p>{spell.description}</p>
-        <SpellCardStatStrip
-          range={spell.range}
-          duration={spell.duration}
-          save={spell.save}
-          damage={spell.damage}
-        />
       </div>
+
+      <SpellCardStatStrip
+        range={spell.range}
+        duration={spell.duration}
+        save={spell.save}
+        damage={spell.damage}
+      />
     </article>
   );
 }

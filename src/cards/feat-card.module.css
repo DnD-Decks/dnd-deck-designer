@@ -40,7 +40,7 @@
 }
 
 .name {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -60,7 +60,7 @@
 }
 
 .source {
-  font-size: 7px;
+  font-size: 8px;
   font-style: italic;
   letter-spacing: 0.04em;
   color: color-mix(in srgb, var(--text-hi) 65%, transparent);
@@ -73,7 +73,7 @@
   padding: 2px 8px;
   background: color-mix(in srgb, color-mix(in srgb, var(--feat-color) 80%, #000) 85%, transparent);
   color: var(--text-hi);
-  font-size: 7.5px;
+  font-size: 8.5px;
   font-style: italic;
   letter-spacing: 0.05em;
   min-height: 14px;
@@ -93,7 +93,7 @@
   margin: 4px;
   padding: 5px 8px 4px;
   overflow-y: auto;
-  --wash: color-mix(in srgb, var(--parchment) 47%, transparent);
+  --wash: color-mix(in srgb, var(--parchment) 43%, transparent);
   background: var(--wash);
   /* no hard edge: the same wash blurs outward so the panel dissolves into the painting */
   box-shadow: 0 0 5px 3px var(--wash);
@@ -116,7 +116,7 @@
 
 .textBox p {
   margin: 0;
-  font-size: 7.5px;
+  font-size: 8.5px;
   line-height: 1.35;
   color: var(--ink-900);
 }

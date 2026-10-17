@@ -57,10 +57,21 @@
   src: url("/fonts/alegreya-sans-italic-latin-400.woff2") format("woff2");
 }
 
+@font-face {
+  font-family: "Barlow Semi Condensed";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/barlow-semi-condensed-latin-600.woff2") format("woff2");
+}
+
 /* Design tokens */
 :root {
   --card-width: 63.5mm;
   --card-height: 88.9mm;
+  /* portrait cards share one vertical grid of 20 units:
+     header 2 · picture 9 · info 1 · text box 6 · footer 1 · borders and gaps 1 */
+  --card-unit: calc(var(--card-height) / 20);
 
   /* Workbench (screen chrome) — slate cutting-mat with parchment/gold card accents */
   --ink-900: #16181d;
@@ -78,6 +89,8 @@
   --font-serif: "Alegreya", Georgia, serif;
   --font-caps: "Alegreya SC", Georgia, serif;
   --font-sans: "Alegreya Sans", system-ui, sans-serif;
+  /* game values and keywords on cards (1d10, slashing, Graze, 120 ft); Alegreya carries the words */
+  --font-value: "Barlow Semi Condensed", "Arial Narrow", sans-serif;
 
   /* Spell school color identities */
   --school-abjuration: #4a6fa5; /* warding blue */

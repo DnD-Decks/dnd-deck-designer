@@ -49,7 +49,8 @@
 /* Every text block is a frosted panel: tinted, translucent, blurred — never opaque. */
 .titleBar,
 .typeLine,
-.textBox {
+.textBox,
+.statStrip {
   position: relative; /* paints above the absolutely-positioned art layer */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -63,12 +64,13 @@
   padding: 4px 6px 4px 8px;
   background: color-mix(in srgb, var(--school-color) 72%, transparent);
   color: var(--text-hi);
-  min-height: 22px;
+  height: calc(2 * var(--card-unit));
   flex-shrink: 0;
 }
 
 .name {
-  font-size: 10px;
+  margin: 0;
+  font-size: 12px;
   font-weight: bold;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -115,7 +117,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--font-sans);
-  font-size: 8px;
+  font-size: 9px;
   font-weight: bold;
   color: var(--ink-900);
   line-height: 1;
@@ -123,11 +125,11 @@
 }
 
 /* ── Art window ──────────────────────────────────────────────────────────── */
-/* Transparent spacer: the painting (or the fallback wash) shows through here unblurred. */
+/* Transparent spacer: the painting (or the fallback wash) shows through here unblurred.
+   It takes the rest of the grid (9 units); an overlong text box eats into it. */
 .artWindow {
-  /* takes whatever the text panel leaves, never less than the old fixed window */
   flex: 1;
-  min-height: 26mm;
+  min-height: calc(4 * var(--card-unit));
 }
 
 /* ── Type line ───────────────────────────────────────────────────────────── */
@@ -138,10 +140,10 @@
   padding: 2px 8px;
   background: color-mix(in srgb, color-mix(in srgb, var(--school-color) 80%, #000) 85%, transparent);
   color: var(--text-hi);
-  font-size: 7.5px;
+  font-size: 8.5px;
   font-style: italic;
   letter-spacing: 0.05em;
-  min-height: 16px;
+  height: var(--card-unit);
   flex-shrink: 0;
 }
 
@@ -167,15 +169,15 @@
 
 /* ── Text box ────────────────────────────────────────────────────────────── */
 .textBox {
-  flex: 0 1 auto;
-  /* the painting wins the space, but the panel never drops below a third of the card */
-  min-height: 30mm;
+  flex: 0 0 auto;
+  /* grows past 6 units only when the rules text needs it, taking it from the picture */
+  min-height: calc(6 * var(--card-unit));
   display: flex;
   flex-direction: column;
   margin: 4px;
   padding: 5px 8px 4px;
   overflow-y: auto;
-  --wash: color-mix(in srgb, var(--parchment) 47%, transparent);
+  --wash: color-mix(in srgb, var(--parchment) 43%, transparent);
   background: var(--wash);
   /* no hard edge: the same wash blurs outward so the panel dissolves into the painting */
   box-shadow: 0 0 5px 3px var(--wash);
@@ -202,25 +204,31 @@
 
 .textBox p {
   margin: 0;
-  font-size: 7.5px;
+  font-size: 8.5px;
   line-height: 1.35;
   color: var(--ink-900);
   flex: 1;
 }
 
-/* ── Stat strip ──────────────────────────────────────────────────────────── */
+/* ── Footer: stat strip ──────────────────────────────────────────────────── */
+/* The card's last unit: the quick facts (range, duration, properties) a player checks mid-turn. */
 .statStrip {
   display: flex;
+  /* one unit tall; the few cards with long stats wrap to a second line rather than clip */
   flex-wrap: wrap;
-  gap: 2px 8px;
-  margin: 0;
-  padding-left: 0;
-  padding-top: 4px;
-  border-top: 1px solid color-mix(in srgb, var(--school-color) 20%, #8a7a5a);
-  font-family: var(--font-sans);
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 0 6px;
+  min-height: var(--card-unit);
+  padding: 2px 6px;
+  white-space: nowrap;
+  background: color-mix(in srgb, var(--parchment) 78%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--school-color) 45%, transparent);
+  font-family: var(--font-value);
   font-variant-numeric: tabular-nums;
-  font-size: 6.5px;
-  color: var(--text-low);
+  font-size: 8.5px;
+  font-weight: 600;
+  color: var(--ink-700);
   letter-spacing: 0.03em;
   flex-shrink: 0;
 }
@@ -228,12 +236,12 @@
 .statItem {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
 }
 
 .statIcon {
-  width: 10px;
-  height: 10px;
+  width: 11px;
+  height: 11px;
   object-fit: contain;
   flex-shrink: 0;
   vertical-align: middle;
