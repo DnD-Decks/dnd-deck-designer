@@ -8,3 +8,5 @@ dist
 .claude
 e2e/test-results
 e2e/playwright-report
+# art drafts (~560 MB of jpgs): nothing in the app or e2e reads them
+asset-pipeline
