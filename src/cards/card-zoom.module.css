@@ -1,0 +1,21 @@
+/* an invisible button over the whole card: tapping anywhere on it zooms */
+.zoom {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: none;
+  border-radius: 8px;
+  cursor: zoom-in;
+}
+
+.zoom:focus-visible {
+  outline: 2px solid var(--gold-soft);
+  outline-offset: 3px;
+}
+
+@media print {
+  .zoom {
+    display: none;
+  }
+}
