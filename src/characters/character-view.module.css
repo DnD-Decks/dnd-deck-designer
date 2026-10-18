@@ -209,21 +209,6 @@
 }
 
 /* transparent control over the card face: tap the card to lift it */
-.zoom {
-  position: absolute;
-  inset: 0;
-  border: 0;
-  padding: 0;
-  background: none;
-  border-radius: 8px;
-  cursor: zoom-in;
-}
-
-.zoom:focus-visible {
-  outline: 2px solid var(--gold-soft);
-  outline-offset: 3px;
-}
-
 /* a phone: smaller cards, and the next one peeks in from the edge; the actions drop to their own row under the name */
 @container play (max-width: 30rem) {
   .slot {
@@ -281,8 +266,7 @@
   .header,
   .sectionLabel,
   .spentLabel,
-  .spentPill,
-  .zoom {
+  .spentPill {
     display: none;
   }
 

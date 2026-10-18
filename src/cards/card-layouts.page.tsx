@@ -93,11 +93,7 @@ export function CardLayoutsPage() {
               <figure key={cardKey(card)} className={styles.specimen}>
                 <div className={styles.slot}>
                   <DeckCardFace card={card} />
-                  <CardZoom
-                    name={cardName(card)}
-                    className={styles.zoom}
-                    zoom={zoom(cardKey(card))}
-                  />
+                  <CardZoom name={cardName(card)} zoom={zoom(cardKey(card))} />
                 </div>
                 <figcaption className={styles.why}>{why}</figcaption>
               </figure>

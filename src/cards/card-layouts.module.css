@@ -35,16 +35,6 @@
   position: relative;
 }
 
-.zoom {
-  position: absolute;
-  inset: 0;
-  border: 0;
-  padding: 0;
-  background: none;
-  border-radius: 8px;
-  cursor: zoom-in;
-}
-
 .why {
   font-family: var(--font-sans);
   font-size: 0.8rem;

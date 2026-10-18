@@ -29,7 +29,7 @@ function CardSlot({ card, zoom }: { card: DeckCard; zoom: Zoom }) {
   return (
     <div className={styles.slot}>
       <DeckCardFace card={card} />
-      <CardZoom name={cardName(card)} className={styles.zoom} zoom={zoom} />
+      <CardZoom name={cardName(card)} zoom={zoom} />
     </div>
   );
 }

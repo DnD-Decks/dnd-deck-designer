@@ -16,11 +16,7 @@ function CardSlot({ card, spent, zoom }: SlotProps) {
         <DeckCardFace card={card} />
       </div>
       {spent && <SpentMark className={styles.spentLabel} />}
-      <CardZoom
-        name={withSpent({ name: cardName(card), spent })}
-        className={styles.zoom}
-        zoom={zoom}
-      />
+      <CardZoom name={withSpent({ name: cardName(card), spent })} zoom={zoom} />
     </div>
   );
 }
