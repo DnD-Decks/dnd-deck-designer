@@ -23,8 +23,8 @@
 .textBox,
 .footer {
   position: relative;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(var(--panel-blur));
+  -webkit-backdrop-filter: blur(var(--panel-blur));
 }
 
 /* ── Title bar ───────────────────────────────────────────────────────────── */
@@ -33,9 +33,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 4px 6px 4px 8px;
-  background: color-mix(in srgb, var(--resource-color) 72%, transparent);
+  background: color-mix(in srgb, var(--resource-color) var(--panel-bar), transparent);
   color: var(--ink-900);
-  height: calc(2 * var(--card-unit));
+  height: var(--card-header-height);
   flex-shrink: 0;
 }
 
@@ -69,7 +69,7 @@
   padding: 2px 8px;
   background: color-mix(
     in srgb,
-    color-mix(in srgb, var(--resource-color) 80%, #000) 85%,
+    color-mix(in srgb, var(--resource-color) 80%, #000) var(--panel-bar),
     transparent
   );
   color: var(--text-hi);
@@ -94,7 +94,7 @@
 }
 
 /* ── Art window ──────────────────────────────────────────────────────────── */
-/* Takes the rest of the grid (9 units); an overlong text box eats into it. */
+/* Takes the rest of the grid (8.5 units); an overlong text box eats into it. */
 .artWindow {
   flex: 1;
   min-height: calc(4 * var(--card-unit));
@@ -110,7 +110,7 @@
   margin: 4px;
   padding: 5px 8px 4px;
   overflow-y: auto;
-  --wash: color-mix(in srgb, var(--parchment) 43%, transparent);
+  --wash: color-mix(in srgb, var(--parchment) var(--panel-wash), transparent);
   background: var(--wash);
   /* no hard edge: the same wash blurs outward so the panel dissolves into the painting */
   box-shadow: 0 0 5px 3px var(--wash);
@@ -128,7 +128,7 @@
   padding: 0 8px;
   overflow: hidden;
   white-space: nowrap;
-  background: color-mix(in srgb, var(--parchment) 78%, transparent);
+  background: color-mix(in srgb, var(--parchment) var(--panel-bar), transparent);
   border-top: 1px solid color-mix(in srgb, var(--resource-color) 45%, transparent);
   font-family: var(--font-value);
   font-size: 8.5px;

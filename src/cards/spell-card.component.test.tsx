@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { spells } from "src/models/spells/spells.model";
 import { describe, expect, test } from "vitest";
 import { SpellCard } from "./spell-card.component.tsx";
@@ -38,12 +38,12 @@ describe("<SpellCard />", () => {
     expect(screen.queryByRole("img", { name: "Ritual" })).toBeNull();
   });
 
-  test("shows the visible facts: description and stat strip", () => {
+  test("shows the visible facts: description, range, duration and header damage", () => {
     render(<SpellCard spell={fireBolt} />);
 
     screen.getByText(fireBolt.description.slice(0, 20), { exact: false });
     screen.getByText("120 ft");
     screen.getByText("Instantaneous");
-    screen.getByText("1d10");
+    within(screen.getByRole("region", { name: "Damage" })).getByText("1d10");
   });
 });

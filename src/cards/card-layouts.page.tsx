@@ -54,6 +54,17 @@ const sections = () => [
     ],
   },
   {
+    title: "Spells without art",
+    specimens: [
+      spell({ id: "find-familiar", why: "ritual, 1 hour" }),
+      spell({ id: "mending", why: "cantrip, 1 minute, no ritual" }),
+      spell({ id: "shillelagh", why: "bonus action, formula, 2 types" }),
+      spell({ id: "ice-knife", why: "mixed dice" }),
+      spell({ id: "delayed-blast-fireball", why: "level 7, long name, 12d6" }),
+      spell({ id: "tashas-hideous-laughter", why: "longest-ish name" }),
+    ],
+  },
+  {
     title: "Weapons",
     specimens: [
       weapon({ id: "greatsword", why: "melee" }),

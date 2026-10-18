@@ -2,15 +2,16 @@ import { type CSSProperties, useId } from "react";
 import { Icon } from "src/lib/icon.component";
 import { weaponMastery } from "src/models/gear/weapon-mastery.model";
 import type { Weapon, WeaponPropertyRef } from "src/models/gear/weapons.model";
-import { damageIcon, diceIcon, rangeIcon } from "src/models/spells/spell-icon.model";
+import { rangeIcon } from "src/models/spells/spell-icon.model";
 import { CardArt } from "./card-art.component";
+import { CardHeaderDamage } from "./card-header-damage.component";
 import spellStyles from "./spell-card.module.css";
 import styles from "./weapon-card.module.css";
 
 type Props = { weapon: Weapon };
 
 const WEAPON_STYLE = {
-  "--school-color": "var(--mastery-steel)",
+  "--card-color": "var(--mastery-steel)",
 } as CSSProperties;
 
 const titleCase = (id: string) =>
@@ -42,35 +43,6 @@ function rangeLabel(weapon: Weapon) {
   return undefined;
 }
 
-// the damage takes the header's right end, where a player's eye lands first:
-// "1d6" over "bludgeoning", then the d6 and the bludgeoning glyph
-// one die icon per die rolled: `2d6` shows two d6, `1` (Blowgun) shows none
-function diceCount(dice: string) {
-  return Number(/^(\d+)d\d+$/.exec(dice)?.[1] ?? 0);
-}
-
-function HeaderDamage({ dice, type }: Weapon["damage"]) {
-  const die = diceIcon(dice);
-  const dieKeys = Array.from({ length: diceCount(dice) }, (_, i) => `die-${i + 1}`);
-  const glyph = damageIcon(type);
-  return (
-    <section className={styles.damage} aria-label="Damage">
-      <span className={styles.damageText}>
-        <span className={styles.dice}>{dice}</span>
-        <span className={styles.damageType}>{type}</span>
-      </span>
-      {die && (
-        <span className={styles.dicePool}>
-          {dieKeys.map((key) => (
-            <Icon key={key} src={die} label={dice} className={styles.die} decorative />
-          ))}
-        </span>
-      )}
-      {glyph && <Icon src={glyph} label={type} className={styles.damageGlyph} decorative />}
-    </section>
-  );
-}
-
 export function WeaponCard({ weapon }: Props) {
   const headingId = useId();
   const masteryId = useId();
@@ -84,7 +56,7 @@ export function WeaponCard({ weapon }: Props) {
         <h3 id={headingId} className={spellStyles.name}>
           {weapon.name}
         </h3>
-        <HeaderDamage {...weapon.damage} />
+        <CardHeaderDamage dice={weapon.damage.dice} types={[weapon.damage.type]} />
       </div>
 
       <div className={spellStyles.artWindow} />
@@ -94,7 +66,7 @@ export function WeaponCard({ weapon }: Props) {
           {titleCase(weapon.proficiency)} {titleCase(weapon.range)} Weapon
         </span>
         {range && (
-          <span className={styles.range}>
+          <span className={spellStyles.range}>
             <span className={spellStyles.tag}>
               <Icon src={rangeIcon(range)} label="Range" className={spellStyles.tagIcon} />
             </span>

@@ -70,8 +70,13 @@
   --card-width: 63.5mm;
   --card-height: 88.9mm;
   /* portrait cards share one vertical grid of 20 units:
-     header 2 · picture 9 · info 1 · text box 6 · footer 1 · borders and gaps 1 */
+     header 2.5 · picture 8.5 · info 1 · text box 6 · footer 1 · borders and gaps 1 */
   --card-unit: calc(var(--card-height) / 20);
+  --card-header-height: calc(2.5 * var(--card-unit));
+  /* frosted panels over the painting, shared by every card: how much each one lets through */
+  --panel-blur: 14px;
+  --panel-bar: 65%; /* header, info line, footer */
+  --panel-wash: 35%; /* text box, cost rail */
 
   /* Workbench (screen chrome) — slate cutting-mat with parchment/gold card accents */
   --ink-900: #16181d;
@@ -92,17 +97,8 @@
   /* game values and keywords on cards (1d10, slashing, Graze, 120 ft); Alegreya carries the words */
   --font-value: "Barlow Semi Condensed", "Arial Narrow", sans-serif;
 
-  /* Spell school color identities */
-  --school-abjuration: #4a6fa5; /* warding blue */
-  --school-conjuration: #c9a227; /* summoning gold */
-  --school-divination: #5fb5c9; /* foresight cyan */
-  --school-enchantment: #b5538f; /* charm magenta */
-  --school-evocation: #b23a2e; /* energy red */
-  --school-illusion: #6b4f9e; /* trickery violet */
-  --school-necromancy: #3d6b4a; /* deathly green */
-  --school-transmutation: #b07a3a; /* change amber */
-
-  /* Non-spell card identities */
+  /* Card-type identities: color tells a spell from a feat, a weapon or a resource */
+  --spell-periwinkle: #5464b0; /* spells: a soft violet-blue, apart from the feat navy */
   --mastery-steel: #4f5a68; /* weapon steel */
 }
 

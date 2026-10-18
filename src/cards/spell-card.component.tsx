@@ -2,12 +2,14 @@ import { useId } from "react";
 import { Icon } from "src/lib/icon.component";
 import {
   CONCENTRATION_ICON,
-  MANA_ICON,
+  DURATION_ICON,
   RITUAL_ICON,
   actionIcon,
+  rangeIcon,
 } from "src/models/spells/spell-icon.model";
 import type { Spell } from "src/models/spells/spells.model";
 import { CardArt } from "./card-art.component";
+import { CardHeaderDamage } from "./card-header-damage.component";
 import { SpellCardStatStrip } from "./spell-card-stat-strip.component";
 import styles from "./spell-card.module.css";
 
@@ -23,30 +25,64 @@ function SpellTag({ icon, label }: { icon: string; label: string }) {
 
 type Props = { spell: Spell };
 
+// "1 minute" is "1m", "12 hours" is "12h"
+const shortTime = (castingTime: string) => castingTime.replace(/^(\d+) (\w).*$/, "$1$2");
+
+// the action-economy glyph, or for a cast that takes minutes the ritual glyph (rituals)
+// or an hourglass with the time; then one mana gem with the spell level (cantrips cost no mana)
+function CastingSlot({ spell }: Props) {
+  const action = actionIcon(spell.castingTime);
+  if (action) return <Icon src={action.src} label={action.label} className={styles.costAction} />;
+  if (spell.ritual) {
+    return (
+      <Icon
+        src={RITUAL_ICON}
+        label={`Ritual, ${spell.castingTime}`}
+        className={styles.costAction}
+      />
+    );
+  }
+  return (
+    <span className={styles.castTime} role="img" aria-label={spell.castingTime}>
+      <Icon
+        src={DURATION_ICON}
+        label={spell.castingTime}
+        className={styles.costAction}
+        decorative
+      />
+      <span aria-hidden="true">{shortTime(spell.castingTime)}</span>
+    </span>
+  );
+}
+
+// the cost reads top-down in the top-left corner, like most card games
+function CostRail({ spell }: Props) {
+  return (
+    <section className={styles.costRail} aria-label="Cost">
+      <CastingSlot spell={spell} />
+      {spell.level > 0 && (
+        <span className={styles.manaGem} role="img" aria-label={`Level ${spell.level} mana`}>
+          <span aria-hidden="true">{spell.level}</span>
+        </span>
+      )}
+    </section>
+  );
+}
+
 export function SpellCard({ spell }: Props) {
   const headingId = useId();
-  const action = actionIcon(spell.castingTime);
 
   return (
-    <article
-      className={styles.card}
-      aria-labelledby={headingId}
-      data-school={spell.school.toLowerCase()}
-    >
+    <article className={styles.card} aria-labelledby={headingId}>
       <CardArt assetId={spell.id} />
 
       <div className={styles.titleBar}>
         <h3 id={headingId} className={styles.name}>
           {spell.name}
         </h3>
-        <span className={styles.costCluster}>
-          {action && <Icon src={action.src} label={action.label} className={styles.actionIcon} />}
-          <span className={styles.manaBadge}>
-            <Icon src={MANA_ICON} label="Mana" className={styles.manaIcon} />
-            {spell.level > 0 && <span className={styles.manaLevel}>{spell.level}</span>}
-          </span>
-        </span>
+        {spell.damage && <CardHeaderDamage dice={spell.damage.dice} types={spell.damage.type} />}
       </div>
+      <CostRail spell={spell} />
 
       <div className={styles.artWindow} />
 
@@ -54,9 +90,15 @@ export function SpellCard({ spell }: Props) {
         <span>
           {spell.school} · {levelLabel(spell.level)}
         </span>
-        <span className={styles.tags}>
-          {spell.ritual && <SpellTag icon={RITUAL_ICON} label="Ritual" />}
-          {spell.concentration && <SpellTag icon={CONCENTRATION_ICON} label="Concentration" />}
+        <span className={styles.infoRight}>
+          <span className={styles.range}>
+            <SpellTag icon={rangeIcon(spell.range)} label="Range" />
+            {spell.range}
+          </span>
+          <span className={styles.tags}>
+            {spell.ritual && <SpellTag icon={RITUAL_ICON} label="Ritual" />}
+            {spell.concentration && <SpellTag icon={CONCENTRATION_ICON} label="Concentration" />}
+          </span>
         </span>
       </div>
 
@@ -64,12 +106,7 @@ export function SpellCard({ spell }: Props) {
         <p>{spell.description}</p>
       </div>
 
-      <SpellCardStatStrip
-        range={spell.range}
-        duration={spell.duration}
-        save={spell.save}
-        damage={spell.damage}
-      />
+      <SpellCardStatStrip duration={spell.duration} save={spell.save} />
     </article>
   );
 }

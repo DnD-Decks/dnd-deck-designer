@@ -5,6 +5,8 @@ export const DURATION_ICON = "/icons/duration.png";
 export const SAVING_THROW_ICON = "/icons/saving-throw.png";
 export const CONCENTRATION_ICON = "/icons/concentration.png";
 export const RITUAL_ICON = "/icons/ritual.png";
+// any of several elements: Chromatic Orb, Sorcerous Burst…
+export const WILDCARD_DAMAGE_ICON = "/icons/damage-wildcard.svg";
 
 export const actionIcon = (castingTime: string) => {
   const t = castingTime.toLowerCase();

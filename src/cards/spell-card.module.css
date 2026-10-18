@@ -1,6 +1,8 @@
 /* Physical card — poker size, tokens from global.css */
 .card {
-  --school-color: var(--card-blue); /* default; per-school overrides below */
+  /* the card-type color; weapons override it */
+  --card-color: var(--spell-periwinkle);
+  --cost-rail-width: 34px;
 
   width: var(--card-width);
   height: var(--card-height);
@@ -11,38 +13,12 @@
   border-radius: 8px;
   overflow: hidden;
   /* fallback wash — visible wherever no painting covers the card */
-  background: color-mix(in srgb, var(--school-color) 12%, var(--parchment));
+  background: color-mix(in srgb, var(--card-color) 12%, var(--parchment));
   font-family: var(--font-serif);
   box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.35);
   /* defer layout/paint for off-screen cards in long decks */
   content-visibility: auto;
   contain-intrinsic-size: 0 var(--card-height);
-}
-
-/* Per-school color identity */
-.card[data-school="abjuration"] {
-  --school-color: var(--school-abjuration);
-}
-.card[data-school="conjuration"] {
-  --school-color: var(--school-conjuration);
-}
-.card[data-school="divination"] {
-  --school-color: var(--school-divination);
-}
-.card[data-school="enchantment"] {
-  --school-color: var(--school-enchantment);
-}
-.card[data-school="evocation"] {
-  --school-color: var(--school-evocation);
-}
-.card[data-school="illusion"] {
-  --school-color: var(--school-illusion);
-}
-.card[data-school="necromancy"] {
-  --school-color: var(--school-necromancy);
-}
-.card[data-school="transmutation"] {
-  --school-color: var(--school-transmutation);
 }
 
 /* ── Panels over the painting ────────────────────────────────────────────── */
@@ -52,8 +28,8 @@
 .textBox,
 .statStrip {
   position: relative; /* paints above the absolutely-positioned art layer */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(var(--panel-blur));
+  -webkit-backdrop-filter: blur(var(--panel-blur));
 }
 
 /* ── Title bar ───────────────────────────────────────────────────────────── */
@@ -62,9 +38,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 4px 6px 4px 8px;
-  background: color-mix(in srgb, var(--school-color) 72%, transparent);
+  background: color-mix(in srgb, var(--card-color) var(--panel-bar), transparent);
   color: var(--text-hi);
-  height: calc(2 * var(--card-unit));
+  height: var(--card-header-height);
   flex-shrink: 0;
 }
 
@@ -72,61 +48,105 @@
   margin: 0;
   font-size: 12px;
   font-weight: bold;
+  line-height: 1.15;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   flex: 1;
   min-width: 0;
+  /* the header is shared with the cost rail and the damage: long names take a second line */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.costCluster {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-  margin-left: 6px;
-}
-
-.actionIcon {
-  width: 14px;
-  height: 14px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-/* Mana badge — icon with level number overlaid */
-.manaBadge {
-  position: relative;
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-}
-
-.manaIcon {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
-}
-
-.manaLevel {
+/* ── Cost rail ───────────────────────────────────────────────────────────── */
+/* A pennant hanging from the top-left corner, over the header and into the picture:
+   the cost reads top-down before the name. */
+.costRail {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: var(--cost-rail-width);
+  /* a fixed column of two symbol slots: casting, then mana; a cantrip leaves the second empty */
+  display: grid;
+  grid-template-rows: repeat(2, 24px);
+  place-items: center;
+  row-gap: 6px;
+  padding: 8px 0 10px;
+  /* the text box's wash, so the rail reads apart from the header it hangs over */
+  --wash: color-mix(in srgb, var(--parchment) var(--panel-wash), transparent);
+  background: var(--wash);
+  /* a thin, crisp edge: an object hanging over the header, not a panel dissolving into it */
+  border-right: 2px solid color-mix(in srgb, var(--card-color) 55%, var(--parchment));
+  border-bottom: 2px solid color-mix(in srgb, var(--card-color) 55%, var(--parchment));
+  box-shadow: 0 0 1px var(--wash);
+  backdrop-filter: blur(var(--panel-blur));
+  -webkit-backdrop-filter: blur(var(--panel-blur));
+  border-bottom-right-radius: 14px;
+}
+
+.card:has(.costRail) .titleBar {
+  padding-left: calc(var(--cost-rail-width) + 6px);
+}
+
+.costAction {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+}
+
+/* the spell slot, BG3-style: a cyan gem with the slot level set in the value font */
+.castTime .costAction {
+  width: 15px;
+  height: 15px;
+}
+
+.castTime {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-family: var(--font-sans);
+  gap: 1px;
+  font-family: var(--font-value);
   font-size: 9px;
-  font-weight: bold;
-  color: var(--ink-900);
+  font-weight: 600;
   line-height: 1;
-  pointer-events: none;
+  color: var(--ink-900);
+}
+
+.manaGem {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  font-family: var(--font-value);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink-900);
+}
+
+.manaGem::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  transform: rotate(45deg);
+  border-radius: 3px;
+  background: radial-gradient(circle at 35% 30%, #e6fbff, #6fe0f5 45%, #1fa6c8);
+  box-shadow: 0 0 6px rgba(111, 224, 245, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+.manaGem > span {
+  position: relative;
 }
 
 /* ── Art window ──────────────────────────────────────────────────────────── */
 /* Transparent spacer: the painting (or the fallback wash) shows through here unblurred.
-   It takes the rest of the grid (9 units); an overlong text box eats into it. */
+   It takes the rest of the grid (8.5 units); an overlong text box eats into it. */
 .artWindow {
   flex: 1;
   min-height: calc(4 * var(--card-unit));
@@ -138,12 +158,35 @@
   align-items: center;
   justify-content: space-between;
   padding: 2px 8px;
-  background: color-mix(in srgb, color-mix(in srgb, var(--school-color) 80%, #000) 85%, transparent);
+  background: color-mix(
+    in srgb,
+    color-mix(in srgb, var(--card-color) 80%, #000) var(--panel-bar),
+    transparent
+  );
   color: var(--text-hi);
   font-size: 8.5px;
   font-style: italic;
   letter-spacing: 0.05em;
   height: var(--card-unit);
+  flex-shrink: 0;
+}
+
+/* range on the right of the info line (spells, ranged weapons) */
+.range {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  font-family: var(--font-value);
+  font-style: normal;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.infoRight {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   flex-shrink: 0;
 }
 
@@ -177,7 +220,7 @@
   margin: 4px;
   padding: 5px 8px 4px;
   overflow-y: auto;
-  --wash: color-mix(in srgb, var(--parchment) 43%, transparent);
+  --wash: color-mix(in srgb, var(--parchment) var(--panel-wash), transparent);
   background: var(--wash);
   /* no hard edge: the same wash blurs outward so the panel dissolves into the painting */
   box-shadow: 0 0 5px 3px var(--wash);
@@ -222,8 +265,8 @@
   min-height: var(--card-unit);
   padding: 2px 6px;
   white-space: nowrap;
-  background: color-mix(in srgb, var(--parchment) 78%, transparent);
-  border-top: 1px solid color-mix(in srgb, var(--school-color) 45%, transparent);
+  background: color-mix(in srgb, var(--parchment) var(--panel-bar), transparent);
+  border-top: 1px solid color-mix(in srgb, var(--card-color) 45%, transparent);
   font-family: var(--font-value);
   font-variant-numeric: tabular-nums;
   font-size: 8.5px;
