@@ -8,13 +8,12 @@ test.describe("catalog: offline", () => {
     await catalogPage.goto("wizard");
     await expect(catalogPage.cards.first()).toBeVisible();
 
-    // icon paths are plain strings in spell-icon.model — a renamed file only breaks in a browser;
-    // CSS-drawn images (the mana gem) have no file, so only <img> elements count
+    // icon paths are plain strings in spell-icon.model — a renamed file only breaks in a browser
     await expect
       .poll(() =>
-        catalogPage.images.evaluateAll((images) =>
+        catalogPage.icons.evaluateAll((images) =>
           images
-            .filter((image) => image instanceof HTMLImageElement && !image.naturalWidth)
+            .filter((image) => !(image as HTMLImageElement).naturalWidth)
             .map((image) => image.getAttribute("src"))
         )
       )

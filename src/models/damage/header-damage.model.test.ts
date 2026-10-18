@@ -43,6 +43,26 @@ describe("headerDamage()", () => {
       },
     },
     {
+      label: "a multiplied formula",
+      damage: { dice: "3x(1d4+1)", types: ["force"] },
+      expected: { shown: "3x(1d4+1)", pile: ["4"], word: "force", glyphs: ["force"] },
+    },
+    {
+      label: "two magical types to choose from",
+      damage: { dice: "3d8", types: ["radiant", "necrotic"] },
+      expected: { shown: "3d8", pile: ["8", "8", "8"], word: "varies", glyphs: ["wildcard"] },
+    },
+    {
+      label: "two physical types to choose from",
+      damage: { dice: "7d8", types: ["piercing", "slashing"] },
+      expected: {
+        shown: "7d8",
+        pile: ["8", "8", "8", "8", "8", "8"],
+        word: "varies",
+        glyphs: ["wildcard"],
+      },
+    },
+    {
       label: "spell level and a note",
       damage: { dice: "1d6 + 3 + spell level (Rend); 2d6 (breath)", types: ["piercing"] },
       expected: { shown: "1d6+3+SL", pile: ["6"], word: "piercing", glyphs: ["piercing"] },

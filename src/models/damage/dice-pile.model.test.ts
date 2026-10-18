@@ -9,6 +9,7 @@ describe("dicePile()", () => {
     { dice: "12d6", expected: ["6", "6", "6", "6", "6", "6"] },
     { dice: "1d10+2d6", expected: ["10", "6", "6"] },
     { dice: "2d10+4d6", expected: ["10", "10", "6", "6", "6", "6"] },
+    { dice: "6d10+2d6", expected: ["10", "10", "10", "10", "10", "6"] },
     { dice: "1", expected: [] },
     { dice: "1d8+MOD", expected: ["8"] },
   ].forEach(({ dice, expected }) => {

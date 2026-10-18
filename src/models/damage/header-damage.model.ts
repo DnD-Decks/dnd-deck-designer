@@ -13,7 +13,7 @@ type Damage = { dice: string; types: readonly string[] };
 
 export const headerDice = (dice: string) =>
   dice
-    .split(/[/;(]/)[0]
+    .split(/\s*[/;]|\s\(/)[0]
     .replace(/spellcasting ability modifier/gi, "MOD")
     .replace(/spell level/gi, "SL")
     .replace(/\s*\+\s*/g, "+")

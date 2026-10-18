@@ -11,7 +11,9 @@ export function createCatalogPage(page: Page) {
     title: page.getByRole("heading", { level: 1 }),
     sectionTitles: main.getByRole("heading", { level: 2 }),
     cards: main.getByRole("article"),
-    images: main.getByRole("img"),
+    // every icon <img>, decorative ones included: the offline spec checks that each file loads;
+    // card art is lazy and optional, so it stays out
+    icons: main.locator('img[src^="/icons/"]'),
     nextCard: page.getByRole("button", { name: "Next card" }),
 
     classButton(label: string) {
