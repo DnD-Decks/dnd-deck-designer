@@ -1,3 +1,4 @@
+import { CardLayoutsPage } from "src/cards/card-layouts.page";
 import { CharacterBuilderPage } from "src/characters/character-builder.page";
 import { CharacterImportPage } from "src/characters/character-import.page";
 import { CharacterPage } from "src/characters/character.page";
@@ -30,6 +31,8 @@ export function AppRoutes() {
         <Redirect to={`/catalog/${DEFAULT_CATALOG_CLASS}`} replace />
       </Route>
       <Route path="/catalog/:cls">{({ cls }) => <CatalogPage cls={cls} />}</Route>
+      {/* dev-only card design workbench; the guard drops it from the production build */}
+      {import.meta.env.DEV && <Route path="/_layouts" component={CardLayoutsPage} />}
       <Route path="/:cls">{({ cls }) => <LegacyClassLink cls={cls} />}</Route>
       <Route>
         <Redirect to="/" replace />
