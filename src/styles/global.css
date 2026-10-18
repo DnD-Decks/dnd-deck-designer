@@ -77,6 +77,7 @@
   --panel-blur: 14px;
   --panel-bar: 65%; /* header, info line, footer */
   --panel-wash: 35%; /* text box, cost rail */
+  --panel-wash-bg: color-mix(in srgb, var(--parchment) var(--panel-wash), transparent);
 
   /* Workbench (screen chrome) — slate cutting-mat with parchment/gold card accents */
   --ink-900: #16181d;
@@ -98,7 +99,7 @@
   --font-value: "Barlow Semi Condensed", "Arial Narrow", sans-serif;
 
   /* Card-type identities: color tells a spell from a feat, a weapon or a resource */
-  --spell-periwinkle: #5464b0; /* spells: a soft violet-blue, apart from the feat navy */
+  --spell-periwinkle: #5464b0;
   --mastery-steel: #4f5a68; /* weapon steel */
 }
 

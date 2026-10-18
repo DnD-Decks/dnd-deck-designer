@@ -110,10 +110,9 @@
   margin: 4px;
   padding: 5px 8px 4px;
   overflow-y: auto;
-  --wash: color-mix(in srgb, var(--parchment) var(--panel-wash), transparent);
-  background: var(--wash);
+  background: var(--panel-wash-bg);
   /* no hard edge: the same wash blurs outward so the panel dissolves into the painting */
-  box-shadow: 0 0 5px 3px var(--wash);
+  box-shadow: 0 0 5px 3px var(--panel-wash-bg);
   border-radius: 6px;
   gap: 4px;
 }

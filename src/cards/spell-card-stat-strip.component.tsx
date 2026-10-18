@@ -6,7 +6,7 @@ import styles from "./spell-card.module.css";
 
 type StatItemProps = { icon: string; label: string; children: ReactNode };
 
-export function StatItem({ icon, label, children }: StatItemProps) {
+function StatItem({ icon, label, children }: StatItemProps) {
   return (
     <span className={styles.statItem}>
       <Icon src={icon} label={label} className={styles.statIcon} />

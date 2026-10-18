@@ -5,11 +5,11 @@ import {
   DURATION_ICON,
   RITUAL_ICON,
   actionIcon,
-  rangeIcon,
 } from "src/models/spells/spell-icon.model";
 import type { Spell } from "src/models/spells/spells.model";
 import { CardArt } from "./card-art.component";
 import { CardHeaderDamage } from "./card-header-damage.component";
+import { CardRange } from "./card-range.component";
 import { SpellCardStatStrip } from "./spell-card-stat-strip.component";
 import styles from "./spell-card.module.css";
 
@@ -28,8 +28,6 @@ type Props = { spell: Spell };
 // "1 minute" is "1m", "12 hours" is "12h"
 const shortTime = (castingTime: string) => castingTime.replace(/^(\d+) (\w).*$/, "$1$2");
 
-// the action-economy glyph, or for a cast that takes minutes the ritual glyph (rituals)
-// or an hourglass with the time; then one mana gem with the spell level (cantrips cost no mana)
 function CastingSlot({ spell }: Props) {
   const action = actionIcon(spell.castingTime);
   if (action) return <Icon src={action.src} label={action.label} className={styles.costAction} />;
@@ -55,7 +53,6 @@ function CastingSlot({ spell }: Props) {
   );
 }
 
-// the cost reads top-down in the top-left corner, like most card games
 function CostRail({ spell }: Props) {
   return (
     <section className={styles.costRail} aria-label="Cost">
@@ -91,10 +88,7 @@ export function SpellCard({ spell }: Props) {
           {spell.school} · {levelLabel(spell.level)}
         </span>
         <span className={styles.infoRight}>
-          <span className={styles.range}>
-            <SpellTag icon={rangeIcon(spell.range)} label="Range" />
-            {spell.range}
-          </span>
+          <CardRange range={spell.range} />
           <span className={styles.tags}>
             {spell.ritual && <SpellTag icon={RITUAL_ICON} label="Ritual" />}
             {spell.concentration && <SpellTag icon={CONCENTRATION_ICON} label="Concentration" />}

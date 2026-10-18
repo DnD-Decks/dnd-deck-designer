@@ -35,7 +35,8 @@ Reuse these before writing a new one:
 
 - **Models**: `lookup({ items, key, label })` (`src/lib/lookup.ts`) gives the `get` / `find` / `list` trio; `get` throws `Unknown <label>: <key>`.
 - **Zoomable card slot**: `useCardSpotlight({ entries })` returns `zoom(key)`; pass it to `<CardZoom>` (`src/cards/card-zoom.component.tsx`).
-- **Stat strip**: `StatItem` / `DamageItem` from `src/cards/spell-card-stat-strip.component.tsx` (spell and weapon cards).
+- **Card header and info line**: `CardHeaderDamage({ dice, types })` (damage in the header, its logic in `src/models/damage/header-damage.model.ts`) and `CardRange({ range })`, shared by spell and weapon cards.
+- **Card tokens** (`global.css`): `--card-unit` (the 20-unit portrait grid), `--card-header-height`, `--panel-*` (blur and panel transparency for every card kind).
 - **Dead-end page**: `DeadEnd` / `CharacterNotFound` (`src/characters/character-dead-end.component.tsx`).
 - **Primitives**: `useRefMap` (one element per key), `isRecord` / `isStringList` (`src/lib/json.guard.ts`), `localStore` (`src/services/local.storage.ts`: `localStorage` that never throws).
 - **Projections**: `catalogEntry(card)` (`deck.model.ts`), `characters.classLine(character)` ("Level 1 Wizard").

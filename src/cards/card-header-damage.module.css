@@ -1,5 +1,4 @@
 /* ── Header damage ───────────────────────────────────────────────────────── */
-/* The main fact of a weapon or a damage spell, read across the table: dice, die, type, type glyph. */
 .damage {
   display: flex;
   align-items: center;
@@ -35,7 +34,6 @@
   display: flex;
 }
 
-/* dice stacked together overlap: the count reads at a glance and the header stays narrow */
 .diceRow + .diceRow {
   margin-top: -3px;
 }
@@ -70,7 +68,6 @@
   background: var(--parchment);
 }
 
-/* paired types stack in the same order as the dice: piercing over cold for 1d10 + 2d6 */
 .glyphStack {
   display: flex;
   flex-direction: column;

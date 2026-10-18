@@ -1,10 +1,9 @@
 import { type CSSProperties, useId } from "react";
-import { Icon } from "src/lib/icon.component";
 import { weaponMastery } from "src/models/gear/weapon-mastery.model";
 import type { Weapon, WeaponPropertyRef } from "src/models/gear/weapons.model";
-import { rangeIcon } from "src/models/spells/spell-icon.model";
 import { CardArt } from "./card-art.component";
 import { CardHeaderDamage } from "./card-header-damage.component";
+import { CardRange } from "./card-range.component";
 import spellStyles from "./spell-card.module.css";
 import styles from "./weapon-card.module.css";
 
@@ -65,14 +64,7 @@ export function WeaponCard({ weapon }: Props) {
         <span>
           {titleCase(weapon.proficiency)} {titleCase(weapon.range)} Weapon
         </span>
-        {range && (
-          <span className={spellStyles.range}>
-            <span className={spellStyles.tag}>
-              <Icon src={rangeIcon(range)} label="Range" className={spellStyles.tagIcon} />
-            </span>
-            {range}
-          </span>
-        )}
+        {range && <CardRange range={range} />}
       </div>
 
       <div className={spellStyles.textBox}>
