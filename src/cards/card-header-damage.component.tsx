@@ -40,18 +40,34 @@ function diceTower<T>(pile: T[]) {
   return [pile.slice(0, top), pile.slice(top)];
 }
 
-// one glyph per damage type when each dice term has its own (Ice Knife: 1d10 piercing + 2d6 cold);
-// a choice of types (Chromatic Orb: 3d8 acid, cold, fire…) shares one wildcard glyph
-function typeGlyphs({ dice, types }: Props) {
-  const terms = [...dice.matchAll(DICE_TERM)].length;
-  if (types.length > 1 && types.length !== terms) {
-    return { word: "varies", glyphs: [{ key: "wildcard", src: WILDCARD_DAMAGE_ICON }] };
-  }
-  const glyphs = types.flatMap((type) => {
+function glyphsOf(types: readonly string[]) {
+  return types.flatMap((type) => {
     const src = damageIcon(type);
     return src ? [{ key: type, src }] : [];
   });
-  return { word: types.join(" + "), glyphs };
+}
+
+const PHYSICAL_DAMAGE = ["bludgeoning", "piercing", "slashing"];
+
+// one formula that hits for its weapon's physical damage or a magical type reads "force|normal"
+// with the magical glyph (Shillelagh: 1d8+MOD, bludgeoning or force); alternative formulas
+// split by "/" are not one (Arcane Hand: 5d8 force / 4d6+MOD bludgeoning)
+function physicalOrMagical({ dice, types }: Props) {
+  if (types.length !== 2 || /[/;]/.test(dice)) return undefined;
+  const magical = types.filter((type) => !PHYSICAL_DAMAGE.includes(type));
+  return magical.length === 1 ? magical[0] : undefined;
+}
+
+// one glyph per damage type when each dice term has its own (Ice Knife: 1d10 piercing + 2d6 cold);
+// any other choice of types (Chromatic Orb: 3d8 acid, cold, fire…) shares one wildcard glyph
+function typeGlyphs({ dice, types }: Props) {
+  const magical = physicalOrMagical({ dice, types });
+  if (magical) return { word: `${magical}|normal`, glyphs: glyphsOf([magical]) };
+  const terms = [...headerDice(dice).matchAll(DICE_TERM)].length;
+  if (types.length > 1 && types.length !== terms) {
+    return { word: "varies", glyphs: [{ key: "wildcard", src: WILDCARD_DAMAGE_ICON }] };
+  }
+  return { word: types.join(" + "), glyphs: glyphsOf(types) };
 }
 
 type Props = { dice: string; types: readonly string[] };
@@ -59,7 +75,7 @@ type Props = { dice: string; types: readonly string[] };
 export function CardHeaderDamage({ dice, types }: Props) {
   const shown = headerDice(dice);
   const pile = dicePile(shown);
-  const { word, glyphs } = typeGlyphs({ dice: shown, types });
+  const { word, glyphs } = typeGlyphs({ dice, types });
   return (
     <section className={styles.damage} aria-label="Damage">
       <span className={styles.damageText}>
