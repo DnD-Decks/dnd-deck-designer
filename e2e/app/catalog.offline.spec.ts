@@ -11,7 +11,7 @@ test.describe("catalog: offline", () => {
     // icon paths are plain strings in spell-icon.model — a renamed file only breaks in a browser
     await expect
       .poll(() =>
-        catalogPage.images.evaluateAll((images) =>
+        catalogPage.icons.evaluateAll((images) =>
           images
             .filter((image) => !(image as HTMLImageElement).naturalWidth)
             .map((image) => image.getAttribute("src"))

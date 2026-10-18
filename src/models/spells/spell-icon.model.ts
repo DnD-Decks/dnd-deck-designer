@@ -1,6 +1,6 @@
 import { ACTION_TIMING_ICONS } from "src/models/actions/combat.model";
+import { WILDCARD_DAMAGE } from "src/models/damage/header-damage.model";
 
-export const MANA_ICON = "/icons/mana.png";
 export const DURATION_ICON = "/icons/duration.png";
 export const SAVING_THROW_ICON = "/icons/saving-throw.png";
 export const CONCENTRATION_ICON = "/icons/concentration.png";
@@ -35,6 +35,7 @@ const DAMAGE_ICONS: Partial<Record<string, string>> = {
   radiant: "/icons/damage-radiant.png",
   slashing: "/icons/damage-slashing.png",
   thunder: "/icons/damage-thunder.png",
+  [WILDCARD_DAMAGE]: "/icons/damage-wildcard.svg",
 };
 
 export const damageIcon = (type: string) => DAMAGE_ICONS[type.toLowerCase()];
@@ -47,11 +48,4 @@ const DICE_ICONS: Partial<Record<string, string>> = {
   "12": "/icons/d12.png",
 };
 
-const DICE_PATTERN = /d(\d+)/gi;
-
-export const diceIcon = (dice: string) => {
-  const sizes = [...dice.matchAll(DICE_PATTERN)].map((m) => m[1]);
-  const distinct = [...new Set(sizes)];
-  // return an icon only when the notation maps to exactly one die size
-  return distinct.length === 1 ? DICE_ICONS[distinct[0]] : undefined;
-};
+export const dieIcon = (size: string) => DICE_ICONS[size];
