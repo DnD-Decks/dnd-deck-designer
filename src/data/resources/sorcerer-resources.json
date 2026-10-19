@@ -17,5 +17,14 @@
     "recharge": "long-rest",
     "action": "bonus-action",
     "description": "As a Bonus Action, you unleash your simmering magic for 1 minute: the spell save DC of your Sorcerer spells increases by 1, and you have Advantage on the attack rolls of Sorcerer spells you cast. You regain all expended uses after a Long Rest."
+  },
+  {
+    "id": "sorcerer-sorcery-points",
+    "name": "Sorcery Points",
+    "level": 2,
+    "uses": 2,
+    "recharge": "long-rest",
+    "description": "Spend Sorcery Points on Metamagic or Font of Magic. Your maximum equals your Sorcerer level. Regain all points after a Long Rest.",
+    "stack": true
   }
 ]

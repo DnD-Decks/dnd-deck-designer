@@ -9,12 +9,18 @@ import { choices } from "src/characters/choices.model";
 import type { DeckEntry } from "src/decks/deck.model";
 import { cardName } from "src/decks/deck.model";
 import type { CharacterClass } from "src/models/class/classes.model";
+import type { CharacterLevel, LandType, SubclassId } from "src/models/class/progression.model";
+import { progression } from "src/models/class/progression.model";
+import { feats } from "src/models/feats/feats.model";
 import { weapons } from "src/models/gear/weapons.model";
 import { spells } from "src/models/spells/spells.model";
 import styles from "./character-builder.module.css";
 
 type BuilderChoicesProps = {
   cls: CharacterClass;
+  level: CharacterLevel;
+  land: LandType;
+  subclass: SubclassId;
   kind: ChoiceSource["kind"];
   picks: Picks;
   onChange: (selection: ChoiceSelection) => void;
@@ -28,6 +34,7 @@ type ChoiceGroupProps = {
 };
 
 function choiceEntry({ id, kind }: { id: string; kind: ChoiceRule["from"]["kind"] }): DeckEntry {
+  if (kind === "feat") return { key: id, card: { kind: "feat", feat: feats.get({ id }) } };
   const weapon = kind === "weapon" ? weapons.find({ id }) : undefined;
   if (weapon) return { key: id, card: { kind: "weapon", weapon } };
   return { key: id, card: { kind: "spell", spell: spells.get({ id }) } };
@@ -92,15 +99,45 @@ function ChoiceGroup({ cls, rule, picked, onChange }: ChoiceGroupProps) {
   );
 }
 
-export function BuilderChoices({ cls, kind, picks, onChange }: BuilderChoicesProps) {
-  const rules = choices.for({ cls, level: 1 }).filter((rule) => rule.from.kind === kind);
-  return rules.map((rule) => (
-    <ChoiceGroup
-      key={`${cls}-${rule.id}`}
-      cls={cls}
-      rule={rule}
-      picked={picks[rule.id] ?? []}
-      onChange={(ids) => onChange({ ruleId: rule.id, ids })}
-    />
-  ));
+export function BuilderChoices({
+  cls,
+  level,
+  land,
+  subclass,
+  kind,
+  picks,
+  onChange,
+}: BuilderChoicesProps) {
+  const rules = choices
+    .for({ cls, level, land, subclass })
+    .filter((rule) => rule.from.kind === kind);
+  const automatic = kind === "spell" ? progression.alwaysPrepared({ cls, level, land }) : [];
+  return (
+    <>
+      {rules.map((rule) => (
+        <ChoiceGroup
+          key={`${cls}-${level}-${land}-${subclass}-${rule.id}`}
+          cls={cls}
+          rule={rule}
+          picked={picks[rule.id] ?? []}
+          onChange={(ids) => onChange({ ruleId: rule.id, ids })}
+        />
+      ))}
+      {automatic.length > 0 && (
+        <section aria-label="Always prepared" className={styles.group}>
+          <h4 className={styles.legend}>Always prepared</h4>
+          <p className={styles.hint}>
+            Included by your class features. These do not use your spell choices.
+          </p>
+          <div className={styles.hand}>
+            {automatic.map((id) => (
+              <div key={id} className={styles.slot}>
+                <DeckCardFace card={choiceEntry({ id, kind: "spell" }).card} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+    </>
+  );
 }

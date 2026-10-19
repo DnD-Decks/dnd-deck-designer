@@ -5,12 +5,13 @@ Copyright (c) 2026 DnD-Decks
 
 ## License summary
 
-This repository contains material under two separate licenses:
+Licensing depends on the material:
 
 | Scope | License |
 |-------|---------|
-| Project source code (`src/`, configs, tooling) | MIT — see LICENSE |
+| Project source code, configs, and tooling (excluding game content) | MIT — see LICENSE |
 | SRD 5.2.1 content (`reference/srd/`, SRD-derived data in `src/data/`) | CC-BY-4.0 — see below |
+| Battle Master PHB 2024 mechanical summaries (explicit `provenance.source: "phb-2024"`) | Non-SRD; no open-content license asserted |
 | Alegreya typefaces (`public/fonts/`) | OFL-1.1 — see `public/fonts/OFL.txt` |
 | Barlow Semi Condensed typeface (`public/fonts/`) | OFL-1.1 — see `public/fonts/OFL-barlow.txt` |
 
@@ -26,5 +27,8 @@ License (CC-BY-4.0): https://creativecommons.org/licenses/by/4.0/
 
 The SRD covers a subset of D&D 5e (2024) content. D&D, Dungeons & Dragons, and all
 associated trademarks and trade dress are property of Wizards of the Coast LLC.
-Non-SRD content (including content from the full Player's Handbook) is not included
-in this repository.
+Battle Master content from the Player's Handbook (2024), pages 93–95, is represented
+by original summaries of its mechanics, consulted through 5e.tools. These entries
+are explicitly marked as non-open content in `src/data/provenance/sources.json`.
+The SRD license does not cover them; the reference site is not a license grant.
+Cards without an explicit provenance declaration default to SRD 5.2.1.

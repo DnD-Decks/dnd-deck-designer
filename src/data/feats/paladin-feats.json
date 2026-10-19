@@ -3,12 +3,51 @@
     "id": "paladin-spellcasting",
     "name": "Spellcasting",
     "source": "Paladin Level 1",
-    "description": "You can cast Paladin spells using Charisma as your spellcasting ability. You have 2 prepared level-1 spells; whenever you finish a Long Rest, you can replace one prepared spell with another Paladin spell. You can use a Holy Symbol as your spellcasting focus."
+    "description": "Cast Paladin spells using Charisma. Prepare 2 spells of level 1. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace one prepared spell. You can use a Holy Symbol as your spellcasting focus.",
+    "descriptions": {
+      "2": "Cast Paladin spells using Charisma. Prepare 3 spells of level 1. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace one prepared spell. You can use a Holy Symbol as your spellcasting focus.",
+      "3": "Cast Paladin spells using Charisma. Prepare 4 spells of level 1. Spells that a feature always prepares do not count against these choices. After a Long Rest, you can replace one prepared spell. You can use a Holy Symbol as your spellcasting focus."
+    }
   },
   {
     "id": "paladin-weapon-mastery",
     "name": "Weapon Mastery",
     "source": "Paladin Level 1",
     "description": "Your training allows you to use the mastery property of 2 weapons you are proficient with. You can change which weapons you use this with after a Long Rest. See Weapon Mastery cards for property details."
+  },
+  {
+    "id": "paladin-fighting-style",
+    "name": "Fighting Style",
+    "source": "Paladin Level 2",
+    "level": 2,
+    "description": "Choose a Fighting Style feat. Alternatively, Blessed Warrior teaches two Cleric cantrips using Charisma; replace one when you gain a Paladin level."
+  },
+  {
+    "id": "paladin-paladins-smite",
+    "name": "Paladin's Smite",
+    "source": "Paladin Level 2",
+    "level": 2,
+    "description": "You always have Divine Smite prepared. Once per Long Rest, you can cast it without expending a spell slot."
+  },
+  {
+    "id": "paladin-divine-sense",
+    "name": "Divine Sense",
+    "source": "Oath of Devotion Level 3",
+    "level": 3,
+    "description": "As a Bonus Action, expend one Channel Divinity. For 10 minutes, know the location and type of Celestials, Fiends, and Undead within 60 feet, and sense consecrated or desecrated places and objects there. Ends early if you become Incapacitated."
+  },
+  {
+    "id": "paladin-oath-of-devotion-spells",
+    "name": "Oath of Devotion Spells",
+    "source": "Oath of Devotion Level 3",
+    "level": 3,
+    "description": "You always have Protection from Evil and Good and Shield of Faith prepared. They do not count against your prepared spell choices."
+  },
+  {
+    "id": "paladin-sacred-weapon",
+    "name": "Sacred Weapon",
+    "source": "Oath of Devotion Level 3",
+    "level": 3,
+    "description": "When you take the Attack action, expend one Channel Divinity to empower a held Melee weapon for 10 minutes. Add your Charisma modifier (minimum +1) to its attack rolls; each hit can deal its normal type or Radiant damage. It sheds Bright Light for 20 feet and Dim Light 20 feet farther. Ends if used again or you stop carrying it."
   }
 ]

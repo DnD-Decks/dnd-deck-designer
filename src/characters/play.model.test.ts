@@ -158,3 +158,42 @@ describe("play.restores()", () => {
     });
   });
 });
+
+// The newer play controls must recover the right number of level-unlocked resources.
+describe("level-three resource recovery", () => {
+  test.each([
+    { cls: "cleric", id: "channel-divinity" },
+    { cls: "druid", id: "wild-shape" },
+    { cls: "paladin", id: "channel-divinity" },
+  ] as const)("$cls restores one $id use on a Short Rest", ({ cls, id }) => {
+    const entries = decks.forCharacter({ ...hero(cls), level: 3 }).entries;
+    const spent = entries
+      .filter(({ card }) => card.kind === "resource" && card.resource.id === `${cls}-${id}`)
+      .map(({ key }) => key);
+    expect(spent).toHaveLength(2);
+    expect(play.recovered({ entries, spent, rest: "short-rest" }).map(({ key }) => key)).toEqual(
+      spent.slice(0, 1)
+    );
+    expect(play.recovered({ entries, spent, rest: "long-rest" }).map(({ key }) => key)).toEqual(
+      spent
+    );
+  });
+
+  test.each([
+    { cls: "monk", id: "focus-points", short: 3 },
+    { cls: "sorcerer", id: "sorcery-points", short: 0 },
+  ] as const)(
+    "$cls can spend each point and recover it at the right rest",
+    ({ cls, id, short }) => {
+      const entries = decks.forCharacter({ ...hero(cls), level: 3 }).entries;
+      const points = entries.filter(
+        ({ card }) => card.kind === "resource" && card.resource.id === `${cls}-${id}`
+      );
+      const spent = points.map(({ key }) => key);
+      expect(points).toHaveLength(3);
+      expect(points.every(play.spendable)).toBe(true);
+      expect(play.recovered({ entries, spent, rest: "short-rest" })).toHaveLength(short);
+      expect(play.recovered({ entries, spent, rest: "long-rest" })).toHaveLength(3);
+    }
+  );
+});

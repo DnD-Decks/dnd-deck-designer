@@ -1,3 +1,4 @@
+import assert from "node:assert/strict";
 import { describe, expect, test } from "vitest";
 
 import { brunhilde } from "./character.fixture.ts";
@@ -40,7 +41,19 @@ describe("characters.parse()", () => {
     { label: "a missing id", value: { ...brunhilde(), id: undefined } },
     { label: "a blank name", value: { ...brunhilde(), name: "  " } },
     { label: "an unknown class", value: { ...brunhilde(), cls: "illithid" } },
-    { label: "a level beyond 1", value: { ...brunhilde(), level: 2 } },
+    { label: "a level beyond 3", value: { ...brunhilde(), level: 4 } },
+    { label: "a zero level", value: { ...brunhilde(), level: 0 } },
+    { label: "a fractional level", value: { ...brunhilde(), level: 1.5 } },
+    { label: "a string level", value: { ...brunhilde(), level: "3" } },
+    { label: "land on another class", value: { ...brunhilde(), level: 3, land: "arid" } },
+    {
+      label: "land before druid level 3",
+      value: { ...brunhilde(), cls: "druid", level: 2, land: "arid" },
+    },
+    {
+      label: "an unknown land",
+      value: { ...brunhilde(), cls: "druid", level: 3, land: "ocean", picks: {} },
+    },
     { label: "a rule the class does not have", value: { ...brunhilde(), picks: { cantrips: [] } } },
     { label: "picks that are not strings", value: { ...brunhilde(), picks: { weapons: [1] } } },
     { label: "a custom that is not a list", value: { ...brunhilde(), picks: { custom: "x" } } },
@@ -66,6 +79,26 @@ describe("characters.toShareCode()", () => {
 });
 
 describe("characters.fromShareCode()", () => {
+  test.each([2, 3] as const)("round-trips a level-%i build", (level) => {
+    const hero = { ...brunhilde(), level };
+    assert.deepEqual(characters.parse(hero), hero);
+    const imported = characters.fromShareCode(characters.toShareCode(hero));
+    assert.deepEqual({ ...imported, id: hero.id }, hero);
+  });
+
+  test("preserves a level-three druid's daily land choice", () => {
+    const hero = {
+      ...brunhilde(),
+      cls: "druid" as const,
+      level: 3 as const,
+      land: "arid" as const,
+      picks: {},
+    };
+    assert.deepEqual(characters.parse(hero), hero);
+    const imported = characters.fromShareCode(characters.toShareCode(hero));
+    assert.equal(imported?.land, "arid");
+    assert.equal(imported?.level, 3);
+  });
   test("round-trips the build under a new id", () => {
     const imported = characters.fromShareCode(characters.toShareCode(brunhilde()));
 

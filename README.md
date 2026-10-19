@@ -1,6 +1,6 @@
 # dnd-deck-designer
 
-A mobile-first web tool for building and playing with **D&D 2024 (5.5e, SRD 5.2.1)** character card decks. Build a character on desktop, then open it on your phone at the table to track resources and spells during play.
+A mobile-first web tool for building and playing with **D&D 2024 (5.5e, SRD 5.2.1)** character card decks. Build a character on desktop, then open it on your phone at the table to track resources and spells during play. Create, edit, and share characters of levels **1–3**, with level-appropriate spells, resources, and the SRD subclass for each class. Level-3 Fighters can also choose **Battle Master (PHB 2024)**, select three maneuvers, and spend four d8 Superiority Dice.
 
 ## Docs
 
@@ -24,10 +24,12 @@ React 19 · Vite · TypeScript · CSS Modules · pnpm · biome · vitest / node:
 
 Spell and class data sourced from the [D&D 5e 2024 SRD](https://github.com/manuartero/dnd-beginner-character-sheet-5e-2024/tree/main/src/data).
 
+Battle Master is a non-SRD extension, checked against [5e.tools](https://5e.tools/classes.html#fighter_xphb,state:sub-battlemaster-xphb=b1). Its cards carry explicit PHB 2024 provenance and page references. The source registry records publication, consulted reference, and open-content status; omitted provenance defaults to SRD. See [ARCHITECTURE.md](ARCHITECTURE.md#content-provenance).
+
 > SRD 5.2 used under [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/) (Wizards of the Coast LLC). D&D trademarks and non-SRD content remain property of WotC.
 
 The verbatim SRD 5.2.1 PDF (CC-BY-4.0 official release) is committed under [`reference/srd/`](reference/srd/) as an audit ground-truth. **SRD content only** — not the full PHB.
 
 ## License
 
-`MIT AND CC-BY-4.0` — code under MIT (see [LICENSE](LICENSE)); vendored SRD 5.2.1 game content under CC-BY-4.0 (see [NOTICE](NOTICE)).
+`MIT AND CC-BY-4.0` — code under MIT (see [LICENSE](LICENSE)); vendored SRD 5.2.1 game content under CC-BY-4.0. Explicitly marked non-SRD summaries have no open-content license asserted (see [NOTICE](NOTICE)).

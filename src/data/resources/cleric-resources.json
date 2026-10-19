@@ -7,5 +7,15 @@
     "stack": true,
     "recharge": "long-rest",
     "description": "You have 2 level-1 spell slots. Expend one to cast a prepared level-1 spell. You regain all expended mana after a Long Rest."
+  },
+  {
+    "id": "cleric-channel-divinity",
+    "name": "Channel Divinity",
+    "level": 2,
+    "uses": 2,
+    "recharge": "long-rest",
+    "description": "Expend a use for Divine Spark, Turn Undead, or another Cleric Channel Divinity effect. Regain one use after a Short Rest and all uses after a Long Rest.",
+    "stack": true,
+    "shortRest": 1
   }
 ]
