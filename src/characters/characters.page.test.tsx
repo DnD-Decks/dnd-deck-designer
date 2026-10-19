@@ -69,7 +69,10 @@ describe("<CharactersPage />", () => {
     { label: "nothing spent", spent: [], text: null },
     {
       label: "both Second Wind uses spent",
-      spent: ["resource-fighter-second-wind-0", "resource-fighter-second-wind-1"],
+      spent: [
+        "resource-fighter-second-wind-short-rest-0",
+        "resource-fighter-second-wind-long-rest-0",
+      ],
       text: "Spent until a rest: Second Wind",
     },
   ].forEach(({ label, spent, text }) => {

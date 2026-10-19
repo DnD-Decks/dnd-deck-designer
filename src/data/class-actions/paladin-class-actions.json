@@ -1,0 +1,14 @@
+[
+  {
+    "id": "paladin-lay-on-hands",
+    "name": "Lay on Hands",
+    "cost": {
+      "resource": "paladin-lay-on-hands",
+      "amount": "X"
+    },
+    "timing": "bonus-action",
+    "range": "Touch",
+    "duration": "Instantaneous",
+    "description": "Touch a creature (which could be yourself) and spend any number of Lay on Hands cards: it regains 1 Hit Point per card. You can instead spend 5 cards to remove the Poisoned condition from it; those cards don't also restore Hit Points."
+  }
+]

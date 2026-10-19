@@ -2,10 +2,9 @@
   {
     "id": "warlock-mana",
     "name": "Mana",
-    "icon": "/icons/mana.png",
-    "uses": 1,
-    "stack": true,
-    "recharge": "short-rest",
-    "description": "You have 1 level-1 Pact Magic spell slot. Expend it to cast a prepared level-1 spell. You regain all expended mana after a Short or Long Rest."
+    "mana": 1,
+    "copies": {
+      "short-rest": 1
+    }
   }
 ]

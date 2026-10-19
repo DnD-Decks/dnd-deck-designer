@@ -1,0 +1,13 @@
+[
+  {
+    "id": "fighter-second-wind",
+    "name": "Second Wind",
+    "cost": {
+      "resource": "fighter-second-wind"
+    },
+    "timing": "bonus-action",
+    "range": "Self",
+    "duration": "Instantaneous",
+    "description": "Draw on your stamina to heal yourself: regain Hit Points equal to 1d10 + your Fighter level."
+  }
+]

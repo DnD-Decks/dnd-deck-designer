@@ -20,7 +20,8 @@ Every card the deck renders (`src/decks/deck.model.ts` → `DeckCard`) gets exac
 | --- | --- | --- | --- | --- |
 | spell | `src/data/spells/spells-level-*.json` (objects keyed by spell id) | `<spell-id>` — `fire-bolt` | portrait 5:7 | yes: one painting per spell, Wizard and Sorcerer both use `fire-bolt.png`. Never create per-class variants. |
 | feat (class feature) | `src/data/feats/<class>-feats.json` (arrays) | the JSON `id`, already class-prefixed — `rogue-sneak-attack` | **landscape 7:5** | no: `wizard-spellcasting` and `cleric-spellcasting` are different paintings (their text and imagery differ). |
-| resource | `src/data/resources/<class>-resources.json` (arrays) | the JSON `id`, already class-prefixed — `barbarian-rage` | portrait 5:7 | no, same reason. |
+| resource (token) | `src/data/resources/<class>-resources.json` (arrays) | `resource-<id>` — `resource-barbarian-rage`; every mana resource shares `resource-mana` | portrait 5:7 | no, except mana. |
+| class action | `src/data/class-actions/<class>-class-actions.json` (arrays) | the JSON `id`, the same as the resource it spends — `barbarian-rage` | portrait 5:7 | no. |
 | weapon | `src/data/gear/weapons.json` (array) | `weapon-<id>` — `weapon-longsword` | portrait 5:7 | yes: the same weapon card sits in every deck proficient with it. The `weapon-` prefix keeps it clear of spell ids. |
 
 Orientation is decided by the card kind, never by how "active" the text sounds: feat cards are the passive, text-heavy ones and the deck renders them horizontal (`feat-card.module.css` swaps the poker dimensions). Everything else is a portrait card.
@@ -55,10 +56,10 @@ The optional `archived: true` metadata marks styles that are less prominent in t
 - `{{scene}}` — **2–3 sentences that a painter could act on**, in this order: SUBJECT (who or what), ACTION (the spell or feature happening, visibly), SETTING (one simple environment), LIGHT (where the light comes from and its colour). Concrete nouns only. No dice, numbers, rule words (Advantage, Bonus Action, saving throw, resistance, feet).
   - Spells usually already describe imagery: take the first 1–2 sentences of `description` and only add the missing SETTING/LIGHT beats.
   - Feats and resources are rules text; weapons are objects: translate the mechanic into what it *looks like*. `Sneak Attack` → a rogue mid-lunge from a dark alcove into the exposed back of a distracted foe, blade catching the only light. `Rage` → a barbarian mid-roar, veins of red-hot light, weapon raised, dust and embers around. `Greataxe` → one great axe swing carrying through two foes in a single arc (the weapon is the subject; its mastery can hint the action).
-  - Abstract resources like `Mana` get a symbolic scene (a well of arcane light, a hand cupping a flame of the class's colour), still concrete.
+  - A resource token's painting is **its icon made epic**: the icon (`Resource.icon`, or the mana gem) is the central emblem, same silhouette and colour, painted as a real object in a simple setting. What the resource *does* belongs to the class action's painting (`Rage` action → the barbarian mid-roar). Add the extra note below and put the icon in the issue body as a reference image.
 - `{{orientation}}` / `{{output}}` — by kind. Feat: `horizontal` and the landscape OUTPUT block from the template header (7:5, ≥ 1050 × 750 px, compose across the width). Every other kind: `vertical` and the portrait block (5:7, ≥ 750 × 1050 px). For a landscape feat, also write the `{{scene}}` so it reads left to right — subject on one side, what it acts on across the frame.
 - `{{visual_style}}` — the selected style file's prose, verbatim. Do not include a second `## VISUAL STYLE` heading.
-- `{{extra_note}}` — optional whole line. Spell with a `damage` field: `The visual centers on <damage.type joined with "/"> damage.` Weapon: `The weapon deals <damage.type> damage; its mastery is <Mastery>.` Every other case: remove the line (no blank placeholder).
+- `{{extra_note}}` — optional whole line. Spell with a `damage` field: `The visual centers on <damage.type joined with "/"> damage.` Weapon: `The weapon deals <damage.type> damage; its mastery is <Mastery>.` Resource token: `The whole painting is built around one central emblem that matches this card's icon — <emblem> (reference icon: <raw icon URL>). Keep its silhouette and colour so a player recognises the icon at a glance, but paint it as a real, epic object in the scene, never as a flat icon. This emblem is the only exception to the no-symbols rule below; still no text or numbers.` Every other case: remove the line (no blank placeholder).
 
 Strip the HTML comment header from the output.
 
@@ -74,7 +75,8 @@ Title, per kind — the class makes feat and resource titles unique:
 | --- | --- |
 | spell | ``[asset]: `Fire Bolt` spell`` |
 | feat | ``[asset]: `Sneak Attack` rogue feat`` |
-| resource | ``[asset]: `Rage` barbarian resource`` |
+| resource token | ``[asset]: `Rage` barbarian resource token`` (mana: ``[asset]: `Mana` resource token``) |
+| class action | ``[asset]: `Rage` barbarian class action`` |
 | weapon | ``[asset]: `Longsword` weapon`` |
 
 Skip entirely (report "already delivered") when `public/art/<asset-id>.png` exists.

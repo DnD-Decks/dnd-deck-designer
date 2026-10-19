@@ -1,0 +1,16 @@
+.cost {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+/* Lay on Hands spends as many tokens as the player chooses: "×X" under its symbol */
+.amount {
+  position: absolute;
+  bottom: -9px;
+  font-family: var(--font-value);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ink-900);
+}

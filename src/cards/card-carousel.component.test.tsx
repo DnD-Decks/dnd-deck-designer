@@ -8,8 +8,13 @@ const entries: CarouselEntry[] = decks
   .get({ cls: "fighter" })
   .cards.map((card) => ({ key: cardKey(card), card, section: cardSection(card) }));
 
-// Second Wind (Resources), Fighting Style and Weapon Mastery (Class Features)
-const three = entries.slice(0, 3);
+// one Second Wind token (Resources), Fighting Style and Weapon Mastery (Class Features)
+const THREE_KEYS = [
+  "resource-fighter-second-wind-short-rest",
+  "feat-fighter-fighting-style",
+  "feat-fighter-weapon-mastery",
+];
+const three = entries.filter(({ key }) => THREE_KEYS.includes(key));
 
 describe("<CardCarousel />", () => {
   test("the region and each slide carry the carousel roles and names", () => {
@@ -17,7 +22,7 @@ describe("<CardCarousel />", () => {
 
     const carousel = screen.getByRole("region", { name: "Fighter cards" });
     expect(carousel.getAttribute("aria-roledescription")).toBe("carousel");
-    screen.getByRole("group", { name: "1 of 3: Second Wind" });
+    screen.getByRole("group", { name: "1 of 3: Second Wind (Short Rest)" });
     screen.getByRole("group", { name: "3 of 3: Weapon Mastery" });
   });
 
@@ -77,7 +82,7 @@ describe("<CardCarousel />", () => {
       />
     );
 
-    const centred = screen.getByRole("button", { name: "Pick Second Wind" });
+    const centred = screen.getByRole("button", { name: "Pick Second Wind (Short Rest)" });
     expect(centred.getAttribute("aria-pressed")).toBe("true");
     // only the centred slide is tappable
     expect(screen.queryByRole("button", { name: "Pick Fighting Style" })).toBeNull();
@@ -88,7 +93,7 @@ describe("<CardCarousel />", () => {
     fireEvent.click(screen.getByRole("button", { name: "Next card" }));
     const moved = screen.getByRole("button", { name: "Pick Fighting Style" });
     expect(moved.getAttribute("aria-pressed")).toBe("false");
-    expect(screen.queryByRole("button", { name: "Pick Second Wind" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Pick Second Wind (Short Rest)" })).toBeNull();
   });
 
   test("below renders for the current entry only", () => {
@@ -114,7 +119,7 @@ describe("<CardCarousel />", () => {
     fireEvent.click(screen.getByRole("button", { name: "Next card" }));
     screen.getByText("Class Features · 3 / 3");
 
-    rerender(<CardCarousel label="Fighter cards" entries={entries.slice(0, 2)} />);
+    rerender(<CardCarousel label="Fighter cards" entries={three.slice(0, 2)} />);
     screen.getByText("Class Features · 2 / 2");
   });
 
@@ -122,7 +127,7 @@ describe("<CardCarousel />", () => {
     render(<CardCarousel label="Fighter cards" entries={three} card={() => undefined} />);
 
     // the card face is still there, just not a button
-    screen.getByRole("article", { name: "Second Wind" });
-    expect(screen.queryByRole("button", { name: "Second Wind" })).toBeNull();
+    screen.getByRole("article", { name: "Second Wind (Short Rest)" });
+    expect(screen.queryByRole("button", { name: "Second Wind (Short Rest)" })).toBeNull();
   });
 });

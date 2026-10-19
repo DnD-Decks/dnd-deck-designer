@@ -91,7 +91,7 @@ describe("<CharacterBuilderPage />", () => {
   describe("persistence{}", () => {
     test("edit prefills and saves the same ID while preserving play state", () => {
       characterStorage.save(brunhilde());
-      characterStorage.setSpent({ id: "f1", spent: ["resource-fighter-second-wind-0"] });
+      characterStorage.setSpent({ id: "f1", spent: ["resource-fighter-second-wind-short-rest-0"] });
       const memory = renderAt("/character/f1");
       fireEvent.click(screen.getByRole("link", { name: "Edit" }));
       expect(memory.history.slice(-1)).toEqual(["/character/f1/edit"]);
@@ -111,7 +111,7 @@ describe("<CharacterBuilderPage />", () => {
           picks: { weapons: ["longsword", "shortbow", "dagger"] },
         },
       ]);
-      expect(characterStorage.spent("f1")).toEqual(["resource-fighter-second-wind-0"]);
+      expect(characterStorage.spent("f1")).toEqual(["resource-fighter-second-wind-short-rest-0"]);
     });
 
     [
@@ -120,7 +120,10 @@ describe("<CharacterBuilderPage />", () => {
     ].forEach(({ label, path }) =>
       test(`cancel ${label} does not mutate storage`, () => {
         characterStorage.save(brunhilde());
-        characterStorage.setSpent({ id: "f1", spent: ["resource-fighter-second-wind-0"] });
+        characterStorage.setSpent({
+          id: "f1",
+          spent: ["resource-fighter-second-wind-short-rest-0"],
+        });
         renderAt(path);
         pickClass("Monk");
         next();
@@ -128,7 +131,7 @@ describe("<CharacterBuilderPage />", () => {
         nameCharacter("Discard me");
         fireEvent.click(screen.getByRole("link", { name: "Cancel" }));
         expect(characterStorage.list()).toEqual([brunhilde()]);
-        expect(characterStorage.spent("f1")).toEqual(["resource-fighter-second-wind-0"]);
+        expect(characterStorage.spent("f1")).toEqual(["resource-fighter-second-wind-short-rest-0"]);
       })
     );
 

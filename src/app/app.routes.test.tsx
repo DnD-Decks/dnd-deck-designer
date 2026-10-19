@@ -38,7 +38,7 @@ describe("<AppRoutes />", () => {
     expect(screen.getByRole("button", { name: /fighter/i }).getAttribute("aria-pressed")).toBe(
       "true"
     );
-    screen.getByRole("article", { name: "Second Wind" });
+    screen.getByRole("article", { name: "Second Wind (Short Rest)" });
   });
 
   test.each([

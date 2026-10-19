@@ -38,7 +38,7 @@ describe("characterStorage{}", () => {
 
   test("remove drops the character and its play state", () => {
     characterStorage.save(brunhilde());
-    characterStorage.setSpent({ id: "f1", spent: ["resource-fighter-second-wind-0"] });
+    characterStorage.setSpent({ id: "f1", spent: ["resource-fighter-second-wind-short-rest-0"] });
     characterStorage.remove("f1");
     expect({ list: characterStorage.list(), spent: characterStorage.spent("f1") }).toEqual({
       list: [],
@@ -47,11 +47,11 @@ describe("characterStorage{}", () => {
   });
 
   test("keeps spent cards per character", () => {
-    characterStorage.setSpent({ id: "f1", spent: ["resource-fighter-second-wind-0"] });
-    characterStorage.setSpent({ id: "w1", spent: ["resource-wizard-mana-0"] });
+    characterStorage.setSpent({ id: "f1", spent: ["resource-fighter-second-wind-short-rest-0"] });
+    characterStorage.setSpent({ id: "w1", spent: ["resource-wizard-mana-long-rest-0"] });
     expect({ f1: characterStorage.spent("f1"), w1: characterStorage.spent("w1") }).toEqual({
-      f1: ["resource-fighter-second-wind-0"],
-      w1: ["resource-wizard-mana-0"],
+      f1: ["resource-fighter-second-wind-short-rest-0"],
+      w1: ["resource-wizard-mana-long-rest-0"],
     });
   });
 

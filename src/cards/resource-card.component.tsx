@@ -1,61 +1,39 @@
-import { useId } from "react";
 import { Icon } from "src/lib/icon.component";
-import type { ActionTiming } from "src/models/actions/combat.model";
-import { ACTION_TIMING_ICONS } from "src/models/actions/combat.model";
 import type { Resource } from "src/models/resources/resources.model";
+import type { RestType } from "src/models/rest/rest-actions.model";
 import { restActions } from "src/models/rest/rest-actions.model";
 import { CardArt } from "./card-art.component";
 import styles from "./resource-card.module.css";
+import { ResourceSymbol } from "./resource-symbol.component";
 
-type Props = { resource: Resource };
+type Props = { resource: Resource; recharge: RestType };
 
-const TIMING_LABELS: Record<ActionTiming, string> = {
-  action: "Action",
-  "bonus-action": "Bonus Action",
-  reaction: "Reaction",
-};
+// the painting is the symbol made epic, so every mana token shares one
+const artOf = (resource: Resource) => (resource.mana ? "resource-mana" : `resource-${resource.id}`);
 
-function TimingItem({ timing }: { timing: ActionTiming }) {
-  const label = TIMING_LABELS[timing];
-  return (
-    <span className={styles.metaItem}>
-      <Icon src={ACTION_TIMING_ICONS[timing]} label={label} className={styles.metaIcon} />
-      {label}
-    </span>
-  );
-}
-
-export function ResourceCard({ resource }: Props) {
-  const headingId = useId();
-  const recharge = restActions.find({ id: resource.recharge })?.label;
+/** A token to spend: its symbol beside the name, a painting of it, and the rest that brings this copy back. */
+export function ResourceCard({ resource, recharge }: Props) {
+  const rest = restActions.get({ id: recharge });
 
   return (
-    <article className={styles.card} aria-labelledby={headingId}>
-      <CardArt assetId={resource.id} />
+    // the twin copies of Second Wind share a heading; the name tells them apart
+    <article
+      className={styles.card}
+      data-recharge={recharge}
+      aria-label={`${resource.name} (${rest.label})`}
+    >
+      <CardArt assetId={artOf(resource)} />
       <header className={styles.titleBar}>
-        {resource.icon && (
-          <Icon src={resource.icon} label={resource.name} className={styles.resourceIcon} />
-        )}
-        <h3 id={headingId} className={styles.name}>
-          {resource.name}
-        </h3>
+        <h3 className={styles.name}>{resource.name}</h3>
+        <ResourceSymbol resource={resource} className={styles.symbol} />
       </header>
 
       <div className={styles.artWindow} />
 
-      <div className={styles.typeLine}>
-        <span>Class Resource</span>
-        {resource.action && <TimingItem timing={resource.action} />}
-      </div>
-
-      <div className={styles.textBox}>
-        <p>{resource.description}</p>
-      </div>
-
-      <div className={styles.footer}>
-        {resource.pool && <span className={styles.metaItem}>Pool: {resource.pool}</span>}
-        <span className={styles.metaItem}>Recharges: {recharge}</span>
-      </div>
+      <footer className={styles.footer}>
+        <Icon src={rest.icon} label={rest.label} className={styles.restIcon} decorative />
+        <span>{rest.label}</span>
+      </footer>
     </article>
   );
 }

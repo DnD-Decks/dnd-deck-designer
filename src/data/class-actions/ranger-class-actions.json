@@ -1,0 +1,13 @@
+[
+  {
+    "id": "ranger-favored-enemy",
+    "name": "Favored Enemy",
+    "cost": {
+      "resource": "ranger-favored-enemy"
+    },
+    "timing": "bonus-action",
+    "range": "90 feet",
+    "duration": "Concentration, up to 1 hour",
+    "description": "Cast Hunter's Mark without spending mana. You always have the spell prepared."
+  }
+]

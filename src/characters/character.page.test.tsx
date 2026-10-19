@@ -22,14 +22,15 @@ describe("<CharacterPage />", () => {
   test("one row per section, in table order", () => {
     renderAt("/character/f1");
     const headings = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
-    expect(headings).toEqual(["Brünhilde", "Resources", "Weapons", "Features"]);
+    expect(headings).toEqual(["Brünhilde", "Resources", "Actions", "Weapons", "Features"]);
   });
 
-  test("each use of a resource is its own card", () => {
+  test("each copy of a resource is its own card, named by the rest that brings it back", () => {
     renderAt("/character/f1");
     const resources = within(screen.getByRole("region", { name: "Resources" }));
-    expect(resources.getAllByRole("article", { name: "Second Wind" })).toHaveLength(2);
-    expect(resources.getAllByRole("button", { name: "Zoom Second Wind" })).toHaveLength(2);
+    expect(
+      resources.getAllByRole("article").map((card) => card.getAttribute("aria-label"))
+    ).toEqual(["Second Wind (Short Rest)", "Second Wind (Long Rest)"]);
   });
 
   test("tapping a card lifts it into the spotlight", () => {
@@ -40,17 +41,17 @@ describe("<CharacterPage />", () => {
 
   test("the arrows step from one copy to the next", () => {
     renderAt("/character/f1");
-    fireEvent.click(screen.getAllByRole("button", { name: "Zoom Second Wind" })[0]);
-    screen.getByRole("button", { name: "Next card: Second Wind" });
+    fireEvent.click(screen.getByRole("button", { name: "Zoom Second Wind (Short Rest)" }));
+    screen.getByRole("button", { name: "Next card: Second Wind (Long Rest)" });
 
     fireEvent.keyDown(screen.getByRole("dialog"), { key: "ArrowRight" });
-    screen.getByRole("dialog", { name: "Second Wind" });
-    screen.getByRole("button", { name: "Previous card: Second Wind" });
+    screen.getByRole("dialog", { name: "Second Wind (Long Rest)" });
+    screen.getByRole("button", { name: "Previous card: Second Wind (Short Rest)" });
   });
 
   test("putting a copy back returns focus to that copy", async () => {
     renderAt("/character/f1");
-    const first = screen.getAllByRole("button", { name: "Zoom Second Wind" })[0];
+    const first = screen.getByRole("button", { name: "Zoom Second Wind (Short Rest)" });
     fireEvent.click(first);
     fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
 

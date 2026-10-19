@@ -3,11 +3,13 @@ import { DeckCardFace } from "src/cards/deck-card.component";
 import { useCardSpotlight } from "src/cards/use-card-spotlight.hook";
 import type { DeckCard } from "src/decks/deck.model";
 import { cardKey, cardName } from "src/decks/deck.model";
+import { classActions } from "src/models/class-actions/class-actions.model";
 import type { CharacterClass } from "src/models/class/classes.model";
 import { feats } from "src/models/feats/feats.model";
 import type { WeaponId } from "src/models/gear/weapons.model";
 import { weapons } from "src/models/gear/weapons.model";
 import { resources } from "src/models/resources/resources.model";
+import type { RestType } from "src/models/rest/rest-actions.model";
 import { spells } from "src/models/spells/spells.model";
 import styles from "./card-layouts.module.css";
 
@@ -24,11 +26,19 @@ const weapon = ({ id, why }: { id: WeaponId; why: string }): Specimen => ({
 });
 
 // resources and feats are only listed per class, so pick by id from the class list
-const resource = ({ cls, id, why }: { cls: CharacterClass; id: string; why: string }) =>
+type ResourcePick = { cls: CharacterClass; id: string; recharge: RestType; why: string };
+
+const resource = ({ cls, id, recharge, why }: ResourcePick) =>
   resources
     .findAll({ cls })
     .filter((r) => r.id === id)
-    .map((r): Specimen => ({ why, card: { kind: "resource", resource: r } }));
+    .map((r): Specimen => ({ why, card: { kind: "resource", resource: r, recharge } }));
+
+const action = ({ cls, id, why }: { cls: CharacterClass; id: string; why: string }) =>
+  classActions
+    .findAll({ cls })
+    .filter((a) => a.id === id)
+    .map((a): Specimen => ({ why, card: { kind: "action", action: a } }));
 
 const feat = ({ cls, id, why }: { cls: CharacterClass; id: string; why: string }) =>
   feats
@@ -74,8 +84,34 @@ const sections = () => [
   {
     title: "Resources",
     specimens: [
-      ...resource({ cls: "fighter", id: "fighter-second-wind", why: "short rest" }),
-      ...resource({ cls: "bard", id: "bard-bardic-inspiration", why: "long rest" }),
+      ...resource({
+        cls: "fighter",
+        id: "fighter-second-wind",
+        recharge: "short-rest",
+        why: "the copy a short rest brings back",
+      }),
+      ...resource({
+        cls: "fighter",
+        id: "fighter-second-wind",
+        recharge: "long-rest",
+        why: "its long-rest twin",
+      }),
+      ...resource({
+        cls: "bard",
+        id: "bard-bardic-inspiration",
+        recharge: "long-rest",
+        why: "long rest only",
+      }),
+      ...resource({ cls: "wizard", id: "wizard-mana", recharge: "long-rest", why: "mana" }),
+      ...resource({ cls: "warlock", id: "warlock-mana", recharge: "short-rest", why: "pact mana" }),
+    ],
+  },
+  {
+    title: "Class Actions",
+    specimens: [
+      ...action({ cls: "fighter", id: "fighter-second-wind", why: "spends 1 Second Wind" }),
+      ...action({ cls: "bard", id: "bard-bardic-inspiration", why: "spends 1 Bardic Inspiration" }),
+      ...action({ cls: "paladin", id: "paladin-lay-on-hands", why: "spends ×X: longest text" }),
     ],
   },
   {

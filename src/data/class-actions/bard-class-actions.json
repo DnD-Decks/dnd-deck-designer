@@ -1,0 +1,13 @@
+[
+  {
+    "id": "bard-bardic-inspiration",
+    "name": "Bardic Inspiration",
+    "cost": {
+      "resource": "bard-bardic-inspiration"
+    },
+    "timing": "bonus-action",
+    "range": "60 feet",
+    "duration": "1 hour",
+    "description": "Inspire a creature who can see or hear you: it gains a Bardic Inspiration die (d6). Within the next hour, it can roll the die and add the number to one D20 Test after rolling the d20."
+  }
+]

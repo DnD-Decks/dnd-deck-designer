@@ -1,51 +1,63 @@
 import { render, screen } from "@testing-library/react";
 import { resources } from "src/models/resources/resources.model";
+import type { RestType } from "src/models/rest/rest-actions.model";
 import { describe, expect, test } from "vitest";
 import { ResourceCard } from "./resource-card.component.tsx";
 
-const rage = resources.findAll({ cls: "barbarian" })[0];
-const wizardMana = resources.findAll({ cls: "wizard" })[0];
+const secondWind = resources.get({ id: "fighter-second-wind" });
+const wizardMana = resources.get({ id: "wizard-mana" });
 
 describe("<ResourceCard />", () => {
-  test("the card is an article labeled by the resource name", () => {
-    render(<ResourceCard resource={rage} />);
-    screen.getByRole("article", { name: "Rage" });
-    screen.getByRole("heading", { name: "Rage", level: 3 });
+  test("the card is an article named by the resource and the rest that brings it back", () => {
+    render(<ResourceCard resource={secondWind} recharge="long-rest" />);
+    screen.getByRole("article", { name: "Second Wind (Long Rest)" });
+    screen.getByRole("heading", { name: "Second Wind", level: 3 });
   });
 
-  test("the resource icon is an image named after the resource", () => {
-    render(<ResourceCard resource={rage} />);
-    expect(screen.getByRole("img", { name: "Rage" }).getAttribute("src")).toBe(rage.icon);
-  });
-
-  test("a timed resource shows the action glyph and its label", () => {
-    render(<ResourceCard resource={rage} />);
-    screen.getByRole("img", { name: "Bonus Action" });
-    screen.getByText("Bonus Action");
-  });
-
-  test("a resource without timing shows only the recharge", () => {
-    render(<ResourceCard resource={wizardMana} />);
-    expect(screen.queryByRole("img", { name: /action/i })).toBeNull();
-    screen.getByText(/recharges: long rest/i);
-  });
-
-  test("a resource without icon renders no resource image", () => {
-    render(<ResourceCard resource={{ ...rage, icon: undefined, action: undefined }} />);
-    expect(screen.queryByRole("img")).toBeNull();
+  test("the resource's symbol is an image named after the resource", () => {
+    render(<ResourceCard resource={secondWind} recharge="long-rest" />);
+    expect(screen.getByRole("img", { name: "Second Wind" }).getAttribute("src")).toBe(
+      secondWind.icon
+    );
   });
 
   [
     {
-      label: "a pool reads as the rule that sizes it",
-      pool: "5 × Paladin level",
-      expected: "Pool: 5 × Paladin level",
+      label: "a token paints resource-<id>",
+      resource: secondWind,
+      expected: "/art/resource-fighter-second-wind.png",
     },
-    { label: "a resource without a pool shows no pool", pool: undefined, expected: null },
-  ].forEach(({ label, pool, expected }) => {
+    {
+      label: "every mana token shares one painting",
+      resource: wizardMana,
+      expected: "/art/resource-mana.png",
+    },
+  ].forEach(({ label, resource, expected }) => {
     test(label, () => {
-      render(<ResourceCard resource={{ ...rage, pool }} />);
-      expect(screen.queryByText(/^Pool:/)?.textContent ?? null).toBe(expected);
+      render(<ResourceCard resource={resource} recharge="long-rest" />);
+      // the painting and the rest icon are both presentational: the header and footer name them
+      const art = screen
+        .getAllByRole("presentation", { hidden: true })
+        .map((img) => img.getAttribute("src"))
+        .filter((src) => src?.startsWith("/art/"));
+      expect(art).toEqual([expected]);
+    });
+  });
+
+  test("mana shows the gem with its level instead of an icon", () => {
+    render(<ResourceCard resource={wizardMana} recharge="long-rest" />);
+    screen.getByRole("img", { name: "Level 1 mana" });
+  });
+
+  (
+    [
+      { recharge: "short-rest", expected: "Short Rest" },
+      { recharge: "long-rest", expected: "Long Rest" },
+    ] satisfies { recharge: RestType; expected: string }[]
+  ).forEach(({ recharge, expected }) => {
+    test(`a ${recharge} copy names the rest that brings it back: ${expected}`, () => {
+      render(<ResourceCard resource={secondWind} recharge={recharge} />);
+      screen.getByText(expected);
     });
   });
 });

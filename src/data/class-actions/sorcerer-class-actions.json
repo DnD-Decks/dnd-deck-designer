@@ -1,0 +1,13 @@
+[
+  {
+    "id": "sorcerer-innate-sorcery",
+    "name": "Innate Sorcery",
+    "cost": {
+      "resource": "sorcerer-innate-sorcery"
+    },
+    "timing": "bonus-action",
+    "range": "Self",
+    "duration": "1 minute",
+    "description": "Unleash your simmering magic: the spell save DC of your Sorcerer spells increases by 1, and you have Advantage on the attack rolls of Sorcerer spells you cast."
+  }
+]

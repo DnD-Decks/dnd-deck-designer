@@ -107,33 +107,6 @@
   color: var(--ink-900);
 }
 
-.manaGem {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  font-family: var(--font-value);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
-  color: var(--ink-900);
-}
-
-.manaGem::before {
-  content: "";
-  position: absolute;
-  inset: 3px;
-  transform: rotate(45deg);
-  border-radius: 3px;
-  background: radial-gradient(circle at 35% 30%, #e6fbff, #6fe0f5 45%, #1fa6c8);
-  box-shadow: 0 0 6px rgba(111, 224, 245, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-}
-
-.manaGem > span {
-  position: relative;
-}
-
 /* ── Art window ──────────────────────────────────────────────────────────── */
 /* Transparent spacer: the painting (or the fallback wash) shows through here unblurred.
    It takes the rest of the grid (8.5 units); an overlong text box eats into it. */

@@ -58,12 +58,12 @@ describe("<AddCardsPage />", () => {
   test("a card already in the deck is marked and not selectable", () => {
     renderAt("/character/f1/add");
 
-    fireEvent.click(screen.getByRole("button", { name: "Go to Second Wind" }));
+    fireEvent.click(screen.getByRole("button", { name: "Go to Second Wind (Short Rest)" }));
 
     // Brünhilde already owns Second Wind: it carries the "In deck" mark and no tap button
-    const slide = screen.getByRole("group", { name: /Second Wind/ });
+    const slide = screen.getByRole("group", { name: /Second Wind \(Short Rest\)/ });
     within(slide).getByText("In deck");
-    expect(within(slide).queryByRole("button", { name: "Second Wind" })).toBeNull();
+    expect(within(slide).queryByRole("button", { name: "Second Wind (Short Rest)" })).toBeNull();
     expect(screen.queryByRole("button", { name: /Add to Brünhilde/ })).toBeNull();
   });
 

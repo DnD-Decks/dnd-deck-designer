@@ -74,7 +74,7 @@ describe("<CharacterPage />", () => {
 
     test("confirming the delete removes the character and its play state, then goes home", async () => {
       const memory = renderAt("/character/f1");
-      await spend("Second Wind");
+      await spend("Second Wind (Short Rest)");
 
       fireEvent.click(screen.getByRole("button", { name: "Delete character" }));
       fireEvent.click(screen.getByRole("button", { name: "Delete Brünhilde" }));

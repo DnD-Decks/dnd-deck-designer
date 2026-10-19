@@ -1,0 +1,13 @@
+[
+  {
+    "id": "barbarian-rage",
+    "name": "Rage",
+    "cost": {
+      "resource": "barbarian-rage"
+    },
+    "timing": "bonus-action",
+    "range": "Self",
+    "duration": "10 minutes",
+    "description": "Enter a rage if you aren't wearing Heavy armor. While raging: Resistance to Bludgeoning, Piercing, and Slashing damage; +2 bonus to Strength-based attack damage; Advantage on Strength checks and saves; you can't maintain Concentration or cast spells. It lasts until the end of your next turn unless you extend it by attacking, forcing a save, or taking a Bonus Action — up to 10 minutes."
+  }
+]

@@ -2,13 +2,13 @@
   {
     "id": "short-rest",
     "label": "Short Rest",
-    "icon": "vol4/icon-vol4_09",
+    "icon": "/icons/short-rest.png",
     "description": "Restores short rest resources."
   },
   {
     "id": "long-rest",
     "label": "Long Rest",
-    "icon": "vol4/icon-vol4_08",
+    "icon": "/icons/long-rest.png",
     "description": "Restores all resources."
   }
 ]
