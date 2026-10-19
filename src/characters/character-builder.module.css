@@ -190,8 +190,17 @@
   outline-offset: 4px;
 }
 
-.slot:has(.pick:not(:disabled)):hover {
-  transform: translateY(-3px);
+/* every tap must reach the checkbox over the card, never the card face under it:
+   on iPhone Safari a tap lifted the card but picked nothing */
+.slot > article {
+  pointer-events: none;
+}
+
+/* on touch, :hover sticks after a tap and reads as half-chosen */
+@media (hover: hover) {
+  .slot:has(.pick:not(:disabled)):hover {
+    transform: translateY(-3px);
+  }
 }
 
 .slot:has(.pick:checked) {
