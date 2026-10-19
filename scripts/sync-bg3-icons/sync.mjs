@@ -113,6 +113,8 @@ const ICONS = [
   { file: "attack-roll.png", title: "Attack Roll Icon.png" },
   { file: "aoe.png", title: "Aoe Icon.png" },
   { file: "healing.png", title: "Healing Icon.png" },
+  { file: "short-rest.png", title: "Short rest icon.png" },
+  { file: "long-rest.png", title: "Long rest icon.png" },
   // dice (BG3 colours dice by damage family; these are the ones the spell card shipped with)
   { file: "d4.png", title: "D4 Healing.png" },
   { file: "d6.png", title: "D6 Physical.png" },

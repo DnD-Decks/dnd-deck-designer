@@ -1,3 +1,4 @@
+import { ClassActionCard } from "src/cards/class-action-card.component";
 import { FeatCard } from "src/cards/feat-card.component";
 import { ResourceCard } from "src/cards/resource-card.component";
 import { SpellCard } from "src/cards/spell-card.component";
@@ -8,7 +9,9 @@ import { assertNever } from "src/lib/assert-never";
 export function DeckCardFace({ card }: { card: DeckCard }) {
   switch (card.kind) {
     case "resource":
-      return <ResourceCard resource={card.resource} />;
+      return <ResourceCard resource={card.resource} recharge={card.recharge} />;
+    case "action":
+      return <ClassActionCard action={card.action} />;
     case "feat":
       return <FeatCard feat={card.feat} />;
     case "spell":

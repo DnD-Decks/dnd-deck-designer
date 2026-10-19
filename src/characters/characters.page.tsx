@@ -2,8 +2,9 @@ import { type CSSProperties, useId } from "react";
 import { DeckCardFace } from "src/cards/deck-card.component";
 import type { Character } from "src/characters/character.model";
 import { characters } from "src/characters/character.model";
+import { play } from "src/characters/play.model";
 import type { DeckEntry } from "src/decks/deck.model";
-import { cardKey, cardName, decks } from "src/decks/deck.model";
+import { cardKey, decks } from "src/decks/deck.model";
 import { characterStorage } from "src/services/character.storage";
 import { Link } from "wouter";
 import styles from "./characters.module.css";
@@ -14,14 +15,16 @@ const HAND = ["resource", "weapon", "spell"] as const;
 function hand(entries: readonly DeckEntry[]) {
   const cards = [...new Set(entries.map(({ card }) => card))].filter(({ kind }) => kind !== "feat");
   const firsts = HAND.flatMap((kind) => cards.find((card) => card.kind === kind) ?? []);
-  const rest = cards.filter((card) => !firsts.includes(card));
+  // one token of a resource is enough; its twin copies and class actions would crowd the fan
+  const rest = cards.filter(
+    (card) => !firsts.includes(card) && card.kind !== "resource" && card.kind !== "action"
+  );
   return [...firsts, ...rest].slice(0, HAND.length);
 }
 
 function spentNames({ id, entries }: { id: string; entries: readonly DeckEntry[] }) {
   const spent = new Set(characterStorage.spent(id));
-  const names = entries.filter(({ key }) => spent.has(key)).map(({ card }) => cardName(card));
-  return [...new Set(names)];
+  return play.names(entries.filter(({ key }) => spent.has(key)));
 }
 
 function Hand({ entries }: { entries: readonly DeckEntry[] }) {

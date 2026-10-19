@@ -18,8 +18,11 @@ test.describe("catalog: add cards", () => {
     const id = characterId(page.url());
 
     // spend a card first: adding cards must not reset the table
-    await playPage.cardActions("Second Wind").getByRole("button", { name: "Spend" }).click();
-    await expect(playPage.carouselCard("Second Wind, spent")).toBeVisible();
+    await playPage
+      .cardActions("Second Wind (Short Rest)")
+      .getByRole("button", { name: "Spend" })
+      .click();
+    await expect(playPage.carouselCard("Second Wind (Short Rest), spent")).toBeVisible();
 
     await playPage.menuButton.click();
     await playPage.menu.getByRole("link", { name: "Add cards" }).click();
@@ -45,7 +48,7 @@ test.describe("catalog: add cards", () => {
     const carousel = playPage.carousel("Brünhilde's cards");
     await expect.soft(carousel.getByRole("button", { name: "Go to Greataxe" })).toBeVisible();
     await expect.soft(carousel.getByRole("button", { name: "Go to Cure Wounds" })).toBeVisible();
-    await expect.soft(playPage.carouselCard("Second Wind, spent")).toBeVisible();
+    await expect.soft(playPage.carouselCard("Second Wind (Short Rest), spent")).toBeVisible();
 
     // the share link carries the added cards
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);

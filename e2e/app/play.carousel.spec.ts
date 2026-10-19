@@ -29,18 +29,21 @@ test.describe("play: carousel", () => {
     await playPage.open(fighter);
 
     // Second Wind leads the deck — its actions sit right under the centred card
-    await playPage.cardActions("Second Wind").getByRole("button", { name: "Spend" }).click();
-    await expect(playPage.carouselCard("Second Wind, spent")).toBeVisible();
+    await playPage
+      .cardActions("Second Wind (Short Rest)")
+      .getByRole("button", { name: "Spend" })
+      .click();
+    await expect(playPage.carouselCard("Second Wind (Short Rest), spent")).toBeVisible();
     // the slide and its thumbnail both carry the Spent mark; the slide's comes first
     await expect
       .soft(playPage.carousel("Brünhilde's cards").getByText("Spent").first())
       .toBeVisible();
 
     await page.reload();
-    await expect(playPage.carouselCard("Second Wind, spent")).toBeVisible();
+    await expect(playPage.carouselCard("Second Wind (Short Rest), spent")).toBeVisible();
 
     await playPage.longRest.click();
-    await expect(playPage.carouselCard("Second Wind")).toBeVisible();
+    await expect(playPage.carouselCard("Second Wind (Short Rest)")).toBeVisible();
     await expect.soft(playPage.restStatus).toHaveText("Long rest: Second Wind recovered");
   });
 });

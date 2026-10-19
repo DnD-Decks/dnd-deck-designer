@@ -16,7 +16,7 @@ export function createPlayPage(page: Page) {
     menuButton: page.getByRole("button", { name: "Menu" }),
     menu: page.getByRole("navigation", { name: "Character menu" }),
     spend,
-    longRest: page.getByRole("button", { name: "Long rest" }),
+    longRest: page.getByRole("button", { name: "Long rest", exact: true }),
     restStatus: table.getByRole("status").filter({ hasText: /rest:/ }),
     deleteCharacter: page.getByRole("button", { name: "Delete character" }),
 

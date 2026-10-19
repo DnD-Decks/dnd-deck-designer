@@ -10,7 +10,8 @@ import type { Spell } from "src/models/spells/spells.model";
 import { CardArt } from "./card-art.component";
 import { CardHeaderDamage } from "./card-header-damage.component";
 import { CardRange } from "./card-range.component";
-import { SpellCardStatStrip } from "./spell-card-stat-strip.component";
+import { CardStatFooter } from "./card-stat-footer.component";
+import { ManaGem } from "./resource-symbol.component";
 import styles from "./spell-card.module.css";
 
 const levelLabel = (level: Spell["level"]) => (level === 0 ? "Cantrip" : `Level ${level}`);
@@ -57,11 +58,7 @@ function CostRail({ spell }: Props) {
   return (
     <section className={styles.costRail} aria-label="Cost">
       <CastingSlot spell={spell} />
-      {spell.level > 0 && (
-        <span className={styles.manaGem} role="img" aria-label={`Level ${spell.level} mana`}>
-          <span aria-hidden="true">{spell.level}</span>
-        </span>
-      )}
+      {spell.level > 0 && <ManaGem level={spell.level} />}
     </section>
   );
 }
@@ -100,7 +97,7 @@ export function SpellCard({ spell }: Props) {
         <p>{spell.description}</p>
       </div>
 
-      <SpellCardStatStrip duration={spell.duration} save={spell.save} />
+      <CardStatFooter duration={spell.duration} save={spell.save} />
     </article>
   );
 }

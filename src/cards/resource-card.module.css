@@ -1,3 +1,4 @@
+/* A token: the name and its symbol, the painting of that symbol, and the rest that brings it back */
 .card {
   --resource-color: var(--gold);
 
@@ -17,10 +18,13 @@
   contain-intrinsic-size: 0 var(--card-height);
 }
 
+/* the copy a short rest brings back reads apart from its long-rest twins at a glance */
+.card[data-recharge="short-rest"] {
+  --resource-color: #4f9a8a;
+}
+
 /* ── Panels over the painting ────────────────────────────────────────────── */
 .titleBar,
-.typeLine,
-.textBox,
 .footer {
   position: relative;
   backdrop-filter: blur(var(--panel-blur));
@@ -32,109 +36,65 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 6px 4px 8px;
+  gap: 6px;
+  padding: 4px 8px 4px 10px;
   background: color-mix(in srgb, var(--resource-color) var(--panel-bar), transparent);
   color: var(--ink-900);
   height: var(--card-header-height);
   flex-shrink: 0;
 }
 
+/* the same size the symbol has in a class action's cost rail */
+.symbol {
+  --gem-size: 22px;
+
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+}
+
 .name {
   margin: 0;
-  font-size: 12px;
+  font-family: var(--font-caps);
+  font-size: 15px;
   font-weight: bold;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  flex: 1;
+  letter-spacing: 0.06em;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.resourceIcon {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
-  flex-shrink: 0;
-  margin-right: 5px;
-}
-
-/* ── Type line ───────────────────────────────────────────────────────────── */
-.typeLine {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  padding: 2px 8px;
-  background: color-mix(
-    in srgb,
-    color-mix(in srgb, var(--resource-color) 80%, #000) var(--panel-bar),
-    transparent
-  );
-  color: var(--text-hi);
-  font-size: 8.5px;
-  font-style: italic;
-  letter-spacing: 0.05em;
-  height: var(--card-unit);
-  flex-shrink: 0;
-}
-
-.metaItem {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.metaIcon {
-  width: 11px;
-  height: 11px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
 /* ── Art window ──────────────────────────────────────────────────────────── */
-/* Takes the rest of the grid (8.5 units); an overlong text box eats into it. */
+/* nearly the whole card: the painting is the token */
 .artWindow {
   flex: 1;
-  min-height: calc(4 * var(--card-unit));
 }
 
-/* ── Text box ────────────────────────────────────────────────────────────── */
-.textBox {
-  flex: 0 0 auto;
-  /* grows past 6 units only when the rules text needs it, taking it from the picture */
-  min-height: calc(6 * var(--card-unit));
-  display: flex;
-  flex-direction: column;
-  margin: 4px;
-  padding: 5px 8px 4px;
-  overflow-y: auto;
-  background: var(--panel-wash-bg);
-  /* no hard edge: the same wash blurs outward so the panel dissolves into the painting */
-  box-shadow: 0 0 5px 3px var(--panel-wash-bg);
-  border-radius: 6px;
-  gap: 4px;
-}
-
-/* ── Footer ──────────────────────────────────────────────────────────────── */
+/* ── Footer: the rest ────────────────────────────────────────────────────── */
 .footer {
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
-  gap: 8px;
-  height: var(--card-unit);
+  justify-content: center;
+  gap: 6px;
+  height: calc(2 * var(--card-unit));
   padding: 0 8px;
-  overflow: hidden;
-  white-space: nowrap;
-  background: color-mix(in srgb, var(--parchment) var(--panel-bar), transparent);
-  border-top: 1px solid color-mix(in srgb, var(--resource-color) 45%, transparent);
-  font-family: var(--font-value);
-  font-size: 8.5px;
+  background: color-mix(in srgb, var(--resource-color) var(--panel-bar), transparent);
+  font-family: var(--font-caps);
+  font-size: 13px;
   font-weight: 600;
-  color: var(--ink-700);
-  letter-spacing: 0.03em;
+  letter-spacing: 0.08em;
+  color: var(--ink-900);
   flex-shrink: 0;
+}
+
+.restIcon {
+  width: calc(1.3 * var(--card-unit));
+  height: calc(1.3 * var(--card-unit));
+  object-fit: contain;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.6));
 }
 
 @media print {
@@ -145,15 +105,4 @@
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
-  .textBox {
-    overflow: hidden;
-  }
-}
-
-.textBox p {
-  margin: 0;
-  font-size: 8.5px;
-  line-height: 1.35;
-  color: var(--ink-900);
-  flex: 1;
 }

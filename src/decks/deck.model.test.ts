@@ -51,11 +51,24 @@ describe("decks.get()", () => {
   });
 
   test.each<{ cls: CharacterClass; expected: string[] }>([
-    { cls: "ranger", expected: ["feat", "resource", "spell", "weapon"] },
-    { cls: "paladin", expected: ["feat", "resource", "spell", "weapon"] },
-    { cls: "barbarian", expected: ["feat", "resource", "weapon"] },
+    { cls: "ranger", expected: ["action", "feat", "resource", "spell", "weapon"] },
+    { cls: "paladin", expected: ["action", "feat", "resource", "spell", "weapon"] },
+    { cls: "barbarian", expected: ["action", "feat", "resource", "weapon"] },
+    { cls: "wizard", expected: ["feat", "resource", "spell", "weapon"] },
   ])("the $cls deck has $expected card kinds", ({ cls, expected }) => {
     expect(kinds(decks.get({ cls }))).toEqual(expected);
+  });
+});
+
+describe("decks.get() resources", () => {
+  test("a resource with copies on both rests is two cards, short rest first", () => {
+    const cards = decks
+      .get({ cls: "fighter" })
+      .cards.flatMap((card) =>
+        card.kind === "resource" ? `${card.resource.id} ${card.recharge}` : []
+      );
+
+    expect(cards).toEqual(["fighter-second-wind short-rest", "fighter-second-wind long-rest"]);
   });
 });
 
@@ -64,11 +77,12 @@ describe("decks.findCard()", () => {
     const kindsOf = [
       "spell-cure-wounds",
       "feat-rogue-sneak-attack",
-      "resource-fighter-second-wind",
+      "resource-fighter-second-wind-short-rest",
+      "action-fighter-second-wind",
       "weapon-longsword",
     ].map((key) => decks.findCard({ key })?.kind);
 
-    expect(kindsOf).toEqual(["spell", "feat", "resource", "weapon"]);
+    expect(kindsOf).toEqual(["spell", "feat", "resource", "action", "weapon"]);
   });
 
   test("returns nothing for an unknown key", () => {
@@ -77,7 +91,7 @@ describe("decks.findCard()", () => {
 });
 
 describe("cardSection()", () => {
-  // ranger is the one class whose deck has all four card kinds
+  // ranger's deck has every card kind
   const deck = decks.get({ cls: "ranger" });
   const first = (kind: DeckCard["kind"]) => {
     const card = deck.cards.find((c) => c.kind === kind);
@@ -88,9 +102,10 @@ describe("cardSection()", () => {
   test("labels each card kind", () => {
     expect([
       cardSection(first("resource")),
+      cardSection(first("action")),
       cardSection(first("feat")),
       cardSection(first("weapon")),
-    ]).toEqual(["Resources", "Class Features", "Weapons"]);
+    ]).toEqual(["Resources", "Class Actions", "Class Features", "Weapons"]);
   });
 
   test("labels cantrips and level-1 spells separately", () => {

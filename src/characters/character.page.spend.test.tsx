@@ -16,6 +16,11 @@ import {
   zoomNames,
 } from "./character-page.fixture.tsx";
 
+const SHORT = "Second Wind (Short Rest)";
+const LONG = "Second Wind (Long Rest)";
+// the two Second Wind tokens, not the Second Wind action that spends them
+const tokenZooms = () => zoomNames("Second Wind \\(");
+
 beforeEach(seedBrunhildeOnGrid);
 afterEach(() => vi.restoreAllMocks());
 
@@ -28,13 +33,13 @@ describe("<CharacterPage />", () => {
 
     test("Spend in the spotlight puts the card back spent; Recover undoes it", async () => {
       renderAt("/character/f1");
-      await spend("Second Wind");
-      expect(zoomNames("Second Wind")).toEqual(["Zoom Second Wind, spent", "Zoom Second Wind"]);
+      await spend(SHORT);
+      expect(tokenZooms()).toEqual([`Zoom ${SHORT}, spent`, `Zoom ${LONG}`]);
 
-      fireEvent.click(screen.getByRole("button", { name: "Zoom Second Wind, spent" }));
+      fireEvent.click(screen.getByRole("button", { name: `Zoom ${SHORT}, spent` }));
       fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Recover" }));
       await waitForElementToBeRemoved(() => screen.queryByRole("dialog"), { timeout: 3000 });
-      expect(zoomNames("Second Wind")).toEqual(["Zoom Second Wind", "Zoom Second Wind"]);
+      expect(tokenZooms()).toEqual([`Zoom ${SHORT}`, `Zoom ${LONG}`]);
     });
 
     test("only resources can be spent", () => {
@@ -44,45 +49,45 @@ describe("<CharacterPage />", () => {
       expect(spotlight.queryByRole("button", { name: "Spend" })).toBeNull();
     });
 
-    test("a short rest brings back one Second Wind and says so", async () => {
+    test("a short rest brings back the short-rest Second Wind and says so", async () => {
       renderAt("/character/f1");
-      await spend("Second Wind");
-      await spend("Second Wind");
+      await spend(SHORT);
+      await spend(LONG);
 
       fireEvent.click(screen.getByRole("button", { name: "Short rest" }));
 
-      expect(zoomNames("Second Wind")).toEqual(["Zoom Second Wind", "Zoom Second Wind, spent"]);
+      expect(tokenZooms()).toEqual([`Zoom ${SHORT}`, `Zoom ${LONG}, spent`]);
       const status = screen.getByText("Short rest: Second Wind recovered");
       expect(screen.getAllByRole("status")).toContain(status);
     });
 
     test("a long rest brings everything back", async () => {
       renderAt("/character/f1");
-      await spend("Second Wind");
-      await spend("Second Wind");
+      await spend(SHORT);
+      await spend(LONG);
 
       fireEvent.click(screen.getByRole("button", { name: "Long rest" }));
 
-      expect(zoomNames("Second Wind")).toEqual(["Zoom Second Wind", "Zoom Second Wind"]);
+      expect(tokenZooms()).toEqual([`Zoom ${SHORT}`, `Zoom ${LONG}`]);
       expect(restsDisabled()).toEqual({ short: true, long: true });
     });
 
     test("a spent card no longer in the deck is forgotten", () => {
       characterStorage.setSpent({
         id: "f1",
-        spent: ["weapon-greataxe-0", "resource-fighter-second-wind-0"],
+        spent: ["weapon-greataxe-0", "resource-fighter-second-wind-short-rest-0"],
       });
       renderAt("/character/f1");
-      expect(characterStorage.spent("f1")).toEqual(["resource-fighter-second-wind-0"]);
+      expect(characterStorage.spent("f1")).toEqual(["resource-fighter-second-wind-short-rest-0"]);
     });
 
     test("spent cards are still spent after a reload", async () => {
       renderAt("/character/f1");
-      await spend("Second Wind");
+      await spend(SHORT);
       cleanup();
 
       renderAt("/character/f1");
-      expect(zoomNames("Second Wind")).toEqual(["Zoom Second Wind, spent", "Zoom Second Wind"]);
+      expect(tokenZooms()).toEqual([`Zoom ${SHORT}, spent`, `Zoom ${LONG}`]);
     });
   });
 
@@ -91,14 +96,14 @@ describe("<CharacterPage />", () => {
       showCarousel();
       renderAt("/character/f1");
 
-      const actions = () => screen.getByRole("group", { name: "Second Wind actions" });
+      const actions = () => screen.getByRole("group", { name: `${SHORT} actions` });
       fireEvent.click(within(actions()).getByRole("button", { name: "Spend" }));
-      screen.getByRole("button", { name: "Second Wind, spent" });
+      screen.getByRole("button", { name: `${SHORT}, spent` });
       // the slide and its thumbnail both carry the Spent mark
       screen.getAllByText("Spent");
 
       fireEvent.click(within(actions()).getByRole("button", { name: "Recover" }));
-      screen.getByRole("button", { name: "Second Wind" });
+      screen.getByRole("button", { name: SHORT });
       expect(screen.queryByText("Spent")).toBeNull();
     });
 
@@ -106,10 +111,10 @@ describe("<CharacterPage />", () => {
       showCarousel();
       renderAt("/character/f1");
 
-      const actions = () => screen.getByRole("group", { name: "Second Wind actions" });
+      const actions = () => screen.getByRole("group", { name: `${SHORT} actions` });
       expect(actions().getAttribute("data-nudge")).toBeNull();
 
-      fireEvent.click(screen.getByRole("button", { name: "Second Wind" }));
+      fireEvent.click(screen.getByRole("button", { name: SHORT }));
       expect(actions().getAttribute("data-nudge")).not.toBeNull();
     });
 
@@ -117,8 +122,8 @@ describe("<CharacterPage />", () => {
       showCarousel();
       renderAt("/character/f1");
 
-      const actions = () => screen.getByRole("group", { name: "Second Wind actions" });
-      fireEvent.click(screen.getByRole("button", { name: "Second Wind" }));
+      const actions = () => screen.getByRole("group", { name: `${SHORT} actions` });
+      fireEvent.click(screen.getByRole("button", { name: SHORT }));
       expect(actions().getAttribute("data-nudge")).not.toBeNull();
 
       fireEvent.animationEnd(actions());

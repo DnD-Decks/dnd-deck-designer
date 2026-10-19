@@ -1,7 +1,7 @@
 {
   "source": "https://bg3.wiki",
-  "generatedAt": "2026-09-18T09:34:34.446Z",
-  "count": 82,
+  "generatedAt": "2026-10-19T10:33:55.247Z",
+  "count": 84,
   "icons": [
     {
       "file": "action.png",
@@ -374,6 +374,16 @@
       "sha1": "19b5e9718818772e61c686dea7f62917b936f8a9"
     },
     {
+      "file": "long-rest.png",
+      "title": "Long rest icon.png",
+      "source": "https://bg3.wiki/wiki/File%3ALong_rest_icon.png",
+      "url": "https://bg3.wiki/w/images/d/dc/Long_rest_icon.png",
+      "width": 72,
+      "height": 72,
+      "bytes": 3610,
+      "sha1": "c83d6d7431dd9baa20bf3d6c45a5d70081deffad"
+    },
+    {
       "file": "mana.png",
       "title": "Spell Slot Icon.png",
       "source": "https://bg3.wiki/wiki/File%3ASpell_Slot_Icon.png",
@@ -492,6 +502,16 @@
       "height": 38,
       "bytes": 2461,
       "sha1": "04d7214f83ea90a47b290b48776576a0aaa91a9f"
+    },
+    {
+      "file": "short-rest.png",
+      "title": "Short rest icon.png",
+      "source": "https://bg3.wiki/wiki/File%3AShort_rest_icon.png",
+      "url": "https://bg3.wiki/w/images/1/12/Short_rest_icon.png",
+      "width": 72,
+      "height": 72,
+      "bytes": 3815,
+      "sha1": "c11e1ed666ec630708dfa415ebc377774f01cea0"
     },
     {
       "file": "weapon-battleaxe.png",

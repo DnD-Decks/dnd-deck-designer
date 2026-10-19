@@ -2,6 +2,7 @@
 // (the src/* alias only exists for tsc and vite).
 import { choices } from "../characters/choices.model.ts";
 import { assertNever } from "../lib/assert-never.ts";
+import { classActions } from "../models/class-actions/class-actions.model.ts";
 import { classes } from "../models/class/classes.model.ts";
 import { feats } from "../models/feats/feats.model.ts";
 import { weapons } from "../models/gear/weapons.model.ts";
@@ -9,15 +10,18 @@ import { resources } from "../models/resources/resources.model.ts";
 import { spells } from "../models/spells/spells.model.ts";
 
 import type { Character } from "src/characters/character.model";
+import type { ClassAction } from "src/models/class-actions/class-actions.model";
 import type { CharacterClass, ClassDetails } from "src/models/class/classes.model";
 import type { Feat } from "src/models/feats/feats.model";
 import type { Weapon } from "src/models/gear/weapons.model";
 import type { Resource } from "src/models/resources/resources.model";
+import type { RestType } from "src/models/rest/rest-actions.model";
 import type { Spell, SpellLevel } from "src/models/spells/spells.model";
 
 export type DeckCard =
   | { kind: "spell"; spell: Spell }
-  | { kind: "resource"; resource: Resource }
+  | { kind: "resource"; resource: Resource; recharge: RestType }
+  | { kind: "action"; action: ClassAction }
   | { kind: "feat"; feat: Feat }
   | { kind: "weapon"; weapon: Weapon };
 
@@ -31,7 +35,9 @@ export type CharacterDeck = { cls: ClassDetails; entries: readonly DeckEntry[] }
 export function cardKey(card: DeckCard) {
   switch (card.kind) {
     case "resource":
-      return `resource-${card.resource.id}`;
+      return `resource-${card.resource.id}-${card.recharge}`;
+    case "action":
+      return `action-${card.action.id}`;
     case "feat":
       return `feat-${card.feat.id}`;
     case "spell":
@@ -46,7 +52,9 @@ export function cardKey(card: DeckCard) {
 export function cardName(card: DeckCard) {
   switch (card.kind) {
     case "resource":
-      return card.resource.name;
+      return resources.tokenName(card);
+    case "action":
+      return card.action.name;
     case "feat":
       return card.feat.name;
     case "spell":
@@ -63,6 +71,8 @@ export function cardSection(card: DeckCard) {
   switch (card.kind) {
     case "resource":
       return "Resources";
+    case "action":
+      return "Class Actions";
     case "feat":
       return "Class Features";
     case "spell":
@@ -81,7 +91,7 @@ export const catalogEntry = (card: DeckCard) => ({
 });
 
 const copies = (card: DeckCard) =>
-  card.kind === "resource" && card.resource.stack ? card.resource.uses : 1;
+  card.kind === "resource" ? (card.resource.copies[card.recharge] ?? 0) : 1;
 
 const SPELL_LEVELS: SpellLevel[] = [0, 1];
 
@@ -107,7 +117,14 @@ export const decks = {
     if (cached) return cached;
 
     const cards: DeckCard[] = [
-      ...resources.findAll({ cls }).map((resource) => ({ kind: "resource" as const, resource })),
+      ...resources
+        .findAll({ cls })
+        .flatMap((resource) =>
+          resources
+            .recharges(resource)
+            .map((recharge) => ({ kind: "resource" as const, resource, recharge }))
+        ),
+      ...classActions.findAll({ cls }).map((action) => ({ kind: "action" as const, action })),
       ...feats.findAll({ cls }).map((feat) => ({ kind: "feat" as const, feat })),
       ...SPELL_LEVELS.flatMap((level) =>
         spells.findAll({ cls, level }).map((spell) => ({ kind: "spell" as const, spell }))
@@ -124,7 +141,7 @@ export const decks = {
     return cardIndex().get(key);
   },
 
-  /** the class template narrowed to a character's picks, stacked resources expanded per use */
+  /** the class template narrowed to a character's picks, resources expanded to one entry per copy */
   forCharacter(character: Character): CharacterDeck {
     const { cls, cards } = decks.get({ cls: character.cls });
     const picked = choices.picked(character);
@@ -136,6 +153,7 @@ export const decks = {
         case "weapon":
           return picked.weapon.has(card.weapon.id);
         case "resource":
+        case "action":
         case "feat":
           return true;
         default:

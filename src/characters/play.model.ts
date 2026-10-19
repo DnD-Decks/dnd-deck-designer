@@ -3,7 +3,6 @@
 import { assertNever } from "../lib/assert-never.ts";
 
 import type { DeckCard, DeckEntry } from "src/decks/deck.model";
-import type { Resource } from "src/models/resources/resources.model";
 import type { RestType } from "src/models/rest/rest-actions.model";
 
 type Rest = { entries: readonly DeckEntry[]; spent: readonly string[]; rest: RestType };
@@ -18,32 +17,27 @@ function joinWithAnd(names: readonly string[]) {
   return names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${last}` : (last ?? "");
 }
 
-const resourceOf = (entry: DeckEntry) =>
-  entry.card.kind === "resource" ? entry.card.resource : undefined;
+const resourceCardOf = (entry: DeckEntry) =>
+  entry.card.kind === "resource" ? entry.card : undefined;
 
-// Second Wind brings back one use on a short rest, Warlock mana all of them, wizard mana none
-function shortRestUses(resource: Resource) {
-  if (resource.shortRest !== undefined) return resource.shortRest;
-  return resource.recharge === "short-rest" ? resource.uses : 0;
-}
+// a long rest brings every copy back; a short rest only the copies printed with it
+const comesBack = ({ entry, rest }: { entry: DeckEntry; rest: RestType }) => {
+  const card = resourceCardOf(entry);
+  return card !== undefined && (rest === "long-rest" || card.recharge === rest);
+};
 
-function restoredUses({ resource, rest }: { resource: Resource; rest: RestType }) {
-  return rest === "long-rest" ? resource.uses : shortRestUses(resource);
-}
-
-const resourcesOf = (entries: readonly DeckEntry[]) =>
-  entries.flatMap((entry) => resourceOf(entry) ?? []);
-
-const namesOf = (resources: readonly Resource[]) => [
-  ...new Set(resources.map((resource) => resource.name)),
+const namesOf = (entries: readonly DeckEntry[]) => [
+  ...new Set(entries.flatMap((entry) => resourceCardOf(entry)?.resource.name ?? [])),
 ];
 
-const SECTIONS = ["Resources", "Weapons", "Features", "Cantrips", "Spells"] as const;
+const SECTIONS = ["Resources", "Actions", "Weapons", "Features", "Cantrips", "Spells"] as const;
 
 function sectionOf(card: DeckCard) {
   switch (card.kind) {
     case "resource":
       return "Resources";
+    case "action":
+      return "Actions";
     case "weapon":
       return "Weapons";
     case "feat":
@@ -73,24 +67,15 @@ export const play = {
   /** the spent entries a rest brings back, in deck order */
   recovered({ entries, spent, rest }: Rest) {
     const spentKeys = new Set(spent);
-    const budgets = new Map<string, number>();
-    return entries.filter((entry) => {
-      const resource = resourceOf(entry);
-      if (!resource || !spentKeys.has(entry.key)) return false;
-      const budget = budgets.get(resource.id) ?? restoredUses({ resource, rest });
-      budgets.set(resource.id, budget - 1);
-      return budget > 0;
-    });
+    return entries.filter((entry) => spentKeys.has(entry.key) && comesBack({ entry, rest }));
   },
 
   /** names of every resource a rest can bring back, spent or not */
   restores({ entries, rest }: Omit<Rest, "spent">) {
-    return namesOf(resourcesOf(entries).filter((resource) => restoredUses({ resource, rest }) > 0));
+    return namesOf(entries.filter((entry) => comesBack({ entry, rest })));
   },
 
-  names(entries: readonly DeckEntry[]) {
-    return namesOf(resourcesOf(entries));
-  },
+  names: namesOf,
 
   /** what a rest would bring back, as a button hint */
   restHint({ entries, rest }: Omit<Rest, "spent">) {

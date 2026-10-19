@@ -53,20 +53,24 @@ describe("decks.forCharacter()", () => {
     expect(featKeys).toEqual(classFeats);
   });
 
-  test("expands stacked resources into one card per use", () => {
+  test("expands a resource into one card per copy", () => {
     const mana = keysOf(wizard).filter((key) => key.startsWith("resource-"));
 
-    expect(mana).toEqual(["resource-wizard-mana-0", "resource-wizard-mana-1"]);
+    expect(mana).toEqual(["resource-wizard-mana-long-rest-0", "resource-wizard-mana-long-rest-1"]);
   });
 
-  test("keeps a pool resource as a single card", () => {
+  test("Lay on Hands is five tokens, not a pool", () => {
     const paladin: Character = { id: "p", name: "Paladin", cls: "paladin", level: 1, picks: {} };
     const resources = keysOf(paladin).filter((key) => key.startsWith("resource-"));
 
     expect(resources).toEqual([
-      "resource-paladin-mana-0",
-      "resource-paladin-mana-1",
-      "resource-paladin-lay-on-hands-0",
+      "resource-paladin-mana-long-rest-0",
+      "resource-paladin-mana-long-rest-1",
+      "resource-paladin-lay-on-hands-long-rest-0",
+      "resource-paladin-lay-on-hands-long-rest-1",
+      "resource-paladin-lay-on-hands-long-rest-2",
+      "resource-paladin-lay-on-hands-long-rest-3",
+      "resource-paladin-lay-on-hands-long-rest-4",
     ]);
   });
 
@@ -91,7 +95,10 @@ describe("decks.forCharacter()", () => {
       resources: keys.filter((key) => key.startsWith("resource-")),
     }).toEqual({
       spells: [],
-      resources: ["resource-fighter-second-wind-0", "resource-fighter-second-wind-1"],
+      resources: [
+        "resource-fighter-second-wind-short-rest-0",
+        "resource-fighter-second-wind-long-rest-0",
+      ],
     });
   });
 
@@ -108,7 +115,11 @@ describe("decks.forCharacter()", () => {
     ]);
     // the picked class cards are still there
     expect(keys).toEqual(
-      expect.arrayContaining(["spell-fire-bolt-0", "resource-wizard-mana-0", "weapon-dagger-0"])
+      expect.arrayContaining([
+        "spell-fire-bolt-0",
+        "resource-wizard-mana-long-rest-0",
+        "weapon-dagger-0",
+      ])
     );
   });
 
@@ -120,7 +131,7 @@ describe("decks.forCharacter()", () => {
         custom: [
           "spell-cure-wounds",
           "feat-rogue-sneak-attack",
-          "resource-paladin-lay-on-hands",
+          "resource-paladin-lay-on-hands-long-rest",
           "weapon-longsword",
         ],
       },
@@ -131,20 +142,24 @@ describe("decks.forCharacter()", () => {
       expect.arrayContaining([
         "spell-cure-wounds-0",
         "feat-rogue-sneak-attack-0",
-        "resource-paladin-lay-on-hands-0",
+        "resource-paladin-lay-on-hands-long-rest-0",
         "weapon-longsword-0",
       ])
     );
   });
 
-  test("expands a custom stacked resource into one card per use", () => {
+  test("a custom resource adds only the copies of the rest it was picked for", () => {
     const hero: Character = {
       ...wizard,
-      picks: { ...wizard.picks, custom: ["resource-fighter-second-wind"] },
+      picks: { ...wizard.picks, custom: ["resource-bard-bardic-inspiration-long-rest"] },
     };
-    const keys = keysOf(hero).filter((key) => key.startsWith("resource-fighter-second-wind"));
+    const keys = keysOf(hero).filter((key) => key.startsWith("resource-bard-"));
 
-    expect(keys).toEqual(["resource-fighter-second-wind-0", "resource-fighter-second-wind-1"]);
+    expect(keys).toEqual([
+      "resource-bard-bardic-inspiration-long-rest-0",
+      "resource-bard-bardic-inspiration-long-rest-1",
+      "resource-bard-bardic-inspiration-long-rest-2",
+    ]);
   });
 
   test("ignores unknown custom keys", () => {

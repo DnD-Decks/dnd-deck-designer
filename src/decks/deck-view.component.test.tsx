@@ -96,11 +96,11 @@ describe("<DeckView />", () => {
     test("the first card in the deck has nowhere to go back to", () => {
       render(<DeckView cls="wizard" />);
       showGrid();
-      fireEvent.click(screen.getByRole("button", { name: "Zoom Mana" }));
+      fireEvent.click(screen.getByRole("button", { name: "Zoom Mana (Long Rest)" }));
       expect(screen.queryByRole("button", { name: /previous card/i })).toBeNull();
 
       fireEvent.keyDown(screen.getByRole("dialog"), { key: "ArrowLeft" });
-      screen.getByRole("dialog", { name: "Mana" });
+      screen.getByRole("dialog", { name: "Mana (Long Rest)" });
     });
 
     test("the caption names both neighbours, and holds the one you click", () => {
