@@ -24,7 +24,7 @@ const abbreviateSave = (save: string) =>
 
 type Props = Pick<Spell, "duration" | "save">;
 
-export function SpellCardStatStrip({ duration, save }: Props) {
+export function CardStatFooter({ duration, save }: Props) {
   return (
     <div className={styles.statStrip}>
       <StatItem icon={DURATION_ICON} label="Duration">

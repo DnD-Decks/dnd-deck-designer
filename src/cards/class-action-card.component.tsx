@@ -5,9 +5,9 @@ import type { ClassAction } from "src/models/class-actions/class-actions.model";
 import { resources } from "src/models/resources/resources.model";
 import { CardArt } from "./card-art.component";
 import { CardRange } from "./card-range.component";
+import { CardStatFooter } from "./card-stat-footer.component";
 import styles from "./class-action-card.module.css";
 import { ResourceSymbol } from "./resource-symbol.component";
-import { SpellCardStatStrip } from "./spell-card-stat-strip.component";
 import spellStyles from "./spell-card.module.css";
 
 type Props = { action: ClassAction };
@@ -61,7 +61,7 @@ export function ClassActionCard({ action }: Props) {
         <p>{action.description}</p>
       </div>
 
-      <SpellCardStatStrip duration={action.duration} />
+      <CardStatFooter duration={action.duration} />
     </article>
   );
 }
