@@ -17,6 +17,8 @@ import sorcererActionsData from "../../data/class-actions/sorcerer-class-actions
   type: "json",
 };
 
+import { lookup } from "../../lib/lookup.ts";
+
 import type { ActionTiming } from "src/models/actions/combat.model";
 import type { CharacterClass } from "src/models/class/classes.model";
 
@@ -41,8 +43,13 @@ const CLASS_DATA: Partial<Record<CharacterClass, ClassAction[]>> = {
   sorcerer: sorcererActionsData as ClassAction[],
 };
 
+const TABLE = lookup({ items: Object.values(CLASS_DATA).flat(), key: "id", label: "class action" });
+
 export const classActions = {
   findAll({ cls }: { cls: CharacterClass }) {
     return CLASS_DATA[cls] ?? [];
   },
+  get: ({ id }: { id: string }) => TABLE.get(id),
+  find: ({ id }: { id: string }) => TABLE.find(id),
+  list: TABLE.list,
 };

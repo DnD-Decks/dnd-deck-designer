@@ -17,16 +17,17 @@ function joinWithAnd(names: readonly string[]) {
   return names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${last}` : (last ?? "");
 }
 
-const resourceOf = (entry: DeckEntry) => (entry.card.kind === "resource" ? entry.card : undefined);
+const resourceCardOf = (entry: DeckEntry) =>
+  entry.card.kind === "resource" ? entry.card : undefined;
 
 // a long rest brings every copy back; a short rest only the copies printed with it
 const comesBack = ({ entry, rest }: { entry: DeckEntry; rest: RestType }) => {
-  const resource = resourceOf(entry);
-  return resource !== undefined && (rest === "long-rest" || resource.recharge === rest);
+  const card = resourceCardOf(entry);
+  return card !== undefined && (rest === "long-rest" || card.recharge === rest);
 };
 
 const namesOf = (entries: readonly DeckEntry[]) => [
-  ...new Set(entries.flatMap((entry) => resourceOf(entry)?.resource.name ?? [])),
+  ...new Set(entries.flatMap((entry) => resourceCardOf(entry)?.resource.name ?? [])),
 ];
 
 const SECTIONS = ["Resources", "Actions", "Weapons", "Features", "Cantrips", "Spells"] as const;

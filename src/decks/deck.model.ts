@@ -7,7 +7,6 @@ import { classes } from "../models/class/classes.model.ts";
 import { feats } from "../models/feats/feats.model.ts";
 import { weapons } from "../models/gear/weapons.model.ts";
 import { resources } from "../models/resources/resources.model.ts";
-import { restActions } from "../models/rest/rest-actions.model.ts";
 import { spells } from "../models/spells/spells.model.ts";
 
 import type { Character } from "src/characters/character.model";
@@ -53,8 +52,7 @@ export function cardKey(card: DeckCard) {
 export function cardName(card: DeckCard) {
   switch (card.kind) {
     case "resource":
-      // the twin copies of Second Wind read apart: "Second Wind (Short Rest)"
-      return `${card.resource.name} (${restActions.get({ id: card.recharge }).label})`;
+      return resources.tokenName(card);
     case "action":
       return card.action.name;
     case "feat":

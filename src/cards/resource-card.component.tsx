@@ -1,5 +1,6 @@
 import { Icon } from "src/lib/icon.component";
 import type { Resource } from "src/models/resources/resources.model";
+import { resources } from "src/models/resources/resources.model";
 import type { RestType } from "src/models/rest/rest-actions.model";
 import { restActions } from "src/models/rest/rest-actions.model";
 import { CardArt } from "./card-art.component";
@@ -20,7 +21,7 @@ export function ResourceCard({ resource, recharge }: Props) {
     <article
       className={styles.card}
       data-recharge={recharge}
-      aria-label={`${resource.name} (${rest.label})`}
+      aria-label={resources.tokenName({ resource, recharge })}
     >
       <CardArt assetId={artOf(resource)} />
       <header className={styles.titleBar}>

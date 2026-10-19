@@ -3,14 +3,7 @@ import { classActions } from "src/models/class-actions/class-actions.model";
 import { describe, expect, test } from "vitest";
 import { ClassActionCard } from "./class-action-card.component.tsx";
 
-const actionOf = (id: string) => {
-  const found = [
-    ...classActions.findAll({ cls: "fighter" }),
-    ...classActions.findAll({ cls: "paladin" }),
-  ].find((action) => action.id === id);
-  if (!found) throw new Error(`no class action ${id}`);
-  return found;
-};
+const actionOf = (id: string) => classActions.get({ id });
 
 const costNames = () =>
   within(screen.getByRole("region", { name: "Cost" }))

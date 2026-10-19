@@ -22,6 +22,7 @@ import wizardResourcesData from "../../data/resources/wizard-resources.json" wit
 import type { CharacterClass } from "src/models/class/classes.model";
 import type { RestType } from "src/models/rest/rest-actions.model";
 import { lookup } from "../../lib/lookup.ts";
+import { restActions } from "../rest/rest-actions.model.ts";
 
 /** A token a player spends: one card per copy, each copy coming back on its own rest. */
 export type Resource = {
@@ -59,6 +60,13 @@ export const resources = {
   },
 
   get: ({ id }: { id: string }) => TABLE.get(id),
+  find: ({ id }: { id: string }) => TABLE.find(id),
+  list: TABLE.list,
+
+  /** the twin copies of Second Wind read apart: "Second Wind (Short Rest)" */
+  tokenName({ resource, recharge }: { resource: Resource; recharge: RestType }) {
+    return `${resource.name} (${restActions.get({ id: recharge }).label})`;
+  },
 
   /** the rests this resource has copies for, short rest first */
   recharges(resource: Resource) {
